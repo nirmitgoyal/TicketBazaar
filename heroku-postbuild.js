@@ -18,7 +18,7 @@ try {
   // Build the application
   console.log('🔨 Building application...');
   execSync('npx vite build', { stdio: 'inherit' });
-  execSync('npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-* --external:./vite.ts --external:../vite.config.ts', { stdio: 'inherit' });
+  execSync('npx esbuild server/production-index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist', { stdio: 'inherit' });
 
   console.log('✅ Heroku post-build completed successfully!');
 } catch (error) {
