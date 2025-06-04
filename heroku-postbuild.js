@@ -1,6 +1,4 @@
 
-#!/usr/bin/env node
-
 // Heroku post-build script
 const { execSync } = require('child_process');
 
