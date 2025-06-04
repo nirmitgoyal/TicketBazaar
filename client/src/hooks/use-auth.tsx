@@ -7,7 +7,6 @@ import {
 import { User as SelectUser } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { signInWithGoogle, signOutFromFirebase } from "@/lib/firebase";
 
 /**
  * Auth context type definition
@@ -18,7 +17,6 @@ type AuthContextType = {
   error: Error | null;
   isAuthenticated: boolean;
   logoutMutation: UseMutationResult<void, Error, void>;
-  googleSignIn: () => Promise<void>;
 };
 
 // Create the auth context
@@ -52,47 +50,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  /**
-   * Sign in with Google
-   * Handles both Firebase authentication and server-side session creation
-   */
-  const googleSignIn = async () => {
-    try {
-      const result = await signInWithGoogle();
-      // If user cancelled popup, don't show error or refetch
-      if (result === null) {
-        return;
-      }
-      // Authentication is handled in signInWithGoogle
-      // We'll refetch the user after successful auth
-      await refetchUser();
-    } catch (error) {
-      console.error("Error signing in with Google:", error);
-      toast({
-        title: "Google Sign-in failed",
-        description:
-          (error as Error).message || "Failed to sign in with Google",
-        variant: "destructive",
-      });
-      throw error;
-    }
-  };
+
 
   /**
    * Logout mutation
-   * Handles both server-side session termination and Firebase sign-out
+   * Handles server-side session termination
    */
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      // First logout from the server
       const res = await apiRequest("POST", "/api/auth/logout");
       if (res.status !== 200) {
         const data = await res.json();
         throw new Error(data.message || "Logout failed");
       }
-
-      // Then sign out from Firebase
-      await signOutFromFirebase();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -118,7 +88,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error,
         isAuthenticated: !!user,
         logoutMutation,
-        googleSignIn,
       }}
     >
       {children}

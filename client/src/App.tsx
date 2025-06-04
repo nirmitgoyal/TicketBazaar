@@ -6,8 +6,6 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { useAnalytics, AnalyticsProvider } from "@/hooks/use-analytics";
 import { WebSocketProvider } from "@/hooks/use-websocket";
-import { handleGoogleRedirectResult } from "@/lib/firebase";
-import { useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "@/components/ui/page-transition";
 import { AtmosphereProvider } from "@/contexts/AtmosphereContext";
@@ -157,20 +155,6 @@ function Router() {
 
 function App() {
   const [location] = useLocation();
-
-  // Handle Firebase authentication redirects
-  useEffect(() => {
-    const checkRedirect = async () => {
-      try {
-        // Check if we're returning from a Firebase auth redirect
-        await handleGoogleRedirectResult();
-      } catch (error) {
-        console.error("Error handling redirect:", error);
-      }
-    };
-
-    checkRedirect();
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
