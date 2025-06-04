@@ -37,13 +37,12 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
     google.maps.marker.AdvancedMarkerElement[]
   >([]);
 
-  // Log events to debug
+  // Track events with valid coordinates for analytics
   useEffect(() => {
-    console.log("Events received by map:", events);
-    console.log(
-      "Events with coordinates:",
-      events.filter((e) => e.latitude && e.longitude).length,
-    );
+    const eventsWithCoords = events.filter((e) => e.latitude && e.longitude).length;
+    if (eventsWithCoords !== events.length) {
+      console.warn(`Map: ${events.length - eventsWithCoords} events missing location data`);
+    }
   }, [events]);
 
   // Load the Google Maps JavaScript API
