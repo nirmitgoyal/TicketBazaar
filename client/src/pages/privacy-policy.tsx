@@ -1,0 +1,476 @@
+import React from "react";
+import { Shield } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { SEOManager } from "@/components/helmet-manager";
+import { OrganizationSchema } from "@/components/schema/organization-schema";
+
+export default function PrivacyPolicy() {
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <SEOManager
+        title="Privacy Policy | Ticket Bazaar"
+        description="Learn about how Ticket Bazaar collects, uses, and protects your personal information. Our privacy policy explains your rights and our data practices."
+        canonicalUrl="https://ticketbazaar.co.in/privacy-policy"
+      >
+        <OrganizationSchema />
+      </SEOManager>
+      <Card className="w-full shadow-lg">
+        <CardHeader className="border-b border-border pb-4">
+          <div className="flex items-center gap-2">
+            <Shield className="h-6 w-6 text-primary" />
+            <CardTitle className="text-2xl">Privacy Policy</CardTitle>
+          </div>
+          <CardDescription>Last Updated: June 3, 2025</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-6 pb-10 space-y-6">
+          <section>
+            <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
+            <p className="text-muted-foreground mb-3">
+              Ticket Bazaar operates as a peer-to-peer (P2P) ticket marketplace connecting individual ticket sellers with buyers across India. We respect your privacy and are committed to protecting your personal data in compliance with applicable data protection laws including the Digital Personal Data Protection Act, 2023 (India) and international standards.
+            </p>
+            <p className="text-muted-foreground">
+              This Privacy Policy explains how we collect, use, process, and safeguard your information when you use our website, mobile applications, and related services. By using our platform, you consent to the data practices described in this policy.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              2. Information We Collect
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              As a P2P marketplace, we collect information necessary to facilitate secure transactions between users:
+            </p>
+            
+            <h3 className="text-lg font-medium mb-2">Personal Information:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Account Information:</strong> Full name, email address, phone number, date of birth (for age verification)</li>
+              <li><strong>Identity Verification:</strong> Government-issued ID details for fraud prevention and compliance</li>
+              <li><strong>Social Media Information:</strong> When you connect via Google, Facebook, or other social login providers</li>
+              <li><strong>Profile Information:</strong> Profile picture, bio, preferences, Instagram handle (optional)</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Transaction & P2P Data:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Ticket Information:</strong> Event details, seat information, ticket pricing, transfer methods</li>
+              <li><strong>Communication Records:</strong> Messages between buyers and sellers, contact requests</li>
+              <li><strong>Transaction History:</strong> Purchase records, sale records, payment details, dispute information</li>
+              <li><strong>Reviews & Ratings:</strong> User feedback, trust scores, transaction reviews</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Technical Information:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Device Information:</strong> IP address, browser type, operating system, device identifiers</li>
+              <li><strong>Usage Data:</strong> Pages visited, time spent, click patterns, search queries</li>
+              <li><strong>Location Data:</strong> General location for event discovery, precise location with consent</li>
+              <li><strong>Cookies & Tracking:</strong> Session data, preferences, analytics information</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Third-Party Data:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4">
+              <li><strong>Social Media:</strong> Public profile information from connected accounts</li>
+              <li><strong>Payment Providers:</strong> Transaction status and verification data</li>
+              <li><strong>Event Data:</strong> Publicly available event information from official sources</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              3. How We Use Your Information
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              We process your personal data for specific, legitimate purposes essential to our P2P marketplace operations:
+            </p>
+
+            <h3 className="text-lg font-medium mb-2">Core Platform Operations:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Facilitate peer-to-peer ticket transactions between users</li>
+              <li>Verify user identity and prevent fraudulent activities</li>
+              <li>Enable direct communication between buyers and sellers</li>
+              <li>Process contact requests and transaction coordination</li>
+              <li>Maintain user profiles and reputation systems</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Safety & Trust:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Verify ticket authenticity and prevent counterfeit sales</li>
+              <li>Monitor transactions for suspicious or prohibited activity</li>
+              <li>Investigate and resolve disputes between users</li>
+              <li>Enforce platform rules and community guidelines</li>
+              <li>Provide customer support and assistance</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Service Enhancement:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Personalize event recommendations based on location and preferences</li>
+              <li>Improve search functionality and user experience</li>
+              <li>Analyze platform usage to develop new features</li>
+              <li>Send relevant notifications about events and platform updates</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Legal & Compliance:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Comply with applicable laws and regulatory requirements</li>
+              <li>Respond to legal requests and law enforcement inquiries</li>
+              <li>Maintain records for tax and accounting purposes</li>
+              <li>Protect against legal liability and enforce our terms</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Marketing & Communications:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4">
+              <li>Send promotional emails about relevant events (with consent)</li>
+              <li>Share platform updates and new feature announcements</li>
+              <li>Conduct surveys and research to improve our services</li>
+              <li>Display targeted advertisements based on your interests</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              4. Information Sharing and Disclosure
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              As a P2P marketplace, sharing certain information is essential for transactions. We share your information only as described below:
+            </p>
+
+            <h3 className="text-lg font-medium mb-2">With Other Platform Users:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Profile Information:</strong> Name, rating, review history to build trust</li>
+              <li><strong>Contact Details:</strong> Phone number or Instagram handle when you initiate contact requests</li>
+              <li><strong>Transaction History:</strong> Number of successful transactions (not specific details)</li>
+              <li><strong>Ticket Listings:</strong> Information about tickets you're selling</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">With Service Providers:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Payment Processors:</strong> Stripe, Razorpay for payment processing</li>
+              <li><strong>Cloud Services:</strong> Hosting, database, and file storage providers</li>
+              <li><strong>Authentication:</strong> Google, Facebook for social login services</li>
+              <li><strong>Analytics:</strong> Website usage and performance analytics</li>
+              <li><strong>Communication:</strong> Email and SMS service providers</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Legal & Safety Requirements:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Law Enforcement:</strong> When required by valid legal process</li>
+              <li><strong>Fraud Prevention:</strong> To prevent, detect, or investigate illegal activities</li>
+              <li><strong>Compliance:</strong> To comply with applicable laws and regulations</li>
+              <li><strong>Safety:</strong> To protect the safety of our users and platform</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Business Transfers:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>In connection with merger, acquisition, or sale of assets</li>
+              <li>Users will be notified of any ownership changes</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">With Your Consent:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4">
+              <li>Any other sharing will only occur with your explicit consent</li>
+              <li>You can withdraw consent at any time where legally permissible</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">5. Data Security</h2>
+            <p className="text-muted-foreground mb-3">
+              We implement comprehensive security measures to protect your personal data in our P2P marketplace:
+            </p>
+
+            <h3 className="text-lg font-medium mb-2">Technical Safeguards:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>End-to-end encryption for sensitive data transmission</li>
+              <li>Secure SSL/TLS connections for all platform interactions</li>
+              <li>Regular security audits and penetration testing</li>
+              <li>Automated fraud detection and prevention systems</li>
+              <li>Secure cloud infrastructure with enterprise-grade protection</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Operational Security:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Access controls and authentication for staff</li>
+              <li>Regular employee training on data protection</li>
+              <li>Incident response procedures for security breaches</li>
+              <li>Regular backup and disaster recovery procedures</li>
+            </ul>
+
+            <p className="text-muted-foreground">
+              While we implement industry-standard security measures, no system is completely secure. We encourage users to practice good security habits and report any suspicious activity immediately.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              6. Your Rights and Choices
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              Under applicable privacy laws, including India's Digital Personal Data Protection Act, 2023, you have specific rights regarding your personal data:
+            </p>
+
+            <h3 className="text-lg font-medium mb-2">Data Subject Rights:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Right to Access:</strong> Request a copy of your personal data we hold</li>
+              <li><strong>Right to Correction:</strong> Update or correct inaccurate information</li>
+              <li><strong>Right to Erasure:</strong> Request deletion of your personal data (with some limitations for P2P transactions)</li>
+              <li><strong>Right to Data Portability:</strong> Receive your data in a machine-readable format</li>
+              <li><strong>Right to Object:</strong> Object to processing of your data for certain purposes</li>
+              <li><strong>Right to Restrict Processing:</strong> Limit how we use your data</li>
+              <li><strong>Right to Withdraw Consent:</strong> Withdraw consent for data processing where applicable</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Platform Controls:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Profile Visibility:</strong> Control what information is visible to other users</li>
+              <li><strong>Contact Preferences:</strong> Manage who can contact you and how</li>
+              <li><strong>Marketing Communications:</strong> Opt-out of promotional emails and notifications</li>
+              <li><strong>Data Download:</strong> Export your data through your account settings</li>
+              <li><strong>Account Deletion:</strong> Delete your account and associated data</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Important Notes for P2P Transactions:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Some data may be retained for completed transactions to maintain platform integrity</li>
+              <li>Reviews and ratings may be preserved even after account deletion for community trust</li>
+              <li>Legal obligations may require us to retain certain data for specified periods</li>
+            </ul>
+
+            <p className="text-muted-foreground">
+              To exercise any of these rights, contact us at privacy@ticketbazaar.co.in or use the data management tools in your account settings. We will respond within 30 days of receiving your request.
+            </p>
+          </section>
+
+          <section id="cookies">
+            <h2 className="text-xl font-semibold mb-3">
+              7. Cookies and Similar Technologies
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              We use cookies and similar technologies to enhance your browsing
+              experience, analyze site traffic, and personalize content. You can
+              manage your cookie preferences through your browser settings.
+            </p>
+            <h3 className="text-lg font-medium mb-2">
+              Types of Cookies We Use:
+            </h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4">
+              <li>
+                <strong>Essential Cookies:</strong> These cookies are necessary
+                for the website to function properly and cannot be switched off
+                in our systems.
+              </li>
+              <li>
+                <strong>Performance Cookies:</strong> These cookies allow us to
+                count visits and traffic sources so we can measure and improve
+                the performance of our site.
+              </li>
+              <li>
+                <strong>Functional Cookies:</strong> These cookies enable the
+                website to provide enhanced functionality and personalization.
+              </li>
+              <li>
+                <strong>Targeting Cookies:</strong> These cookies may be set
+                through our site by our advertising partners to build a profile
+                of your interests.
+              </li>
+            </ul>
+            <p className="text-muted-foreground mt-3">
+              You can set your browser to block or alert you about these
+              cookies, but some parts of the site will not work if you do so.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              8. Age Restrictions and Children's Privacy
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              Ticket Bazaar is designed for users who are 18 years of age or older. We strictly comply with children's privacy protection laws.
+            </p>
+            
+            <h3 className="text-lg font-medium mb-2">Age Verification:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Users must be at least 18 years old to create an account</li>
+              <li>We may request age verification during registration</li>
+              <li>Financial transactions require adult legal capacity</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Protection Measures:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>We do not knowingly collect data from users under 18</li>
+              <li>If we discover a minor has created an account, we will immediately suspend it</li>
+              <li>Parents/guardians can report underage accounts to privacy@ticketbazaar.co.in</li>
+              <li>We will delete any data collected from minors upon discovery</li>
+            </ul>
+
+            <p className="text-muted-foreground">
+              If you believe we have inadvertently collected information from someone under 18, please contact us immediately and we will take appropriate action.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              9. International Data Transfers
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              As a global platform serving users across India and potentially internationally, we may transfer your data across borders:
+            </p>
+
+            <h3 className="text-lg font-medium mb-2">Data Processing Locations:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Primary data processing occurs within India</li>
+              <li>Cloud services may store data in secure international data centers</li>
+              <li>Third-party service providers may process data in other countries</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Transfer Safeguards:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Standard Contractual Clauses for international transfers</li>
+              <li>Adequacy decisions where applicable</li>
+              <li>Certification schemes and codes of conduct</li>
+              <li>Regular assessment of transfer risks and safeguards</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              10. Third-Party Services and Integrations
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              Our platform integrates with various third-party services to enhance your experience:
+            </p>
+
+            <h3 className="text-lg font-medium mb-2">Social Media Platforms:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Google:</strong> Authentication, email services, maps integration</li>
+              <li><strong>Facebook/Meta:</strong> Social login, sharing features</li>
+              <li><strong>Instagram:</strong> Profile linking and verification</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Payment and Financial Services:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Stripe:</strong> International payment processing</li>
+              <li><strong>Razorpay:</strong> Indian payment gateway services</li>
+              <li>These services have their own privacy policies governing data use</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Analytics and Performance:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Website analytics to improve user experience</li>
+              <li>Performance monitoring and error tracking</li>
+              <li>Marketing analytics for relevant advertising</li>
+            </ul>
+
+            <p className="text-muted-foreground">
+              When you interact with these third-party services, their privacy policies also apply. We encourage you to review their policies to understand how they handle your data.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              11. Changes to This Privacy Policy
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              We may update this Privacy Policy periodically to reflect changes in our practices, services, or legal requirements:
+            </p>
+
+            <h3 className="text-lg font-medium mb-2">Notification Methods:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Email notification to registered users for material changes</li>
+              <li>Prominent notice on our website and platform</li>
+              <li>In-app notifications for significant policy updates</li>
+              <li>Updated "Last Modified" date at the top of this policy</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Your Options:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Review changes before they take effect</li>
+              <li>Contact us with questions about policy changes</li>
+              <li>Delete your account if you disagree with new terms</li>
+              <li>Continue using the platform constitutes acceptance of changes</li>
+            </ul>
+
+            <p className="text-muted-foreground">
+              Significant changes will be communicated at least 30 days before taking effect, allowing you time to review and make informed decisions about your continued use of our platform.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">12. Data Retention</h2>
+            <p className="text-muted-foreground mb-3">
+              We retain your personal data based on specific business needs and legal requirements:
+            </p>
+
+            <h3 className="text-lg font-medium mb-2">Retention Periods:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Account Data:</strong> Retained while your account is active plus 3 years after closure</li>
+              <li><strong>Transaction Records:</strong> 7 years for financial compliance and tax purposes</li>
+              <li><strong>Communication Logs:</strong> 3 years for dispute resolution and customer support</li>
+              <li><strong>Reviews and Ratings:</strong> Indefinitely to maintain platform trust and integrity</li>
+              <li><strong>Marketing Data:</strong> Until you opt-out or withdraw consent</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Secure Deletion:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Data is securely deleted when retention periods expire</li>
+              <li>Multiple deletion passes to ensure data cannot be recovered</li>
+              <li>Regular audits to verify deletion compliance</li>
+              <li>Anonymization of historical data where possible</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Legal Holds:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4">
+              <li>Data may be retained longer if subject to legal proceedings</li>
+              <li>Regulatory investigations may extend retention periods</li>
+              <li>Users will be notified if data retention is extended</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">13. Contact Information and Data Protection Officer</h2>
+            <p className="text-muted-foreground mb-3">
+              For questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us through the following channels:
+            </p>
+
+            <h3 className="text-lg font-medium mb-2">General Privacy Inquiries:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Email:</strong> privacy@ticketbazaar.co.in</li>
+              <li><strong>Response Time:</strong> We will respond within 30 days</li>
+              <li><strong>Languages:</strong> English and Hindi</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Data Subject Rights Requests:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li>Use the data management tools in your account settings</li>
+              <li>Email us with specific requests for access, correction, or deletion</li>
+              <li>Include your account email and specific request details</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Company Information:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Company Name:</strong> Ticket Bazaar</li>
+              <li><strong>Address:</strong> Sector 110, Noida, 201304, Uttar Pradesh, India</li>
+              <li><strong>Business Hours:</strong> Monday to Friday, 9:00 AM to 6:00 PM IST</li>
+            </ul>
+
+            <h3 className="text-lg font-medium mb-2">Regulatory Complaints:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4">
+              <li>You have the right to lodge complaints with relevant data protection authorities</li>
+              <li>In India: Data Protection Board (when established under DPDP Act 2023)</li>
+              <li>For EU users: Your local data protection authority</li>
+            </ul>
+
+            <div className="mt-6 p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                <strong>Effective Date:</strong> This Privacy Policy is effective as of June 3, 2025, and governs all data processing activities from this date forward. Previous versions of our privacy policy remain available upon request.
+              </p>
+            </div>
+          </section>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

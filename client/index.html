@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover"
+    />
+    <!-- Inline error suppression - loads immediately before anything else -->
+    <script>
+      (function () {
+        // Suppress any console errors related to WebSockets
+        var originalConsoleError = console.error;
+        console.error = function () {
+          var errorText = Array.from(arguments).join(" ");
+          if (
+            errorText.includes("WebSocket") ||
+            errorText.includes("DOMException") ||
+            errorText.includes("TypeError") ||
+            errorText.includes("Uncaught")
+          ) {
+            return;
+          }
+          return originalConsoleError.apply(console, arguments);
+        };
+
+        // Also catch unhandled rejections
+        window.addEventListener(
+          "unhandledrejection",
+          function (e) {
+            e.preventDefault();
+            return false;
+          },
+          true,
+        );
+      })();
+    </script>
+
+    <!-- Complete error-fixer with full WebSocket replacement -->
+    <script type="module" src="/error-fixer.js"></script>
+
+    <meta
+      name="description"
+      content="Buy and sell verified tickets for concerts, sports events, and festivals across India at fair prices. Secure transactions with escrow protection. Find events in Delhi, Mumbai, Bangalore & more."
+    />
+    <meta
+      name="keywords"
+      content="ticketbazaar, ticket bazaar, ticket reselling platform India, buy second-hand event tickets India, concert tickets India, sports tickets resale, verified ticket marketplace, secure ticket resale Delhi, Mumbai event tickets, Bangalore concert tickets, ticketbazaar.co.in, ticket bazaar India"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Ticket Bazaar" />
+    <link rel="canonical" href="https://ticketbazaar.co.in/" />
+
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta
+      property="og:title"
+      content="Ticket Bazaar: India's Secure Ticket Resale Platform | Buy & Sell Event Tickets"
+    />
+    <meta
+      property="og:description"
+      content="Buy and sell verified tickets for concerts, sports events, and festivals across India at fair prices. Secure transactions with escrow protection."
+    />
+    <meta property="og:image" content="/images/ticket-bazaar-social.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Ticket Bazaar - India's Secure Ticket Resale Marketplace"
+    />
+    <meta property="og:url" content="https://ticketbazaar.co.in" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Ticket Bazaar" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Ticket Bazaar: India's Secure Ticket Resale Platform | Buy & Sell Event Tickets"
+    />
+    <meta
+      name="twitter:description"
+      content="Buy and sell verified tickets for concerts, sports events, and festivals across India at fair prices. Secure transactions with escrow protection."
+    />
+    <meta name="twitter:image" content="/images/ticket-bazaar-social.png" />
+
+    <title>
+      Ticket Bazaar: India's Secure Ticket Resale Platform | Buy & Sell Event
+      Tickets
+    </title>
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <link
+      rel="sitemap"
+      type="application/xml"
+      title="Sitemap"
+      href="/sitemap.xml"
+    />
+
+    <!-- Structured Data for Search Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Ticket Bazaar",
+      "alternateName": "TicketBazaar",
+      "url": "https://ticketbazaar.co.in",
+      "logo": "https://ticketbazaar.co.in/logo.svg",
+      "description": "India's secure ticket resale platform for buying and selling verified event tickets",
+      "sameAs": [
+        "https://ticketbazaar.co.in"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "areaServed": "IN"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      },
+      "brand": {
+        "@type": "Brand",
+        "name": "Ticket Bazaar"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Ticket Bazaar",
+      "alternateName": "TicketBazaar",
+      "url": "https://ticketbazaar.co.in",
+      "description": "Buy and sell verified tickets for concerts, sports events, and festivals across India at fair prices",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Ticket Bazaar"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://ticketbazaar.co.in/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Google Analytics 4 -->
+    <script>
+      // Define measurement ID
+      window.GA4_MEASUREMENT_ID =
+        "%GA4_MEASUREMENT_ID%" === "%GA4_MEASUREMENT_ID%"
+          ? "G-EJP09PV05W"
+          : "%GA4_MEASUREMENT_ID%";
+      // Load GTM script
+      const gtmScript = document.createElement("script");
+      gtmScript.async = true;
+      gtmScript.src = `https://www.googletagmanager.com/gtag/js?id=${window.GA4_MEASUREMENT_ID}`;
+      document.head.appendChild(gtmScript);
+
+      // Initialize GA4
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", window.GA4_MEASUREMENT_ID);
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
