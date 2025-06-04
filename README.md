@@ -645,8 +645,10 @@ GOOGLE_CLIENT_SECRET=your-google-oauth-client-secret
 
 # External Service Integration
 GOOGLE_MAPS_API_KEY=your-google-maps-api-key
-STRIPE_PUBLIC_KEY=pk_live_your-stripe-public-key
-STRIPE_SECRET_KEY=sk_live_your-stripe-secret-key
+
+# Payment Processing (Optional - Pure P2P model doesn't require payment processing)
+# STRIPE_PUBLIC_KEY=pk_live_your-stripe-public-key
+# STRIPE_SECRET_KEY=sk_live_your-stripe-secret-key
 
 # Firebase Analytics & Monitoring
 FIREBASE_PROJECT_ID=your-firebase-project-id
@@ -688,9 +690,11 @@ WHATSAPP_BUSINESS_ACCOUNT_ID=your-whatsapp-business-account-id
    heroku config:set SESSION_SECRET=$(openssl rand -base64 32)
    heroku config:set GOOGLE_CLIENT_ID=your_google_client_id
    heroku config:set GOOGLE_CLIENT_SECRET=your_google_client_secret
-   heroku config:set STRIPE_PUBLIC_KEY=your_stripe_public_key
-   heroku config:set STRIPE_SECRET_KEY=your_stripe_secret_key
    heroku config:set GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+   
+   # Optional: Only needed if implementing future payment features
+   # heroku config:set STRIPE_PUBLIC_KEY=your_stripe_public_key
+   # heroku config:set STRIPE_SECRET_KEY=your_stripe_secret_key
    ```
 
 4. **Deploy**
@@ -714,8 +718,8 @@ WHATSAPP_BUSINESS_ACCOUNT_ID=your-whatsapp-business-account-id
 | `SESSION_SECRET`       | Secret for session management                          | Yes      |
 | `GOOGLE_CLIENT_ID`     | Google OAuth client ID                                 | Yes      |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth client secret                             | Yes      |
-| `STRIPE_PUBLIC_KEY`    | Stripe publishable key                                 | Yes      |
-| `STRIPE_SECRET_KEY`    | Stripe secret key                                      | Yes      |
+| `STRIPE_PUBLIC_KEY`    | Stripe publishable key (P2P model - optional)         | No       |
+| `STRIPE_SECRET_KEY`    | Stripe secret key (P2P model - optional)              | No       |
 | `GOOGLE_MAPS_API_KEY`  | Google Maps API key                                    | Yes      |
 
 ### Optional API Keys (Future Features)
