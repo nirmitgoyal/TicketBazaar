@@ -1,3 +1,4 @@
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes/index";
 import { setupProduction } from "./production";
@@ -7,10 +8,10 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import session from 'express-session';
 import passport from 'passport';
-import { routes } from './routes.js';
-import { errorMiddleware } from './middleware/error.middleware.js';
-import { setupAuth } from './auth.js';
-import { setupWebSocket } from './services/websocket.service.js';
+import { routes } from './routes';
+import { errorMiddleware } from './middleware/error.middleware';
+import { setupAuth } from './auth';
+import { setupWebSocket } from './services/websocket.service';
 import http from 'http';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -19,6 +20,7 @@ const __dirname = dirname(__filename);
 const app = express();
 const server = http.createServer(app);
 
+// Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -40,9 +42,6 @@ app.use(passport.session());
 // Setup authentication
 setupAuth();
 
-// Serve static files from dist directory
-app.use(express.static(path.join(__dirname, '../dist')));
-
 // Add cache control headers to prevent browser caching issues
 app.use((req, res, next) => {
   // For HTML files, prevent caching to ensure users get latest updates
@@ -56,6 +55,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -86,19 +86,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// API routes
-app.use('/api', routes);
-
-// Serve React app for all other routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
-});
-
 (async () => {
-  const server2 = await registerRoutes(app);
+  // Register routes
+  await registerRoutes(app);
 
   // Set up production static file serving
   setupProduction(app);
+
+  // API routes
+  app.use('/api', routes);
 
   // Add general 404 handler for any non-matching routes (both API and frontend)
   app.use((_req: Request, res: Response) => {
@@ -122,16 +118,16 @@ app.get('*', (req, res) => {
 
     console.error("Server error:", err);
   });
+
+  // Error handling middleware
+  app.use(errorMiddleware);
+
+  // Setup WebSocket
+  setupWebSocket(server);
+
+  const PORT = process.env.PORT || 5000;
+
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Production server running on port ${PORT}`);
+  });
 })();
-
-// Error handling middleware
-app.use(errorMiddleware);
-
-// Setup WebSocket
-setupWebSocket(server);
-
-const PORT = process.env.PORT || 5000;
-
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Production server running on port ${PORT}`);
-});
