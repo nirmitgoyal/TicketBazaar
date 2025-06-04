@@ -350,11 +350,11 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
             onCloseClick={() => setSelectedEvent(null)}
           >
             <div className="bg-white p-3 max-w-xs">
-              {selectedEvent.imageUrl && (
+              {selectedEvent.eventImageUrl && (
                 <div className="mb-2 rounded overflow-hidden">
                   <img
-                    src={selectedEvent.imageUrl}
-                    alt={selectedEvent.title}
+                    src={selectedEvent.eventImageUrl}
+                    alt={selectedEvent.eventTitle}
                     className="w-full h-32 object-cover"
                   />
                 </div>
