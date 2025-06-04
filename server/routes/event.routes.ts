@@ -43,7 +43,7 @@ router.get("/popular", async (req, res) => {
         "chennai",
         "kolkata",
       ];
-      if (majorCities.includes(ticket.city.toLowerCase())) {
+      if (ticket.city && majorCities.includes(ticket.city.toLowerCase())) {
         score += 2;
       }
 

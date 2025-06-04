@@ -299,7 +299,7 @@ export class TicketController {
         seat: null,
         price: 0, // Price will be negotiated directly between users in P2P marketplace
         quantity: validatedData.quantity,
-        transferMethod: "electronic",
+        transferMethod: "electronic" as const,
         additionalInfo: validatedData.additionalInfo,
         trending: false,
         sellingFast: false,

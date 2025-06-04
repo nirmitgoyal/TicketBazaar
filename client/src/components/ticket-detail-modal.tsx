@@ -77,6 +77,7 @@ export function TicketDetailModal({
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle className="text-xl">Loading tickets...</DialogTitle>
+            <DialogDescription>Please wait while we fetch available tickets for this event.</DialogDescription>
           </DialogHeader>
           <div className="py-8 text-center">
             <p className="text-textSecondary">Fetching available tickets...</p>
@@ -94,6 +95,7 @@ export function TicketDetailModal({
             <DialogTitle className="text-xl">
               {event?.title || "No Tickets Available"}
             </DialogTitle>
+            <DialogDescription>No tickets are currently listed for sale for this event.</DialogDescription>
           </DialogHeader>
           <div className="py-8 text-center">
             <p className="text-textSecondary">
@@ -112,6 +114,7 @@ export function TicketDetailModal({
           <DialogTitle className="text-xl">
             {event?.title || "Available Tickets"}
           </DialogTitle>
+          <DialogDescription>Browse and contact sellers for available tickets to this event.</DialogDescription>
         </DialogHeader>
 
         <div className="py-2">
@@ -119,8 +122,8 @@ export function TicketDetailModal({
             <div className="mb-6">
               <p className="text-textSecondary mb-1">{event.venue}</p>
               <p className="text-textSecondary text-sm">
-                {event.date
-                  ? new Date(event.date).toLocaleString("en-US", {
+                {event.eventDate
+                  ? new Date(event.eventDate).toLocaleString("en-US", {
                       weekday: "short",
                       year: "numeric",
                       month: "short",
