@@ -363,11 +363,9 @@ export function Navigation() {
                     <motion.div variants={listItem}>
                       <button
                         className="py-3 px-2 flex items-center gap-2 text-primary font-medium w-full text-left touch-target rounded-md transition-colors hover:bg-primary/5"
-                        onClick={handleGoogleSignIn}
-                        disabled={isSigningIn}
+                        onClick={() => handleNavigation("/login")}
                       >
-                        <FcGoogle className="h-4 w-4" />
-                        {isSigningIn ? "Signing In..." : "Sign In with Google"}
+                        Sign In
                       </button>
                     </motion.div>
                   </>

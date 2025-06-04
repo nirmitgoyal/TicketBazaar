@@ -237,12 +237,17 @@ export default function ListTicket() {
 
               <div className="flex flex-col gap-4">
                 <Button onClick={() => navigate("/login")} className="w-full">
-                  Login with Google
+                  Sign In
                 </Button>
 
                 <p className="text-center text-sm text-muted-foreground">
-                  Don't have an account? Signing in will create one for you
-                  automatically.
+                  Don't have an account?{" "}
+                  <button
+                    onClick={() => navigate("/register")}
+                    className="text-primary hover:underline"
+                  >
+                    Sign up here
+                  </button>
                 </p>
               </div>
             </CardContent>
