@@ -180,6 +180,20 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const startTime = Date.now();
+    try {
+      const [user] = await db.select().from(users).where(eq(users.username, username));
+      const duration = Date.now() - startTime;
+      logger.dbOperation('SELECT', 'users', duration);
+      return user || undefined;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      logger.dbOperation('SELECT', 'users', duration, undefined, error);
+      throw error;
+    }
+  }
+
   async getUserByGoogleId(googleId: string): Promise<User | undefined> {
     if (!googleId) return undefined;
     const startTime = Date.now();

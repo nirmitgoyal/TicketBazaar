@@ -8,11 +8,11 @@ import { z } from "zod";
 const router = Router();
 const userController = new UserController();
 
-// User registration - will be implemented as needed
-// router.post("/register", validateBody(userRegisterSchema), userController.register);
+// User registration
+router.post("/register", validateBody(userRegisterSchema), userController.register);
 
-// User login - now only supports Google OAuth
-router.post("/login", userController.getLoginInfo);
+// User login
+router.post("/login", validateBody(userLoginSchema), userController.login);
 
 // Get current user
 router.get("/user", userController.getCurrentUser);
@@ -96,23 +96,7 @@ router.get("/users/:id", async (req, res) => {
 // Logout
 router.post("/logout", userController.logout);
 
-// Google OAuth routes
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] }),
-);
 
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/login",
-    session: true,
-  }),
-  userController.googleCallback,
-);
-
-// Firebase authentication
-router.post("/firebase", userController.firebaseLogin);
 
 // Phone number update schema
 const updatePhoneSchema = z.object({

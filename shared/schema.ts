@@ -15,13 +15,13 @@ import { z } from "zod";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
   password: text("password").notNull(),
   fullName: text("full_name").notNull(),
   email: text("email").notNull().unique(),
   phone: text("phone"),
   whatsapp: text("whatsapp"), // Added WhatsApp number for direct contact
   instagram: text("instagram").notNull(), // Instagram handle for profile verification (mandatory)
-  googleId: text("google_id").unique(),
   rating: doublePrecision("rating").default(0),
   ratingsCount: integer("ratings_count").default(0),
   preferredContactMethod: text("preferred_contact_method").default("whatsapp"), // whatsapp, phone, email
@@ -195,13 +195,13 @@ export const ticketViewsRelations = relations(ticketViews, ({ one }) => ({
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
   password: true,
   fullName: true,
   email: true,
   phone: true,
   whatsapp: true,
   instagram: true,
-  googleId: true,
   preferredContactMethod: true,
 });
 
@@ -279,6 +279,7 @@ export const ticketListingSchema = insertTicketSchema.extend({
 
 export const userRegisterSchema = insertUserSchema
   .extend({
+    username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username cannot exceed 20 characters"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     fullName: z.string().min(2, "Full name is required"),
     email: z.string().email("Invalid email address"),
@@ -296,7 +297,7 @@ export const userRegisterSchema = insertUserSchema
   });
 
 export const userLoginSchema = z.object({
-  email: z.string().email("Valid email is required"),
+  username: z.string().min(1, "Username is required"),
   password: z.string().min(1, "Password is required"),
 });
 

@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { storage } from "../storage";
 import { randomBytes } from "crypto";
+import bcrypt from "bcrypt";
+import passport from "passport";
 import QRCode from "qrcode";
+import { userRegisterSchema, userLoginSchema } from "@shared/schema";
 
 // Base controller with common functionality
 export class BaseController {
@@ -21,16 +24,68 @@ export class BaseController {
 
 // User controller for authentication and user management
 export class UserController extends BaseController {
-  // Get login information
-  public getLoginInfo = (req: Request, res: Response) => {
+  // User registration
+  public register = async (req: Request, res: Response) => {
     try {
-      this.sendSuccess(res, {
-        message: "This application only supports Google Authentication",
-        googleAuthEnabled: true,
+      const { username, password, fullName, email, phone, instagram, preferredContactMethod } = req.body;
+
+      // Check if user already exists
+      const existingUserByUsername = await storage.getUserByUsername(username);
+      if (existingUserByUsername) {
+        return this.sendError(res, "Username already exists", 400);
+      }
+
+      const existingUserByEmail = await storage.getUserByEmail(email);
+      if (existingUserByEmail) {
+        return this.sendError(res, "Email already exists", 400);
+      }
+
+      // Hash password
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+      // Create user
+      const newUser = await storage.createUser({
+        username,
+        password: hashedPassword,
+        fullName,
+        email,
+        phone: phone || "",
+        instagram,
+        preferredContactMethod: preferredContactMethod || "whatsapp",
+        rating: 5.0,
+        ratingsCount: 0,
       });
+
+      // Remove password from response
+      const { password: _, ...userWithoutPassword } = newUser;
+      this.sendSuccess(res, { 
+        message: "User registered successfully", 
+        user: userWithoutPassword 
+      }, 201);
     } catch (error) {
+      console.error("Registration error:", error);
       this.handleError(error, res);
     }
+  };
+
+  // User login
+  public login = (req: Request, res: Response, next: NextFunction) => {
+    passport.authenticate("local", (err: any, user: any, info: any) => {
+      if (err) {
+        return this.handleError(err, res);
+      }
+      if (!user) {
+        return this.sendError(res, info?.message || "Invalid username or password", 401);
+      }
+
+      req.login(user, (err: any) => {
+        if (err) {
+          return this.handleError(err, res);
+        }
+        return this.sendSuccess(res, { message: "Login successful", user });
+      });
+    })(req, res, next);
   };
 
   // Get current authenticated user
