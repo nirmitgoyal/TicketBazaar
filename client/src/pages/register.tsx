@@ -14,7 +14,6 @@ export default function Register() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    username: "",
     password: "",
     fullName: "",
     email: "",
@@ -78,16 +77,6 @@ export default function Register() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                type="text"
-                value={formData.username}
-                onChange={(e) => handleInputChange("username", e.target.value)}
-                required
-              />
-            </div>
             <div>
               <Label htmlFor="fullName">Full Name</Label>
               <Input
