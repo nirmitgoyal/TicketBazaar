@@ -5,21 +5,12 @@ import { Link } from "wouter";
 import { Loader2, MapPin, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EventListFallback from "./event-list-fallback";
-
-// Container style for the map
-const containerStyle = {
-  width: "100%",
-  height: "600px",
-};
-
-// Center on central India for a better overall view
-const defaultCenter = {
-  lat: 20.5937,
-  lng: 78.9629,
-};
-
-// Define libraries for Google Maps as a static array to prevent reloading issues
-const mapLibraries: ("places" | "geometry" | "marker")[] = ["places", "geometry", "marker"];
+import { 
+  GOOGLE_MAPS_LIBRARIES, 
+  GOOGLE_MAPS_OPTIONS, 
+  MAP_CONTAINER_STYLE, 
+  DEFAULT_CENTER 
+} from "@/lib/google-maps-config";
 
 // Set up props interface
 interface EventMapProps {
@@ -51,7 +42,7 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries: mapLibraries,
+    libraries: GOOGLE_MAPS_LIBRARIES,
     mapIds: ["ticket-bazaar-map"], // Add a map ID for Advanced Markers
   });
 
@@ -247,7 +238,7 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
         setInitialBoundsSet(true);
       } else {
         // If no valid coordinates at all, center on India
-        map.setCenter({ lat: 20.5937, lng: 78.9629 }); // Center of India
+        map.setCenter(DEFAULT_CENTER); // Center of India
         map.setZoom(5); // Zoom level to see most of India
         setInitialBoundsSet(true);
       }
@@ -312,30 +303,13 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
         </Button>
       </div>
       <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={defaultCenter}
+        mapContainerStyle={MAP_CONTAINER_STYLE}
+        center={DEFAULT_CENTER}
         zoom={5}
         onLoad={onLoad}
         onUnmount={onUnmount}
         onBoundsChanged={onBoundsChanged}
-        options={{
-          mapId: "ticket-bazaar-map", // Add map ID for Advanced Markers
-          fullscreenControl: true,
-          streetViewControl: false,
-          mapTypeControl: false,
-          zoomControl: true,
-          scrollwheel: true,
-          gestureHandling: "greedy",
-          disableDefaultUI: false,
-          clickableIcons: false,
-          styles: [
-            {
-              featureType: "poi",
-              elementType: "labels",
-              stylers: [{ visibility: "off" }],
-            },
-          ],
-        }}
+        options={GOOGLE_MAPS_OPTIONS}
       >
         {/* Markers are now handled with useEffect to avoid deprecated warnings */}
 
