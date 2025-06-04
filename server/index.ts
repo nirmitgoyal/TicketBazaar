@@ -88,7 +88,7 @@ app.use((req, res, next) => {
 
   // Use environment port or fallback to 5000 for local development
   const port = parseInt(process.env.PORT || "5000", 10);
-  const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
+  const host = "0.0.0.0"; // Always bind to 0.0.0.0 for deployment compatibility
   
   server.listen(
     {
