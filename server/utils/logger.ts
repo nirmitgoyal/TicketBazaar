@@ -139,18 +139,13 @@ class Logger {
 
   // Database operation logging
   dbOperation(operation: string, table: string, duration: number, userId?: number, error?: any): void {
-    const message = `${operation} on ${table} completed in ${duration}ms`;
-    
     if (error) {
       this.error('DATABASE', `${operation} on ${table} failed`, error, userId);
-    } else if (duration > 500) {
-      // Only log slow database operations in production
-      this.warn('DATABASE', `Slow ${message}`, undefined, userId);
-    } else if (this.isDevelopment && duration > 100) {
-      // Log moderately slow operations in development
-      this.debug('DATABASE', message, undefined, userId);
+    } else if (duration > 2000) {
+      // Only log very slow database operations (>2s)
+      this.warn('DATABASE', `Very slow ${operation} on ${table} completed in ${duration}ms`, undefined, userId);
     }
-    // Skip logging fast operations to reduce noise
+    // Skip all normal database operation logging to reduce console noise
   }
 
   // Authentication logging

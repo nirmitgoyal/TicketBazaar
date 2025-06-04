@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -83,9 +84,12 @@ export function SellerProfileModal({
             </Avatar>
             <div>
               <h2 className="text-xl font-bold">{seller.fullName}</h2>
-              <p className="text-sm text-textSecondary">@{seller.username}</p>
+              <p className="text-sm text-textSecondary">{seller.email}</p>
             </div>
           </DialogTitle>
+          <DialogDescription>
+            View seller profile, ratings, and active ticket listings. Contact seller directly for ticket purchases.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -273,7 +277,7 @@ export function SellerProfileModal({
                           <span className="text-sm font-semibold text-primary">
                             {ticket.transferMethod || "Electronic"}
                           </span>
-                          <Badge variant="outline" size="sm">
+                          <Badge variant="outline">
                             {ticket.quantity} available
                           </Badge>
                         </div>
