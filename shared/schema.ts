@@ -201,6 +201,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
   whatsapp: true,
   instagram: true,
   preferredContactMethod: true,
+  rating: true,
+  ratingsCount: true,
 });
 
 export const insertTicketSchema = createInsertSchema(tickets).omit({
