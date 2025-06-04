@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes/index";
-import { setupVite, serveStatic, log } from "./vite";
+import { serveStatic, log } from "./vite";
 
 const app = express();
 app.use(express.json());
@@ -56,6 +56,8 @@ app.use((req, res, next) => {
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
+    // Dynamically import setupVite only in development
+    const { setupVite } = await import("./vite");
     await setupVite(app, server);
   } else {
     serveStatic(app);
@@ -89,7 +91,7 @@ app.use((req, res, next) => {
   // Use environment port or fallback to 5000 for local development
   const port = parseInt(process.env.PORT || "5000", 10);
   const host = "0.0.0.0"; // Always bind to 0.0.0.0 for deployment compatibility
-  
+
   server.listen(
     {
       port,
