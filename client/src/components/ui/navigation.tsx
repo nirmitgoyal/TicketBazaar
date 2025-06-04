@@ -2,17 +2,15 @@ import { Link, useLocation } from "wouter";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserCircle, Menu, X, Map, Ticket } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeInDown, listItem, staggerContainer } from "@/lib/animations";
 import { RealTimeNotifications } from "@/components/real-time-notifications";
 
 export function Navigation() {
-  const { user, isAuthenticated, logoutMutation, googleSignIn } = useAuth();
+  const { user, isAuthenticated, logoutMutation } = useAuth();
   const [location, setLocation] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSigningIn, setIsSigningIn] = useState(false);
 
   // Handle navigation with proper client-side routing
   const handleNavigation = (path: string) => {
@@ -22,17 +20,6 @@ export function Navigation() {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleGoogleSignIn = async () => {
-    setIsSigningIn(true);
-    try {
-      await googleSignIn();
-    } catch (error) {
-      console.error("Google sign in error:", error);
-    } finally {
-      setIsSigningIn(false);
-    }
   };
 
   return (

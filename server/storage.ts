@@ -44,12 +44,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
-  getUserByGoogleId(googleId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  updateUserGoogleId(
-    userId: number,
-    googleId: string,
-  ): Promise<User | undefined>;
   updateUserRating(
     userId: number,
     newRating: number,
@@ -194,35 +189,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getUserByGoogleId(googleId: string): Promise<User | undefined> {
-    if (!googleId) return undefined;
-    const startTime = Date.now();
-    try {
-      const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.googleId, googleId));
-      const duration = Date.now() - startTime;
-      logger.dbOperation('SELECT', 'users', duration);
-      return user || undefined;
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      logger.dbOperation('SELECT', 'users', duration, undefined, error);
-      throw error;
-    }
-  }
 
-  async updateUserGoogleId(
-    userId: number,
-    googleId: string,
-  ): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set({ googleId })
-      .where(eq(users.id, userId))
-      .returning();
-    return user || undefined;
-  }
 
   async updateUserRating(
     userId: number,
