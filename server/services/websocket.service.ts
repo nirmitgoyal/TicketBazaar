@@ -218,5 +218,6 @@ export function broadcastToAll(data: any): void {
     });
   }
 }
-// No export statements were present in the original code. The change requested an export for broadcastToAll which is not defined.
-// No changes are applied.
+
+// Alias for backward compatibility
+export const setupWebSocket = initializeWebSocketService;

@@ -8,8 +8,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import session from 'express-session';
 import passport from 'passport';
-import { routes } from './routes';
-import { errorMiddleware } from './middleware/error.middleware';
+import { errorHandler } from './middleware/error.middleware';
 import { setupAuth } from './auth';
 import { setupWebSocket } from './services/websocket.service';
 import http from 'http';
@@ -40,7 +39,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Setup authentication
-setupAuth();
+setupAuth(app);
 
 // Add cache control headers to prevent browser caching issues
 app.use((req, res, next) => {
@@ -93,9 +92,6 @@ app.use((req, res, next) => {
   // Set up production static file serving
   setupProduction(app);
 
-  // API routes
-  app.use('/api', routes);
-
   // Add general 404 handler for any non-matching routes (both API and frontend)
   app.use((_req: Request, res: Response) => {
     res.status(404).json({
@@ -120,14 +116,14 @@ app.use((req, res, next) => {
   });
 
   // Error handling middleware
-  app.use(errorMiddleware);
+  app.use(errorHandler);
 
   // Setup WebSocket
-  setupWebSocket(server);
+  initializeWebSocketService(server);
 
-  const PORT = process.env.PORT || 5000;
+  const PORT = parseInt(process.env.PORT || '5000', 10);
 
-  server.listen(PORT, '0.0.0.0', () => {
+  server.listen(PORT, () => {
     console.log(`🚀 Production server running on port ${PORT}`);
   });
 })();
