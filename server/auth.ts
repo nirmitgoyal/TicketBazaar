@@ -32,14 +32,13 @@ export function setupAuth(app: Express) {
     store: new PostgresSessionStore({
       conString: process.env.DATABASE_URL,
       createTableIfMissing: true,
+      tableName: 'session'
     }),
     cookie: {
-      // In production, secure should be true
-      // For local development, it can be set to false to work over HTTP
-      // For automatic switching, we check if the request is secure
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      httpOnly: true
     },
   };
 

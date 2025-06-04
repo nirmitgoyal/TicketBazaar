@@ -41,6 +41,20 @@ app.use(passport.session());
 // Setup authentication
 setupAuth(app);
 
+// Trust proxy for Heroku and enable proper HTTPS handling
+app.set('trust proxy', 1);
+
+// Force HTTPS in production
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https') {
+      res.redirect(`https://${req.header('host')}${req.url}`);
+    } else {
+      next();
+    }
+  });
+}
+
 // Add cache control headers to prevent browser caching issues
 app.use((req, res, next) => {
   // For HTML files, prevent caching to ensure users get latest updates
@@ -91,15 +105,6 @@ app.use((req, res, next) => {
 
   // Set up production static file serving
   setupProduction(app);
-
-  // Add general 404 handler for any non-matching routes (both API and frontend)
-  app.use((_req: Request, res: Response) => {
-    res.status(404).json({
-      success: false,
-      message: "Route not found",
-      status: 404,
-    });
-  });
 
   // Global error handler
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
