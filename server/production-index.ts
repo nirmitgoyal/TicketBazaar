@@ -119,7 +119,7 @@ app.use((req, res, next) => {
   app.use(errorHandler);
 
   // Setup WebSocket
-  initializeWebSocketService(server);
+  setupWebSocket(server);
 
   const PORT = parseInt(process.env.PORT || '5000', 10);
 
