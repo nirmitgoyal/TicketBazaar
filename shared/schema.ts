@@ -15,7 +15,6 @@ import { z } from "zod";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
   password: text("password").notNull(),
   fullName: text("full_name").notNull(),
   email: text("email").notNull().unique(),
@@ -195,7 +194,6 @@ export const ticketViewsRelations = relations(ticketViews, ({ one }) => ({
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
   password: true,
   fullName: true,
   email: true,
@@ -279,7 +277,6 @@ export const ticketListingSchema = insertTicketSchema.extend({
 
 export const userRegisterSchema = insertUserSchema
   .extend({
-    username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username cannot exceed 20 characters"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     fullName: z.string().min(2, "Full name is required"),
     email: z.string().email("Invalid email address"),
@@ -297,7 +294,7 @@ export const userRegisterSchema = insertUserSchema
   });
 
 export const userLoginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
+  email: z.string().email("Valid email is required"),
   password: z.string().min(1, "Password is required"),
 });
 

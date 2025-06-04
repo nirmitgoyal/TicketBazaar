@@ -27,7 +27,7 @@ export default function Login() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
   const [loginError, setLoginError] = useState<string | null>(null);

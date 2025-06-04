@@ -27,14 +27,9 @@ export class UserController extends BaseController {
   // User registration
   public register = async (req: Request, res: Response) => {
     try {
-      const { username, password, fullName, email, phone, instagram, preferredContactMethod } = req.body;
+      const { password, fullName, email, phone, instagram, preferredContactMethod } = req.body;
 
       // Check if user already exists
-      const existingUserByUsername = await storage.getUserByUsername(username);
-      if (existingUserByUsername) {
-        return this.sendError(res, "Username already exists", 400);
-      }
-
       const existingUserByEmail = await storage.getUserByEmail(email);
       if (existingUserByEmail) {
         return this.sendError(res, "Email already exists", 400);
@@ -46,7 +41,6 @@ export class UserController extends BaseController {
 
       // Create user
       const newUser = await storage.createUser({
-        username,
         password: hashedPassword,
         fullName,
         email,

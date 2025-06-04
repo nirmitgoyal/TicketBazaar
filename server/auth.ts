@@ -52,21 +52,21 @@ export function setupAuth(app: Express) {
   passport.use(
     new LocalStrategy(
       {
-        usernameField: "username",
+        usernameField: "email",
         passwordField: "password",
       },
-      async (username, password, done) => {
+      async (email, password, done) => {
         try {
-          // Find user by username
-          const user = await storage.getUserByUsername(username);
+          // Find user by email
+          const user = await storage.getUserByEmail(email);
           if (!user) {
-            return done(null, false, { message: "Invalid username or password" });
+            return done(null, false, { message: "Invalid email or password" });
           }
 
           // Check password
           const isValidPassword = await bcrypt.compare(password, user.password);
           if (!isValidPassword) {
-            return done(null, false, { message: "Invalid username or password" });
+            return done(null, false, { message: "Invalid email or password" });
           }
 
           // Remove password from user object for security

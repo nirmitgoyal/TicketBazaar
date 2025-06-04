@@ -43,7 +43,6 @@ export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUserRating(
     userId: number,
@@ -175,19 +174,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    const startTime = Date.now();
-    try {
-      const [user] = await db.select().from(users).where(eq(users.username, username));
-      const duration = Date.now() - startTime;
-      logger.dbOperation('SELECT', 'users', duration);
-      return user || undefined;
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      logger.dbOperation('SELECT', 'users', duration, undefined, error);
-      throw error;
-    }
-  }
+
 
 
 
