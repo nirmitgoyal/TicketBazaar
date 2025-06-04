@@ -283,7 +283,7 @@ export class TicketController {
         eventDescription: `${validatedData.eventTitle} at ${validatedData.eventVenue}`,
         venue: validatedData.eventVenue,
         venueAddress: validatedData.eventVenueAddress,
-        eventDate: new Date(`${validatedData.eventDate}T${validatedData.eventTime}:00`),
+        eventDate: new Date(`${validatedData.eventDate} ${validatedData.eventTime}`),
         category: validatedData.eventCategory,
         latitude: validatedData.eventLatitude,
         longitude: validatedData.eventLongitude,
