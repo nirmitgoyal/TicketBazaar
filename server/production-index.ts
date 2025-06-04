@@ -95,3 +95,65 @@ app.use((req, res, next) => {
     },
   );
 })();
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import session from 'express-session';
+import passport from 'passport';
+import { routes } from './routes.js';
+import { errorMiddleware } from './middleware/error.middleware.js';
+import { setupAuth } from './auth.js';
+import { setupWebSocket } from './services/websocket.service.js';
+import http from 'http';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const app = express();
+const server = http.createServer(app);
+
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Setup authentication
+setupAuth();
+
+// Body parsing middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from dist directory
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// API routes
+app.use('/api', routes);
+
+// Serve React app for all other routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
+// Error handling middleware
+app.use(errorMiddleware);
+
+// Setup WebSocket
+setupWebSocket(server);
+
+const PORT = process.env.PORT || 5000;
+
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Production server running on port ${PORT}`);
+});

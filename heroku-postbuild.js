@@ -3,6 +3,11 @@ import { execSync } from 'child_process';
 
 console.log('🚀 Starting Heroku post-build process...');
 
+// Validate critical environment variables
+if (!process.env.DATABASE_URL) {
+  console.warn('⚠️ DATABASE_URL not set. Database operations may fail.');
+}
+
 try {
   // Install all dependencies (including dev dependencies for build tools)
   console.log('📦 Installing dependencies...');
@@ -10,7 +15,12 @@ try {
 
   // Push database schema using npx to ensure drizzle-kit is available
   console.log('🗄️ Setting up database...');
-  execSync('npx drizzle-kit push', { stdio: 'inherit' });
+  try {
+    execSync('npx drizzle-kit push', { stdio: 'inherit' });
+  } catch (dbError) {
+    console.warn('⚠️ Database setup failed, continuing with build...', dbError.message);
+    // Continue with build even if DB setup fails
+  }
 
   // Build the application
   console.log('🔨 Building application...');
@@ -18,7 +28,7 @@ try {
 
   // Build the server with esbuild
   console.log('🔧 Building server with esbuild...');
-  execSync('npx esbuild server/production-index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist', { stdio: 'inherit' });
+  execSync('npx esbuild server/production-index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js', { stdio: 'inherit' });
 
   // Verify the build output
   console.log('🔍 Verifying build output...');
