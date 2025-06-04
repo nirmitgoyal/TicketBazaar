@@ -19,8 +19,7 @@ const defaultCenter = {
 };
 
 // Define libraries for Google Maps as a static array to prevent reloading issues
-// Use string array with type assertion to avoid TS errors
-const mapLibraries = ["places", "geometry", "marker"] as any;
+const mapLibraries: ("places" | "geometry" | "marker")[] = ["places", "geometry", "marker"];
 
 // Set up props interface
 interface EventMapProps {

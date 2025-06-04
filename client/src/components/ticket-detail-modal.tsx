@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Ticket, User, Event } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";

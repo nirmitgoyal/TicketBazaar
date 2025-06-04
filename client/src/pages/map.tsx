@@ -7,7 +7,8 @@ import { MapPin, Calendar, Users, IndianRupee } from "lucide-react";
 import { SEOManager } from "@/components/helmet-manager";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 
-const libraries: ("places")[] = ["places"];
+// Define libraries as a static constant to prevent LoadScript reloading
+const GOOGLE_MAPS_LIBRARIES: ("places")[] = ["places"];
 
 interface TicketEvent {
   id: number;
@@ -80,7 +81,7 @@ export default function MapPage() {
   return (
     <LoadScript
       googleMapsApiKey={googleMapsApiKey}
-      libraries={libraries}
+      libraries={GOOGLE_MAPS_LIBRARIES}
       loadingElement={<div>Loading Maps...</div>}
     >
       <div className="container mx-auto px-4 py-8">
