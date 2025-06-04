@@ -261,7 +261,6 @@ export class TicketController {
         eventCategory: z.string().min(1, "Category is required"),
         
         // Basic listing details for P2P marketplace
-        price: z.number().positive("Price must be greater than 0"),
         quantity: z.number().min(1, "Quantity must be at least 1"),
         additionalInfo: z.string().optional(),
       });
@@ -292,7 +291,7 @@ export class TicketController {
         section: "General",
         row: null,
         seat: null,
-        price: validatedData.price,
+        price: 0, // Price will be negotiated directly between users in P2P marketplace
         quantity: validatedData.quantity,
         transferMethod: "electronic",
         additionalInfo: validatedData.additionalInfo,

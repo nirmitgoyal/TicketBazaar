@@ -52,7 +52,6 @@ const ticketWithEventSchema = z.object({
   eventCategory: z.string().min(1, "Category is required"),
   
   // Basic listing details for P2P marketplace
-  price: z.number().positive("Price must be greater than 0"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
   additionalInfo: z.string().optional(),
 });
@@ -79,7 +78,6 @@ export default function ListTicket() {
       eventLatitude: undefined,
       eventLongitude: undefined,
       eventCategory: "",
-      price: 0,
       quantity: 1,
       additionalInfo: "",
     },
@@ -469,47 +467,26 @@ export default function ListTicket() {
                   <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
                     <h3 className="font-medium text-lg">Listing Details</h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="price"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Price per Ticket (₹)</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="e.g., 2500"
-                                {...field}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="quantity"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Number of Tickets</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min="1"
-                                max="8"
-                                placeholder="1"
-                                {...field}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="quantity"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Number of Tickets</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min="1"
+                              max="8"
+                              placeholder="1"
+                              {...field}
+                              onChange={(e) => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                     <FormField
                       control={form.control}
