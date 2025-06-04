@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -13,14 +17,20 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Ticket, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { FcGoogle } from "react-icons/fc";
+import { useToast } from "@/hooks/use-toast";
 import SEO from "@/components/seo";
+import { userLoginSchema } from "@shared/schema";
+import { z } from "zod";
 
 export default function Login() {
-  const { isAuthenticated, googleSignIn } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [isSigningIn, setIsSigningIn] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -32,34 +42,57 @@ export default function Login() {
     }
   }, [isAuthenticated, navigate]);
 
-  /**
-   * Handle Google sign-in process
-   */
-  const handleGoogleSignIn = async () => {
-    console.log("Google sign-in button clicked");
-    setLoginError(null);
-    setIsSigningIn(true);
+  const loginMutation = useMutation({
+    mutationFn: async (loginData: z.infer<typeof userLoginSchema>) => {
+      const response = await apiRequest("POST", "/api/auth/login", loginData);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Login failed");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Login successful",
+        description: "Welcome back!",
+      });
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get("returnTo") || "/";
+      navigate(returnTo);
+    },
+    onError: (error: Error) => {
+      setLoginError(error.message);
+      toast({
+        title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError(null);
     try {
-      await googleSignIn();
-      // The navigation is handled in the googleSignIn function
-      // or by the useEffect hook above when isAuthenticated changes
+      const validatedData = userLoginSchema.parse(formData);
+      loginMutation.mutate(validatedData);
     } catch (error) {
-      console.error("Error in Google sign-in:", error);
-      setLoginError(
-        (error as Error).message || "Failed to sign in with Google",
-      );
-    } finally {
-      setIsSigningIn(false);
+      if (error instanceof z.ZodError) {
+        setLoginError(error.errors[0].message);
+      }
     }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
     <div className="container max-w-md mx-auto px-4 py-8">
       <SEO
         title="Login | Access Your Account - Ticket Bazaar"
-        description="Sign in to your Ticket Bazaar account to buy and sell verified tickets for concerts, sports events, and festivals across India. Secure Google authentication."
-        keywords="login, sign in, ticket bazaar, user account, Google authentication, secure login"
+        description="Sign in to your Ticket Bazaar account to buy and sell verified tickets for concerts, sports events, and festivals across India."
+        keywords="login, sign in, ticket bazaar, user account, secure login"
       />
       <div className="flex justify-center mb-6">
         <div className="flex items-center space-x-1">
@@ -74,7 +107,7 @@ export default function Login() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Sign in</CardTitle>
           <CardDescription className="text-center">
-            Sign in to access your account
+            Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -86,22 +119,48 @@ export default function Login() {
             </Alert>
           )}
 
-          <div className="space-y-4">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2 h-11"
-              onClick={handleGoogleSignIn}
-              disabled={isSigningIn}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                value={formData.username}
+                onChange={(e) => handleInputChange("username", e.target.value)}
+                required
+                placeholder="Enter your username"
+              />
+            </div>
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => handleInputChange("password", e.target.value)}
+                required
+                placeholder="Enter your password"
+              />
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={loginMutation.isPending}
             >
-              <FcGoogle className="h-5 w-5" />
-              {isSigningIn ? "Signing in..." : "Sign in with Google"}
+              {loginMutation.isPending ? "Signing in..." : "Sign in"}
             </Button>
+          </form>
 
-            <p className="text-center text-sm text-muted-foreground">
-              We only support Google sign-in to ensure the highest level of
-              security and convenience.
-            </p>
+          <div className="mt-4 text-center">
+            <span className="text-sm text-gray-600">
+              Don't have an account?{" "}
+              <button
+                onClick={() => navigate("/register")}
+                className="text-primary hover:underline"
+              >
+                Sign up
+              </button>
+            </span>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col">

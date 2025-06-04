@@ -1,10 +1,9 @@
 import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as LocalStrategy } from "passport-local";
 import { Express, Request, Response } from "express";
 import session from "express-session";
-import { randomBytes } from "crypto";
+import bcrypt from "bcrypt";
 import { storage } from "./storage";
-import { logger } from "./utils/logger";
 import { User as SelectUser } from "@shared/schema";
 import connectPg from "connect-pg-simple";
 
@@ -49,65 +48,35 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Configure Google OAuth strategy
+  // Configure Local authentication strategy
   passport.use(
-    new GoogleStrategy(
+    new LocalStrategy(
       {
-        clientID: process.env.GOOGLE_CLIENT_ID || "",
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-        // Dynamically determine callback URL based on request
-        callbackURL: "/api/auth/google/callback",
-        // When proxy is true, trust the X-Forwarded-Proto header
-        // which ensures proper protocol (http/https) is used
-        proxy: true,
+        usernameField: "username",
+        passwordField: "password",
       },
-      async (accessToken, refreshToken, profile, done) => {
+      async (username, password, done) => {
         try {
-          // Get email from profile
-          const email = profile.emails?.[0]?.value;
-          if (!email) {
-            logger.auth("Google OAuth failed", undefined, email, "No email in profile");
-            return done(new Error("No email found in Google profile"), false);
-          }
-
-          // Check if user exists by Google ID first
-          let user = await storage.getUserByGoogleId(profile.id);
-
-          // If not found by Google ID, try email
+          // Find user by username
+          const user = await storage.getUserByUsername(username);
           if (!user) {
-            user = await storage.getUserByEmail(email);
+            return done(null, false, { message: "Invalid username or password" });
           }
 
-          // If user doesn't exist, create a new one
-          if (!user) {
-            const newUser = {
-              password: randomBytes(16).toString("hex"), // Random password (not used for login)
-              fullName: profile.displayName || "Google User",
-              email: email,
-              phone: "",
-              instagram: "pending_update", // Temporary value, user must update this
-              googleId: profile.id,
-              rating: 5.0,
-              ratingsCount: 0,
-            };
-
-            user = await storage.createUser(newUser);
-            logger.auth("Google OAuth user created", user.id, email);
-          }
-          // If user exists but doesn't have googleId, update it
-          else if (!user.googleId) {
-            user = await storage.updateUserGoogleId(user.id, profile.id);
-            logger.auth("Google OAuth linked to existing user", user?.id, email);
-          } else {
-            logger.auth("Google OAuth login", user.id, email);
+          // Check password
+          const isValidPassword = await bcrypt.compare(password, user.password);
+          if (!isValidPassword) {
+            return done(null, false, { message: "Invalid username or password" });
           }
 
-          return done(null, user);
+          // Remove password from user object for security
+          const { password: _, ...userWithoutPassword } = user;
+          return done(null, userWithoutPassword as any);
         } catch (error) {
           return done(error, false);
         }
-      },
-    ),
+      }
+    )
   );
 
   // User serialization and deserialization for sessions
