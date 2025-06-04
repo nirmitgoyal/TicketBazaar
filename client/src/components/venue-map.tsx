@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
+import { GOOGLE_MAPS_OPTIONS, DEFAULT_CENTER } from "@/lib/google-maps-config";
 
 interface VenueMapProps {
   venues: Array<{
@@ -20,11 +21,6 @@ interface VenueMapProps {
 const mapContainerStyle = {
   width: "100%",
   height: "400px",
-};
-
-const defaultCenter = {
-  lat: 19.0760, // Mumbai coordinates as default
-  lng: 72.8777,
 };
 
 export function VenueMap({ venues, className = "" }: VenueMapProps) {
@@ -84,16 +80,11 @@ export function VenueMap({ venues, className = "" }: VenueMapProps) {
       <CardContent>
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
-          center={defaultCenter}
+          center={DEFAULT_CENTER}
           zoom={10}
           onLoad={onLoad}
           onUnmount={onUnmount}
-          options={{
-            zoomControl: true,
-            streetViewControl: false,
-            mapTypeControl: false,
-            fullscreenControl: true,
-          }}
+          options={GOOGLE_MAPS_OPTIONS}
         >
           {venuesWithCoordinates.map((venue) => (
             <Marker

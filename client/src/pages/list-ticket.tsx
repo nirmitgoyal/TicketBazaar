@@ -38,9 +38,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { SEOManager } from "@/components/helmet-manager";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-
-// Define libraries as a static constant to prevent LoadScript reloading
-const GOOGLE_MAPS_LIBRARIES: ("places")[] = ["places"];
+import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 
 // Define schema for P2P ticket listing with event details
 const ticketWithEventSchema = z.object({

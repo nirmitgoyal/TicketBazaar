@@ -6,9 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Users, IndianRupee } from "lucide-react";
 import { SEOManager } from "@/components/helmet-manager";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
-
-// Define libraries as a static constant to prevent LoadScript reloading
-const GOOGLE_MAPS_LIBRARIES: ("places")[] = ["places"];
+import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 
 interface TicketEvent {
   id: number;
