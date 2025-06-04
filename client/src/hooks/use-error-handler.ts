@@ -45,6 +45,8 @@ export function useErrorHandler(options: ErrorHandlerOptions = {}) {
             "Network connection error. Please check your internet connection.";
         } else if (error.message.includes("unauthorized")) {
           message = "Please log in to continue.";
+        } else if (error.message.includes("WebSocket") || error.message.includes("1006")) {
+          message = "Real-time connection lost. Refreshing page may help.";
         } else {
           message = error.message;
         }
@@ -69,5 +71,28 @@ export function useErrorHandler(options: ErrorHandlerOptions = {}) {
     [toast, showToast, logError, onError],
   );
 
-  return { handleError, handleApiError };
+  const handleWebSocketError = useCallback(
+    (error: unknown, context?: string) => {
+      const errorMessage = error instanceof Error ? error.message : "WebSocket connection failed";
+
+      if (logError) {
+        console.error(`WebSocket Error${context ? ` in ${context}` : ""}:`, error);
+      }
+
+      if (showToast) {
+        toast({
+          title: "Connection Issue",
+          description: "Real-time features may be limited. Try refreshing the page.",
+          variant: "destructive",
+        });
+      }
+
+      if (onError && error instanceof Error) {
+        onError(error);
+      }
+    },
+    [toast, showToast, logError, onError],
+  );
+
+  return { handleError, handleApiError, handleWebSocketError };
 }

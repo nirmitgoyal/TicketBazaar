@@ -17,7 +17,8 @@ export function errorHandler(
   // Handle WebSocket upgrade errors
   if (req.headers.upgrade === 'websocket') {
     console.error("WebSocket error:", err);
-    return;
+    // Don't try to send HTTP response for WebSocket errors
+    return next();
   }
 
   // Handle Drizzle ORM specific errors (convert to our error types)
