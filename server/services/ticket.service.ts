@@ -108,44 +108,57 @@ export class TicketService {
    * @returns Created ticket
    */
   async createTicketWithEvent(data: {
+    sellerId: number;
+    title: string;
     eventTitle: string;
-    eventDate: string;
-    eventTime: string;
-    eventCity: string;
-    eventVenue: string;
+    eventDescription?: string | null;
+    venue: string;
+    venueAddress?: string;
+    eventDate: Date;
+    category: string;
+    latitude?: number;
+    longitude?: number;
+    city: string;
     section: string;
-    row?: string;
-    seat?: string;
+    row?: string | null;
+    seat?: string | null;
+    price: number;
     quantity: number;
     transferMethod: "electronic" | "physical" | "pickup";
     additionalInfo?: string;
-    sellerId: number;
+    trending?: boolean;
+    sellingFast?: boolean;
+    eventImageUrl?: string | null;
+    isTransferrable: boolean;
+    showContactInfo: boolean;
+    status: string;
   }): Promise<Ticket> {
-
-    // Combine date and time for the event
-    const eventDateTime = new Date(`${data.eventDate}T${data.eventTime}`);
-
-    // In P2P model, we create tickets directly without separate events
     // Create the ticket with embedded event data
     const ticketData: InsertTicket = {
       sellerId: data.sellerId,
-      title: `${data.eventTitle} - ${data.section}`,
+      title: data.title,
       eventTitle: data.eventTitle,
-      eventDescription: null,
-      venue: data.eventVenue,
-      eventDate: eventDateTime,
-      category: "events",
-      city: data.eventCity,
+      eventDescription: data.eventDescription,
+      venue: data.venue,
+      venueAddress: data.venueAddress,
+      eventDate: data.eventDate,
+      category: data.category,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      city: data.city,
       section: data.section,
-      row: data.row || "",
-      seat: data.seat || "",
-      price: 0,
+      row: data.row,
+      seat: data.seat,
+      price: data.price,
       quantity: data.quantity,
-      status: "available",
-      isTransferrable: true,
+      status: data.status,
+      isTransferrable: data.isTransferrable,
       transferMethod: data.transferMethod,
       additionalInfo: data.additionalInfo || "",
-      showContactInfo: true,
+      showContactInfo: data.showContactInfo,
+      trending: data.trending || false,
+      sellingFast: data.sellingFast || false,
+      eventImageUrl: data.eventImageUrl,
     };
 
     return storage.createTicket(ticketData);
