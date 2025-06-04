@@ -117,14 +117,22 @@ class Logger {
     const method = req.method;
     const url = req.originalUrl;
     
-    const level = status >= 400 ? 'ERROR' : status >= 300 ? 'WARN' : 'INFO';
+    // Skip logging static assets and frequent polling endpoints
+    if (url.includes('/assets/') || url.includes('/favicon') || url.includes('hot-update')) {
+      return;
+    }
+    
     const message = `${method} ${url} ${status} in ${duration}ms`;
     
-    if (level === 'ERROR') {
+    if (status >= 400) {
       this.error('HTTP', message, undefined, userId, requestId);
-    } else if (level === 'WARN') {
+    } else if (status >= 300) {
       this.warn('HTTP', message, undefined, userId, requestId);
-    } else {
+    } else if (duration > 1000) {
+      // Log slow requests
+      this.warn('HTTP', `Slow request: ${message}`, undefined, userId, requestId);
+    } else if (this.isDevelopment || duration > 500) {
+      // Log normal requests in development or slower requests in production
       this.info('HTTP', message, undefined, userId, requestId);
     }
   }
@@ -135,9 +143,14 @@ class Logger {
     
     if (error) {
       this.error('DATABASE', `${operation} on ${table} failed`, error, userId);
-    } else {
+    } else if (duration > 500) {
+      // Only log slow database operations in production
+      this.warn('DATABASE', `Slow ${message}`, undefined, userId);
+    } else if (this.isDevelopment && duration > 100) {
+      // Log moderately slow operations in development
       this.debug('DATABASE', message, undefined, userId);
     }
+    // Skip logging fast operations to reduce noise
   }
 
   // Authentication logging

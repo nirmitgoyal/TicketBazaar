@@ -23,6 +23,9 @@ import App from "./App";
 // (Browser-level WebSockets are patched in error-fixer.js)
 import "./lib/socket-fix";
 
+// Apply console filtering to remove irrelevant logs
+import "./utils/console-filter";
+
 import "./index.css";
 
 // Fix any lingering issues with WebSocket
