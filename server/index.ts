@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes/index";
-import { serveStatic, log } from "./utils";
+import { log } from "./utils";
 
 const app = express();
 app.use(express.json());
@@ -60,7 +60,9 @@ app.use((req, res, next) => {
     const { setupVite } = await import("./vite");
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    // In production, use a completely separate module to avoid Vite imports
+    const { setupProduction } = await import("./production");
+    setupProduction(app);
   }
 
   // Add general 404 handler for any non-matching routes (both API and frontend)
