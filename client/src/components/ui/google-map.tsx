@@ -360,18 +360,18 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
                 </div>
               )}
               <h3 className="font-semibold text-lg text-primary">
-                {selectedEvent.title}
+                {selectedEvent.eventTitle}
               </h3>
               <p className="text-sm text-gray-700">{selectedEvent.venue}</p>
               <p className="text-xs text-gray-500 mb-1">
-                {new Date(selectedEvent.date).toLocaleDateString()}
+                {new Date(selectedEvent.eventDate).toLocaleDateString()}
               </p>
               <div className="text-xs bg-blue-100 text-blue-800 rounded-full px-2 py-1 inline-block mb-2">
                 {selectedEvent.category}
               </div>
-              {selectedEvent.description && (
+              {selectedEvent.eventDescription && (
                 <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                  {selectedEvent.description}
+                  {selectedEvent.eventDescription}
                 </p>
               )}
               <Link
