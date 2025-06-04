@@ -18,7 +18,14 @@ try {
   // Build the application
   console.log('🔨 Building application...');
   execSync('vite build', { stdio: 'inherit' });
-  execSync('esbuild server/production-index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist', { stdio: 'inherit' });
+  
+  // Ensure esbuild is available and build the server
+  console.log('🔧 Building server with esbuild...');
+  execSync('npx esbuild server/production-index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist', { stdio: 'inherit' });
+  
+  // Verify the build output
+  console.log('🔍 Verifying build output...');
+  execSync('ls -la dist/', { stdio: 'inherit' });
 
   console.log('✅ Heroku post-build completed successfully!');
 } catch (error) {
