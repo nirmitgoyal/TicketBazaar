@@ -915,32 +915,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* Featured Events Section */}
-      {featuredEvents.length > 0 &&
-        !searchQuery &&
-        activeCategory === "all" &&
-        !filters.dateRange &&
-        !selectedSearchFilters.location &&
-        !selectedSearchFilters.date && (
-          <section className="py-8">
-            <div className="container mx-auto px-4">
-              <h2 className="text-2xl font-bold font-poppins mb-6">
-                Featured Events
-              </h2>
-
-              <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {featuredEvents.slice(0, 3).map((event, index) => (
-                  <TicketCard
-                    key={event.id}
-                    event={event}
-                    onClick={() => openModal(event.id)}
-                    index={index}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+      
 
       {/* Upcoming Events Section */}
       <section className="py-8 bg-white">
