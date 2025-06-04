@@ -166,7 +166,7 @@ export function TicketDetailModal({
 
                   <div className="flex items-center mt-3 text-sm text-textSecondary">
                     <div className="flex items-center mr-4">
-                      <CheckCircle className="h-4 w-4 mr-1 text-secondary" />
+                      <CheckCircle className="h-4 w-4 mr-1 text-green-600" />
                       <span>Verified User</span>
                     </div>
                     {ticket.transferMethod && (
