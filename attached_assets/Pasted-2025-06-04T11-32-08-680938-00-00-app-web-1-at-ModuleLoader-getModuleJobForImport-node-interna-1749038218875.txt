@@ -1,0 +1,33 @@
+2025-06-04T11:32:08.680938+00:00 app[web.1]:     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+2025-06-04T11:32:08.680939+00:00 app[web.1]:     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+2025-06-04T11:32:08.680939+00:00 app[web.1]:   code: 'ERR_MODULE_NOT_FOUND'
+2025-06-04T11:32:08.680939+00:00 app[web.1]: }
+2025-06-04T11:32:08.680940+00:00 app[web.1]: 
+2025-06-04T11:32:08.680940+00:00 app[web.1]: Node.js v22.16.0
+2025-06-04T11:32:08.735599+00:00 heroku[web.1]: Process exited with status 1
+2025-06-04T11:32:08.759340+00:00 heroku[web.1]: State changed from starting to crashed
+2025-06-04T11:32:12.152707+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=cryptic-inlet-49772-21737e05a5e9.herokuapp.com request_id=5a757b1a-84ab-48be-9e4f-63dfe40bfc9c fwd="49.43.152.62" dyno= connect= service= status=503 bytes= protocol=https
+2025-06-04T11:32:12.616947+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=cryptic-inlet-49772-21737e05a5e9.herokuapp.com request_id=58c48252-d01e-4519-9c66-e0101834bd14 fwd="49.43.152.62" dyno= connect= service= status=503 bytes= protocol=https
+2025-06-04T11:31:59.062346+00:00 app[api]: Release v20 created by user parth.mitblr2023@learner.manipal.edu
+2025-06-04T11:32:04.000000+00:00 app[api]: Build succeeded
+2025-06-04T11:38:06.706797+00:00 heroku[web.1]: State changed from crashed to starting
+2025-06-04T11:38:15.583092+00:00 heroku[web.1]: Starting process with command `NODE_ENV=production node dist/index.js`
+2025-06-04T11:38:16.274078+00:00 heroku[web.1]: Process exited with status 1
+2025-06-04T11:38:16.304724+00:00 heroku[web.1]: State changed from starting to crashed
+2025-06-04T11:38:16.223614+00:00 app[web.1]: node:internal/modules/package_json_reader:256
+2025-06-04T11:38:16.223647+00:00 app[web.1]:   throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+2025-06-04T11:38:16.223647+00:00 app[web.1]:         ^
+2025-06-04T11:38:16.223648+00:00 app[web.1]: 
+2025-06-04T11:38:16.223648+00:00 app[web.1]: Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /app/dist/index.js
+2025-06-04T11:38:16.223648+00:00 app[web.1]:     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+2025-06-04T11:38:16.223649+00:00 app[web.1]:     at packageResolve (node:internal/modules/esm/resolve:768:81)
+2025-06-04T11:38:16.223649+00:00 app[web.1]:     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+2025-06-04T11:38:16.223649+00:00 app[web.1]:     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+2025-06-04T11:38:16.223650+00:00 app[web.1]:     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)
+2025-06-04T11:38:16.223650+00:00 app[web.1]:     at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)
+2025-06-04T11:38:16.223650+00:00 app[web.1]:     at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)
+2025-06-04T11:38:16.223651+00:00 app[web.1]:     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+2025-06-04T11:38:16.223651+00:00 app[web.1]:     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+2025-06-04T11:38:16.223651+00:00 app[web.1]:   code: 'ERR_MODULE_NOT_FOUND'
+2025-06-04T11:38:16.223652+00:00 app[web.1]: }
+2025-06-04T11:38:16.223652+00:00 app[web.1]: 
