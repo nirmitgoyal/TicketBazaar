@@ -21,6 +21,7 @@ import {
   type InsertTicketView,
 } from "@shared/schema";
 import { db } from "./db";
+import { logger } from "./utils/logger";
 import connectPg from "connect-pg-simple";
 import session from "express-session";
 
@@ -151,24 +152,49 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    const startTime = Date.now();
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      const duration = Date.now() - startTime;
+      logger.dbOperation('SELECT', 'users', duration, id);
+      return user || undefined;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      logger.dbOperation('SELECT', 'users', duration, id, error);
+      throw error;
+    }
   }
 
-
-
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user || undefined;
+    const startTime = Date.now();
+    try {
+      const [user] = await db.select().from(users).where(eq(users.email, email));
+      const duration = Date.now() - startTime;
+      logger.dbOperation('SELECT', 'users', duration);
+      return user || undefined;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      logger.dbOperation('SELECT', 'users', duration, undefined, error);
+      throw error;
+    }
   }
 
   async getUserByGoogleId(googleId: string): Promise<User | undefined> {
     if (!googleId) return undefined;
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.googleId, googleId));
-    return user || undefined;
+    const startTime = Date.now();
+    try {
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.googleId, googleId));
+      const duration = Date.now() - startTime;
+      logger.dbOperation('SELECT', 'users', duration);
+      return user || undefined;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      logger.dbOperation('SELECT', 'users', duration, undefined, error);
+      throw error;
+    }
   }
 
   async updateUserGoogleId(

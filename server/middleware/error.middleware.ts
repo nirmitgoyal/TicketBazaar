@@ -1,78 +1,68 @@
-import { Request, Response, NextFunction } from "express";
-import { ErrorService } from "../services/error.service";
+import { Request, Response, NextFunction } from 'express';
+import { logger } from '../utils/logger';
 
-/**
- * Global error handler middleware
- * This middleware captures any errors thrown in routes or other middleware
- * and returns a standardized error response
- */
-export function errorHandler(
-  err: any,
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  console.error("Error occurred:", err);
-
-  // Handle WebSocket upgrade errors
-  if (req.headers.upgrade === 'websocket') {
-    console.error("WebSocket error:", err);
-    // Don't try to send HTTP response for WebSocket errors
-    return next();
+export function errorHandler(error: any, req: Request, res: Response, next: NextFunction) {
+  const userId = (req.user as any)?.id;
+  const requestId = req.headers['x-request-id'] as string;
+  
+  // Log the error with context
+  logger.error('API', `${req.method} ${req.originalUrl} failed`, error, userId, requestId);
+  
+  // Handle different types of errors
+  if (error.name === 'ValidationError') {
+    return res.status(400).json({
+      message: 'Validation failed',
+      errors: error.errors,
+    });
   }
-
-  // Handle development server WebSocket errors
-  if (process.env.NODE_ENV === 'development' && err.code === 'ECONNRESET') {
-    console.log("Development WebSocket connection reset - this is normal");
-    return next();
+  
+  if (error.name === 'UnauthorizedError') {
+    return res.status(401).json({
+      message: 'Authentication required',
+    });
   }
-
-  // Handle Drizzle ORM specific errors (convert to our error types)
-  if (err.code) {
-    // Handle PostgreSQL error codes
-    if (err.code === "23505") {
-      err.status = 409;
-      err.name = "ConflictError";
-      if (!err.message || err.message.includes("duplicate key")) {
-        err.message = "Duplicate entry. This record already exists.";
-      }
-    } else if (err.code === "23503") {
-      err.status = 400;
-      err.name = "BadRequestError";
-      if (!err.message || err.message.includes("foreign key constraint")) {
-        err.message =
-          "Foreign key constraint failed. Referenced resource may not exist.";
-      }
-    } else if (err.code === "42P01") {
-      err.status = 500;
-      if (
-        !err.message ||
-        err.message.includes("relation") ||
-        err.message.includes("does not exist")
-      ) {
-        err.message = "Database table not found. Please contact support.";
-      }
-    }
+  
+  if (error.code === 'LIMIT_FILE_SIZE') {
+    return res.status(413).json({
+      message: 'File too large',
+    });
   }
-
-  // Get standardized error response
-  const errorResponse = ErrorService.getErrorResponse(err);
-
-  // Send response
-  res.status(errorResponse.status).json(errorResponse);
+  
+  // Database errors
+  if (error.code && error.code.startsWith('23')) {
+    logger.error('DATABASE', 'Database constraint violation', error, userId, requestId);
+    return res.status(409).json({
+      message: 'Database operation failed',
+    });
+  }
+  
+  // Default server error
+  const statusCode = error.statusCode || 500;
+  const message = process.env.NODE_ENV === 'production' 
+    ? 'Internal server error' 
+    : error.message || 'Something went wrong';
+    
+  res.status(statusCode).json({
+    message,
+    ...(process.env.NODE_ENV !== 'production' && { stack: error.stack }),
+  });
 }
 
-/**
- * 404 Not Found middleware
- * This middleware handles requests to routes that don't exist
- */
 export function notFoundHandler(req: Request, res: Response) {
-  const error = {
-    status: 404,
-    message: `Cannot ${req.method} ${req.path}`,
-    name: "NotFoundError",
-  };
+  const userId = (req.user as any)?.id;
+  const requestId = req.headers['x-request-id'] as string;
+  
+  logger.warn('API', `Route not found: ${req.method} ${req.originalUrl}`, undefined, userId, requestId);
+  
+  res.status(404).json({
+    message: 'Route not found',
+    path: req.originalUrl,
+  });
+}
 
-  const errorResponse = ErrorService.getErrorResponse(error);
-  res.status(404).json(errorResponse);
+// Async error wrapper for route handlers
+export function asyncHandler(fn: Function) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
 }

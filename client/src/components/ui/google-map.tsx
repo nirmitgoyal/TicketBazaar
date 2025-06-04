@@ -56,7 +56,6 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
   });
 
   const onLoad = useCallback((map: google.maps.Map) => {
-    console.log("Map loaded successfully");
     setMap(map);
   }, []);
 

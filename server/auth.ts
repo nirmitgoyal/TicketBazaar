@@ -4,6 +4,7 @@ import { Express, Request, Response } from "express";
 import session from "express-session";
 import { randomBytes } from "crypto";
 import { storage } from "./storage";
+import { logger } from "./utils/logger";
 import { User as SelectUser } from "@shared/schema";
 import connectPg from "connect-pg-simple";
 
@@ -65,6 +66,7 @@ export function setupAuth(app: Express) {
           // Get email from profile
           const email = profile.emails?.[0]?.value;
           if (!email) {
+            logger.auth("Google OAuth failed", undefined, email, "No email in profile");
             return done(new Error("No email found in Google profile"), false);
           }
 
@@ -90,10 +92,14 @@ export function setupAuth(app: Express) {
             };
 
             user = await storage.createUser(newUser);
+            logger.auth("Google OAuth user created", user.id, email);
           }
           // If user exists but doesn't have googleId, update it
           else if (!user.googleId) {
             user = await storage.updateUserGoogleId(user.id, profile.id);
+            logger.auth("Google OAuth linked to existing user", user?.id, email);
+          } else {
+            logger.auth("Google OAuth login", user.id, email);
           }
 
           return done(null, user);
