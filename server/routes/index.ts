@@ -11,6 +11,7 @@ import dataPrivacyRoutes from "./data-privacy";
 import recommendationRoutes from "./recommendations";
 import searchHintsRoutes from "./search-hints";
 import ticketViewRoutes from "./ticket-views";
+import healthRoutes from "./health.routes";
 
 export {
   authRoutes,
@@ -35,6 +36,7 @@ export async function registerRoutes(app: Express) {
   app.use("/api/recommendations", recommendationRoutes);
   app.use("/api/search-hints", searchHintsRoutes);
   app.use("/api/ticket-views", ticketViewRoutes);
+  app.use("/health", healthRoutes);
   
   return server;
 }
