@@ -1,26 +1,25 @@
-
 // Heroku post-build script
 import { execSync } from 'child_process';
 
 console.log('🚀 Starting Heroku post-build process...');
 
 try {
-  // Install all dependencies including dev dependencies for build
+  // Install all dependencies (including dev dependencies for build tools)
   console.log('📦 Installing dependencies...');
   execSync('npm ci', { stdio: 'inherit' });
 
-  // Push database schema
-  console.log('🗄️ Pushing database schema...');
-  execSync('npm run db:push', { stdio: 'inherit' });
+  // Push database schema using npx to ensure drizzle-kit is available
+  console.log('🗄️ Setting up database...');
+  execSync('npx drizzle-kit push', { stdio: 'inherit' });
 
   // Build the application
   console.log('🔨 Building application...');
-  execSync('vite build', { stdio: 'inherit' });
-  
-  // Ensure esbuild is available and build the server
+  execSync('npx vite build', { stdio: 'inherit' });
+
+  // Build the server with esbuild
   console.log('🔧 Building server with esbuild...');
   execSync('npx esbuild server/production-index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist', { stdio: 'inherit' });
-  
+
   // Verify the build output
   console.log('🔍 Verifying build output...');
   execSync('ls -la dist/', { stdio: 'inherit' });
