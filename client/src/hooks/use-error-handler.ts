@@ -79,7 +79,13 @@ export function useErrorHandler(options: ErrorHandlerOptions = {}) {
         console.error(`WebSocket Error${context ? ` in ${context}` : ""}:`, error);
       }
 
-      if (showToast) {
+      // Don't show toast for development WebSocket errors (Vite HMR)
+      const isDevelopmentError = typeof error === 'object' && error !== null && 
+        ('code' in error && error.code === 1006) || 
+        errorMessage.includes('vite') || 
+        errorMessage.includes('development');
+
+      if (showToast && !isDevelopmentError) {
         toast({
           title: "Connection Issue",
           description: "Real-time features may be limited. Try refreshing the page.",

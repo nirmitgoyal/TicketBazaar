@@ -21,6 +21,12 @@ export function errorHandler(
     return next();
   }
 
+  // Handle development server WebSocket errors
+  if (process.env.NODE_ENV === 'development' && err.code === 'ECONNRESET') {
+    console.log("Development WebSocket connection reset - this is normal");
+    return next();
+  }
+
   // Handle Drizzle ORM specific errors (convert to our error types)
   if (err.code) {
     // Handle PostgreSQL error codes
