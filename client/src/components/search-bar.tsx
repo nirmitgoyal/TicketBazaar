@@ -139,7 +139,7 @@ export function SearchBar({
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [dateRange, setDateRange] = useState<string>("");
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+
   const [trending, setTrending] = useState<boolean>(false);
   const [sellingFast, setSellingFast] = useState<boolean>(false);
   const [showAdvancedFilters, setShowAdvancedFilters] =
@@ -153,7 +153,6 @@ export function SearchBar({
 
   // Create debounced versions of state values for improved performance
   const debouncedQuery = useDebounce(query, 500);
-  const debouncedPriceRange = useDebounce(priceRange, 500);
 
   // Initialize form based on URL params
   useEffect(() => {
@@ -175,13 +174,7 @@ export function SearchBar({
     // Handle date range
     setDateRange(params.get("dateRange") || "");
 
-    // Handle price range
-    const minPrice = params.get("minPrice");
-    const maxPrice = params.get("maxPrice");
 
-    if (minPrice && maxPrice) {
-      setPriceRange([parseInt(minPrice), parseInt(maxPrice)]);
-    }
 
     // Handle boolean filters
     setTrending(params.get("trending") === "true");
@@ -201,7 +194,6 @@ export function SearchBar({
     if (location && location !== "any") count++;
     if (date) count++;
     if (dateRange) count++;
-    if (priceRange[0] > 0 || priceRange[1] < 10000) count++;
     if (trending) count++;
     if (sellingFast) count++;
     if (selectedCategories.length > 0) count++;
@@ -212,7 +204,6 @@ export function SearchBar({
     location,
     date,
     dateRange,
-    priceRange,
     trending,
     sellingFast,
     selectedCategories,

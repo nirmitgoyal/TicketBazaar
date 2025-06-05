@@ -12,7 +12,6 @@ interface VenueMapProps {
     venueAddress?: string;
     latitude?: number;
     longitude?: number;
-    price: number;
     category: string;
   }>;
   className?: string;
@@ -128,12 +127,9 @@ export function VenueMap({ venues, className = "" }: VenueMapProps) {
                     {venuesWithCoordinates.find(v => v.id === selectedVenue)!.venueAddress}
                   </p>
                 )}
-                <div className="flex justify-between items-center">
+                <div className="flex justify-start items-center">
                   <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
                     {venuesWithCoordinates.find(v => v.id === selectedVenue)!.category}
-                  </span>
-                  <span className="font-semibold text-sm">
-                    ₹{venuesWithCoordinates.find(v => v.id === selectedVenue)!.price}
                   </span>
                 </div>
               </div>
