@@ -20,7 +20,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe("Authentication API Integration Tests", () => {
-  const API_BASE_URL = "http://localhost:3000/api";
+  const API_BASE_URL = "http://localhost:5000/api";
 
   test("should get authentication info", async () => {
     const response = await fetch(`${API_BASE_URL}/auth/login-info`, {
