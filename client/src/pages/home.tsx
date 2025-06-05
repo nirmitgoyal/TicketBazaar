@@ -27,6 +27,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 import { EventSchema } from "@/components/schema/event-schema";
+
 import { useWebSocket } from "@/hooks/use-websocket";
 
 export default function Home() {
@@ -892,7 +893,6 @@ export default function Home() {
                   <Badge variant="secondary" className="px-3 py-1 text-sm">
                     Venue:{" "}
                     {filters.venueLocation.charAt(0).toUpperCase() +
-```text
                       filters.venueLocation.slice(1)}
                     <button
                       className="ml-2 text-muted-foreground hover:text-foreground"
@@ -977,7 +977,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <h2 className="text-2xl font-bold font-poppins mb-4 md:mb-0">
               {searchQuery
-                ? `Search Results for "${searchQuery}"`
+                ? "Search Results for \"" + searchQuery + "\""
                 : "Upcoming Events"}
             </h2>
 
@@ -1151,5 +1151,3 @@ export default function Home() {
     </div>
   );
 }
-import { BreadcrumbSchema } from "@/components/schema/breadcrumb-schema";
-import { FAQSchema } from "@/components/schema/faq-schema";
