@@ -119,7 +119,7 @@ export class TestHelpers {
   async waitForAnalyticsEvent(eventName: string) {
     return this.page.waitForFunction(
       (name) => {
-        return window.dataLayer && window.dataLayer.some(
+        return (window as any).dataLayer && (window as any).dataLayer.some(
           (event: any) => event.event === name || event[0] === 'event' && event[1] === name
         );
       },
@@ -132,7 +132,7 @@ export class TestHelpers {
    * Get all analytics events fired
    */
   async getAnalyticsEvents() {
-    return this.page.evaluate(() => window.dataLayer || []);
+    return this.page.evaluate(() => (window as any).dataLayer || []);
   }
 
   /**
@@ -194,7 +194,19 @@ export class TestHelpers {
    * Check if element is in viewport
    */
   async isInViewport(selector: string): Promise<boolean> {
-    return this.page.locator(selector).isInViewport();
+    const element = this.page.locator(selector);
+    const box = await element.boundingBox();
+    if (!box) return false;
+    
+    const viewport = this.page.viewportSize();
+    if (!viewport) return false;
+    
+    return (
+      box.x >= 0 &&
+      box.y >= 0 &&
+      box.x + box.width <= viewport.width &&
+      box.y + box.height <= viewport.height
+    );
   }
 
   /**
