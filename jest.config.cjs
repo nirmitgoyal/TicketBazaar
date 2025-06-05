@@ -21,11 +21,18 @@ module.exports = {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   testMatch: [
+    "**/tests/**/*.test.+(ts|tsx|js)",
     "**/__tests__/**/*.+(ts|tsx|js)",
-    "**/?(*.)+(spec|test).+(ts|tsx|js)",
+  ],
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "/tests/e2e/",
+    "**/*.spec.ts",
+    "**/playwright*",
+    "**/test-results/",
+    "**/coverage/"
   ],
   setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
-  testPathIgnorePatterns: ["/node_modules/"],
   collectCoverage: true,
   collectCoverageFrom: [
     "server/**/*.{js,ts}",
