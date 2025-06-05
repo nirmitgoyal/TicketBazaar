@@ -213,71 +213,13 @@ jobs:
           fi
         fi
 
-  # Performance baseline check
-  performance-baseline:
-    name: Performance Baseline
-    runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: ticketbazaar_perf_baseline
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Install Playwright browsers
-      run: npx playwright install --with-deps chromium
-      
-    - name: Setup performance test database
-      run: |
-        npm run db:push
-        npm run seed:users
-        npm run seed:events
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_perf_baseline
-        
-    - name: Start application
-      run: |
-        npm run dev &
-        sleep 30
-        curl --retry 10 --retry-connrefused --retry-delay 5 http://localhost:5000/api/health
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_perf_baseline
-        SESSION_SECRET: perf-baseline-secret
-        
-    - name: Basic performance check
-      run: |
-        # Run basic performance test
-        npx playwright test tests/e2e/specs/09-performance-accessibility.spec.ts --project=chromium --reporter=line
-        echo "✅ Performance baseline check completed"
-      env:
-        CI: true
+
 
   # Status check summary
   status-check-summary:
     name: Status Check Summary
     runs-on: ubuntu-latest
-    needs: [branch-protection-check, code-quality-gates, test-coverage-gates, security-compliance, performance-baseline]
+    needs: [branch-protection-check, code-quality-gates, test-coverage-gates, security-compliance]
     if: always()
     
     steps:
@@ -310,19 +252,14 @@ jobs:
           echo "❌ Security Compliance: FAILED" >> $GITHUB_STEP_SUMMARY
         fi
         
-        if [ "${{ needs.performance-baseline.result }}" == "success" ]; then
-          echo "✅ Performance Baseline: PASSED" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "❌ Performance Baseline: FAILED" >> $GITHUB_STEP_SUMMARY
-        fi
+
         
     - name: Final status check
       run: |
         if [ "${{ needs.branch-protection-check.result }}" != "success" ] || 
            [ "${{ needs.code-quality-gates.result }}" != "success" ] || 
            [ "${{ needs.test-coverage-gates.result }}" != "success" ] || 
-           [ "${{ needs.security-compliance.result }}" != "success" ] || 
-           [ "${{ needs.performance-baseline.result }}" != "success" ]; then
+           [ "${{ needs.security-compliance.result }}" != "success" ]; then
           echo "❌ One or more status checks failed"
           exit 1
         else

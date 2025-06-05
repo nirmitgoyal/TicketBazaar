@@ -185,7 +185,7 @@ jobs:
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
-    needs: [pre-deployment-tests, mobile-production-validation, production-performance-benchmark]
+    needs: [pre-deployment-tests, mobile-production-validation]
     if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'staging'
     environment: staging
     

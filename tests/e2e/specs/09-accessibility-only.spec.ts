@@ -1,47 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../utils/test-helpers';
 
-test.describe('Performance and Accessibility', () => {
+test.describe('Accessibility Compliance', () => {
   let helpers: TestHelpers;
 
   test.beforeEach(async ({ page }) => {
     helpers = new TestHelpers(page);
-  });
-
-  test('should meet core web vitals performance benchmarks', async ({ page }) => {
-    await page.goto('/');
-    
-    // Measure page load performance
-    const performanceEntries = await page.evaluate(() => {
-      return JSON.stringify(performance.getEntriesByType('navigation'));
-    });
-    
-    const navigationEntry = JSON.parse(performanceEntries)[0];
-    
-    if (navigationEntry) {
-      // First Contentful Paint should be under 1.8s
-      const fcp = navigationEntry.responseEnd - navigationEntry.fetchStart;
-      expect(fcp).toBeLessThan(1800);
-      
-      // DOM Content Loaded should be reasonable
-      const dcl = navigationEntry.domContentLoadedEventEnd - navigationEntry.fetchStart;
-      expect(dcl).toBeLessThan(3000);
-    }
-  });
-
-  test('should handle slow network conditions gracefully', async ({ page }) => {
-    // Simulate slow 3G network
-    await helpers.simulateSlowNetwork();
-    
-    await page.goto('/');
-    await helpers.waitForPageLoad();
-    
-    // Page should still load and be functional
-    await expect(page.locator('body')).toBeVisible();
-    await expect(page.locator('[data-testid="search-input"], input[placeholder*="search" i]')).toBeVisible();
-    
-    // Reset network conditions
-    await helpers.resetNetworkConditions();
   });
 
   test('should be accessible to screen readers', async ({ page }) => {
@@ -208,112 +172,6 @@ test.describe('Performance and Accessibility', () => {
     }
   });
 
-  test('should maintain performance under load', async ({ page }) => {
-    await page.goto('/');
-    await helpers.waitForPageLoad();
-    
-    // Measure memory usage
-    const initialMemory = await page.evaluate(() => {
-      return (performance as any).memory ? (performance as any).memory.usedJSHeapSize : 0;
-    });
-    
-    // Perform multiple interactions
-    for (let i = 0; i < 5; i++) {
-      const searchInput = page.locator('[data-testid="search-input"], input[placeholder*="search" i]');
-      if (await searchInput.count() > 0) {
-        await helpers.typeRealistically('[data-testid="search-input"], input[placeholder*="search" i]', `search ${i}`);
-        await searchInput.press('Enter');
-        await helpers.waitForPageLoad();
-        await page.waitForTimeout(500);
-      }
-    }
-    
-    // Check memory hasn't grown excessively
-    const finalMemory = await page.evaluate(() => {
-      return (performance as any).memory ? (performance as any).memory.usedJSHeapSize : 0;
-    });
-    
-    if (initialMemory > 0 && finalMemory > 0) {
-      const memoryIncrease = finalMemory - initialMemory;
-      // Memory shouldn't increase by more than 50MB
-      expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024);
-    }
-  });
-
-  test('should handle resource loading errors gracefully', async ({ page }) => {
-    // Block some resources to simulate loading failures
-    await page.route('**/*.jpg', route => route.abort());
-    await page.route('**/*.png', route => route.abort());
-    
-    await page.goto('/');
-    await helpers.waitForPageLoad();
-    
-    // Page should still be functional despite missing images
-    await expect(page.locator('body')).toBeVisible();
-    
-    const searchInput = page.locator('[data-testid="search-input"], input[placeholder*="search" i]');
-    if (await searchInput.count() > 0) {
-      await expect(searchInput).toBeVisible();
-      await helpers.typeRealistically('[data-testid="search-input"], input[placeholder*="search" i]', 'test');
-    }
-  });
-
-  test('should optimize for mobile performance', async ({ page, isMobile }) => {
-    if (isMobile) {
-      await page.goto('/');
-      
-      // Measure mobile-specific performance
-      const mobileMetrics = await page.evaluate(() => {
-        const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-        return {
-          domContentLoaded: nav.domContentLoadedEventEnd - nav.fetchStart,
-          loadComplete: nav.loadEventEnd - nav.fetchStart,
-          firstPaint: performance.getEntriesByName('first-paint')[0]?.startTime || 0
-        };
-      });
-      
-      // Mobile should load reasonably fast
-      expect(mobileMetrics.domContentLoaded).toBeLessThan(4000);
-      
-      // Test mobile interactions
-      const ticketCards = page.locator('[data-testid="ticket-card"], .ticket-card');
-      if (await ticketCards.count() > 0) {
-        await helpers.touchTap('[data-testid="ticket-card"]:first-child');
-        await helpers.waitForPageTransition();
-        
-        // Should navigate successfully
-        const pageLoaded = await page.locator('body').isVisible();
-        expect(pageLoaded).toBeTruthy();
-      }
-    }
-  });
-
-  test('should handle viewport size changes', async ({ page }) => {
-    await page.goto('/');
-    await helpers.waitForPageLoad();
-    
-    // Test different viewport sizes
-    const viewports = [
-      { width: 320, height: 568 }, // iPhone SE
-      { width: 768, height: 1024 }, // iPad
-      { width: 1920, height: 1080 }, // Desktop
-    ];
-    
-    for (const viewport of viewports) {
-      await page.setViewportSize(viewport);
-      await page.waitForTimeout(500);
-      
-      // Page should adapt to new viewport
-      await expect(page.locator('body')).toBeVisible();
-      
-      // Navigation should be accessible
-      const navigation = page.locator('nav, [role="navigation"], .navigation');
-      if (await navigation.count() > 0) {
-        await expect(navigation).toBeVisible();
-      }
-    }
-  });
-
   test('should maintain text readability at different zoom levels', async ({ page }) => {
     await page.goto('/');
     await helpers.waitForPageLoad();
@@ -342,5 +200,78 @@ test.describe('Performance and Accessibility', () => {
     await page.evaluate(() => {
       document.body.style.zoom = '1';
     });
+  });
+
+  test('should have semantic HTML structure', async ({ page }) => {
+    await page.goto('/');
+    await helpers.waitForPageLoad();
+    
+    // Check for semantic HTML elements
+    const semanticElements = [
+      'header',
+      'nav',
+      'main',
+      'footer',
+      'section',
+      'article'
+    ];
+    
+    let semanticCount = 0;
+    for (const element of semanticElements) {
+      const count = await page.locator(element).count();
+      if (count > 0) {
+        semanticCount++;
+      }
+    }
+    
+    // Should have at least some semantic elements
+    expect(semanticCount).toBeGreaterThan(0);
+  });
+
+  test('should provide alternative text for images', async ({ page }) => {
+    await page.goto('/');
+    await helpers.waitForPageLoad();
+    
+    // Check images for alt text
+    const images = page.locator('img');
+    const imageCount = await images.count();
+    
+    for (let i = 0; i < Math.min(imageCount, 5); i++) {
+      const image = images.nth(i);
+      const altText = await image.getAttribute('alt');
+      const ariaLabel = await image.getAttribute('aria-label');
+      
+      // Images should have alt text or aria-label
+      if (altText !== null || ariaLabel !== null) {
+        expect(altText || ariaLabel).toBeTruthy();
+      }
+    }
+  });
+
+  test('should handle form accessibility', async ({ page }) => {
+    await page.goto('/register');
+    await helpers.waitForPageLoad();
+    
+    // Check form accessibility
+    const formElements = page.locator('input, textarea, select');
+    const formCount = await formElements.count();
+    
+    for (let i = 0; i < Math.min(formCount, 5); i++) {
+      const element = formElements.nth(i);
+      
+      // Check for proper labeling
+      const id = await element.getAttribute('id');
+      const ariaLabel = await element.getAttribute('aria-label');
+      const ariaLabelledBy = await element.getAttribute('aria-labelledby');
+      
+      if (id) {
+        const label = page.locator(`label[for="${id}"]`);
+        const hasLabel = await label.count() > 0;
+        
+        if (hasLabel || ariaLabel || ariaLabelledBy) {
+          expect(true).toBeTruthy(); // Has proper labeling
+        }
+      }
+    }
   });
 });

@@ -62,12 +62,12 @@ This comprehensive end-to-end test suite simulates real human behavior on the fu
    - Mobile purchase experience
    - Analytics event tracking
 
-9. **Performance & Accessibility** (`09-performance-accessibility.spec.ts`)
-   - Core Web Vitals benchmarks
+9. **Accessibility Compliance** (`09-accessibility-only.spec.ts`)
    - Screen reader compatibility
    - Keyboard navigation
    - Color contrast validation
-   - Network condition handling
+   - Focus management
+   - Semantic HTML structure
 
 10. **Cross-Browser Compatibility** (`10-cross-browser-compatibility.spec.ts`)
     - Browser-specific feature testing
