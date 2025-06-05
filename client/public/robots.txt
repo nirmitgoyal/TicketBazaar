@@ -1,7 +1,27 @@
+
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin/
 Disallow: /checkout/processing
+Disallow: /complete-profile
+Disallow: /my-tickets
+Disallow: /profile
+Disallow: /ticket-verification
+Disallow: /*?*
+Allow: /events/category/
+
+# Allow specific search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Crawl delay
+Crawl-delay: 1
 
 Sitemap: https://ticketbazaar.co.in/sitemap.xml
+
+# Host directive
+Host: ticketbazaar.co.in

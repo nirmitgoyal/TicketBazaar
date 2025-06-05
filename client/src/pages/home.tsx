@@ -56,7 +56,7 @@ export default function Home() {
     // Also invalidate events cache to ensure fresh data
     queryClient.invalidateQueries({ queryKey: ["/api/events"] });
     queryClient.invalidateQueries({ queryKey: ["/api/events/search"] });
-    
+
     const urlParams = new URLSearchParams(window.location.search);
     setSearchParams(urlParams);
 
@@ -360,7 +360,7 @@ export default function Home() {
 
   // Check if events have available tickets (for filtering purposes only)
   const eventsWithTickets = new Set<number>();
-  
+
   if (tickets && Array.isArray(tickets) && tickets.length > 0) {
     tickets.forEach((ticket: Ticket) => {
       if (ticket.status === "available") {
@@ -612,12 +612,65 @@ export default function Home() {
     "Comedy",
   ];
 
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCity, setSelectedCity] = useState("all");
+
+    useEffect(() => {
+        if (params.category) {
+            setSelectedCategory(params.category.toLowerCase());
+        } else {
+            setSelectedCategory("all");
+        }
+    }, [params.category]);
+
+  const ticketBazaarFAQs = [
+        {
+            question: "Is Ticket Bazaar a safe platform to buy and sell tickets?",
+            answer: "Yes, Ticket Bazaar uses a secure escrow payment system to ensure safe transactions for both buyers and sellers. We verify tickets and offer fast payouts."
+        },
+        {
+            question: "What types of tickets can I find on Ticket Bazaar?",
+            answer: "You can find second hand tickets for a variety of events including concerts, sports events, festivals, theatre, and comedy shows across India."
+        },
+        {
+            question: "How does Ticket Bazaar ensure the authenticity of tickets?",
+            answer: "We verify all tickets listed on our platform to ensure they are legitimate, providing buyers with confidence in their purchase."
+        },
+        {
+            question: "Can I sell tickets on Ticket Bazaar even if I am not a resident of India?",
+            answer: "Currently, selling tickets on Ticket Bazaar is restricted to Indian residents due to payment and verification processes."
+        },
+        {
+            question: "What happens if the event is canceled?",
+            answer: "In the event of a cancellation, buyers will receive a full refund, ensuring a risk-free purchase experience."
+        }
+    ];
   return (
     <div>
       <SEOManager
-        title="Ticket Bazaar: India's Secure Second Hand Ticket Marketplace | Buy & Sell 2nd Hand Tickets"
-        description="Browse and buy verified second hand tickets for concerts, sports events, and festivals across India. Secure 2nd hand ticket transactions with payment protection. Find events in Delhi, Mumbai, Bangalore & more."
-      />
+        title={selectedCategory === "all" 
+          ? "Ticket Bazaar: India's Secure Second Hand Ticket Marketplace | Buy & Sell 2nd Hand Tickets"
+          : `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Tickets | Second Hand ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Event Tickets | Ticket Bazaar`
+        }
+        description={selectedCategory === "all"
+          ? `Browse and buy verified second hand tickets for concerts, sports events, and festivals across India. Secure 2nd hand ticket transactions with payment protection. Find events in ${selectedCity === "all" ? "Delhi, Mumbai, Bangalore & more" : selectedCity}.`
+          : `Buy verified second hand ${selectedCategory} tickets in ${selectedCity === "all" ? "India" : selectedCity}. Secure ${selectedCategory} event ticket resale with escrow protection. Best prices for ${selectedCategory} events.`
+        }
+        canonicalUrl={selectedCategory === "all" && selectedCity === "all" 
+          ? "https://ticketbazaar.co.in/" 
+          : `https://ticketbazaar.co.in/events/category/${selectedCategory}${selectedCity !== "all" ? `?city=${selectedCity}` : ""}`
+        }
+        keywords={`${selectedCategory} tickets, second hand ${selectedCategory} tickets, 2nd hand ${selectedCategory} tickets, ${selectedCity} ${selectedCategory} events, ticket resale, event tickets India, secure ticket marketplace, verified tickets, ticket escrow`}
+      >
+        <OrganizationSchema />
+        {selectedCategory !== "all" && (
+          <BreadcrumbSchema items={[
+            { name: "Home", url: "/" },
+            { name: "Events", url: "/" },
+            { name: selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1), url: `/events/category/${selectedCategory}` }
+          ]} />
+        )}
+      </SEOManager>
       <OrganizationSchema />
       {events && events.length > 0 && (
         <EventSchema
@@ -839,6 +892,7 @@ export default function Home() {
                   <Badge variant="secondary" className="px-3 py-1 text-sm">
                     Venue:{" "}
                     {filters.venueLocation.charAt(0).toUpperCase() +
+```text
                       filters.venueLocation.slice(1)}
                     <button
                       className="ml-2 text-muted-foreground hover:text-foreground"
@@ -915,7 +969,7 @@ export default function Home() {
         </section>
       )}
 
-      
+
 
       {/* Upcoming Events Section */}
       <section className="py-8 bg-white">
@@ -1097,3 +1151,5 @@ export default function Home() {
     </div>
   );
 }
+import { BreadcrumbSchema } from "@/components/schema/breadcrumb-schema";
+import { FAQSchema } from "@/components/schema/faq-schema";

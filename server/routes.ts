@@ -49,6 +49,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Import and register health routes
   const healthRoutes = (await import("./routes/health.routes")).default;
   apiRouter.use("/health", healthRoutes);
+
+  // Import and register sitemap routes
+  const sitemapRoutes = (await import("./routes/sitemap")).default;
+  app.use("/", sitemapRoutes);
   
   logger.info('SERVER', 'All API routes registered successfully');
 

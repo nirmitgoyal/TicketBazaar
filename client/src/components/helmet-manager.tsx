@@ -87,11 +87,33 @@ export const HelmetProvider: React.FC<{ children: React.ReactNode }> = ({
           content={helmetData.ogImage || "/images/ticket-bazaar-social.png"}
         />
 
-        <meta name="robots" content="index, follow" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta name="author" content="Ticket Bazaar" />
         <meta name="publisher" content="Ticket Bazaar" />
         <meta name="distribution" content="global" />
         <meta name="rating" content="general" />
+        <meta name="revisit-after" content="1 day" />
+        <meta name="language" content="English" />
+        <meta name="coverage" content="Worldwide" />
+        <meta name="target" content="all" />
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        
+        {/* Enhanced Open Graph tags */}
+        <meta property="og:rich_attachment" content="true" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        
+        {/* Additional Twitter tags */}
+        <meta name="twitter:site" content="@ticketbazaar" />
+        <meta name="twitter:creator" content="@ticketbazaar" />
+        
+        {/* App-specific meta tags */}
+        <meta name="application-name" content="Ticket Bazaar" />
+        <meta name="msapplication-TileColor" content="#1976D2" />
+        <meta name="msapplication-config" content="/browserconfig.xml" />
       </Helmet>
       {helmetData.children}
       {children}

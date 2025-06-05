@@ -7,6 +7,7 @@ import { MapPin, Calendar, Users, IndianRupee } from "lucide-react";
 import { SEOManager } from "@/components/helmet-manager";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
+import { BreadcrumbSchema } from "@/components/schema/breadcrumb-schema";
 
 interface TicketEvent {
   id: number;
@@ -84,13 +85,18 @@ export default function MapPage() {
     >
       <div className="container mx-auto px-4 py-8">
         <SEOManager
-          title="Event Venue Locations Map | Find Tickets Near You - Ticket Bazaar"
-          description="Discover event venues on our interactive map. Find tickets for concerts, sports, and entertainment events happening near you across India."
+          title="Event Map - Find Second Hand Tickets Near You | Interactive Event Map | Ticket Bazaar"
+          description="Discover events and second hand tickets near you with our interactive map. Find concerts, sports events, festivals and more across India. Real-time event locations with available 2nd hand tickets."
           canonicalUrl="https://ticketbazaar.co.in/map"
+          keywords="event map, events near me, ticket map, second hand tickets map, event locations, interactive map, concerts near me, sports events map, festival map, India events map"
         >
           <OrganizationSchema />
+          <BreadcrumbSchema items={[
+            { name: "Home", url: "/" },
+            { name: "Event Map", url: "/map" }
+          ]} />
         </SEOManager>
-        
+
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-2">
             Event Venue Map
@@ -190,25 +196,25 @@ export default function MapPage() {
                           {event.category}
                         </Badge>
                       </div>
-                      
+
                       <div className="space-y-1 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <MapPin className="h-3 w-3" />
                           <span className="line-clamp-1">{event.venue}</span>
                         </div>
-                        
+
                         {event.venueAddress && (
                           <p className="line-clamp-1 pl-4">
                             {event.venueAddress}
                           </p>
                         )}
-                        
+
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           <span>{new Date(event.eventDate).toLocaleDateString()}</span>
                         </div>
                       </div>
-                      
+
                       <div className="flex justify-between items-center pt-2">
                         <span className="font-bold text-lg">₹{event.price}</span>
                         <Badge variant={event.status === "available" ? "default" : "secondary"}>

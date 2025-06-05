@@ -13,6 +13,9 @@ import { useAnalytics } from "@/hooks/use-analytics";
 import { SEOManager } from "@/components/helmet-manager";
 import CombinedSchema from "@/components/schema/combined-schema";
 import { SocialShare } from "@/components/social-share";
+import { EventSchema } from "@/components/schema/event-schema";
+import { BreadcrumbSchema } from "@/components/schema/breadcrumb-schema";
+import { OrganizationSchema } from "@/components/schema/organization-schema";
 
 export default function EventDetails() {
   const { id } = useParams<{ id: string }>();
@@ -118,16 +121,34 @@ export default function EventDetails() {
   const [location] = useLocation();
   const currentUrl = `https://ticketbazaar.co.in${location}`;
 
+  // Calculate ticket price range for schema
+  const ticketPrices = tickets.length > 0 ? {
+    min: Math.min(...tickets.map(t => t.price)),
+    max: Math.max(...tickets.map(t => t.price)),
+    currency: "INR"
+  } : undefined;
+
+  // Breadcrumb data
+  const breadcrumbItems = [
+    { name: "Home", url: "/" },
+    { name: "Events", url: "/" },
+    { name: event.category, url: `/events/category/${event.category}` },
+    { name: event.eventTitle || event.title, url: `/event/${event.id}` }
+  ];
+
   return (
     <div className="container mx-auto px-4 py-8">
       <SEOManager
-        title={eventTitle}
-        description={`Buy second hand and 2nd hand tickets for ${event.eventTitle}. ${description}`}
-        canonicalUrl={canonicalUrl}
-        ogImage={event.eventImageUrl || "/images/ticket-bazaar-social.png"}
+        title={`${event.eventTitle || event.title} Tickets | ${event.venue} | Ticket Bazaar`}
+        description={`Buy verified second hand tickets for ${event.eventTitle || event.title} at ${event.venue} on ${new Date(event.eventDate).toLocaleDateString()}. ${event.city} event tickets with secure escrow protection. Starting from ₹${ticketPrices?.min || 'TBD'}.`}
+        canonicalUrl={`https://ticketbazaar.co.in/event/${id}`}
+        keywords={`${event.eventTitle}, ${event.venue}, ${event.city}, ${event.category} tickets, event tickets, second hand tickets, 2nd hand tickets, resale tickets, ${new Date(event.eventDate).toLocaleDateString()}`}
         ogType="event"
-        keywords={`${event.eventTitle} tickets, second hand tickets, 2nd hand tickets, ${event.category} tickets, ${event.city || "India"} events, verified tickets`}
-      />
+      >
+        <EventSchema event={event} ticketPrices={ticketPrices} />
+        <BreadcrumbSchema items={breadcrumbItems} />
+        <OrganizationSchema />
+      </SEOManager>
       <CombinedSchema
         event={event}
         ticket={tickets?.[0]}
