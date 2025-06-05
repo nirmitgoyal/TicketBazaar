@@ -58,6 +58,14 @@ jobs:
     - name: Install Playwright browsers
       run: npx playwright install --with-deps ${{ matrix.browser }}
       
+    - name: Wait for PostgreSQL
+      run: |
+        until pg_isready -h localhost -p 5432 -U postgres; do
+          echo "Waiting for PostgreSQL to be ready..."
+          sleep 2
+        done
+        echo "PostgreSQL is ready!"
+        
     - name: Setup production-like database
       run: |
         npm run db:push
@@ -141,6 +149,14 @@ jobs:
     - name: Install Playwright browsers
       run: npx playwright install --with-deps chromium webkit
       
+    - name: Wait for PostgreSQL
+      run: |
+        until pg_isready -h localhost -p 5432 -U postgres; do
+          echo "Waiting for PostgreSQL to be ready..."
+          sleep 2
+        done
+        echo "PostgreSQL is ready!"
+        
     - name: Setup production-like database
       run: |
         npm run db:push
