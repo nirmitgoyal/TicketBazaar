@@ -29,6 +29,7 @@ import TermsOfService from "@/pages/terms-of-service";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import DataDeletion from "@/pages/data-deletion";
 import NotFound from "@/pages/not-found";
+import VerificationDemo from "@/pages/verification-demo";
 
 // Components
 import { Navigation } from "@/components/ui/navigation";
@@ -133,6 +134,7 @@ function Router() {
       <Route path="/list-ticket" component={ListTicket} />
       <ProtectedRoute path="/my-tickets" component={MyTickets} />
       <Route path="/ticket-verification" component={TicketVerification} />
+      <Route path="/verification-demo" component={VerificationDemo} />
       <ProtectedRoute
         path="/ticket/verify/:ticketId"
         component={TicketVerification}

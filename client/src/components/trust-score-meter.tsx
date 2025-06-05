@@ -143,8 +143,8 @@ export function TrustScoreMeter({
             {/* Gradient definition */}
             <defs>
               <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" className={`${getScoreBackgroundColor(animatedScore).split(' ')[0].replace('from-', 'text-')}`} />
-                <stop offset="100%" className={`${getScoreBackgroundColor(animatedScore).split(' ')[2].replace('to-', 'text-')}`} />
+                <stop offset="0%" stopColor={animatedScore >= 80 ? '#10b981' : animatedScore >= 60 ? '#eab308' : animatedScore >= 40 ? '#f97316' : '#ef4444'} />
+                <stop offset="100%" stopColor={animatedScore >= 80 ? '#059669' : animatedScore >= 60 ? '#ca8a04' : animatedScore >= 40 ? '#ea580c' : '#dc2626'} />
               </linearGradient>
             </defs>
           </svg>
