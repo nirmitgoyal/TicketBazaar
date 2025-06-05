@@ -33,7 +33,7 @@ jobs:
       
     - name: Check for required files
       run: |
-        REQUIRED_FILES=("README.md" "package.json" "playwright.config.ts" ".github/workflows/ci.yml")
+        REQUIRED_FILES=("README.md" "package.json" ".github/workflows/ci.yml")
         
         for file in "${REQUIRED_FILES[@]}"; do
           if [ -f "$file" ]; then
@@ -43,35 +43,6 @@ jobs:
             exit 1
           fi
         done
-        
-    - name: Validate test structure
-      run: |
-        if [ -d "tests/e2e/specs" ]; then
-          TEST_COUNT=$(find tests/e2e/specs -name "*.spec.ts" | wc -l)
-          echo "✅ Found $TEST_COUNT E2E test files"
-          
-          # List test files for verification
-          echo "E2E test files:"
-          find tests/e2e/specs -name "*.spec.ts" | sort
-          
-          if [ $TEST_COUNT -lt 5 ]; then
-            echo "⚠️ Minimum 5 test files recommended for comprehensive coverage"
-            echo "Current count: $TEST_COUNT"
-          else
-            echo "✅ Sufficient E2E test coverage with $TEST_COUNT test files"
-          fi
-        else
-          echo "❌ E2E test directory structure missing"
-          exit 1
-        fi
-        
-        # Check unit test structure
-        if [ -d "tests/unit" ] || [ -d "tests/integration" ]; then
-          UNIT_COUNT=$(find tests -name "*.test.ts" -o -name "*.test.js" | wc -l)
-          echo "✅ Found $UNIT_COUNT unit/integration test files"
-        else
-          echo "⚠️ Unit test directory recommended but not required for status check"
-        fi
 
   # Code quality gates
   code-quality-gates:

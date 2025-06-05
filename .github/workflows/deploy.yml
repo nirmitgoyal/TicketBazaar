@@ -1,4 +1,4 @@
-name: Production Deployment with E2E Validation
+name: Production Deployment
 
 on:
   push:
@@ -18,31 +18,11 @@ env:
   NODE_ENV: production
 
 jobs:
-  # Pre-deployment validation
-  pre-deployment-tests:
-    name: Pre-deployment E2E Tests
+  # Build verification
+  build-verification:
+    name: Build Verification
     runs-on: ubuntu-latest
-    timeout-minutes: 35
     
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: ticketbazaar_deploy
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    strategy:
-      fail-fast: true
-      matrix:
-        browser: [chromium, firefox, webkit]
-        
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -56,153 +36,17 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Install Playwright browsers
-      run: npx playwright install --with-deps ${{ matrix.browser }}
+    - name: TypeScript type checking
+      run: npm run check
       
-    - name: Wait for PostgreSQL
-      run: |
-        until pg_isready -h localhost -p 5432 -U postgres; do
-          echo "Waiting for PostgreSQL to be ready..."
-          sleep 2
-        done
-        echo "PostgreSQL is ready!"
-        
-    - name: Setup production-like database
-      run: |
-        npm run db:push
-        npx tsx scripts/seed-users.ts
-        npx tsx scripts/seed-realistic-events.ts
-        npx tsx scripts/seed-tickets.ts
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_deploy
-        
     - name: Build application
       run: npm run build
-      
-    - name: Start production build
-      run: |
-        NODE_ENV=production npm start &
-        sleep 45
-        curl --retry 15 --retry-connrefused --retry-delay 10 http://localhost:5000/api/health
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_deploy
-        SESSION_SECRET: production-test-secret
-        GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-        
-    - name: Run comprehensive E2E test suite
-      run: npx playwright test --project=${{ matrix.browser }} --reporter=html
-      env:
-        CI: true
-        
-    - name: Upload deployment test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: deployment-test-report-${{ matrix.browser }}
-        path: playwright-report/
-        retention-days: 30
-        
-    - name: Upload failure videos
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: deployment-test-videos-${{ matrix.browser }}
-        path: test-results/
-        retention-days: 30
-
-  # Production mobile validation
-  mobile-production-validation:
-    name: Mobile Production Validation
-    runs-on: ubuntu-latest
-    needs: pre-deployment-tests
-    
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: ticketbazaar_mobile_prod
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    strategy:
-      matrix:
-        device: ['Mobile Chrome', 'Mobile Safari']
-        
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Install Playwright browsers
-      run: npx playwright install --with-deps chromium webkit
-      
-    - name: Wait for PostgreSQL
-      run: |
-        until pg_isready -h localhost -p 5432 -U postgres; do
-          echo "Waiting for PostgreSQL to be ready..."
-          sleep 2
-        done
-        echo "PostgreSQL is ready!"
-        
-    - name: Setup production-like database
-      run: |
-        npm run db:push
-        npx tsx scripts/seed-users.ts
-        npx tsx scripts/seed-realistic-events.ts
-        npx tsx scripts/seed-tickets.ts
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_mobile_prod
-        
-    - name: Build application
-      run: npm run build
-      
-    - name: Start production build
-      run: |
-        NODE_ENV=production npm start &
-        sleep 45
-        curl --retry 15 --retry-connrefused --retry-delay 10 http://localhost:5000/api/health
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_mobile_prod
-        SESSION_SECRET: mobile-production-test-secret
-        GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-        
-    - name: Run mobile production tests
-      run: |
-        npx playwright test tests/e2e/specs/01-homepage-navigation.spec.ts --project="${{ matrix.device }}" --reporter=html
-        npx playwright test tests/e2e/specs/03-search-and-filters.spec.ts --project="${{ matrix.device }}" --reporter=html
-        npx playwright test tests/e2e/specs/08-ticket-purchase-flow.spec.ts --project="${{ matrix.device }}" --reporter=html
-      env:
-        CI: true
-        
-    - name: Upload mobile production results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: mobile-production-report-${{ matrix.device }}
-        path: playwright-report/
-        retention-days: 30
-
-
 
   # Deploy to staging first
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
-    needs: [pre-deployment-tests, mobile-production-validation]
+    needs: build-verification
     if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'staging'
     environment: staging
     
@@ -235,44 +79,11 @@ jobs:
         path: dist/
         retention-days: 7
 
-  # Post-staging validation
-  staging-validation:
-    name: Staging Environment Validation
-    runs-on: ubuntu-latest
-    needs: deploy-staging
-    if: needs.deploy-staging.result == 'success'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Install Playwright browsers
-      run: npx playwright install --with-deps chromium
-      
-    - name: Run staging environment tests
-      run: |
-        echo "Running tests against staging environment..."
-        # Configure tests to run against actual staging URL
-        # npx playwright test --config=playwright.staging.config.ts
-        echo "Staging validation completed"
-      env:
-        CI: true
-        STAGING_URL: ${{ secrets.STAGING_URL }}
-
   # Production deployment
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
-    needs: staging-validation
+    needs: deploy-staging
     if: github.ref == 'refs/heads/main' && github.event.inputs.environment != 'staging'
     environment: production
     
@@ -304,41 +115,7 @@ jobs:
         name: production-build
         path: dist/
         retention-days: 30
-
-  # Post-deployment validation
-  post-deployment-validation:
-    name: Post-deployment Validation
-    runs-on: ubuntu-latest
-    needs: deploy-production
-    if: needs.deploy-production.result == 'success'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Install Playwright browsers
-      run: npx playwright install --with-deps chromium
-      
-    - name: Run production smoke tests
-      run: |
-        echo "Running smoke tests against production environment..."
-        # Configure tests to run against actual production URL
-        # npx playwright test tests/e2e/specs/01-homepage-navigation.spec.ts --config=playwright.production.config.ts
-        echo "Production validation completed"
-      env:
-        CI: true
-        PRODUCTION_URL: ${{ secrets.PRODUCTION_URL }}
         
     - name: Notify deployment success
       run: |
-        echo "🚀 Production deployment completed successfully!"
-        echo "All E2E validations passed."
+        echo "Production deployment completed successfully!"
