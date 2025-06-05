@@ -106,8 +106,8 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
 
   return (
     <div className="mt-3 pt-3 border-t border-gray-200">
-      <div className="flex items-center justify-between">
-        {getVerificationBadge()}
+      <div className="flex items-center justify-between mb-3">
+        {!verificationResult && getVerificationBadge()}
         
         <Button
           variant="ghost"
@@ -119,43 +119,137 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
           {isVerifying ? (
             <>
               <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-              Verifying...
+              Analyzing...
             </>
           ) : (
             <>
               <Shield className="h-4 w-4 mr-1" />
-              {verificationResult ? 'Re-verify' : 'Verify with AI'}
+              {verificationResult ? 'Re-analyze' : 'Verify with AI'}
             </>
           )}
         </Button>
       </div>
       
-      {verificationResult && (
-        <div className="mt-2 text-xs text-gray-600">
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div>
-              <span className="font-medium">Event:</span> {verificationResult.verification.event.confidence}%
+      <AnimatePresence mode="wait">
+        {verificationResult && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-4"
+          >
+            {/* Main Trust Score */}
+            <div className="flex justify-center">
+              <TrustScoreMeter
+                score={verificationResult.verification.overall.confidence}
+                label="Overall Trust Score"
+                size="md"
+                fraudRisk={verificationResult.verification.overall.fraudRisk}
+                animate={true}
+              />
             </div>
-            <div>
-              <span className="font-medium">Seller:</span> {verificationResult.verification.seller.confidence}%
-            </div>
-            <div>
-              <span className="font-medium">Price:</span> {verificationResult.verification.pricing.confidence}%
-            </div>
-          </div>
-          
-          {verificationResult.recommendations && verificationResult.recommendations.length > 0 && (
-            <div className="mt-2 p-2 bg-blue-50 rounded text-blue-800">
-              <div className="font-medium mb-1">Safety Tips:</div>
-              <ul className="text-xs space-y-1">
-                {verificationResult.recommendations.slice(0, 2).map((rec: string, index: number) => (
-                  <li key={index}>• {rec}</li>
+            
+            {/* Detailed Scores */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2.5, duration: 0.5 }}
+              className="grid grid-cols-3 gap-3"
+            >
+              <div className="text-center">
+                <TrustScoreMeter
+                  score={verificationResult.verification.event.confidence}
+                  label="Event"
+                  size="sm"
+                  showDetails={false}
+                  animate={true}
+                />
+              </div>
+              <div className="text-center">
+                <TrustScoreMeter
+                  score={verificationResult.verification.seller.confidence}
+                  label="Seller"
+                  size="sm"
+                  showDetails={false}
+                  animate={true}
+                />
+              </div>
+              <div className="text-center">
+                <TrustScoreMeter
+                  score={verificationResult.verification.pricing.confidence}
+                  label="Pricing"
+                  size="sm"
+                  showDetails={false}
+                  animate={true}
+                />
+              </div>
+            </motion.div>
+            
+            {/* AI Analysis */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 3, duration: 0.5 }}
+              className="space-y-2"
+            >
+              <div className="text-xs font-medium text-gray-700 flex items-center gap-1">
+                <Eye className="h-3 w-3" />
+                AI Analysis
+              </div>
+              <div className="text-xs text-gray-600 space-y-1">
+                {verificationResult.verification.overall.reasons?.map((reason: string, index: number) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 3.2 + (index * 0.2), duration: 0.3 }}
+                    className="flex items-start gap-2"
+                  >
+                    <div className="w-1 h-1 bg-blue-500 rounded-full mt-1.5 flex-shrink-0" />
+                    <span>{reason}</span>
+                  </motion.div>
                 ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
+              </div>
+            </motion.div>
+            
+            {/* Safety Recommendations */}
+            {verificationResult.recommendations && verificationResult.recommendations.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 3.5, duration: 0.5 }}
+                className={`p-3 rounded-lg ${
+                  verificationResult.verification.overall.fraudRisk === 'high' 
+                    ? 'bg-red-50 border border-red-200' 
+                    : verificationResult.verification.overall.fraudRisk === 'medium'
+                    ? 'bg-yellow-50 border border-yellow-200'
+                    : 'bg-green-50 border border-green-200'
+                }`}
+              >
+                <div className="text-xs font-medium mb-2 flex items-center gap-1">
+                  <Shield className="h-3 w-3" />
+                  Safety Recommendations
+                </div>
+                <ul className="text-xs space-y-1">
+                  {verificationResult.recommendations.slice(0, 3).map((rec: string, index: number) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 3.7 + (index * 0.1), duration: 0.3 }}
+                      className="flex items-start gap-2"
+                    >
+                      <TrendingUp className="h-3 w-3 mt-0.5 flex-shrink-0 text-blue-600" />
+                      <span>{rec}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
