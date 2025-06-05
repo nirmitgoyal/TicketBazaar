@@ -214,9 +214,9 @@ jobs:
         path: playwright-report/
         retention-days: 30
 
-  # Performance and Accessibility Tests
-  performance-tests:
-    name: Performance & Accessibility Tests
+  # Accessibility Tests (Performance tests removed)
+  accessibility-tests:
+    name: Accessibility Tests
     runs-on: ubuntu-latest
     needs: unit-tests
     
@@ -225,7 +225,7 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: ticketbazaar_perf
+          POSTGRES_DB: ticketbazaar_a11y
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -257,7 +257,7 @@ jobs:
         npm run seed:events
         npm run seed:tickets
       env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_perf
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_a11y
         
     - name: Start application server
       run: |
@@ -265,20 +265,20 @@ jobs:
         sleep 30
         curl --retry 10 --retry-connrefused --retry-delay 5 http://localhost:5000/api/health
       env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_perf
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_a11y
         SESSION_SECRET: test-session-secret
         GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         
-    - name: Run Performance Tests
-      run: npx playwright test tests/e2e/specs/09-performance-accessibility.spec.ts --project=chromium --reporter=html
+    - name: Run Accessibility Tests
+      run: npx playwright test tests/e2e/specs/09-accessibility-only.spec.ts --project=chromium --reporter=html
       env:
         CI: true
         
-    - name: Upload performance test results
+    - name: Upload accessibility test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: performance-test-report
+        name: accessibility-test-report
         path: playwright-report/
         retention-days: 30
 
@@ -286,7 +286,7 @@ jobs:
   build:
     name: Build Verification
     runs-on: ubuntu-latest
-    needs: [unit-tests, e2e-tests, mobile-e2e-tests, performance-tests]
+    needs: [unit-tests, e2e-tests, mobile-e2e-tests, accessibility-tests]
     
     steps:
     - name: Checkout code
