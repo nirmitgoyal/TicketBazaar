@@ -212,19 +212,13 @@ export function SearchBar({
   // Auto-search when debounced values change
   useEffect(() => {
     // Skip on initial render to prevent unnecessary API calls
-    if (
-      debouncedQuery === initialQuery &&
-      debouncedPriceRange[0] === 0 &&
-      debouncedPriceRange[1] === 10000
-    ) {
+    if (debouncedQuery === initialQuery) {
       return;
     }
 
     // Skip if there's no meaningful change from initial state
     if (
       debouncedQuery === "" &&
-      debouncedPriceRange[0] === 0 &&
-      debouncedPriceRange[1] === 10000 &&
       !trending &&
       !sellingFast
     ) {
@@ -240,7 +234,6 @@ export function SearchBar({
     performSearch();
   }, [
     debouncedQuery,
-    debouncedPriceRange,
     location,
     category,
     date,
@@ -291,13 +284,7 @@ export function SearchBar({
         params.set("dateRange", dateRange);
       }
 
-      if (priceRange[0] > 0) {
-        params.set("minPrice", priceRange[0].toString());
-      }
 
-      if (priceRange[1] < 10000) {
-        params.set("maxPrice", priceRange[1].toString());
-      }
 
       if (trending) {
         params.set("trending", "true");
@@ -316,7 +303,6 @@ export function SearchBar({
     location,
     date,
     dateRange,
-    priceRange,
     trending,
     sellingFast,
     onSearch,
@@ -346,7 +332,6 @@ export function SearchBar({
     setCategory("");
     setDate(undefined);
     setDateRange("");
-    setPriceRange([0, 10000]);
     setTrending(false);
     setSellingFast(false);
     setSelectedCategories([]);
@@ -357,10 +342,7 @@ export function SearchBar({
     performSearch();
   };
 
-  // Format price for display
-  const formatPrice = (value: number) => {
-    return `₹${value.toLocaleString("en-IN")}`;
-  };
+
 
   // Handle date range selection
   const handleDateRangeChange = (range: string) => {
@@ -385,8 +367,6 @@ export function SearchBar({
     preferences: {
       categories:
         selectedCategories.length > 0 ? selectedCategories : undefined,
-      priceRange:
-        priceRange[0] > 0 || priceRange[1] < 10000 ? priceRange : undefined,
       datePreference: dateRange || undefined,
     },
   };
