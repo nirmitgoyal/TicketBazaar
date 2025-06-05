@@ -50,6 +50,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const healthRoutes = (await import("./routes/health.routes")).default;
   apiRouter.use("/health", healthRoutes);
 
+  // Import and register verification routes
+  const verificationRoutes = (await import("./routes/verification.routes")).default;
+  apiRouter.use("/verification", verificationRoutes);
+
   // Import and register sitemap routes
   const sitemapRoutes = (await import("./routes/sitemap")).default;
   app.use("/", sitemapRoutes);

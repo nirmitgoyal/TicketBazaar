@@ -131,6 +131,11 @@ export interface IStorage {
   deleteAllUserData(userId: number): Promise<boolean>;
   exportUserData(userId: number): Promise<any>;
 
+  // Verification operations
+  verifyTicketAuthenticity(ticketId: number): Promise<any>;
+  verifySellerAuthenticity(sellerId: number): Promise<any>;
+  getComprehensiveVerification(ticketId: number): Promise<any>;
+
   // Session storage
   sessionStore: any;
 }
@@ -777,6 +782,114 @@ export class DatabaseStorage implements IStorage {
       console.error("Error exporting user data:", error);
       throw error;
     }
+  }
+
+  async verifyTicketAuthenticity(ticketId: number): Promise<any> {
+    try {
+      const { VerificationService } = await import('./services/verification.service');
+      const verificationService = new VerificationService();
+      
+      const ticket = await this.getTicket(ticketId);
+      if (!ticket) {
+        throw new Error('Ticket not found');
+      }
+
+      const eventVerification = await verificationService.verifyEvent(ticket);
+      const pricingVerification = await verificationService.verifyTicketPricing(ticket);
+
+      return {
+        ticket,
+        verification: {
+          event: eventVerification,
+          pricing: pricingVerification
+        }
+      };
+    } catch (error) {
+      console.error("Error verifying ticket authenticity:", error);
+      throw error;
+    }
+  }
+
+  async verifySellerAuthenticity(sellerId: number): Promise<any> {
+    try {
+      const { VerificationService } = await import('./services/verification.service');
+      const verificationService = new VerificationService();
+      
+      const seller = await this.getUser(sellerId);
+      if (!seller) {
+        throw new Error('Seller not found');
+      }
+
+      const sellerTickets = await this.getTicketsBySeller(sellerId);
+      const sellerVerification = await verificationService.verifySeller(seller, sellerTickets);
+
+      return {
+        seller,
+        verification: sellerVerification,
+        ticketHistory: sellerTickets.slice(0, 10)
+      };
+    } catch (error) {
+      console.error("Error verifying seller authenticity:", error);
+      throw error;
+    }
+  }
+
+  async getComprehensiveVerification(ticketId: number): Promise<any> {
+    try {
+      const { VerificationService } = await import('./services/verification.service');
+      const verificationService = new VerificationService();
+      
+      const ticket = await this.getTicket(ticketId);
+      if (!ticket) {
+        throw new Error('Ticket not found');
+      }
+
+      const seller = await this.getUser(ticket.sellerId);
+      if (!seller) {
+        throw new Error('Seller not found');
+      }
+
+      const sellerHistory = await this.getTicketsBySeller(ticket.sellerId);
+      const comprehensiveVerification = await verificationService.performComprehensiveVerification(
+        ticket,
+        seller,
+        sellerHistory
+      );
+
+      return {
+        ticket,
+        seller,
+        verification: comprehensiveVerification,
+        recommendations: this.generateSafetyRecommendations(comprehensiveVerification.overall)
+      };
+    } catch (error) {
+      console.error("Error performing comprehensive verification:", error);
+      throw error;
+    }
+  }
+
+  private generateSafetyRecommendations(overallVerification: any): string[] {
+    const recommendations = [];
+
+    if (overallVerification.fraudRisk === 'high') {
+      recommendations.push('High fraud risk detected - proceed with extreme caution');
+      recommendations.push('Consider requesting additional verification from seller');
+      recommendations.push('Use secure payment methods only');
+      recommendations.push('Meet in public places for ticket transfer');
+    } else if (overallVerification.fraudRisk === 'medium') {
+      recommendations.push('Medium risk - take standard precautions');
+      recommendations.push('Verify seller identity before purchase');
+      recommendations.push('Use platform escrow if available');
+    } else {
+      recommendations.push('Low risk - standard safety measures apply');
+      recommendations.push('Still verify ticket authenticity before event');
+    }
+
+    if (overallVerification.confidence < 50) {
+      recommendations.push('Low confidence in verification - manual review recommended');
+    }
+
+    return recommendations;
   }
 }
 
