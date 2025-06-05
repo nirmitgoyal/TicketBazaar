@@ -157,7 +157,7 @@ jobs:
         
     - name: Run unit tests with coverage
       run: |
-        npm run test:coverage
+        npm test -- --coverage
         echo "✅ Unit tests completed"
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_coverage
