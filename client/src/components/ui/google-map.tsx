@@ -32,7 +32,9 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
   useEffect(() => {
     const eventsWithCoords = events.filter((e) => e.latitude && e.longitude).length;
     if (eventsWithCoords !== events.length) {
-      console.warn(`Map: ${events.length - eventsWithCoords} events missing location data`);
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`Map: ${events.length - eventsWithCoords} events missing location data`);
+      }
     }
   }, [events]);
 
@@ -92,11 +94,15 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
           }
         },
         (error) => {
-          console.error("Error getting user location:", error);
+          if (process.env.NODE_ENV === 'development') {
+            console.error("Error getting user location:", error);
+          }
         },
       );
     } else {
-      console.error("Geolocation is not supported by this browser.");
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Geolocation is not supported by this browser.");
+      }
     }
   }, [map, onViewportChange, isLoaded]);
 
@@ -193,7 +199,9 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
       window.google &&
       !initialBoundsSet
     ) {
-      console.log("Map is loaded and ready to display events");
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Map is loaded and ready to display events");
+      }
 
       // Always fit to all markers in India for "All cities" view
       const bounds = new google.maps.LatLngBounds();
@@ -247,7 +255,9 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
 
   // Show loading state or error
   if (loadError) {
-    console.error("Google Maps error:", loadError);
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Google Maps error:", loadError);
+    }
 
     // Display events in a grid layout as fallback
     return (

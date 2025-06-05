@@ -64,7 +64,18 @@ export const tickets = pgTable("tickets", {
   // Removed verification fields - pure P2P means users handle verification themselves
   createdAt: timestamp("created_at").notNull().defaultNow(),
   expiresAt: timestamp("expires_at"), // When the ticket listing expires
-});
+}, (table) => ({
+  sellerIdx: index("tickets_seller_id_idx").on(table.sellerId),
+  eventTitleIdx: index("tickets_event_title_idx").on(table.eventTitle),
+  categoryIdx: index("tickets_category_idx").on(table.category),
+  eventDateIdx: index("tickets_event_date_idx").on(table.eventDate),
+  statusIdx: index("tickets_status_idx").on(table.status),
+  cityIdx: index("tickets_city_idx").on(table.city),
+  priceIdx: index("tickets_price_idx").on(table.price),
+  createdAtIdx: index("tickets_created_at_idx").on(table.createdAt),
+  trendingIdx: index("tickets_trending_idx").on(table.trending),
+  locationIdx: index("tickets_location_idx").on(table.latitude, table.longitude),
+}));
 
 // Enhanced contact requests for pure P2P model
 export const contactRequests = pgTable("contact_requests", {
@@ -80,7 +91,13 @@ export const contactRequests = pgTable("contact_requests", {
   offeredPrice: doublePrecision("offered_price"), // Price offered by buyer
   meetingLocation: text("meeting_location"), // Suggested meeting location for in-person transfers
   preferredTime: text("preferred_time"), // Preferred time for contact/meeting
-});
+}, (table) => ({
+  ticketIdx: index("contact_requests_ticket_id_idx").on(table.ticketId),
+  requesterIdx: index("contact_requests_requester_id_idx").on(table.requesterId),
+  sellerIdx: index("contact_requests_seller_id_idx").on(table.sellerId),
+  statusIdx: index("contact_requests_status_idx").on(table.status),
+  createdAtIdx: index("contact_requests_created_at_idx").on(table.createdAt),
+}));
 
 // User feedback replaces disputes
 export const userFeedback = pgTable("user_feedback", {
@@ -92,7 +109,12 @@ export const userFeedback = pgTable("user_feedback", {
   status: text("status").notNull().default("pending"), // pending, reviewed, addressed
   createdAt: timestamp("created_at").notNull().defaultNow(),
   reviewedAt: timestamp("reviewed_at"),
-});
+}, (table) => ({
+  userIdx: index("user_feedback_user_id_idx").on(table.userId),
+  ticketIdx: index("user_feedback_ticket_id_idx").on(table.ticketId),
+  statusIdx: index("user_feedback_status_idx").on(table.status),
+  createdAtIdx: index("user_feedback_created_at_idx").on(table.createdAt),
+}));
 
 export const userReviews = pgTable("user_reviews", {
   id: serial("id").primaryKey(),
@@ -104,7 +126,13 @@ export const userReviews = pgTable("user_reviews", {
   reviewType: text("review_type").notNull(), // buyer_review_seller, seller_review_buyer
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at"),
-});
+}, (table) => ({
+  reviewerIdx: index("user_reviews_reviewer_id_idx").on(table.reviewerId),
+  userIdx: index("user_reviews_user_id_idx").on(table.userId),
+  contactRequestIdx: index("user_reviews_contact_request_id_idx").on(table.contactRequestId),
+  ratingIdx: index("user_reviews_rating_idx").on(table.rating),
+  createdAtIdx: index("user_reviews_created_at_idx").on(table.createdAt),
+}));
 
 // Ticket viewing history table
 export const ticketViews = pgTable("ticket_views", {
@@ -112,7 +140,11 @@ export const ticketViews = pgTable("ticket_views", {
   userId: integer("user_id").notNull(),
   ticketId: integer("ticket_id").notNull(),
   viewedAt: timestamp("viewed_at").notNull().defaultNow(),
-});
+}, (table) => ({
+  userIdx: index("ticket_views_user_id_idx").on(table.userId),
+  ticketIdx: index("ticket_views_ticket_id_idx").on(table.ticketId),
+  viewedAtIdx: index("ticket_views_viewed_at_idx").on(table.viewedAt),
+}));
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
