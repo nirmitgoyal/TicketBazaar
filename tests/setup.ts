@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { server } from "./mocks/server.js";
+import { server } from "./mocks/server";
 import { afterAll, afterEach, beforeAll } from "@jest/globals";
 import { TextDecoder, TextEncoder } from "util";
 
