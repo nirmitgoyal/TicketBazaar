@@ -89,13 +89,13 @@ async function demonstrateTestSuite() {
   await simulateTest('✓ should handle map-based ticket discovery', 2678);
   await simulateTest('✓ should track user journey analytics events', 1789);
   
-  // Performance and Accessibility Tests
-  console.log('9️⃣ PERFORMANCE & ACCESSIBILITY TESTS');
-  console.log('   Testing Core Web Vitals, screen readers, keyboard navigation');
-  await simulateTest('✓ should meet core web vitals performance benchmarks', 2456);
+  // Accessibility Tests
+  console.log('9️⃣ ACCESSIBILITY COMPLIANCE TESTS');
+  console.log('   Testing screen readers, keyboard navigation, focus management');
   await simulateTest('✓ should be accessible to screen readers', 1678);
   await simulateTest('✓ should support keyboard navigation', 1345);
-  await simulateTest('✓ should handle slow network conditions gracefully', 3234);
+  await simulateTest('✓ should handle focus management properly', 1567);
+  await simulateTest('✓ should have proper color contrast ratios', 1234);
   
   // Cross-Browser Compatibility Tests
   console.log('🔟 CROSS-BROWSER COMPATIBILITY TESTS');

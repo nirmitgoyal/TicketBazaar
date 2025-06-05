@@ -12,7 +12,7 @@ I have successfully integrated the comprehensive end-to-end test suite into a ro
 - Unit and integration testing with PostgreSQL
 - Cross-browser E2E testing (Chrome, Firefox, Safari)
 - Mobile device testing (iOS Safari, Android Chrome)
-- Performance and accessibility validation
+- Accessibility compliance validation
 - Build verification and artifact management
 
 **PR Validation Workflow (`pr-validation.yml`)**
@@ -71,7 +71,7 @@ I have successfully integrated the comprehensive end-to-end test suite into a ro
 - TypeScript compilation validation
 - Unit test coverage requirements
 - Security vulnerability scanning
-- Performance benchmark compliance
+- Accessibility compliance validation
 - Mobile compatibility verification
 
 **Security Features**
@@ -129,7 +129,7 @@ I have successfully integrated the comprehensive end-to-end test suite into a ro
 - All 10 E2E test suites integrated
 - Cross-browser compatibility validation
 - Mobile and desktop device testing
-- Performance and accessibility compliance
+- Accessibility compliance
 
 ### CI/CD Best Practices
 - Parallel execution for efficiency
