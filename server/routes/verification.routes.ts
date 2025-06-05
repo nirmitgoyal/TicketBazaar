@@ -76,12 +76,132 @@ router.get('/comprehensive/:ticketId', async (req, res) => {
       });
     }
 
-    const comprehensiveResult = await storage.getComprehensiveVerification(ticketId);
+    // Get ticket details first
+    const ticket = await storage.getTicket(ticketId);
+    if (!ticket) {
+      return res.status(404).json({
+        success: false,
+        message: 'Ticket not found'
+      });
+    }
+
+    // Call Perplexity API directly for real verification
+    const perplexityApiKey = process.env.PERPLEXITY_API_KEY;
+    if (!perplexityApiKey) {
+      return res.status(500).json({
+        success: false,
+        message: 'Perplexity API key not configured'
+      });
+    }
+
+    const messages = [
+      {
+        role: 'system',
+        content: 'You are an expert event verification specialist. Analyze events for authenticity and provide detailed verification results. Respond with valid JSON only.'
+      },
+      {
+        role: 'user',
+        content: `Verify this event for authenticity:
+
+Event: ${ticket.eventTitle}
+Venue: ${ticket.venue}
+Date: ${ticket.eventDate}
+City: ${ticket.city}
+Category: ${ticket.category}
+Price: ₹${ticket.price}
+Section: ${ticket.section}
+
+Analyze:
+1. Event legitimacy and current status
+2. Venue authenticity
+3. Pricing reasonableness
+4. Date validity
+
+Respond with JSON:
+{
+  "isVerified": boolean,
+  "confidence": number (0-100),
+  "fraudRisk": "low|medium|high",
+  "eventAnalysis": "brief analysis",
+  "pricingAnalysis": "price assessment",
+  "recommendations": ["safety tip 1", "safety tip 2"]
+}`
+      }
+    ];
+
+    const perplexityResponse = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${perplexityApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-sonar-small-128k-online',
+        messages,
+        max_tokens: 500,
+        temperature: 0.2,
+        top_p: 0.9,
+        search_recency_filter: 'month',
+      }),
+    });
+
+    if (!perplexityResponse.ok) {
+      throw new Error(`Perplexity API error: ${perplexityResponse.status}`);
+    }
+
+    const perplexityData = await perplexityResponse.json();
+    const aiResponse = perplexityData.choices[0]?.message?.content || '{}';
+    
+    // Extract JSON from response
+    const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+    let verificationResult;
+    
+    if (jsonMatch) {
+      try {
+        verificationResult = JSON.parse(jsonMatch[0]);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        throw new Error('Invalid AI response format');
+      }
+    } else {
+      throw new Error('No JSON found in AI response');
+    }
+
+    // Structure the response to match frontend expectations
+    const comprehensiveResult = {
+      ticket,
+      verification: {
+        overall: {
+          isVerified: verificationResult.isVerified || false,
+          confidence: verificationResult.confidence || 0,
+          fraudRisk: verificationResult.fraudRisk || 'high',
+          reasons: [verificationResult.eventAnalysis || 'Analysis unavailable']
+        },
+        event: { 
+          confidence: verificationResult.confidence || 0,
+          analysis: verificationResult.eventAnalysis
+        },
+        seller: { 
+          confidence: Math.max(0, (verificationResult.confidence || 0) - 10)
+        },
+        pricing: { 
+          confidence: verificationResult.confidence || 0,
+          analysis: verificationResult.pricingAnalysis
+        }
+      },
+      recommendations: verificationResult.recommendations || [
+        'Verify event details independently',
+        'Check seller credentials',
+        'Use secure payment methods'
+      ],
+      sources: perplexityData.citations || []
+    };
     
     res.json({
       success: true,
       data: comprehensiveResult
     });
+    
   } catch (error) {
     console.error('Comprehensive verification error:', error);
     res.status(500).json({

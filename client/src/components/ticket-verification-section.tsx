@@ -16,7 +16,6 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
   const handleVerify = async () => {
     setIsVerifying(true);
     try {
-      // Call Perplexity API directly for verification
       const response = await fetch('/api/verification/comprehensive/' + ticket.id);
       
       if (response.ok) {
@@ -24,50 +23,14 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
         if (data.success) {
           setVerificationResult(data.data);
         } else {
-          // Mock verification result for demonstration
-          setVerificationResult({
-            verification: {
-              overall: {
-                isVerified: false,
-                confidence: 25,
-                fraudRisk: 'high',
-                reasons: ['Event date has passed', 'Unable to verify current availability']
-              },
-              event: { confidence: 20 },
-              seller: { confidence: 35 },
-              pricing: { confidence: 30 }
-            },
-            recommendations: [
-              'Exercise extreme caution with this listing',
-              'Verify seller identity before purchase',
-              'Check official sources for event status'
-            ]
-          });
+          throw new Error(data.message || 'Verification failed');
         }
       } else {
         throw new Error('API request failed');
       }
     } catch (error) {
       console.error('Verification error:', error);
-      // Show demo verification for user testing
-      setVerificationResult({
-        verification: {
-          overall: {
-            isVerified: false,
-            confidence: 25,
-            fraudRisk: 'high',
-            reasons: ['Unable to verify due to technical issues']
-          },
-          event: { confidence: 20 },
-          seller: { confidence: 35 },
-          pricing: { confidence: 30 }
-        },
-        recommendations: [
-          'Verification temporarily unavailable',
-          'Exercise caution when purchasing',
-          'Verify details manually before proceeding'
-        ]
-      });
+      setVerificationResult(null);
     } finally {
       setIsVerifying(false);
     }
