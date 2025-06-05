@@ -8,6 +8,7 @@ import {
   timestamp,
   doublePrecision,
   primaryKey,
+  index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
@@ -24,7 +25,10 @@ export const users = pgTable("users", {
   rating: doublePrecision("rating").default(0),
   ratingsCount: integer("ratings_count").default(0),
   preferredContactMethod: text("preferred_contact_method").default("whatsapp"), // whatsapp, phone, email
-});
+}, (table) => ({
+  emailIdx: index("users_email_idx").on(table.email),
+  ratingIdx: index("users_rating_idx").on(table.rating),
+}));
 
 // Pure P2P ticket listings with embedded event information
 export const tickets = pgTable("tickets", {
