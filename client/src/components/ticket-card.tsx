@@ -1,7 +1,9 @@
 import { Link } from "wouter";
+import { useState } from "react";
 import { formatDistanceToNow, format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { Ticket as TicketIcon, MapPin, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Ticket as TicketIcon, MapPin, Calendar, Shield } from "lucide-react";
 import { Ticket as TicketType } from "@shared/schema";
 import { motion } from "framer-motion";
 import {
@@ -13,6 +15,8 @@ import {
 } from "@/lib/animations";
 import { useAtmosphereContext } from "@/contexts/AtmosphereContext";
 import { useSoundEffects } from "@/lib/sound-effects";
+import { VerificationBadge } from "./verification-badge";
+import { VerificationModal } from "./verification-modal";
 
 interface TicketCardProps {
   event: TicketType;
@@ -28,6 +32,7 @@ export function TicketCard({
   const { id, eventTitle: title, venue, eventDate: date, eventImageUrl: imageUrl, trending, sellingFast } = event;
   const { setActiveEvent } = useAtmosphereContext();
   const { playTicketHover, playButtonHover, playClick } = useSoundEffects();
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const formatDate = (date: Date | string) => {
     try {
@@ -193,7 +198,43 @@ export function TicketCard({
             </motion.div>
           )}
         </div>
+        
+        {/* Verification Section */}
+        <motion.div
+          className="mt-4 pt-3 border-t border-gray-200"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 + index * 0.05 }}
+        >
+          <div className="flex items-center justify-between">
+            <VerificationBadge 
+              status="unverified" 
+              size="sm"
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowVerificationModal(true);
+                playClick();
+              }}
+              onMouseEnter={handleButtonHover}
+              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            >
+              <Shield className="h-4 w-4 mr-1" />
+              Verify
+            </Button>
+          </div>
+        </motion.div>
       </div>
+      
+      {/* Verification Modal */}
+      <VerificationModal
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        ticket={event}
+      />
     </motion.div>
   );
 }
