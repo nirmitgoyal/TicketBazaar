@@ -1,6 +1,6 @@
 # TicketBazaar - Peer-to-Peer Ticket Marketplace
 
-A cutting-edge peer-to-peer ticket resale platform for the Indian market, enabling direct user connections and seamless event discovery across major metropolitan cities.
+A cutting-edge peer-to-peer ticket resale platform for the Indian market, delivering an engaging and accessible event discovery experience across major metropolitan cities.
 
 ## 🌟 Project Overview
 
@@ -140,28 +140,31 @@ TicketBazaar revolutionizes ticket reselling in India by eliminating traditional
 
 ### Frontend Architecture
 ```
-React 18 + TypeScript
-├── State Management: React Query + Context API
-├── Styling: Tailwind CSS + Framer Motion
+React 18 + TypeScript + Vite
+├── State Management: TanStack React Query + Context API
+├── Styling: Tailwind CSS + Framer Motion + shadcn/ui
 ├── Routing: Wouter (lightweight React router)
 ├── Forms: React Hook Form + Zod validation
-├── UI Components: Radix UI + shadcn/ui
+├── UI Components: Complete Radix UI ecosystem
 ├── Maps: @react-google-maps/api
-├── Analytics: Firebase Analytics
-└── Real-time: WebSocket client
+├── Audio: Custom hover music system
+├── SEO: React Helmet for meta management
+└── Real-time: WebSocket client with reconnection
 ```
 
 ### Backend Architecture
 ```
-Node.js + Express + TypeScript
-├── Database: PostgreSQL + Drizzle ORM
-├── Authentication: Passport.js + Google OAuth
+Node.js 22 + Express + TypeScript + TSX
+├── Database: PostgreSQL (NeonDB) + Drizzle ORM
+├── Authentication: Passport.js (Local + Google OAuth ready)
 ├── Session Management: express-session + connect-pg-simple
 ├── WebSocket: ws library for real-time communication
 ├── File Upload: Multer for image handling
-├── Validation: Zod schemas throughout
+├── Validation: Zod schemas with drizzle-zod
 ├── Error Handling: Centralized error middleware
-└── Testing: Jest + Supertest
+├── AI Integration: OpenAI for search hints
+├── Payment Ready: Stripe + Razorpay integration
+└── Testing: Jest with TypeScript support
 ```
 
 ### Database Schema
@@ -306,58 +309,80 @@ P2P Communication Flow:
 client/src/
 ├── components/
 │   ├── ui/                          # Base UI components (shadcn/ui)
-│   │   ├── button.tsx              # Customizable button component
-│   │   ├── input.tsx               # Form input with validation
-│   │   ├── card.tsx                # Content container component
-│   │   ├── dialog.tsx              # Modal dialog system
-│   │   └── toast.tsx               # Notification system
+│   │   └── [Radix UI components]    # Complete shadcn/ui component library
 │   │
-│   ├── ticket-card.tsx             # Individual ticket display
-│   ├── event-card.tsx              # Event information layout
-│   ├── venue-map.tsx               # Google Maps integration
-│   ├── ticket-heatmap.tsx          # Seat availability visualization
-│   ├── seller-contact-card.tsx     # Seller profile information
-│   ├── search-bar.tsx              # Intelligent search interface
+│   ├── app-sidebar.tsx             # Application sidebar navigation
+│   ├── canonical-url-manager.tsx   # SEO URL management
+│   ├── contact-request-modal.tsx   # P2P communication interface
+│   ├── dispute-modal.tsx           # Dispute resolution system
+│   ├── error-boundary.tsx          # Error boundary wrapper
+│   ├── event-atmosphere.tsx        # Dynamic event theming
+│   ├── event-card.tsx              # Event information display
+│   ├── event-recommendations.tsx   # AI-powered recommendations
 │   ├── filter-dropdown.tsx         # Advanced filtering options
+│   ├── helmet-manager.tsx          # SEO meta tag management
+│   ├── mobile-nav.tsx              # Mobile navigation menu
+│   ├── pull-to-refresh.tsx         # Mobile pull-to-refresh
 │   ├── real-time-notifications.tsx # WebSocket notifications
+│   ├── search-bar.tsx              # Intelligent search interface
+│   ├── search-hints.tsx            # AI search suggestions
+│   ├── seller-contact-card.tsx     # Seller profile information
+│   ├── seller-profile-modal.tsx    # Detailed seller profiles
+│   ├── seo.tsx                     # SEO optimization component
 │   ├── social-share.tsx            # Social media sharing
-│   └── mobile-nav.tsx              # Mobile navigation menu
+│   ├── ticket-card.tsx             # Individual ticket display
+│   ├── ticket-comparison.tsx       # Ticket comparison tool
+│   ├── ticket-detail-modal.tsx     # Detailed ticket view
+│   ├── ticket-heatmap.tsx          # Seat availability visualization
+│   ├── ticket-verification.tsx     # Ticket validation system
+│   └── venue-map.tsx               # Google Maps integration
 │
 ├── pages/
-│   ├── home.tsx                    # Main marketplace dashboard
+│   ├── complete-profile.tsx        # Profile completion flow
+│   ├── data-deletion.tsx           # GDPR data deletion
 │   ├── event-details.tsx           # Detailed event information
 │   ├── event-map.tsx               # Map-based event discovery
+│   ├── home.tsx                    # Main marketplace dashboard
 │   ├── list-ticket.tsx             # Ticket creation form
-│   ├── my-tickets.tsx              # User's ticket management
-│   ├── profile.tsx                 # User profile & settings
-│   ├── complete-profile.tsx        # Profile completion flow
-│   ├── ticket-verification.tsx     # Ticket validation page
 │   ├── login.tsx                   # Authentication page
-│   ├── register.tsx                # User registration
+│   ├── map.tsx                     # Interactive map view
+│   ├── my-tickets.tsx              # User's ticket management
+│   ├── not-found.tsx               # 404 error page
 │   ├── privacy-policy.tsx          # Privacy policy page
-│   └── terms-of-service.tsx        # Terms of service
+│   ├── profile.tsx                 # User profile & settings
+│   ├── register.tsx                # User registration
+│   ├── terms-of-service.tsx        # Terms of service
+│   └── ticket-verification.tsx     # Ticket validation page
 │
 ├── hooks/
+│   ├── use-analytics.tsx           # Firebase analytics
 │   ├── use-auth.tsx                # Authentication state management
-│   ├── use-websocket.tsx           # Real-time communication
+│   ├── use-canonical-url.tsx       # SEO URL management
+│   ├── use-error-handler.ts        # Global error handling
+│   ├── use-mobile.tsx              # Mobile device detection
 │   ├── use-search-hints.ts         # AI-powered search suggestions
 │   ├── use-ticket-view.ts          # User analytics tracking
-│   ├── use-mobile.tsx              # Mobile device detection
-│   ├── use-analytics.tsx           # Firebase analytics
-│   └── use-error-handler.ts        # Global error handling
+│   ├── use-toast.ts                # Toast notification system
+│   ├── use-websocket.tsx           # Real-time communication
+│   ├── useEventAtmosphere.ts       # Event atmosphere management
+│   └── useHoverMusic.ts            # Audio hover effects
 │
 ├── contexts/
-│   ├── AtmosphereContext.tsx       # Event atmosphere & theming
-│   └── AuthContext.tsx             # User authentication state
+│   └── AtmosphereContext.tsx       # Event atmosphere & theming
 │
 ├── lib/
-│   ├── api.ts                      # HTTP client configuration
 │   ├── animations.ts               # Framer Motion animation presets
+│   ├── api.ts                      # HTTP client configuration
+│   ├── google-maps-config.ts       # Google Maps configuration
+│   ├── protected-route.tsx         # Route protection component
 │   ├── queryClient.ts              # React Query configuration
-│   ├── utils.ts                    # Utility functions
 │   ├── socket-fix.ts               # WebSocket connection utilities
-│   ├── firebase.ts                 # Firebase configuration
-│   └── protected-route.tsx         # Route protection component
+│   ├── sound-effects.ts            # Audio effect management
+│   └── utils.ts                    # Utility functions
+│
+├── utils/
+│   ├── console-filter.ts           # Development console filtering
+│   └── logger.ts                   # Application logging
 │
 └── assets/
     ├── instagram-logo.png          # Brand assets
@@ -368,6 +393,7 @@ client/src/
 ```
 server/
 ├── routes/
+│   ├── routes.ts                   # Main route registration
 │   ├── auth.routes.ts              # Authentication endpoints
 │   ├── event.routes.ts             # Event management API
 │   ├── ticket.routes.ts            # Ticket CRUD operations
@@ -376,14 +402,18 @@ server/
 │   ├── search-hints.ts             # AI search suggestion API
 │   ├── data-privacy.ts             # GDPR compliance endpoints
 │   ├── ticket-views.ts             # Analytics tracking
-│   └── recommendations.ts          # Event recommendation engine
+│   ├── recommendations.ts          # Event recommendation engine
+│   ├── health.routes.ts            # Health check endpoints
+│   ├── sitemap.ts                  # SEO sitemap generation
+│   └── index.ts                    # Route exports
 │
 ├── controllers/
 │   ├── base.controller.ts          # Base controller with common methods
 │   ├── user.controller.ts          # User management operations
 │   ├── event.controller.ts         # Event business logic
 │   ├── ticket.controller.ts        # Ticket operations & validation
-│   └── review.controller.ts        # Review system management
+│   ├── review.controller.ts        # Review system management
+│   └── index.ts                    # Controller exports
 │
 ├── services/
 │   ├── event.service.ts            # Event data processing
@@ -391,18 +421,27 @@ server/
 │   ├── user.service.ts             # User profile management
 │   ├── websocket.service.ts        # Real-time messaging service
 │   ├── ai-search-hints.service.ts  # AI-powered search
-│   └── error.service.ts            # Error handling service
+│   ├── review.service.ts           # Review system service
+│   ├── error.service.ts            # Error handling service
+│   └── index.ts                    # Service exports
 │
 ├── middleware/
 │   ├── auth.middleware.ts          # Authentication verification
 │   ├── validation.middleware.ts    # Request validation with Zod
 │   └── error.middleware.ts         # Global error handling
 │
+├── utils/
+│   ├── utils.ts                    # Server utilities
+│   └── logger.ts                   # Logging utilities
+│
 ├── auth.ts                         # Passport.js configuration
 ├── storage.ts                      # Database abstraction layer
 ├── db.ts                           # Database connection
 ├── event-fetcher.ts                # External event data fetching
-└── vite.ts                         # Development server setup
+├── vite.ts                         # Development server setup
+├── index.ts                        # Main server entry point
+├── production.ts                   # Production configuration
+└── production-index.ts             # Production server entry
 ```
 
 ## 📊 Database Schema Deep Dive
@@ -817,25 +856,19 @@ npm run dev
 ### Development Scripts
 ```bash
 # Core development commands
-npm run dev              # Start development server
+npm run dev              # Start development server (tsx server/index.ts)
 npm run build           # Build for production
-npm run preview         # Preview production build
+npm run start           # Start production server
 
 # Database management
-npm run db:push         # Push schema changes
-npm run db:studio       # Open Drizzle Studio
-npm run db:migrate      # Run migrations
-npm run db:seed         # Seed sample data
-
-# Code quality
-npm run lint            # ESLint checking
-npm run format          # Prettier formatting
-npm run type-check      # TypeScript validation
+npm run db:push         # Push schema changes to database
+npm run check           # TypeScript type checking
 
 # Testing
-npm run test            # Run all tests
-npm run test:watch      # Watch mode testing
-npm run test:coverage   # Coverage reports
+npm test                # Run Jest tests
+
+# Production deployment
+npm run heroku-postbuild # Heroku build process
 ```
 
 ## 🔒 Security & Privacy Features
