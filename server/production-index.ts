@@ -16,6 +16,25 @@ import http from 'http';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Environment validation for production
+function validateEnvironment() {
+  const required = ['DATABASE_URL'];
+  const missing = required.filter(key => !process.env[key]);
+  
+  if (missing.length > 0) {
+    console.error(`❌ Missing required environment variables: ${missing.join(', ')}`);
+    console.error('Please ensure all required environment variables are set before deployment.');
+    process.exit(1);
+  }
+  
+  console.log('✅ Environment validation passed');
+}
+
+// Run environment validation in production
+if (process.env.NODE_ENV === 'production') {
+  validateEnvironment();
+}
+
 const app = express();
 const server = http.createServer(app);
 
@@ -100,35 +119,112 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Register routes
-  await registerRoutes(app);
+  try {
+    // Register routes with error handling
+    console.log('🔧 Registering routes...');
+    await registerRoutes(app);
 
-  // Set up production static file serving
-  setupProduction(app);
+    // Set up production static file serving
+    console.log('📁 Setting up static file serving...');
+    setupProduction(app);
 
-  // Global error handler
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    // Global error handler
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
 
-    res.status(status).json({
-      success: false,
-      message,
-      status,
+      res.status(status).json({
+        success: false,
+        message,
+        status,
+      });
+
+      console.error("Server error:", err);
     });
 
-    console.error("Server error:", err);
-  });
+    // Error handling middleware
+    app.use(errorHandler);
 
-  // Error handling middleware
-  app.use(errorHandler);
+    // Setup WebSocket with error handling
+    console.log('🔌 Setting up WebSocket...');
+    try {
+      setupWebSocket(server);
+    } catch (wsError) {
+      console.warn('⚠️ WebSocket setup failed, continuing without WebSocket support:', wsError instanceof Error ? wsError.message : String(wsError));
+    }
 
-  // Setup WebSocket
-  setupWebSocket(server);
+    const PORT = parseInt(process.env.PORT || '5000', 10);
+    const HOST = process.env.HOST || '0.0.0.0';
 
-  const PORT = parseInt(process.env.PORT || '5000', 10);
+    // Add server error handling to prevent crash loops
+    server.on('error', (error: any) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${PORT} is already in use. Trying alternative port...`);
+        const altPort = PORT + 1;
+        server.listen(altPort, HOST, () => {
+          console.log(`🚀 Production server running on ${HOST}:${altPort} (alternative port)`);
+        });
+      } else {
+        console.error('❌ Server error:', error);
+        process.exit(1);
+      }
+    });
 
-  server.listen(PORT, () => {
-    console.log(`🚀 Production server running on port ${PORT}`);
-  });
+    server.listen(PORT, HOST, () => {
+      console.log(`🚀 Production server running on ${HOST}:${PORT}`);
+      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`Database URL configured: ${process.env.DATABASE_URL ? 'Yes' : 'No'}`);
+      
+      // Health check endpoint
+      app.get('/health', (_req, res) => {
+        res.status(200).json({ 
+          status: 'healthy', 
+          timestamp: new Date().toISOString(),
+          port: PORT,
+          host: HOST
+        });
+      });
+    });
+
+  } catch (startupError) {
+    console.error('❌ Failed to start production server:', startupError);
+    console.error('Stack trace:', startupError.stack);
+    process.exit(1);
+  }
 })();
+
+// Graceful shutdown handling
+function gracefulShutdown(signal: string) {
+  console.log(`\n🛑 Received ${signal}. Starting graceful shutdown...`);
+  
+  server.close((err) => {
+    if (err) {
+      console.error('❌ Error during server shutdown:', err);
+      process.exit(1);
+    }
+    
+    console.log('✅ Server closed successfully');
+    process.exit(0);
+  });
+  
+  // Force close after 10 seconds
+  setTimeout(() => {
+    console.error('⚠️ Forced shutdown after timeout');
+    process.exit(1);
+  }, 10000);
+}
+
+// Handle process signals
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught exceptions and unhandled rejections
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  gracefulShutdown('uncaughtException');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  gracefulShutdown('unhandledRejection');
+});

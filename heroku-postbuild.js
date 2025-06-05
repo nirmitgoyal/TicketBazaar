@@ -12,6 +12,16 @@ try {
   // Install all dependencies (including dev dependencies for build tools)
   console.log('📦 Installing dependencies...');
   execSync('npm ci', { stdio: 'inherit' });
+  
+  // Verify critical dependencies are installed
+  console.log('🔍 Verifying OAuth dependencies...');
+  try {
+    execSync('node -e "require(\'passport-google-oauth20\')"', { stdio: 'inherit' });
+    console.log('✅ passport-google-oauth20 dependency verified');
+  } catch (depError) {
+    console.warn('⚠️ passport-google-oauth20 not found, installing...');
+    execSync('npm install passport-google-oauth20', { stdio: 'inherit' });
+  }
 
   // Push database schema using npx to ensure drizzle-kit is available
   console.log('🗄️ Setting up database...');
