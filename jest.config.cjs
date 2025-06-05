@@ -9,6 +9,7 @@ module.exports = {
       "ts-jest",
       {
         useESM: true,
+        isolatedModules: true,
         tsconfig: "tsconfig.json",
       },
     ],
@@ -51,9 +52,4 @@ module.exports = {
   verbose: true,
   moduleDirectories: ["node_modules", "<rootDir>"],
   watchPathIgnorePatterns: ["node_modules"],
-  globals: {
-    "ts-jest": {
-      isolatedModules: true,
-    },
-  },
 };

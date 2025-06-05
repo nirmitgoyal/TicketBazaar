@@ -97,11 +97,11 @@ describe("Authentication API Integration Tests", () => {
 
   test("should return 401 when not authenticated", async () => {
     // Set up the mock server to return not authenticated for this test
-    server.use((req, res, ctx) => {
-      if (req.url.pathname === "/api/auth/user") {
+    server.use(
+      rest.get("/api/auth/user", (req, res, ctx) => {
         return res(ctx.status(401), ctx.json({ message: "Not authenticated" }));
-      }
-    });
+      })
+    );
 
     const response = await fetch(`${API_BASE_URL}/auth/user`, {
       method: "GET",
