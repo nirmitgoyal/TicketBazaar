@@ -3,9 +3,9 @@ import { server } from "./mocks/server.js";
 import { afterAll, afterEach, beforeAll } from "@jest/globals";
 import { TextDecoder, TextEncoder } from "util";
 
-// Add TextDecoder/TextEncoder to global
-global.TextDecoder = TextDecoder;
-global.TextEncoder = TextEncoder;
+// Add TextDecoder/TextEncoder to global with proper type casting
+global.TextDecoder = TextDecoder as any;
+global.TextEncoder = TextEncoder as any;
 
 // Establish API mocking before all tests
 beforeAll(() => server.listen({ onUnhandledRequest: "warn" }));
