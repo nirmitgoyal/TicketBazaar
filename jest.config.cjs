@@ -27,10 +27,10 @@ module.exports = {
   testPathIgnorePatterns: [
     "/node_modules/",
     "/tests/e2e/",
-    "**/*.spec.ts",
-    "**/playwright*",
-    "**/test-results/",
-    "**/coverage/"
+    "\\.spec\\.ts$",
+    "playwright",
+    "/test-results/",
+    "/coverage/"
   ],
   setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
   collectCoverage: true,
