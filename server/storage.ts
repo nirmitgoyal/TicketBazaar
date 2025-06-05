@@ -220,16 +220,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getEventTickets(eventTitle: string): Promise<Ticket[]> {
-    return await db.select().from(tickets).where(eq(tickets.eventTitle, eventTitle));
+    return await db.select().from(tickets)
+      .where(eq(tickets.eventTitle, eventTitle))
+      .orderBy(desc(tickets.price))
+      .limit(20);
   }
 
   async getAllEvents(): Promise<Ticket[]> {
-    // Return all tickets (which contain embedded event data)
-    return await db.select().from(tickets).orderBy(desc(tickets.eventDate));
+    // Return all tickets (which contain embedded event data) with pagination limit
+    return await db.select().from(tickets).orderBy(desc(tickets.eventDate)).limit(100);
   }
 
   async getEventsByCategory(category: string): Promise<Ticket[]> {
-    return await db.select().from(tickets).where(eq(tickets.category, category));
+    return await db.select().from(tickets)
+      .where(eq(tickets.category, category))
+      .orderBy(desc(tickets.eventDate))
+      .limit(50);
   }
 
   async searchEvents(

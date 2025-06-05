@@ -65,7 +65,9 @@ export function SocialShare({
         duration: 2000,
       });
     } catch (err) {
-      console.error("Failed to copy: ", err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Failed to copy: ", err);
+      }
       toast({
         title: "Error",
         description: "Failed to copy link",

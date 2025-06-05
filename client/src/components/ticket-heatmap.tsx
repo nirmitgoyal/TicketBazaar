@@ -40,10 +40,16 @@ export function TicketHeatMap({ eventId }: { eventId: number }) {
 
   // For debugging
   useEffect(() => {
-    console.log("TicketHeatMap rendering with eventId:", eventId);
-    console.log("Heat map data:", heatMapData);
-    console.log("Loading:", isLoading);
-    console.log("Error:", error);
+    if (process.env.NODE_ENV === 'development') {
+      console.log("TicketHeatMap rendering with eventId:", eventId);
+    }
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Heat map data:", heatMapData);
+    }
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Loading:", isLoading);
+      console.log("Error:", error);
+    }
   }, [eventId, heatMapData, isLoading, error]);
 
   // Auto-scroll to map when expanded

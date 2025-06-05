@@ -49,7 +49,9 @@ export function TicketDetailModal({
       const sellerPromises = sellerIds.map(async (sellerId) => {
         const response = await fetch(`/api/auth/users/${sellerId}`);
         if (!response.ok) {
-          console.error(`Error fetching seller ${sellerId}:`, response.status);
+          if (process.env.NODE_ENV === 'development') {
+            console.error(`Error fetching seller ${sellerId}:`, response.status);
+          }
           return null;
         }
         const seller = await response.json();
