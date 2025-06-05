@@ -149,7 +149,7 @@ app.use((req, res, next) => {
     console.log('🔌 Setting up WebSocket...');
     try {
       setupWebSocket(server);
-    } catch (wsError) {
+    } catch (wsError: unknown) {
       console.warn('⚠️ WebSocket setup failed, continuing without WebSocket support:', wsError instanceof Error ? wsError.message : String(wsError));
     }
 
@@ -188,7 +188,7 @@ app.use((req, res, next) => {
 
   } catch (startupError) {
     console.error('❌ Failed to start production server:', startupError);
-    console.error('Stack trace:', startupError.stack);
+    console.error('Stack trace:', startupError instanceof Error ? startupError.stack : String(startupError));
     process.exit(1);
   }
 })();
