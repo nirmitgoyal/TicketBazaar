@@ -7,20 +7,8 @@ set -e  # Exit on any error
 
 echo "Starting deployment process..."
 
-# Skip dependency installation in development environment
-# Dependencies are already available
-echo "Skipping dependency installation (already available)..."
-
-# Database setup - push schema changes
-echo "Setting up database schema..."
-if npm run db:push; then
-    echo "Database schema updated successfully"
-else
-    echo "Database setup failed, continuing with build..."
-fi
-
-# Build the frontend and server
-echo "Building application..."
+# Use the existing package.json build script which works correctly
+echo "Building application using npm build script..."
 npm run build
 
 # Verify build output exists
