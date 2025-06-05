@@ -68,14 +68,7 @@ export function TicketHeatMap({ eventId }: { eventId: number }) {
     return popularity >= 60 ? "text-white" : "text-gray-900";
   };
 
-  // Format the price to INR
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
+
 
   if (isLoading) {
     return (
@@ -119,7 +112,7 @@ export function TicketHeatMap({ eventId }: { eventId: number }) {
           </Button>
         </h3>
         <p className="text-textSecondary text-sm mt-1">
-          See real-time seat availability and average prices
+          See real-time seat availability and demand
         </p>
       </div>
 
@@ -174,9 +167,6 @@ export function TicketHeatMap({ eventId }: { eventId: number }) {
                         {section.availableTickets} of {section.totalTickets}{" "}
                         tickets available
                       </div>
-                      <div className="font-medium mt-2">
-                        Avg. price: {formatPrice(section.averagePrice)}
-                      </div>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -187,7 +177,6 @@ export function TicketHeatMap({ eventId }: { eventId: number }) {
                         Tickets: {section.availableTickets}/
                         {section.totalTickets} available
                       </p>
-                      <p>Avg price: {formatPrice(section.averagePrice)}</p>
                     </div>
                   </TooltipContent>
                 </Tooltip>

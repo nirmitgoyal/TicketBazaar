@@ -3,7 +3,7 @@ import { LoadScript } from "@react-google-maps/api";
 import { VenueMap } from "@/components/venue-map";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, Users, IndianRupee } from "lucide-react";
+import { MapPin, Calendar, Users } from "lucide-react";
 import { SEOManager } from "@/components/helmet-manager";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
@@ -69,7 +69,6 @@ export default function MapPage() {
     venueAddress: event.venueAddress,
     latitude: event.latitude!,
     longitude: event.longitude!,
-    price: event.price,
     category: event.category,
   })) || [];
 
@@ -147,11 +146,11 @@ export default function MapPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
-                <IndianRupee className="h-5 w-5 text-yellow-600" />
+                <Users className="h-5 w-5 text-purple-600" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Avg. Price</p>
+                  <p className="text-sm text-muted-foreground">Available Tickets</p>
                   <p className="text-2xl font-bold">
-                    ₹{Math.round((events?.reduce((sum, e) => sum + e.price, 0) || 0) / (events?.length || 1))}
+                    {events?.reduce((sum, e) => sum + e.quantity, 0) || 0}
                   </p>
                 </div>
               </div>
@@ -215,8 +214,7 @@ export default function MapPage() {
                         </div>
                       </div>
 
-                      <div className="flex justify-between items-center pt-2">
-                        <span className="font-bold text-lg">₹{event.price}</span>
+                      <div className="flex justify-end items-center pt-2">
                         <Badge variant={event.status === "available" ? "default" : "secondary"}>
                           {event.status}
                         </Badge>
