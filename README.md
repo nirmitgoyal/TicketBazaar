@@ -769,61 +769,84 @@ WHATSAPP_BUSINESS_ACCOUNT_ID=your-whatsapp-business-account-id
 | `WHATSAPP_PHONE_NUMBER_ID`     | WhatsApp phone number ID     |
 | `WHATSAPP_BUSINESS_ACCOUNT_ID` | WhatsApp business account ID |
 
-## 🧪 Testing & Quality Assurance
+## 🧪 Testing & Development Scripts
 
-### Testing Strategy
+### Available Scripts
 ```bash
-# Run all tests
-npm test
+# Core development
+npm run dev              # Start development server with hot reload
+npm run build           # Build production bundle
+npm run start           # Start production server
+npm run check           # TypeScript type checking
 
-# Run tests with coverage
-npm run test:coverage
+# Database operations
+npm run db:push         # Push schema changes to database
 
-# Run specific test suites
-npm run test:unit          # Unit tests
-npm run test:integration   # Integration tests
-npm run test:e2e          # End-to-end tests
+# Testing
+npm test                # Run Jest test suite
 
-# Pre-deployment health checks
-npm run health-check
+# Production deployment
+npm run heroku-postbuild # Heroku production build
 ```
+
+### Testing Framework
+- **Jest**: TypeScript-enabled test runner
+- **Test Environment**: Node.js environment for server-side testing
+- **Setup**: Automated test configuration in tests/setup.ts
+- **Basic Tests**: Component and utility function validation
 
 ### Test Coverage Areas
 ```
-├── Unit Tests (Jest + Testing Library)
-│   ├── Component rendering and behavior
-│   ├── Hook functionality and state management
+├── Basic Tests (Jest)
+│   ├── Component functionality
 │   ├── Utility function validation
-│   ├── API client error handling
-│   └── Form validation logic
+│   ├── API endpoint testing
+│   └── Database operations
 │
-├── Integration Tests (Supertest)
-│   ├── Authentication flow end-to-end
-│   ├── Database operations and migrations
-│   ├── API endpoint functionality
-│   ├── WebSocket connection handling
-│   └── External service integration
+├── Development Testing
+│   ├── Hot reload functionality
+│   ├── TypeScript compilation
+│   ├── Database connectivity
+│   └── Environment validation
 │
-├── End-to-End Tests (Puppeteer)
-│   ├── Complete user registration journey
-│   ├── Ticket listing and discovery flow
-│   ├── P2P communication process
-│   ├── Mobile responsiveness validation
-│   └── Performance benchmarking
-│
-└── Security Tests
-    ├── Input validation and sanitization
-    ├── Authentication bypass attempts
-    ├── SQL injection prevention
-    ├── XSS attack protection
-    └── Rate limiting effectiveness
+└── Manual Testing Areas
+    ├── User authentication flow
+    ├── Ticket listing and discovery
+    ├── P2P communication process
+    ├── Mobile responsiveness
+    └── WebSocket connections
 ```
+
+## 🎵 Unique Features & Innovations
+
+### Audio Experience System
+- **Hover Music**: 5-second audio previews for different event types
+- **Event-Specific Sounds**: Coldplay concerts play Coldplay snippets
+- **Category-Based Audio**: Sports events play stadium atmosphere
+- **Regional Customization**: Mumbai events feature Bollywood music
+
+### Advanced SEO & Performance
+- **Canonical URL Management**: Automated SEO-friendly URL structure
+- **Dynamic Meta Tags**: Event-specific social media previews
+- **Pull-to-Refresh**: Native mobile app experience
+- **Sitemap Generation**: Automated search engine optimization
+
+### Real-Time Communication
+- **WebSocket Integration**: Instant notifications and updates
+- **Connection Recovery**: Automatic reconnection with exponential backoff
+- **Typing Indicators**: Live communication feedback
+- **Presence System**: Online/offline user status
+
+### AI-Powered Features
+- **Smart Search Hints**: OpenAI-powered search suggestions
+- **Event Recommendations**: Machine learning-based event discovery
+- **Dynamic Event Fetching**: Automated event data collection
 
 ## 🔧 Local Development Setup
 
 ### Prerequisites
-- Node.js 18+ 
-- PostgreSQL 13+
+- Node.js 22+
+- PostgreSQL (NeonDB recommended)
 - Git
 
 ### Step-by-Step Setup
@@ -836,21 +859,32 @@ cd ticketbazaar
 npm install
 
 # 3. Set up environment variables
-cp .env.example .env
-# Edit .env with your configuration:
-# - DATABASE_URL for PostgreSQL connection
-# - GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
-# - GOOGLE_MAPS_API_KEY
-# - SESSION_SECRET
+# Create .env with required variables:
+# - DATABASE_URL (PostgreSQL connection string)
+# - SESSION_SECRET (cryptographically secure key)
+# - GOOGLE_MAPS_API_KEY (for maps functionality)
 
-# 4. Initialize database
+# 4. Initialize database schema
 npm run db:push
 
-# 5. Seed sample data (optional)
-npm run seed:realistic-events
-
-# 6. Start development server
+# 5. Start development server
 npm run dev
+
+# The app will be available at http://localhost:5000
+```
+
+### Database Seeding Scripts
+
+The project includes several seeding scripts for populating the database with realistic data:
+
+```bash
+# Available seeding commands (run with tsx)
+tsx scripts/seed-users.ts          # Create sample user accounts
+tsx scripts/seed-realistic-events.ts # Add realistic Indian events
+tsx scripts/seed-tickets.ts         # Generate ticket listings
+tsx scripts/fetch-events.ts         # Fetch events from external sources
+tsx scripts/init-db.ts             # Initialize database tables
+tsx scripts/export-db.ts           # Export database data
 ```
 
 ### Development Scripts
@@ -1081,4 +1115,34 @@ heroku logs --grep="ERROR"
 
 ---
 
-**Built with ❤️ for the Indian market** | **Last Updated**: June 2025
+**Built with ❤️ for the Indian market** | **Last Updated**: December 2024
+
+---
+
+## 📋 Quick Reference
+
+### Essential Commands
+```bash
+npm run dev                    # Start development server
+npm run db:push               # Update database schema
+npm test                      # Run test suite
+npm run build                 # Build for production
+```
+
+### Key Technologies
+- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS
+- **Backend**: Node.js 22 + Express + TSX
+- **Database**: PostgreSQL with Drizzle ORM
+- **UI**: Radix UI + shadcn/ui components
+- **Real-time**: WebSocket communication
+- **Maps**: Google Maps integration
+- **Audio**: Custom hover music system
+
+### Project Highlights
+- Zero-fee peer-to-peer ticket marketplace
+- AI-powered search and recommendations
+- Real-time communication system
+- Mobile-first responsive design
+- Advanced SEO optimization
+- Comprehensive audio experience
+- Indian market optimization
