@@ -145,7 +145,7 @@ test.describe('Interactive Map Functionality', () => {
       await page.waitForTimeout(500);
 
       // Test double tap zoom
-      await mapCanvas.tap({ count: 2 });
+      await mapCanvas.dblclick();
       await page.waitForTimeout(1000);
     }
   });
