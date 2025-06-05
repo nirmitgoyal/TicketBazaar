@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { db } from "../db";
 import { sql } from "drizzle-orm";
-import { events, tickets, users } from "../db";
+import { tickets, users } from "../../shared/schema";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -154,7 +154,6 @@ async function checkDatabasePerformance(): Promise<HealthCheckResult> {
   const startTime = Date.now();
   try {
     // Test query performance with actual tables
-    const [eventCount] = await db.select({ count: sql`count(*)` }).from(events);
     const [userCount] = await db.select({ count: sql`count(*)` }).from(users);
     const [ticketCount] = await db.select({ count: sql`count(*)` }).from(tickets);
     
@@ -165,7 +164,6 @@ async function checkDatabasePerformance(): Promise<HealthCheckResult> {
       status: responseTime < 1000 ? "healthy" : responseTime < 3000 ? "degraded" : "unhealthy",
       responseTime,
       details: {
-        events: eventCount.count,
         users: userCount.count,
         tickets: ticketCount.count
       }
@@ -283,7 +281,7 @@ async function checkCriticalEndpoints(): Promise<HealthCheckResult> {
   const startTime = Date.now();
   try {
     // Test critical database operations
-    await db.select().from(events).limit(1);
+    await db.select().from(tickets).limit(1);
     await db.select().from(users).limit(1);
     
     return {
