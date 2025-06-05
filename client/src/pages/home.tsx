@@ -27,6 +27,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 import { EventSchema } from "@/components/schema/event-schema";
+import { BreadcrumbSchema } from "@/components/schema/breadcrumb-schema";
 
 import { useWebSocket } from "@/hooks/use-websocket";
 
@@ -673,10 +674,9 @@ export default function Home() {
         )}
       </SEOManager>
       <OrganizationSchema />
-      {events && events.length > 0 && (
+      {events && events.length > 0 && events[0] && (
         <EventSchema
-          events={events}
-          url={`https://ticketbazaar.co.in${location}`}
+          event={events[0]}
         />
       )}
       {/* Hero Section */}
