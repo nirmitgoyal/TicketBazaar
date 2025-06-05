@@ -22,6 +22,7 @@ jobs:
   pre-deployment-tests:
     name: Pre-deployment E2E Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     
     services:
       postgres:

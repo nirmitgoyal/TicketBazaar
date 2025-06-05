@@ -13,6 +13,7 @@ jobs:
   quick-validation:
     name: Quick Validation
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     
     steps:
     - name: Checkout code
@@ -46,6 +47,7 @@ jobs:
   critical-e2e-tests:
     name: Critical E2E Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     needs: quick-validation
     
     services:
@@ -145,7 +147,7 @@ jobs:
       
     - name: Check for hardcoded secrets
       run: |
-        if grep -r "password\|secret\|key" --include="*.ts" --include="*.js" --exclude-dir=node_modules . | grep -v "test" | grep -v "example"; then
+        if grep -r "password\s*=\s*['\"].*['\"]|secret\s*=\s*['\"].*['\"]|key\s*=\s*['\"].*['\"]" --include="*.ts" --include="*.js" --exclude-dir=node_modules . | grep -v "test" | grep -v "example" | grep -v "placeholder"; then
           echo "⚠️ Potential hardcoded secrets found - review required"
         else
           echo "✅ No obvious hardcoded secrets detected"

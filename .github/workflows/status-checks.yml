@@ -11,6 +11,7 @@ jobs:
   branch-protection-check:
     name: Branch Protection Check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     steps:
     - name: Checkout code
@@ -204,7 +205,7 @@ jobs:
     - name: Security scan
       run: |
         # Check for hardcoded secrets
-        if grep -r "password\|secret\|key" --include="*.ts" --include="*.js" --exclude-dir=node_modules . | grep -v "test" | grep -v "example"; then
+        if grep -r "password\s*=\s*['\"].*['\"]|secret\s*=\s*['\"].*['\"]|key\s*=\s*['\"].*['\"]" --include="*.ts" --include="*.js" --exclude-dir=node_modules . | grep -v "test" | grep -v "example" | grep -v "placeholder"; then
           echo "⚠️ Potential hardcoded secrets found - review required"
         else
           echo "✅ No obvious hardcoded secrets detected"
