@@ -1,5 +1,5 @@
 /** @type {import('jest').Config} */
-module.exports = {
+export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
@@ -42,13 +42,7 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  globals: {
-    'ts-jest': {
-      useESM: false,
-      isolatedModules: false
-    }
-  },
-  extensionsToTreatAsEsm: [],
+  extensionsToTreatAsEsm: ['.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testTimeout: 10000
 };
