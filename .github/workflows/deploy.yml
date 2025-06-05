@@ -61,9 +61,9 @@ jobs:
     - name: Setup production-like database
       run: |
         npm run db:push
-        npm run seed:users
-        npm run seed:events
-        npm run seed:tickets
+        npx tsx scripts/seed-users.ts
+        npx tsx scripts/seed-realistic-events.ts
+        npx tsx scripts/seed-tickets.ts
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_deploy
         
@@ -144,9 +144,9 @@ jobs:
     - name: Setup production-like database
       run: |
         npm run db:push
-        npm run seed:users
-        npm run seed:events
-        npm run seed:tickets
+        npx tsx scripts/seed-users.ts
+        npx tsx scripts/seed-realistic-events.ts
+        npx tsx scripts/seed-tickets.ts
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_mobile_prod
         
