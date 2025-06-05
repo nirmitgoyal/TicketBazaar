@@ -31,9 +31,9 @@ export function SocialShare({
 
   const getShareMessage = () => {
     if (ticket && event) {
-      return `Check out this ticket for ${event.title} on Ticket Bazaar! Section: ${ticket.section}, Price: ₹${ticket.sellingPrice}`;
+      return `Check out this ticket for ${event.eventTitle} on Ticket Bazaar! Section: ${ticket.section}, Price: ₹${ticket.price}`;
     } else if (event) {
-      return `Check out ${event.title} on Ticket Bazaar! Event in ${event.venue} on ${new Date(event.date).toLocaleDateString()}`;
+      return `Check out ${event.eventTitle} on Ticket Bazaar! Event in ${event.venue} on ${new Date(event.eventDate).toLocaleDateString()}`;
     }
     return "Check out Ticket Bazaar - India's trusted ticket reselling platform!";
   };

@@ -334,12 +334,13 @@ export class DatabaseStorage implements IStorage {
       );
     }
 
-    // Execute search with all conditions
+    // Execute search with all conditions and pagination
     const searchResults = await db
       .select()
       .from(tickets)
       .where(conditions.length ? and(...conditions) : undefined)
-      .orderBy(desc(tickets.eventDate));
+      .orderBy(desc(tickets.eventDate))
+      .limit(50);
 
     return searchResults;
   }
@@ -350,14 +351,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTicketsByEvent(eventTitle: string): Promise<Ticket[]> {
-    return await db.select().from(tickets).where(eq(tickets.eventTitle, eventTitle));
+    return await db.select().from(tickets)
+      .where(eq(tickets.eventTitle, eventTitle))
+      .orderBy(desc(tickets.price))
+      .limit(20);
   }
 
   async getTicketsBySeller(sellerId: number): Promise<Ticket[]> {
     return await db
       .select()
       .from(tickets)
-      .where(eq(tickets.sellerId, sellerId));
+      .where(eq(tickets.sellerId, sellerId))
+      .orderBy(desc(tickets.createdAt))
+      .limit(30);
   }
 
   async createTicket(ticket: InsertTicket): Promise<Ticket> {
