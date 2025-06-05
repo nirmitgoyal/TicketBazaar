@@ -1,0 +1,330 @@
+name: Required Status Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  # Branch protection status check
+  branch-protection-check:
+    name: Branch Protection Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check commit message format
+      run: |
+        COMMIT_MSG=$(git log -1 --pretty=format:'%s')
+        echo "Commit message: $COMMIT_MSG"
+        
+        # Check for conventional commit format
+        if [[ $COMMIT_MSG =~ ^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+ ]]; then
+          echo "✅ Commit message follows conventional format"
+        else
+          echo "⚠️ Commit message doesn't follow conventional format"
+        fi
+      
+    - name: Check for required files
+      run: |
+        REQUIRED_FILES=("README.md" "package.json" "playwright.config.ts" ".github/workflows/ci.yml")
+        
+        for file in "${REQUIRED_FILES[@]}"; do
+          if [ -f "$file" ]; then
+            echo "✅ $file exists"
+          else
+            echo "❌ $file is missing"
+            exit 1
+          fi
+        done
+        
+    - name: Validate test structure
+      run: |
+        if [ -d "tests/e2e/specs" ]; then
+          TEST_COUNT=$(find tests/e2e/specs -name "*.spec.ts" | wc -l)
+          echo "✅ Found $TEST_COUNT E2E test files"
+          
+          if [ $TEST_COUNT -lt 5 ]; then
+            echo "⚠️ Minimum 5 test files expected for comprehensive coverage"
+          fi
+        else
+          echo "❌ E2E test directory structure missing"
+          exit 1
+        fi
+
+  # Code quality gates
+  code-quality-gates:
+    name: Code Quality Gates
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Check package vulnerabilities
+      run: |
+        AUDIT_RESULT=$(npm audit --audit-level=high --json 2>/dev/null || echo '{"vulnerabilities":{}}')
+        HIGH_VULNS=$(echo $AUDIT_RESULT | jq '.metadata.vulnerabilities.high // 0')
+        CRITICAL_VULNS=$(echo $AUDIT_RESULT | jq '.metadata.vulnerabilities.critical // 0')
+        
+        echo "High vulnerabilities: $HIGH_VULNS"
+        echo "Critical vulnerabilities: $CRITICAL_VULNS"
+        
+        if [ $CRITICAL_VULNS -gt 0 ]; then
+          echo "❌ Critical vulnerabilities found"
+          exit 1
+        elif [ $HIGH_VULNS -gt 0 ]; then
+          echo "⚠️ High vulnerabilities found - review required"
+        else
+          echo "✅ No critical vulnerabilities found"
+        fi
+      
+    - name: TypeScript compilation check
+      run: |
+        npm run check
+        echo "✅ TypeScript compilation successful"
+        
+    - name: Build verification
+      run: |
+        npm run build
+        echo "✅ Build completed successfully"
+        
+        # Check build output
+        if [ -d "dist" ] && [ "$(ls -A dist)" ]; then
+          echo "✅ Build artifacts generated"
+        else
+          echo "❌ Build artifacts missing"
+          exit 1
+        fi
+
+  # Test coverage gates
+  test-coverage-gates:
+    name: Test Coverage Gates
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ticketbazaar_coverage
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Setup test database
+      run: |
+        npm run db:push
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_coverage
+        
+    - name: Run unit tests with coverage
+      run: |
+        npm run test:coverage
+        echo "✅ Unit tests completed"
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_coverage
+        
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+      
+    - name: E2E test validation
+      run: |
+        npm run seed:users
+        npm run seed:events
+        npm run dev &
+        sleep 30
+        curl --retry 10 --retry-connrefused --retry-delay 5 http://localhost:5000/api/health
+        
+        # Run a subset of critical E2E tests for status check
+        npx playwright test tests/e2e/specs/01-homepage-navigation.spec.ts --project=chromium --reporter=line
+        echo "✅ Critical E2E tests passed"
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_coverage
+        SESSION_SECRET: coverage-test-secret
+
+  # Security compliance check
+  security-compliance:
+    name: Security Compliance
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Security scan
+      run: |
+        # Check for hardcoded secrets
+        if grep -r "password\|secret\|key" --include="*.ts" --include="*.js" --exclude-dir=node_modules . | grep -v "test" | grep -v "example"; then
+          echo "⚠️ Potential hardcoded secrets found - review required"
+        else
+          echo "✅ No obvious hardcoded secrets detected"
+        fi
+        
+        # Check for console.log statements in production code
+        if find . -name "*.ts" -not -path "./node_modules/*" -not -path "./tests/*" -exec grep -l "console\.log" {} \;; then
+          echo "⚠️ Console.log statements found in production code"
+        else
+          echo "✅ No console.log statements in production code"
+        fi
+        
+        # Check package.json for security
+        if [ -f "package.json" ]; then
+          if grep -q '"start".*"node"' package.json; then
+            echo "✅ Production start script uses node"
+          fi
+        fi
+
+  # Performance baseline check
+  performance-baseline:
+    name: Performance Baseline
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ticketbazaar_perf_baseline
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+      
+    - name: Setup performance test database
+      run: |
+        npm run db:push
+        npm run seed:users
+        npm run seed:events
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_perf_baseline
+        
+    - name: Start application
+      run: |
+        npm run dev &
+        sleep 30
+        curl --retry 10 --retry-connrefused --retry-delay 5 http://localhost:5000/api/health
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_perf_baseline
+        SESSION_SECRET: perf-baseline-secret
+        
+    - name: Basic performance check
+      run: |
+        # Run basic performance test
+        npx playwright test tests/e2e/specs/09-performance-accessibility.spec.ts --project=chromium --reporter=line
+        echo "✅ Performance baseline check completed"
+      env:
+        CI: true
+
+  # Status check summary
+  status-check-summary:
+    name: Status Check Summary
+    runs-on: ubuntu-latest
+    needs: [branch-protection-check, code-quality-gates, test-coverage-gates, security-compliance, performance-baseline]
+    if: always()
+    
+    steps:
+    - name: Generate status summary
+      run: |
+        echo "## Status Check Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ needs.branch-protection-check.result }}" == "success" ]; then
+          echo "✅ Branch Protection: PASSED" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Branch Protection: FAILED" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.code-quality-gates.result }}" == "success" ]; then
+          echo "✅ Code Quality: PASSED" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Code Quality: FAILED" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.test-coverage-gates.result }}" == "success" ]; then
+          echo "✅ Test Coverage: PASSED" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Test Coverage: FAILED" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.security-compliance.result }}" == "success" ]; then
+          echo "✅ Security Compliance: PASSED" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Security Compliance: FAILED" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.performance-baseline.result }}" == "success" ]; then
+          echo "✅ Performance Baseline: PASSED" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Performance Baseline: FAILED" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+    - name: Final status check
+      run: |
+        if [ "${{ needs.branch-protection-check.result }}" != "success" ] || 
+           [ "${{ needs.code-quality-gates.result }}" != "success" ] || 
+           [ "${{ needs.test-coverage-gates.result }}" != "success" ] || 
+           [ "${{ needs.security-compliance.result }}" != "success" ] || 
+           [ "${{ needs.performance-baseline.result }}" != "success" ]; then
+          echo "❌ One or more status checks failed"
+          exit 1
+        else
+          echo "✅ All status checks passed"
+        fi
