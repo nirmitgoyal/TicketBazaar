@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 import { server } from "../mocks/server";
 import { User } from "../../shared/schema";
 import {

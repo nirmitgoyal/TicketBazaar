@@ -1,43 +1,47 @@
 import { storage } from "../../server/storage";
 import {
   insertUserSchema,
-  insertEventSchema,
   insertTicketSchema,
 } from "../../shared/schema";
 import { z } from "zod";
 
 // Mock user data for testing
 const testUser = {
-  username: "testuser",
   password: "password123",
   fullName: "Test User",
   email: "test@example.com",
   phone: "1234567890",
-};
-
-// Mock event data for testing
-const testEvent = {
-  title: "Test Event",
-  description: "This is a test event",
-  date: new Date("2025-06-01T18:00:00"),
-  venue: "Test Venue, Delhi NCR",
-  category: "Music",
-  imageUrl: "https://example.com/image.jpg",
-  trending: true,
-  sellingFast: true,
+  whatsapp: "1234567890",
+  instagram: "testuser_ig",
+  preferredContactMethod: "whatsapp",
 };
 
 // Mock ticket data for testing
 const testTicket = {
-  eventId: 1,
   sellerId: 1,
+  title: "Test Concert Ticket",
+  eventTitle: "Test Concert",
+  eventDescription: "This is a test concert event",
+  venue: "Test Venue",
+  venueAddress: "123 Test Street, Delhi",
+  eventDate: new Date("2025-06-01T18:00:00"),
+  category: "Music",
+  eventImageUrl: "https://example.com/image.jpg",
+  trending: true,
+  sellingFast: true,
+  latitude: 28.6139,
+  longitude: 77.2090,
+  city: "Delhi",
   section: "A",
   row: "1",
   seat: "10",
-  originalPrice: 2000,
-  sellingPrice: 1500,
+  price: 1500,
   quantity: 1,
   status: "available",
+  isTransferrable: true,
+  transferMethod: "digital",
+  additionalInfo: "Great seats with clear view",
+  showContactInfo: true,
 };
 
 describe("Storage Service Tests", () => {
