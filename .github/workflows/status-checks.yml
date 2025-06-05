@@ -17,20 +17,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Check commit message format
-      run: |
-        COMMIT_MSG=$(git log -1 --pretty=format:'%s')
-        echo "Commit message: $COMMIT_MSG"
-        
-        # Check for conventional commit format (more flexible pattern)
-        if [[ $COMMIT_MSG =~ ^(feat|fix|docs|style|refactor|test|chore|ci|build|perf|revert|improvement|enhance|update|add|remove)(\(.+\))?:? .+ ]]; then
-          echo "✅ Commit message follows conventional format"
-        else
-          echo "⚠️ Commit message doesn't follow strict conventional format but not blocking"
-          echo "  Recommended format: type(scope): description"
-          echo "  Examples: feat(auth): add login, fix(ui): resolve button styling"
-        fi
-      
     - name: Check for required files
       run: |
         REQUIRED_FILES=("README.md" "package.json" ".github/workflows/ci.yml")
