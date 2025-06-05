@@ -196,6 +196,20 @@ export class WebSocketService {
     this.sendToUser(buyerId, event);
     this.sendToUser(sellerId, event);
   }
+
+  getConnectionCount(): number {
+    return this.clients.size;
+  }
+
+  getActiveConnectionCount(): number {
+    let activeCount = 0;
+    this.clients.forEach((client) => {
+      if (client.ws.readyState === WebSocket.OPEN) {
+        activeCount++;
+      }
+    });
+    return activeCount;
+  }
 }
 
 // Export the global instance and convenience functions
