@@ -166,11 +166,25 @@ jobs:
       
     - name: Wait for PostgreSQL
       run: |
-        until pg_isready -h localhost -p 5432 -U postgres; do
-          echo "Waiting for PostgreSQL to be ready..."
-          sleep 2
+        echo "Testing PostgreSQL connection..."
+        for i in {1..30}; do
+          if pg_isready -h localhost -p 5432 -U postgres; then
+            echo "PostgreSQL is ready!"
+            break
+          fi
+          if [ $i -eq 30 ]; then
+            echo "PostgreSQL failed to start within timeout"
+            exit 1
+          fi
+          echo "Waiting for PostgreSQL... attempt $i/30"
+          sleep 3
         done
-        echo "PostgreSQL is ready!"
+        
+        # Test actual database connection
+        PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d ticketbazaar_coverage -c "SELECT 1;" || {
+          echo "Database connection test failed"
+          exit 1
+        }
         
     - name: Setup test database
       run: |
@@ -279,6 +293,7 @@ jobs:
   status-check-summary:
     name: Status Check Summary
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [branch-protection-check, code-quality-gates, test-coverage-gates, security-compliance]
     if: always()
     
@@ -288,38 +303,55 @@ jobs:
         echo "## Status Check Results" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
-        if [ "${{ needs.branch-protection-check.result }}" == "success" ]; then
+        # Branch Protection Check
+        BRANCH_RESULT="${{ needs.branch-protection-check.result }}"
+        if [ "$BRANCH_RESULT" == "success" ]; then
           echo "✅ Branch Protection: PASSED" >> $GITHUB_STEP_SUMMARY
         else
-          echo "❌ Branch Protection: FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "❌ Branch Protection: FAILED ($BRANCH_RESULT)" >> $GITHUB_STEP_SUMMARY
         fi
         
-        if [ "${{ needs.code-quality-gates.result }}" == "success" ]; then
+        # Code Quality Gates
+        QUALITY_RESULT="${{ needs.code-quality-gates.result }}"
+        if [ "$QUALITY_RESULT" == "success" ]; then
           echo "✅ Code Quality: PASSED" >> $GITHUB_STEP_SUMMARY
         else
-          echo "❌ Code Quality: FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "❌ Code Quality: FAILED ($QUALITY_RESULT)" >> $GITHUB_STEP_SUMMARY
         fi
         
-        if [ "${{ needs.test-coverage-gates.result }}" == "success" ]; then
+        # Test Coverage Gates
+        COVERAGE_RESULT="${{ needs.test-coverage-gates.result }}"
+        if [ "$COVERAGE_RESULT" == "success" ]; then
           echo "✅ Test Coverage: PASSED" >> $GITHUB_STEP_SUMMARY
         else
-          echo "❌ Test Coverage: FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "❌ Test Coverage: FAILED ($COVERAGE_RESULT)" >> $GITHUB_STEP_SUMMARY
         fi
         
-        if [ "${{ needs.security-compliance.result }}" == "success" ]; then
+        # Security Compliance
+        SECURITY_RESULT="${{ needs.security-compliance.result }}"
+        if [ "$SECURITY_RESULT" == "success" ]; then
           echo "✅ Security Compliance: PASSED" >> $GITHUB_STEP_SUMMARY
         else
-          echo "❌ Security Compliance: FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "❌ Security Compliance: FAILED ($SECURITY_RESULT)" >> $GITHUB_STEP_SUMMARY
         fi
-        
-
         
     - name: Final status check
       run: |
-        if [ "${{ needs.branch-protection-check.result }}" != "success" ] || 
-           [ "${{ needs.code-quality-gates.result }}" != "success" ] || 
-           [ "${{ needs.test-coverage-gates.result }}" != "success" ] || 
-           [ "${{ needs.security-compliance.result }}" != "success" ]; then
+        BRANCH_RESULT="${{ needs.branch-protection-check.result }}"
+        QUALITY_RESULT="${{ needs.code-quality-gates.result }}"
+        COVERAGE_RESULT="${{ needs.test-coverage-gates.result }}"
+        SECURITY_RESULT="${{ needs.security-compliance.result }}"
+        
+        echo "Job Results:"
+        echo "- Branch Protection: $BRANCH_RESULT"
+        echo "- Code Quality: $QUALITY_RESULT" 
+        echo "- Test Coverage: $COVERAGE_RESULT"
+        echo "- Security Compliance: $SECURITY_RESULT"
+        
+        if [ "$BRANCH_RESULT" != "success" ] || 
+           [ "$QUALITY_RESULT" != "success" ] || 
+           [ "$COVERAGE_RESULT" != "success" ] || 
+           [ "$SECURITY_RESULT" != "success" ]; then
           echo "❌ One or more status checks failed"
           exit 1
         else
