@@ -112,6 +112,18 @@ router.get("/batch", async (req, res) => {
   }
 });
 
+// Get cleanup service status
+router.get("/cleanup-status", async (req, res) => {
+  try {
+    const { cleanupService } = await import("../services/cleanup.service");
+    const status = cleanupService.getStatus();
+    res.json(status);
+  } catch (error) {
+    console.error("Error getting cleanup status:", error);
+    res.status(500).json({ error: "Failed to get cleanup status" });
+  }
+});
+
 // Get ticket by ID
 router.get("/:id", ticketController.getTicketById);
 
@@ -165,7 +177,7 @@ router.delete("/:id", isAuthenticated, ticketController.deleteTicket);
 // Delete all tickets
 router.delete("/", isAuthenticated, ticketController.deleteAllTickets);
 
-// Clean up expired tickets (admin only)
+// Clean up expired tickets manually
 router.delete("/cleanup-expired", isAuthenticated, async (req, res) => {
   try {
     // Only allow authenticated users to run cleanup
@@ -173,8 +185,8 @@ router.delete("/cleanup-expired", isAuthenticated, async (req, res) => {
       return res.status(401).json({ error: "Authentication required" });
     }
 
-    const { storage } = await import("../storage");
-    const deletedCount = await storage.deleteExpiredTickets();
+    const { cleanupService } = await import("../services/cleanup.service");
+    const deletedCount = await cleanupService.runCleanup();
     
     res.json({ 
       message: `Successfully deleted ${deletedCount} expired tickets`,

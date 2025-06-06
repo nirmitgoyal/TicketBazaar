@@ -13,6 +13,7 @@ import searchHintsRoutes from "./routes/search-hints";
 import dataPrivacyRoutes from "./routes/data-privacy";
 import { WebSocketService } from "./services/websocket.service";
 import { logger, requestLoggingMiddleware } from "./utils/logger";
+import { cleanupService } from "./services/cleanup.service";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -96,5 +97,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Make WebSocket service available globally
   (global as any).wsService = wsService;
 
+  // Initialize cleanup service for automated expired ticket removal
+  logger.info('SERVER', 'Initializing automated cleanup service');
+  
   return httpServer;
 }
