@@ -1,4 +1,4 @@
-import { eq, or, and, like, desc, sql, ilike, lt } from "drizzle-orm";
+import { eq, or, and, like, desc, sql, ilike } from "drizzle-orm";
 import { PgInsertValue } from "drizzle-orm/pg-core";
 import {
   users,
