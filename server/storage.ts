@@ -155,9 +155,11 @@ export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
     const startTime = Date.now();
     try {
-      const [user] = await db.select().from(users).where(eq(users.id, id));
+      const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
       const duration = Date.now() - startTime;
-      logger.dbOperation('SELECT', 'users', duration, id);
+      if (duration > 1000) {
+        logger.dbOperation('SELECT', 'users', duration, id);
+      }
       return user || undefined;
     } catch (error) {
       const duration = Date.now() - startTime;
@@ -169,9 +171,11 @@ export class DatabaseStorage implements IStorage {
   async getUserByEmail(email: string): Promise<User | undefined> {
     const startTime = Date.now();
     try {
-      const [user] = await db.select().from(users).where(eq(users.email, email));
+      const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
       const duration = Date.now() - startTime;
-      logger.dbOperation('SELECT', 'users', duration);
+      if (duration > 1000) {
+        logger.dbOperation('SELECT', 'users', duration);
+      }
       return user || undefined;
     } catch (error) {
       const duration = Date.now() - startTime;

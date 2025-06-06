@@ -51,7 +51,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
   };
 
   const getVerificationBadge = () => {
-    if (!verificationResult) {
+    if (!verificationResult || verificationResult.error) {
       return (
         <Badge variant="outline" className="text-gray-600 border-gray-300">
           <Shield className="h-3 w-3 mr-1" />
@@ -60,7 +60,15 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
       );
     }
 
-    const overall = verificationResult.verification.overall;
+    const overall = verificationResult.verification?.overall;
+    if (!overall) {
+      return (
+        <Badge variant="outline" className="text-gray-600 border-gray-300">
+          <Shield className="h-3 w-3 mr-1" />
+          Not Verified
+        </Badge>
+      );
+    }
     
     if (overall.fraudRisk === 'low' && overall.confidence >= 70) {
       return (
@@ -80,7 +88,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
       return (
         <Badge className="bg-red-100 text-red-800 border-red-200">
           <AlertTriangle className="h-3 w-3 mr-1" />
-          High Risk ({overall.confidence}%)
+          {overall.fraudRisk === 'unknown' ? 'Service Error' : `High Risk (${overall.confidence}%)`}
         </Badge>
       );
     }

@@ -20,8 +20,12 @@ const isLocalOrCI = process.env.NODE_ENV === 'test' ||
 let db: ReturnType<typeof drizzlePostgres<typeof schema>> | ReturnType<typeof drizzleNeon<typeof schema>>;
 
 if (isLocalOrCI) {
-  // Use standard postgres driver for local/CI environments
-  const queryClient = postgres(process.env.DATABASE_URL);
+  // Use standard postgres driver for local/CI environments with connection pooling
+  const queryClient = postgres(process.env.DATABASE_URL, {
+    max: 10,
+    idle_timeout: 20,
+    connect_timeout: 10,
+  });
   db = drizzlePostgres(queryClient, { schema });
 } else {
   // Use Neon serverless driver for production
