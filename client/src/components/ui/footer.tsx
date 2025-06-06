@@ -111,8 +111,10 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="/contact"
+                  href="https://www.linkedin.com/in/nirmitgoyal/"
                   className="text-textSecondary hover:text-primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Contact Us
                 </a>
