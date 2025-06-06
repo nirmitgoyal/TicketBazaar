@@ -1085,49 +1085,81 @@ export default function Home() {
                 <h3 className="font-poppins font-semibold text-lg mb-4">
                   How it works
                 </h3>
-                <div className="space-y-5">
-                  <div className="flex">
-                    <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-medium mr-3">
-                      1
+                
+                {/* For Sellers */}
+                <div className="mb-6">
+                  <h4 className="font-medium text-green-600 mb-3">For Sellers:</h4>
+                  <div className="space-y-3">
+                    <div className="flex text-sm">
+                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
+                        1
+                      </div>
+                      <div>
+                        <span className="font-medium">Verify account</span> - Sign up with Instagram & DigiLocker
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-medium mb-1">Create verified account</h4>
-                      <p className="text-sm text-textSecondary">
-                        Sign up with your Instagram profile and complete DigiLocker verification
-                      </p>
+                    <div className="flex text-sm">
+                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
+                        2
+                      </div>
+                      <div>
+                        <span className="font-medium">List tickets</span> - Upload details with photos and price
+                      </div>
+                    </div>
+                    <div className="flex text-sm">
+                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
+                        3
+                      </div>
+                      <div>
+                        <span className="font-medium">Get contacted</span> - Buyers reach you via Instagram
+                      </div>
+                    </div>
+                    <div className="flex text-sm">
+                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
+                        4
+                      </div>
+                      <div>
+                        <span className="font-medium">Complete sale</span> - Meet safely and exchange securely
+                      </div>
                     </div>
                   </div>
-                  <div className="flex">
-                    <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-medium mr-3">
-                      2
+                </div>
+
+                {/* For Buyers */}
+                <div>
+                  <h4 className="font-medium text-blue-600 mb-3">For Buyers:</h4>
+                  <div className="space-y-3">
+                    <div className="flex text-sm">
+                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
+                        1
+                      </div>
+                      <div>
+                        <span className="font-medium">Browse events</span> - Find tickets for your favorite events
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-medium mb-1">List your tickets</h4>
-                      <p className="text-sm text-textSecondary">
-                        Upload ticket details with photos and set your preferred price
-                      </p>
+                    <div className="flex text-sm">
+                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
+                        2
+                      </div>
+                      <div>
+                        <span className="font-medium">Contact seller</span> - Message via their Instagram (works with private accounts too)
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex">
-                    <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-medium mr-3">
-                      3
+                    <div className="flex text-sm">
+                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
+                        3
+                      </div>
+                      <div>
+                        <span className="font-medium">Negotiate terms</span> - Agree on price and meeting details
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-medium mb-1">Connect via Instagram</h4>
-                      <p className="text-sm text-textSecondary">
-                        Buyers contact you directly through Instagram to negotiate and arrange
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex">
-                    <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-medium mr-3">
-                      4
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-1">Complete transaction</h4>
-                      <p className="text-sm text-textSecondary">
-                        Meet safely in public places and use secure payment methods
-                      </p>
+                    <div className="flex text-sm">
+                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
+                        4
+                      </div>
+                      <div>
+                        <span className="font-medium">Get tickets</span> - Meet safely and complete payment
+                      </div>
                     </div>
                   </div>
                 </div>
