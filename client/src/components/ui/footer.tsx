@@ -106,11 +106,6 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="#" className="text-textSecondary hover:text-primary">
-                  How it Works
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-textSecondary hover:text-primary">
                   FAQs
                 </a>
               </li>
@@ -122,11 +117,6 @@ export function Footer() {
                   rel="noopener noreferrer"
                 >
                   Contact Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-textSecondary hover:text-primary">
-                  Buyer Guarantee
                 </a>
               </li>
               <li>
