@@ -56,8 +56,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.use("/verification", verificationRoutes);
 
   // Import and register sitemap routes
-  const sitemapRoutes = (await import("./routes/sitemap")).default;
-  app.use("/", sitemapRoutes);
+  const { generateSitemap, generateRobotsTxt } = await import("./routes/sitemap");
   
   logger.info('SERVER', 'All API routes registered successfully');
 
@@ -67,19 +66,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register API router
   app.use("/api", apiRouter);
 
-  // Add specific route for sitemap.xml that needs to be accessible at the domain root
-  app.get("/sitemap.xml", (req, res) => {
-    const sitemapPath = path.resolve(__dirname, "../client/public/sitemap.xml");
-    res.setHeader("Content-Type", "application/xml");
-    res.sendFile(sitemapPath);
-  });
+  // Add dynamic sitemap.xml route
+  app.get("/sitemap.xml", generateSitemap);
 
-  // Add robots.txt route
-  app.get("/robots.txt", (req, res) => {
-    const robotsPath = path.resolve(__dirname, "../client/public/robots.txt");
-    res.setHeader("Content-Type", "text/plain");
-    res.sendFile(robotsPath);
-  });
+  // Add dynamic robots.txt route
+  app.get("/robots.txt", generateRobotsTxt);
 
   // IMPORTANT: Don't add notFoundHandler here
   // The frontend routes will be handled by the Vite middleware
