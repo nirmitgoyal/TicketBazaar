@@ -31,6 +31,7 @@ import DataDeletion from "@/pages/data-deletion";
 import NotFound from "@/pages/not-found";
 import VerificationDemo from "@/pages/verification-demo";
 import FAQPage from "@/pages/FAQPage";
+import ContactPage from "@/pages/ContactPage";
 
 // Components
 import { Navigation } from "@/components/ui/navigation";
@@ -149,6 +150,7 @@ function Router() {
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/data-deletion" component={DataDeletion} />
       <Route path="/faq" component={FAQPage} />
+      <Route path="/contact" component={ContactPage} />
 
       {/* Special transition route from map to home */}
       <Route path="/map-to-home" component={RedirectFromMapToHome} />
