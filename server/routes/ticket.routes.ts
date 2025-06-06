@@ -112,19 +112,7 @@ router.get("/batch", async (req, res) => {
   }
 });
 
-// Get cleanup service status
-router.get("/cleanup-status", async (req, res) => {
-  try {
-    const { cleanupService } = await import("../services/cleanup.service");
-    const status = cleanupService.getStatus();
-    res.json(status);
-  } catch (error) {
-    console.error("Error getting cleanup status:", error);
-    res.status(500).json({ error: "Failed to get cleanup status" });
-  }
-});
-
-// Get ticket by ID
+// Get ticket by ID (must come after specific routes)
 router.get("/:id", ticketController.getTicketById);
 
 // Get tickets by event
