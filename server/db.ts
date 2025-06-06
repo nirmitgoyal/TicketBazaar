@@ -17,7 +17,7 @@ const isLocalOrCI = process.env.NODE_ENV === 'test' ||
                    process.env.DATABASE_URL.includes('localhost') ||
                    process.env.DATABASE_URL.includes('127.0.0.1');
 
-let db;
+let db: ReturnType<typeof drizzlePostgres<typeof schema>> | ReturnType<typeof drizzleNeon<typeof schema>>;
 
 if (isLocalOrCI) {
   // Use standard postgres driver for local/CI environments

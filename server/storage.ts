@@ -272,14 +272,15 @@ export class DatabaseStorage implements IStorage {
 
     // Search by query (look in eventTitle, eventDescription, venue, city)
     if (query) {
-      conditions.push(
-        or(
-          ilike(tickets.eventTitle, `%${query}%`),
-          ilike(tickets.eventDescription, `%${query}%`),
-          ilike(tickets.venue, `%${query}%`),
-          ilike(tickets.city, `%${query}%`),
-        ),
+      const searchCondition = or(
+        ilike(tickets.eventTitle, `%${query}%`),
+        ilike(tickets.eventDescription, `%${query}%`),
+        ilike(tickets.venue, `%${query}%`),
+        ilike(tickets.city, `%${query}%`),
       );
+      if (searchCondition) {
+        conditions.push(searchCondition);
+      }
     }
 
     // Filter by category

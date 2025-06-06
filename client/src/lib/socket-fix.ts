@@ -231,31 +231,8 @@ window.addEventListener(
 );
 
 // This file helps with WebSocket connections in the Replit environment
-// by providing patches and workarounds for common connection issues
-
-// Apply WebSocket patches for better Replit compatibility
 if (typeof window !== 'undefined') {
   console.log('WebSocket patch applied');
-
-  // Add connection retry logic for development
-  if (import.meta.env.DEV) {
-    const originalWebSocket = window.WebSocket;
-    window.WebSocket = class extends originalWebSocket {
-      constructor(url: string | URL, protocols?: string | string[]) {
-        super(url, protocols);
-
-        this.addEventListener('close', (event) => {
-          if (event.code === 1006) {
-            console.log('WebSocket closed abnormally, this is common in development');
-          }
-        });
-
-        this.addEventListener('error', (event) => {
-          console.log('WebSocket error in development mode:', event);
-        });
-      }
-    };
-  }
 }
 
 // For TypeScript
