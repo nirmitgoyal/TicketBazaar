@@ -22,35 +22,35 @@ const faqData: FAQItem[] = [
   {
     id: 2,
     question: "How do I buy tickets on Ticket Bazaar?",
-    answer: "Browse Events: Explore the list of available events on our homepage.\n\nSelect Tickets: Choose the event and select the tickets you wish to purchase.\n\nSecure Payment: Proceed to checkout and complete your purchase using our secure payment gateway.\n\nReceive Tickets: Once the transaction is successful, you'll receive your tickets via email or can download them from your account dashboard.",
+    answer: "Browse Events: Explore the list of available events on our homepage.\n\nFind Tickets: Choose the event and browse available tickets from various sellers.\n\nContact Seller: Use our platform to connect directly with the ticket seller.\n\nNegotiate & Arrange: Discuss price, payment method, and ticket transfer details directly with the seller.\n\nComplete Transaction: Finalize the purchase through your preferred payment method as agreed with the seller.",
     category: "buying",
     icon: <User className="h-5 w-5" />
   },
   {
     id: 3,
     question: "How can I sell my tickets?",
-    answer: "Create an Account: Sign up or log in to your Ticket Bazaar account.\n\nList Your Ticket: Navigate to the 'Sell Tickets' section and provide the necessary details about your ticket.\n\nSet Price: Determine a fair price for your ticket.\n\nManage Listings: Monitor your listings and communicate with potential buyers through our platform.",
+    answer: "Create an Account: Sign up or log in to your Ticket Bazaar account.\n\nList Your Ticket: Navigate to the 'Sell Tickets' section and provide the necessary details about your ticket.\n\nSet Your Terms: Add your preferred price range and payment methods you accept.\n\nManage Inquiries: Respond to potential buyers and negotiate terms directly through our platform.",
     category: "selling",
     icon: <FileText className="h-5 w-5" />
   },
   {
     id: 4,
     question: "Is it safe to buy tickets on Ticket Bazaar?",
-    answer: "Absolutely. We prioritize user safety by verifying sellers and ensuring secure transactions. Our platform is designed to protect both buyers and sellers throughout the ticket exchange process.",
+    answer: "Yes. We prioritize user safety by verifying sellers and providing a secure platform for communication. We recommend meeting in safe public places for ticket exchanges and using secure payment methods like UPI or bank transfers with proper verification.",
     category: "general",
     icon: <Shield className="h-5 w-5" />
   },
   {
     id: 5,
-    question: "What payment methods are accepted?",
-    answer: "We accept various payment methods, including major credit/debit cards, UPI, and net banking, to provide flexibility and convenience to our users.",
+    question: "What payment methods can I use?",
+    answer: "Since this is a peer-to-peer platform, you negotiate payment methods directly with the seller or buyer. Common options include UPI, bank transfers, digital wallets, or cash transactions. We recommend using secure, traceable payment methods for your protection.",
     category: "payment",
     icon: <CreditCard className="h-5 w-5" />
   },
   {
     id: 6,
-    question: "Can I get a refund if an event is canceled?",
-    answer: "In the event of a cancellation, we facilitate refunds in accordance with our refund policy. Please refer to our Refund Policy page for detailed information.",
+    question: "What happens if an event is canceled?",
+    answer: "Since transactions occur directly between users, refund arrangements depend on your agreement with the seller. We recommend discussing cancellation policies before completing any transaction. For official event cancellations, contact the seller immediately to arrange a refund.",
     category: "payment",
     icon: <RefreshCcw className="h-5 w-5" />
   },
@@ -60,6 +60,20 @@ const faqData: FAQItem[] = [
     answer: "For any queries or assistance, reach out to our support team via the 'Contact Us' page or email us at support@ticketbazaar.in. We're here to help!",
     category: "support",
     icon: <MessageCircle className="h-5 w-5" />
+  },
+  {
+    id: 8,
+    question: "How do I negotiate with buyers/sellers?",
+    answer: "Use our platform's messaging system to communicate directly with other users. Be clear about your expectations regarding price, meeting location, payment method, and ticket transfer process. Always maintain respectful communication.",
+    category: "general",
+    icon: <MessageCircle className="h-5 w-5" />
+  },
+  {
+    id: 9,
+    question: "What should I do before meeting a buyer/seller?",
+    answer: "Verify the person's identity through our platform, agree on meeting location (preferably public places), confirm payment method, and ensure you have proper ticket verification. Always prioritize your safety.",
+    category: "general",
+    icon: <Shield className="h-5 w-5" />
   }
 ];
 
