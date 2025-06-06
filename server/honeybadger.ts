@@ -13,8 +13,8 @@ export const initHoneybadger = async () => {
       
       // Configure Honeybadger
       honeybadgerInstance.configure({
-        apiKey: process.env.HONEYBADGER_API_KEY,
-        environment: process.env.NODE_ENV || 'development',
+        apiKey: process.env.HONEYBADGER_API_KEY || "hbp_MB0R3crxF3cFxyEcYJXMpPUM9CY9Fd3OTtmV",
+        environment: process.env.NODE_ENV || 'production',
         revision: process.env.HONEYBADGER_REVISION,
         reportData: true,
         developmentEnvironments: ['development', 'test']
