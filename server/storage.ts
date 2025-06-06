@@ -130,6 +130,7 @@ export interface IStorage {
   // Data deletion operations
   deleteAllUserData(userId: number): Promise<boolean>;
   exportUserData(userId: number): Promise<any>;
+  deleteExpiredTickets(): Promise<number>; // Returns count of deleted tickets
 
   // Verification operations
   verifyTicketAuthenticity(ticketId: number): Promise<any>;
@@ -868,6 +869,29 @@ export class DatabaseStorage implements IStorage {
       };
     } catch (error) {
       console.error("Error performing comprehensive verification:", error);
+      throw error;
+    }
+  }
+
+  async deleteExpiredTickets(): Promise<number> {
+    try {
+      const now = new Date();
+      
+      // Delete tickets where eventDate is before current date using SQL
+      const result = await db
+        .delete(tickets)
+        .where(sql`${tickets.eventDate} < ${now}`)
+        .returning({ id: tickets.id });
+      
+      const deletedCount = result.length;
+      
+      if (deletedCount > 0) {
+        console.log(`Deleted ${deletedCount} expired tickets (events before ${now.toISOString()})`);
+      }
+      
+      return deletedCount;
+    } catch (error) {
+      console.error("Error deleting expired tickets:", error);
       throw error;
     }
   }

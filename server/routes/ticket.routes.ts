@@ -165,4 +165,25 @@ router.delete("/:id", isAuthenticated, ticketController.deleteTicket);
 // Delete all tickets
 router.delete("/", isAuthenticated, ticketController.deleteAllTickets);
 
+// Clean up expired tickets (admin only)
+router.delete("/cleanup-expired", isAuthenticated, async (req, res) => {
+  try {
+    // Only allow authenticated users to run cleanup
+    if (!req.user) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    const { storage } = await import("../storage");
+    const deletedCount = await storage.deleteExpiredTickets();
+    
+    res.json({ 
+      message: `Successfully deleted ${deletedCount} expired tickets`,
+      deletedCount 
+    });
+  } catch (error) {
+    console.error("Error cleaning up expired tickets:", error);
+    res.status(500).json({ error: "Failed to clean up expired tickets" });
+  }
+});
+
 export default router;
