@@ -59,6 +59,33 @@ const upload = multer({
 // Get all tickets
 router.get("/", ticketController.getAllTickets);
 
+// Get tickets in batch for multiple events
+router.get("/batch", async (req, res) => {
+  try {
+    const eventIds = req.query.eventIds as string;
+    if (!eventIds) {
+      return res.status(400).json({ error: "eventIds parameter is required" });
+    }
+    
+    const ids = eventIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+    if (ids.length === 0) {
+      return res.json([]);
+    }
+    
+    // Get all tickets for the specified events in one query
+    const { storage } = await import("../storage");
+    const allTickets = await storage.getAllEvents();
+    
+    // Filter tickets by the requested event IDs
+    const filteredTickets = allTickets.filter(ticket => ids.includes(ticket.id));
+    
+    res.json(filteredTickets);
+  } catch (error) {
+    console.error("Error fetching batch tickets:", error);
+    res.status(500).json({ error: "Failed to fetch tickets" });
+  }
+});
+
 // Get ticket by ID
 router.get("/:id", ticketController.getTicketById);
 

@@ -156,53 +156,30 @@ export default function Home() {
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
   });
 
-  // Fetch all available tickets - optimized to use batching
+  // Fetch all available tickets - optimized single batch request
   const { data: tickets, isLoading: ticketsLoading } = useQuery<Ticket[]>({
-    queryKey: ["/api/tickets", events?.map((e) => e.id)],
+    queryKey: ["/api/tickets/batch", events?.map((e) => e.id)],
     queryFn: async () => {
       if (!events || events.length === 0) return [];
 
-      // Create batches of 5 events to reduce the number of simultaneous requests
-      const batchSize = 5;
-      const batches = [];
-      for (let i = 0; i < events.length; i += batchSize) {
-        batches.push(events.slice(i, i + batchSize));
-      }
-
-      const allTickets: Ticket[] = [];
-
-      // Process each batch sequentially to avoid too many simultaneous requests
-      for (const batch of batches) {
-        // Process events in each batch in parallel
-        const batchPromises = batch.map((event) =>
-          fetch(`/api/tickets/event/${event.id}`, {
-            signal: AbortSignal.timeout(5000), // 5 second timeout
-          })
-            .then((response) => {
-              if (response.ok) return response.json();
-              return []; // Return empty array for failed requests
-            })
-            .catch((error) => {
-              console.error(
-                `Error fetching tickets for event ${event.id}:`,
-                error,
-              );
-              return []; // Return empty array on error
-            }),
-        );
-
-        // Wait for all requests in this batch to complete
-        const batchResults = await Promise.all(batchPromises);
-
-        // Add all tickets from this batch to our results
-        batchResults.forEach((eventTickets) => {
-          if (Array.isArray(eventTickets)) {
-            allTickets.push(...eventTickets);
-          }
+      // Get all event IDs in a single batch request
+      const eventIds = events.map(e => e.id).join(',');
+      
+      try {
+        const response = await fetch(`/api/tickets/batch?eventIds=${eventIds}`, {
+          signal: AbortSignal.timeout(10000), // 10 second timeout
+          credentials: "include",
         });
-      }
 
-      return allTickets;
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.error("Error fetching batch tickets:", error);
+        return []; // Return empty array on error
+      }
     },
     enabled: !!events && events.length > 0,
     staleTime: 60000, // Cache results for 1 minute
@@ -1047,127 +1024,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sell Tickets Section */}
-      <section className="py-12 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="md:flex">
-              <div className="md:w-1/2 p-6 md:p-10">
-                <h2 className="text-2xl md:text-3xl font-bold font-poppins mb-4">
-                  Want to sell your tickets?
-                </h2>
-                <p className="text-textSecondary mb-6">
-                  List your tickets on India's trusted peer-to-peer platform.
-                  Connect directly with buyers through Instagram for secure transactions.
-                </p>
-                <ul className="mb-8 space-y-3">
-                  <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
-                    <span>Instagram verification for authenticity</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
-                    <span>DigiLocker identity verification</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
-                    <span>Direct communication with buyers</span>
-                  </li>
-                </ul>
-                <Button
-                  className="bg-green-600 hover:bg-green-700 text-white font-medium"
-                  onClick={() => (window.location.href = "/list-ticket")}
-                >
-                  Start Selling
-                </Button>
-              </div>
-              <div className="md:w-1/2 bg-primary/5 p-6 md:p-10">
-                <h3 className="font-poppins font-semibold text-lg mb-4">
-                  How it works
-                </h3>
-                
-                {/* For Sellers */}
-                <div className="mb-6">
-                  <h4 className="font-medium text-green-600 mb-3">For Sellers:</h4>
-                  <div className="space-y-3">
-                    <div className="flex text-sm">
-                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
-                        1
-                      </div>
-                      <div>
-                        <span className="font-medium">Verify account</span> - Sign up with Instagram & DigiLocker
-                      </div>
-                    </div>
-                    <div className="flex text-sm">
-                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
-                        2
-                      </div>
-                      <div>
-                        <span className="font-medium">List tickets</span> - Upload details with photos and price
-                      </div>
-                    </div>
-                    <div className="flex text-sm">
-                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
-                        3
-                      </div>
-                      <div>
-                        <span className="font-medium">Get contacted</span> - Buyers reach you via Instagram
-                      </div>
-                    </div>
-                    <div className="flex text-sm">
-                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
-                        4
-                      </div>
-                      <div>
-                        <span className="font-medium">Complete sale</span> - Meet safely and exchange securely
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                {/* For Buyers */}
-                <div>
-                  <h4 className="font-medium text-blue-600 mb-3">For Buyers:</h4>
-                  <div className="space-y-3">
-                    <div className="flex text-sm">
-                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
-                        1
-                      </div>
-                      <div>
-                        <span className="font-medium">Browse events</span> - Find tickets for your favorite events
-                      </div>
-                    </div>
-                    <div className="flex text-sm">
-                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
-                        2
-                      </div>
-                      <div>
-                        <span className="font-medium">Contact seller</span> - Message via their Instagram (works with private accounts too)
-                      </div>
-                    </div>
-                    <div className="flex text-sm">
-                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
-                        3
-                      </div>
-                      <div>
-                        <span className="font-medium">Negotiate terms</span> - Agree on price and meeting details
-                      </div>
-                    </div>
-                    <div className="flex text-sm">
-                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">
-                        4
-                      </div>
-                      <div>
-                        <span className="font-medium">Get tickets</span> - Meet safely and complete payment
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Ticket Detail Modal */}
       {selectedEventId !== null && (

@@ -47,59 +47,7 @@ export function Footer() {
             </div>
           </div>
 
-          <div>
-            <h4 className="font-medium text-base mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  className="text-textSecondary hover:text-primary"
-                  href="/"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="text-textSecondary hover:text-primary"
-                  href="/?category=Concerts"
-                >
-                  Concerts
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="text-textSecondary hover:text-primary"
-                  href="/?category=Sports"
-                >
-                  Sports
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="text-textSecondary hover:text-primary"
-                  href="/?category=Theatre"
-                >
-                  Theatre
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="text-textSecondary hover:text-primary"
-                  href="/?category=Festivals"
-                >
-                  Festivals
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="text-textSecondary hover:text-primary"
-                  href="/?category=Comedy"
-                >
-                  Comedy
-                </Link>
-              </li>
-            </ul>
-          </div>
+
 
           <div>
             <h4 className="font-medium text-base mb-4">Support</h4>
