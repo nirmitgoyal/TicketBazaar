@@ -159,13 +159,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUser(id: number): Promise<User | undefined> {
+    // Check cache first
+    const cached = this.userCache.get(id);
+    if (cached && this.isValidCacheEntry(cached.timestamp)) {
+      return cached.user;
+    }
+
     const startTime = Date.now();
     try {
       const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
       const duration = Date.now() - startTime;
+      
       if (duration > 1000) {
         logger.dbOperation('SELECT', 'users', duration, id);
       }
+
+      // Cache the result if user exists
+      if (user) {
+        this.userCache.set(id, { user, timestamp: Date.now() });
+      }
+
       return user || undefined;
     } catch (error) {
       const duration = Date.now() - startTime;
