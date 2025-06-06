@@ -1,68 +1,118 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, HelpCircle } from "lucide-react";
+import { ChevronDown, ChevronUp, HelpCircle, MessageCircle, Search, User, CreditCard, Shield, RefreshCcw, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Input } from "@/components/ui/input";
 
 interface FAQItem {
   id: number;
   question: string;
   answer: string;
+  category: "general" | "buying" | "selling" | "payment" | "support";
+  icon: React.ReactNode;
 }
 
 const faqData: FAQItem[] = [
   {
     id: 1,
     question: "What is Ticket Bazaar?",
-    answer: "Ticket Bazaar is India's premier secure ticket resale platform, enabling users to buy and sell event tickets safely and efficiently."
+    answer: "Ticket Bazaar is India's premier secure ticket resale platform, enabling users to buy and sell event tickets safely and efficiently.",
+    category: "general",
+    icon: <HelpCircle className="h-5 w-5" />
   },
   {
     id: 2,
     question: "How do I buy tickets on Ticket Bazaar?",
-    answer: "Browse Events: Explore the list of available events on our homepage.\n\nSelect Tickets: Choose the event and select the tickets you wish to purchase.\n\nSecure Payment: Proceed to checkout and complete your purchase using our secure payment gateway.\n\nReceive Tickets: Once the transaction is successful, you'll receive your tickets via email or can download them from your account dashboard."
+    answer: "Browse Events: Explore the list of available events on our homepage.\n\nSelect Tickets: Choose the event and select the tickets you wish to purchase.\n\nSecure Payment: Proceed to checkout and complete your purchase using our secure payment gateway.\n\nReceive Tickets: Once the transaction is successful, you'll receive your tickets via email or can download them from your account dashboard.",
+    category: "buying",
+    icon: <User className="h-5 w-5" />
   },
   {
     id: 3,
     question: "How can I sell my tickets?",
-    answer: "Create an Account: Sign up or log in to your Ticket Bazaar account.\n\nList Your Ticket: Navigate to the 'Sell Tickets' section and provide the necessary details about your ticket.\n\nSet Price: Determine a fair price for your ticket.\n\nManage Listings: Monitor your listings and communicate with potential buyers through our platform."
+    answer: "Create an Account: Sign up or log in to your Ticket Bazaar account.\n\nList Your Ticket: Navigate to the 'Sell Tickets' section and provide the necessary details about your ticket.\n\nSet Price: Determine a fair price for your ticket.\n\nManage Listings: Monitor your listings and communicate with potential buyers through our platform.",
+    category: "selling",
+    icon: <FileText className="h-5 w-5" />
   },
   {
     id: 4,
     question: "Is it safe to buy tickets on Ticket Bazaar?",
-    answer: "Absolutely. We prioritize user safety by verifying sellers and ensuring secure transactions. Our platform is designed to protect both buyers and sellers throughout the ticket exchange process."
+    answer: "Absolutely. We prioritize user safety by verifying sellers and ensuring secure transactions. Our platform is designed to protect both buyers and sellers throughout the ticket exchange process.",
+    category: "general",
+    icon: <Shield className="h-5 w-5" />
   },
   {
     id: 5,
     question: "What payment methods are accepted?",
-    answer: "We accept various payment methods, including major credit/debit cards, UPI, and net banking, to provide flexibility and convenience to our users."
+    answer: "We accept various payment methods, including major credit/debit cards, UPI, and net banking, to provide flexibility and convenience to our users.",
+    category: "payment",
+    icon: <CreditCard className="h-5 w-5" />
   },
   {
     id: 6,
     question: "Can I get a refund if an event is canceled?",
-    answer: "In the event of a cancellation, we facilitate refunds in accordance with our refund policy. Please refer to our Refund Policy page for detailed information."
+    answer: "In the event of a cancellation, we facilitate refunds in accordance with our refund policy. Please refer to our Refund Policy page for detailed information.",
+    category: "payment",
+    icon: <RefreshCcw className="h-5 w-5" />
   },
   {
     id: 7,
     question: "How do I contact customer support?",
-    answer: "For any queries or assistance, reach out to our support team via the 'Contact Us' page or email us at support@ticketbazaar.in. We're here to help!"
+    answer: "For any queries or assistance, reach out to our support team via the 'Contact Us' page or email us at support@ticketbazaar.in. We're here to help!",
+    category: "support",
+    icon: <MessageCircle className="h-5 w-5" />
   }
 ];
 
-function FAQItem({ faq, isOpen, onToggle }: { faq: FAQItem; isOpen: boolean; onToggle: () => void }) {
+const categories = [
+  { id: "all", label: "All Questions", count: faqData.length },
+  { id: "general", label: "General", count: faqData.filter(item => item.category === "general").length },
+  { id: "buying", label: "Buying Tickets", count: faqData.filter(item => item.category === "buying").length },
+  { id: "selling", label: "Selling Tickets", count: faqData.filter(item => item.category === "selling").length },
+  { id: "payment", label: "Payment & Refunds", count: faqData.filter(item => item.category === "payment").length },
+  { id: "support", label: "Support", count: faqData.filter(item => item.category === "support").length }
+];
+
+function FAQItem({ faq, isOpen, onToggle, searchTerm }: { 
+  faq: FAQItem; 
+  isOpen: boolean; 
+  onToggle: () => void;
+  searchTerm: string;
+}) {
+  const highlightText = (text: string, term: string) => {
+    if (!term) return text;
+    const regex = new RegExp(`(${term})`, 'gi');
+    const parts = text.split(regex);
+    return parts.map((part, index) => 
+      regex.test(part) ? <mark key={index} className="bg-yellow-200 px-1 rounded">{part}</mark> : part
+    );
+  };
+
   return (
-    <div className="border border-gray-200 rounded-lg mb-4 overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white border border-gray-200 rounded-xl mb-4 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
+    >
       <button
         onClick={onToggle}
-        className="w-full px-6 py-4 text-left bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset transition-colors duration-200"
+        className="w-full px-6 py-5 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset transition-colors duration-200"
       >
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-medium text-gray-900 pr-4">
-            {faq.question}
-          </h3>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="text-primary bg-primary/10 p-2 rounded-lg flex-shrink-0">
+              {faq.icon}
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 pr-4">
+              {highlightText(faq.question, searchTerm)}
+            </h3>
+          </div>
           <div className="flex-shrink-0">
-            {isOpen ? (
-              <ChevronUp className="h-5 w-5 text-gray-500" />
-            ) : (
+            <motion.div
+              animate={{ rotate: isOpen ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
               <ChevronDown className="h-5 w-5 text-gray-500" />
-            )}
+            </motion.div>
           </div>
         </div>
       </button>
@@ -76,20 +126,22 @@ function FAQItem({ faq, isOpen, onToggle }: { faq: FAQItem; isOpen: boolean; onT
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="px-6 pb-4 bg-gray-50">
-              <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {faq.answer}
+            <div className="px-6 pb-6 pt-2 bg-gray-50/50">
+              <div className="text-gray-700 leading-relaxed whitespace-pre-line border-l-4 border-primary pl-4">
+                {highlightText(faq.answer, searchTerm)}
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
 
 export default function FAQPage() {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const toggleItem = (id: number) => {
     setOpenItems(prev => {
@@ -104,76 +156,209 @@ export default function FAQPage() {
   };
 
   const expandAll = () => {
-    setOpenItems(new Set(faqData.map(item => item.id)));
+    const filteredItems = getFilteredFAQs();
+    setOpenItems(new Set(filteredItems.map(item => item.id)));
   };
 
   const collapseAll = () => {
     setOpenItems(new Set());
   };
 
+  const getFilteredFAQs = () => {
+    let filtered = faqData;
+    
+    // Filter by category
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter(item => item.category === selectedCategory);
+    }
+    
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(item => 
+        item.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.answer.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    return filtered;
+  };
+
+  const filteredFAQs = getFilteredFAQs();
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-8">
       <div className="container mx-auto mobile-container">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="bg-primary/10 p-3 rounded-full">
-              <HelpCircle className="h-8 w-8 text-primary" />
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-center mb-6"
+          >
+            <div className="bg-gradient-to-br from-primary to-primary/80 p-4 rounded-2xl shadow-lg">
+              <HelpCircle className="h-10 w-10 text-white" />
             </div>
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Frequently Asked Questions (FAQ)
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-4"
+          >
+            Frequently Asked Questions
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+          >
             Welcome to Ticket Bazaar's FAQ section. Here, we address common questions to help you navigate our platform with ease.
-          </p>
+          </motion.p>
         </div>
 
+        {/* Search Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="max-w-2xl mx-auto mb-8"
+        >
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search frequently asked questions..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-primary focus:ring-0 shadow-sm"
+            />
+          </div>
+        </motion.div>
+
+        {/* Category Filter */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="flex flex-wrap justify-center gap-3 mb-8"
+        >
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(category.id)}
+              className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 ${
+                selectedCategory === category.id
+                  ? "bg-primary text-white shadow-lg"
+                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:border-primary"
+              }`}
+            >
+              {category.label}
+              <span className="ml-2 text-xs opacity-75">
+                ({category.id === "all" ? faqData.length : category.count})
+              </span>
+            </button>
+          ))}
+        </motion.div>
+
         {/* Controls */}
-        <div className="flex justify-center gap-4 mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="flex justify-center gap-4 mb-8"
+        >
           <button
             onClick={expandAll}
-            className="px-4 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-colors duration-200"
+            className="px-6 py-3 text-sm font-medium text-primary border-2 border-primary rounded-xl hover:bg-primary hover:text-white transition-all duration-200 shadow-sm"
           >
-            Expand All
+            Expand All ({filteredFAQs.length})
           </button>
           <button
             onClick={collapseAll}
-            className="px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            className="px-6 py-3 text-sm font-medium text-gray-600 border-2 border-gray-300 rounded-xl hover:bg-gray-100 hover:border-gray-400 transition-all duration-200 shadow-sm"
           >
             Collapse All
           </button>
-        </div>
+        </motion.div>
 
         {/* FAQ Items */}
-        <div className="max-w-4xl mx-auto">
-          {faqData.map((faq) => (
-            <FAQItem
-              key={faq.id}
-              faq={faq}
-              isOpen={openItems.has(faq.id)}
-              onToggle={() => toggleItem(faq.id)}
-            />
-          ))}
+        <div className="max-w-5xl mx-auto">
+          {filteredFAQs.length > 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              {filteredFAQs.map((faq, index) => (
+                <motion.div
+                  key={faq.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                >
+                  <FAQItem
+                    faq={faq}
+                    isOpen={openItems.has(faq.id)}
+                    onToggle={() => toggleItem(faq.id)}
+                    searchTerm={searchTerm}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12"
+            >
+              <div className="bg-gray-100 rounded-full p-6 w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                <Search className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No results found</h3>
+              <p className="text-gray-600">
+                Try adjusting your search terms or browse different categories.
+              </p>
+            </motion.div>
+          )}
         </div>
 
         {/* Contact Section */}
-        <div className="text-center mt-12 p-8 bg-white rounded-lg shadow-sm">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="text-center mt-16 p-8 bg-gradient-to-r from-primary/5 to-primary/10 rounded-2xl border border-primary/20"
+        >
+          <div className="flex justify-center mb-4">
+            <div className="bg-primary p-3 rounded-full">
+              <MessageCircle className="h-6 w-6 text-white" />
+            </div>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Still have questions?
           </h2>
-          <p className="text-gray-600 mb-6">
-            Can't find the answer you're looking for? Please reach out to our customer support team.
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            Can't find the answer you're looking for? Our customer support team is here to help you with any questions or concerns.
           </p>
-          <a
-            href="https://www.linkedin.com/in/nirmitgoyal/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors duration-200"
-          >
-            Contact Support
-          </a>
-        </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="https://www.linkedin.com/in/nirmitgoyal/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              <MessageCircle className="h-5 w-5 mr-2" />
+              Contact Support
+            </a>
+            <a
+              href="mailto:support@ticketbazaar.in"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-semibold rounded-xl border-2 border-primary hover:bg-primary hover:text-white transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              Email Us
+            </a>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
