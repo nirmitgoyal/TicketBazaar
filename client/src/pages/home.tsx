@@ -1102,9 +1102,9 @@ export default function Home() {
                       2
                     </div>
                     <div>
-                      <h4 className="font-medium mb-1">Verify authenticity</h4>
+                      <h4 className="font-medium mb-1">List your tickets</h4>
                       <p className="text-sm text-textSecondary">
-                        We'll verify your tickets to ensure they're legitimate
+                        Upload ticket details with photos and set your preferred price
                       </p>
                     </div>
                   </div>
@@ -1113,10 +1113,9 @@ export default function Home() {
                       3
                     </div>
                     <div>
-                      <h4 className="font-medium mb-1">Secure sale</h4>
+                      <h4 className="font-medium mb-1">Connect via Instagram</h4>
                       <p className="text-sm text-textSecondary">
-                        When someone buys, we handle the secure transfer and
-                        payment
+                        Buyers contact you directly through Instagram to negotiate and arrange
                       </p>
                     </div>
                   </div>
@@ -1125,10 +1124,9 @@ export default function Home() {
                       4
                     </div>
                     <div>
-                      <h4 className="font-medium mb-1">Get paid</h4>
+                      <h4 className="font-medium mb-1">Complete transaction</h4>
                       <p className="text-sm text-textSecondary">
-                        Receive your payment promptly once the buyer confirms
-                        receipt
+                        Meet safely in public places and use secure payment methods
                       </p>
                     </div>
                   </div>
