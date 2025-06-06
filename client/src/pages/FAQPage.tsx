@@ -22,21 +22,21 @@ const faqData: FAQItem[] = [
   {
     id: 2,
     question: "How do I buy tickets on Ticket Bazaar?",
-    answer: "Browse Events: Explore the list of available events on our homepage.\n\nFind Tickets: Choose the event and browse available tickets from various sellers.\n\nContact Seller: Use our platform to connect directly with the ticket seller.\n\nNegotiate & Arrange: Discuss price, payment method, and ticket transfer details directly with the seller.\n\nComplete Transaction: Finalize the purchase through your preferred payment method as agreed with the seller.",
+    answer: "Browse Events: Explore the list of available events on our homepage.\n\nFind Tickets: Choose the event and browse available tickets from various sellers.\n\nContact Seller: Connect with the seller through their Instagram profile linked on our platform.\n\nNegotiate & Arrange: Discuss price, payment method, and ticket transfer details directly via Instagram.\n\nComplete Transaction: Finalize the purchase using your agreed payment method.",
     category: "buying",
     icon: <User className="h-5 w-5" />
   },
   {
     id: 3,
     question: "How can I sell my tickets?",
-    answer: "Create an Account: Sign up or log in to your Ticket Bazaar account.\n\nList Your Ticket: Navigate to the 'Sell Tickets' section and provide the necessary details about your ticket.\n\nSet Your Terms: Add your preferred price range and payment methods you accept.\n\nManage Inquiries: Respond to potential buyers and negotiate terms directly through our platform.",
+    answer: "Create an Account: Sign up with your Instagram profile to verify your identity.\n\nList Your Ticket: Navigate to the 'Sell Tickets' section and provide the necessary details about your ticket.\n\nSet Your Terms: Add your preferred price range and payment methods you accept.\n\nManage Inquiries: Buyers will contact you directly through Instagram to negotiate and arrange the transaction.",
     category: "selling",
     icon: <FileText className="h-5 w-5" />
   },
   {
     id: 4,
     question: "Is it safe to buy tickets on Ticket Bazaar?",
-    answer: "Yes. We prioritize user safety by verifying sellers and providing a secure platform for communication. We recommend meeting in safe public places for ticket exchanges and using secure payment methods like UPI or bank transfers with proper verification.",
+    answer: "Yes. We verify sellers through their Instagram profiles to ensure authenticity. Since communication happens via Instagram, you can check the seller's profile history and credibility. Always meet in safe public places and use secure payment methods.",
     category: "general",
     icon: <Shield className="h-5 w-5" />
   },
@@ -63,15 +63,15 @@ const faqData: FAQItem[] = [
   },
   {
     id: 8,
-    question: "How do I negotiate with buyers/sellers?",
-    answer: "Use our platform's messaging system to communicate directly with other users. Be clear about your expectations regarding price, meeting location, payment method, and ticket transfer process. Always maintain respectful communication.",
+    question: "How do I communicate with buyers/sellers?",
+    answer: "All communication happens through Instagram. Contact the seller via their Instagram profile linked on our platform. Be clear about your expectations regarding price, meeting location, payment method, and ticket transfer process. Always maintain respectful communication.",
     category: "general",
     icon: <MessageCircle className="h-5 w-5" />
   },
   {
     id: 9,
     question: "What should I do before meeting a buyer/seller?",
-    answer: "Verify the person's identity through our platform, agree on meeting location (preferably public places), confirm payment method, and ensure you have proper ticket verification. Always prioritize your safety.",
+    answer: "Check their Instagram profile for authenticity, agree on meeting location (preferably public places), confirm payment method, and ensure you have proper ticket verification. Always prioritize your safety and inform someone about your meeting.",
     category: "general",
     icon: <Shield className="h-5 w-5" />
   }
