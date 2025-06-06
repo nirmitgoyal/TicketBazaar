@@ -1,16 +1,17 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes/index";
 import { log } from "./utils";
-import initializeHoneybadger, { extractUserContext, getHoneybadger } from "./honeybadger";
+import { initHoneybadger, extractUserContext, getMiddleware, notifyError } from "./honeybadger";
 
 (async () => {
   // Initialize Honeybadger first
-  const Honeybadger = await initializeHoneybadger();
+  await initHoneybadger();
+  const { requestHandler, errorHandler } = await getMiddleware();
   
   const app = express();
 
   // Add Honeybadger request handler BEFORE all other middleware
-  app.use(Honeybadger.requestHandler);
+  app.use(requestHandler);
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
@@ -74,7 +75,7 @@ import initializeHoneybadger, { extractUserContext, getHoneybadger } from "./hon
   }
 
   // Add Honeybadger error handler AFTER all middleware and routes
-  app.use(Honeybadger.errorHandler);
+  app.use(errorHandler);
 
   // Add general 404 handler for any non-matching routes (both API and frontend)
   // This will be reached only if the Vite middleware doesn't handle the request
@@ -87,14 +88,12 @@ import initializeHoneybadger, { extractUserContext, getHoneybadger } from "./hon
   });
 
   // Global error handler for all other routes (after Vite)
-  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+  app.use(async (err: any, req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
     // Report error to Honeybadger with request context
-    Honeybadger.notify(err, {
-      context: extractUserContext(req)
-    });
+    await notifyError(err, extractUserContext(req));
 
     res.status(status).json({
       success: false,
