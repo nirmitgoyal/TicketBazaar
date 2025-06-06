@@ -80,13 +80,8 @@ export class TicketController {
         return res.status(400).json({ message: "Invalid event ID" });
       }
 
-      // First get the event to find its title
-      const event = await storage.getTicket(eventId);
-      if (!event) {
-        return res.status(404).json({ message: "Event not found" });
-      }
-
-      const tickets = await this.ticketService.getTicketsByEvent(event.eventTitle);
+      // Get tickets directly by event ID or find event title first
+      const tickets = await storage.getTicketsByEvent(eventId.toString());
       res.status(200).json(tickets);
     } catch (error) {
       res.status(500).json({

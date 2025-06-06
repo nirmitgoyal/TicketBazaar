@@ -143,6 +143,8 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   sessionStore: any;
+  private userCache = new Map<number, { user: User; timestamp: number }>();
+  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
     const PostgresSessionStore = connectPg(session);
@@ -150,6 +152,10 @@ export class DatabaseStorage implements IStorage {
       conString: process.env.DATABASE_URL,
       createTableIfMissing: true,
     });
+  }
+
+  private isValidCacheEntry(timestamp: number): boolean {
+    return Date.now() - timestamp < this.CACHE_TTL;
   }
 
   async getUser(id: number): Promise<User | undefined> {

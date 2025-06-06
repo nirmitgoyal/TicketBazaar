@@ -46,26 +46,31 @@ export function TicketDetailModal({
         new Set(tickets.map((ticket) => ticket.sellerId)),
       );
 
-      // Fetch seller data for each seller ID
+      // Fetch seller data for each seller ID with proper error handling
       const sellerPromises = sellerIds.map(async (sellerId) => {
-        const response = await fetch(`/api/auth/users/${sellerId}`);
-        if (!response.ok) {
-          if (process.env.NODE_ENV === 'development') {
-            console.error(`Error fetching seller ${sellerId}:`, response.status);
+        try {
+          const response = await fetch(`/api/auth/users/${sellerId}`);
+          if (!response.ok) {
+            return null;
           }
+          const seller = await response.json();
+          return { id: sellerId, data: seller };
+        } catch (error) {
+          // Silently handle network errors
           return null;
         }
-        const seller = await response.json();
-        return { id: sellerId, data: seller };
       });
 
-      const sellerResults = await Promise.all(sellerPromises);
+      const sellerResults = await Promise.allSettled(sellerPromises);
 
       // Convert to Record<sellerId, User>
       return sellerResults.reduce(
         (acc, result) => {
-          if (result && result.data) {
-            acc[result.id] = result.data;
+          if (result.status === 'fulfilled' && result.value) {
+            const sellerData = result.value;
+            if (sellerData && sellerData.data) {
+              acc[sellerData.id] = sellerData.data;
+            }
           }
           return acc;
         },
