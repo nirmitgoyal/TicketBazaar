@@ -306,12 +306,13 @@ export class DatabaseStorage implements IStorage {
       const endOfDay = new Date(filters.date);
       endOfDay.setHours(23, 59, 59, 999);
 
-      conditions.push(
-        and(
-          sql`${tickets.eventDate} >= ${startOfDay}`,
-          sql`${tickets.eventDate} <= ${endOfDay}`,
-        ),
+      const dateCondition = and(
+        sql`${tickets.eventDate} >= ${startOfDay}`,
+        sql`${tickets.eventDate} <= ${endOfDay}`,
       );
+      if (dateCondition) {
+        conditions.push(dateCondition);
+      }
     }
 
     // Filter by price range
@@ -335,14 +336,15 @@ export class DatabaseStorage implements IStorage {
     // Conditionally add conditions for bounds search
     if (filters?.bounds) {
       const { north, south, east, west } = filters.bounds;
-      conditions.push(
-        and(
-          sql`${tickets.latitude} <= ${north}`,
-          sql`${tickets.latitude} >= ${south}`,
-          sql`${tickets.longitude} <= ${east}`,
-          sql`${tickets.longitude} >= ${west}`,
-        ),
+      const boundsCondition = and(
+        sql`${tickets.latitude} <= ${north}`,
+        sql`${tickets.latitude} >= ${south}`,
+        sql`${tickets.longitude} <= ${east}`,
+        sql`${tickets.longitude} >= ${west}`,
       );
+      if (boundsCondition) {
+        conditions.push(boundsCondition);
+      }
     }
 
     // Execute search with all conditions and pagination
@@ -415,7 +417,12 @@ export class DatabaseStorage implements IStorage {
   async deleteTicket(id: number): Promise<boolean> {
     try {
       const result = await db.delete(tickets).where(eq(tickets.id, id));
-      return result.rowCount !== null && result.rowCount > 0;
+      // Handle different database drivers that may or may not have rowCount
+      if ('rowCount' in result && result.rowCount !== null) {
+        return result.rowCount > 0;
+      }
+      // For drivers without rowCount, assume success if no error thrown
+      return true;
     } catch (error) {
       console.error("Error deleting ticket:", error);
       return false;
