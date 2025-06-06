@@ -1,0 +1,46 @@
+{
+  "name": "Ticket Bazaar - India's Secure Ticket Marketplace",
+  "short_name": "Ticket Bazaar",
+  "description": "Buy and sell verified second hand tickets for concerts, sports events, and festivals across India at fair prices. Secure transactions with escrow protection.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976D2",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["entertainment", "lifestyle", "music"],
+  "lang": "en-IN",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Browse Events",
+      "short_name": "Browse",
+      "description": "Browse all available events",
+      "url": "/?category=all",
+      "icons": [{ "src": "/logo.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Sell Tickets",
+      "short_name": "Sell",
+      "description": "List your tickets for sale",
+      "url": "/list-ticket",
+      "icons": [{ "src": "/logo.svg", "sizes": "96x96" }]
+    }
+  ]
+}

@@ -24,10 +24,8 @@ import {
 import { queryClient } from "@/lib/queryClient";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { SEOManager } from "@/components/helmet-manager";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
-import { EventSchema } from "@/components/schema/event-schema";
-import { BreadcrumbSchema } from "@/components/schema/breadcrumb-schema";
+import SEOOptimizedPage from "@/components/seo-optimized-page";
+import { generateSearchResultsStructuredData, generateFAQStructuredData } from "@/utils/seo-utils";
 
 import { useWebSocket } from "@/hooks/use-websocket";
 
@@ -624,38 +622,33 @@ export default function Home() {
             answer: "In the event of a cancellation, buyers will receive a full refund, ensuring a risk-free purchase experience."
         }
     ];
+  // Generate structured data for the homepage
+  const faqStructuredData = generateFAQStructuredData(ticketBazaarFAQs);
+  const searchResultsData = searchQuery && events ? 
+    generateSearchResultsStructuredData(searchQuery, events.length, events.map(event => ({
+      title: event.eventTitle || event.title,
+      description: event.eventDescription || '',
+      venue: event.venue,
+      date: event.eventDate.toISOString(),
+      category: event.category,
+      city: event.city || '',
+      imageUrl: event.eventImageUrl ? event.eventImageUrl : undefined
+    }))) : null;
+
+  const structuredDataArray: object[] = [];
+  structuredDataArray.push(faqStructuredData);
+  if (searchResultsData) structuredDataArray.push(searchResultsData);
+
   return (
-    <div>
-      <SEOManager
-        title={selectedCategory === "all" 
-          ? "Ticket Bazaar: India's Secure Second Hand Ticket Marketplace | Buy & Sell 2nd Hand Tickets"
-          : `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Tickets | Second Hand ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Event Tickets | Ticket Bazaar`
-        }
-        description={selectedCategory === "all"
-          ? `Browse and buy verified second hand tickets for concerts, sports events, and festivals across India. Secure 2nd hand ticket transactions with payment protection. Find events in ${selectedCity === "all" ? "Delhi, Mumbai, Bangalore & more" : selectedCity}.`
-          : `Buy verified second hand ${selectedCategory} tickets in ${selectedCity === "all" ? "India" : selectedCity}. Secure ${selectedCategory} event ticket resale with escrow protection. Best prices for ${selectedCategory} events.`
-        }
-        canonicalUrl={selectedCategory === "all" && selectedCity === "all" 
-          ? "https://ticketbazaar.co.in/" 
-          : `https://ticketbazaar.co.in/events/category/${selectedCategory}${selectedCity !== "all" ? `?city=${selectedCity}` : ""}`
-        }
-        keywords={`${selectedCategory} tickets, second hand ${selectedCategory} tickets, 2nd hand ${selectedCategory} tickets, ${selectedCity} ${selectedCategory} events, ticket resale, event tickets India, secure ticket marketplace, verified tickets, ticket escrow`}
-      >
-        <OrganizationSchema />
-        {selectedCategory !== "all" && (
-          <BreadcrumbSchema items={[
-            { name: "Home", url: "/" },
-            { name: "Events", url: "/" },
-            { name: selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1), url: `/events/category/${selectedCategory}` }
-          ]} />
-        )}
-      </SEOManager>
-      <OrganizationSchema />
-      {events && events.length > 0 && events[0] && (
-        <EventSchema
-          event={events[0]}
-        />
-      )}
+    <SEOOptimizedPage
+      type={searchQuery ? "search" : selectedCategory === "all" ? "general" : "category"}
+      data={{
+        category: selectedCategory,
+        query: searchQuery,
+        city: selectedCity
+      }}
+      structuredData={structuredDataArray}
+    >
       {/* Hero Section */}
       <section className="bg-primary text-white py-6 md:py-12">
         <div className="container mx-auto px-4">
@@ -1034,6 +1027,6 @@ export default function Home() {
           onClose={closeModal}
         />
       )}
-    </div>
+    </SEOOptimizedPage>
   );
 }
