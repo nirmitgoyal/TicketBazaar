@@ -105,7 +105,7 @@ export function Footer() {
             <h4 className="font-medium text-base mb-4">Support</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-textSecondary hover:text-primary">
+                <a href="/faq" className="text-textSecondary hover:text-primary">
                   FAQs
                 </a>
               </li>

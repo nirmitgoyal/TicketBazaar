@@ -30,6 +30,7 @@ import PrivacyPolicy from "@/pages/privacy-policy";
 import DataDeletion from "@/pages/data-deletion";
 import NotFound from "@/pages/not-found";
 import VerificationDemo from "@/pages/verification-demo";
+import FAQPage from "@/pages/FAQPage";
 
 // Components
 import { Navigation } from "@/components/ui/navigation";
@@ -147,6 +148,7 @@ function Router() {
       <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/data-deletion" component={DataDeletion} />
+      <Route path="/faq" component={FAQPage} />
 
       {/* Special transition route from map to home */}
       <Route path="/map-to-home" component={RedirectFromMapToHome} />
