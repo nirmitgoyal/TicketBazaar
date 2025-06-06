@@ -4,7 +4,6 @@
 export const GOOGLE_MAPS_LIBRARIES: ("places" | "geometry" | "marker")[] = ["places", "geometry", "marker"];
 
 export const GOOGLE_MAPS_OPTIONS = {
-  mapId: "ticket-bazaar-map",
   fullscreenControl: true,
   streetViewControl: false,
   mapTypeControl: false,

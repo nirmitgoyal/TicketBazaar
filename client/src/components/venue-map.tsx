@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
+import { useState, useCallback, useRef } from "react";
+import { GoogleMap, InfoWindow } from "@react-google-maps/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
 import { GOOGLE_MAPS_OPTIONS, DEFAULT_CENTER } from "@/lib/google-maps-config";
@@ -25,6 +25,7 @@ const mapContainerStyle = {
 export function VenueMap({ venues, className = "" }: VenueMapProps) {
   const [selectedVenue, setSelectedVenue] = useState<number | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
 
   // Filter venues that have coordinates
   const venuesWithCoordinates = venues.filter(
@@ -33,6 +34,59 @@ export function VenueMap({ venues, className = "" }: VenueMapProps) {
 
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
+    
+    // Clear existing markers
+    markersRef.current.forEach(marker => {
+      if (marker.map) {
+        marker.map = null;
+      }
+    });
+    markersRef.current = [];
+
+    // Create advanced markers for each venue
+    venuesWithCoordinates.forEach((venue) => {
+      if (venue.latitude && venue.longitude) {
+        // Create marker element
+        const markerElement = document.createElement('div');
+        markerElement.innerHTML = `
+          <div style="
+            background: #ef4444;
+            border: 2px solid #dc2626;
+            border-radius: 50% 50% 50% 0;
+            width: 24px;
+            height: 24px;
+            position: relative;
+            transform: rotate(-45deg);
+            cursor: pointer;
+          ">
+            <div style="
+              background: white;
+              border-radius: 50%;
+              width: 8px;
+              height: 8px;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+            "></div>
+          </div>
+        `;
+
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+          map,
+          position: { lat: venue.latitude, lng: venue.longitude },
+          content: markerElement,
+          title: venue.eventTitle,
+        });
+
+        // Add click listener
+        marker.addListener('click', () => {
+          setSelectedVenue(venue.id);
+        });
+
+        markersRef.current.push(marker);
+      }
+    });
     
     // If we have venues, fit the map to show all markers
     if (venuesWithCoordinates.length > 0) {
@@ -85,27 +139,6 @@ export function VenueMap({ venues, className = "" }: VenueMapProps) {
           onUnmount={onUnmount}
           options={GOOGLE_MAPS_OPTIONS}
         >
-          {venuesWithCoordinates.map((venue) => (
-            <Marker
-              key={venue.id}
-              position={{
-                lat: venue.latitude!,
-                lng: venue.longitude!,
-              }}
-              onClick={() => setSelectedVenue(venue.id)}
-              icon={{
-                url: "data:image/svg+xml," + encodeURIComponent(`
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
-                    <circle cx="12" cy="10" r="3" fill="white"/>
-                  </svg>
-                `),
-                scaledSize: new window.google.maps.Size(24, 24),
-                anchor: new window.google.maps.Point(12, 24),
-              }}
-            />
-          ))}
-
           {selectedVenue && (
             <InfoWindow
               position={{
