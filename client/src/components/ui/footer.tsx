@@ -111,7 +111,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://www.linkedin.com/in/nirmitgoyal/"
+                  href="https://www.linkedin.com/company/ticket-bazaar-co-in/"
                   className="text-textSecondary hover:text-primary"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -120,7 +120,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-textSecondary hover:text-primary">
+                <a href="/seller-policy" className="text-textSecondary hover:text-primary">
                   Seller Policy
                 </a>
               </li>
