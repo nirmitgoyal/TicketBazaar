@@ -36,7 +36,7 @@ const faqData: FAQItem[] = [
   {
     id: 4,
     question: "Is it safe to buy tickets on Ticket Bazaar?",
-    answer: "Yes. We verify sellers through their Instagram profiles to ensure authenticity. Since communication happens via Instagram, you can check the seller's profile history and credibility. Always meet in safe public places and use secure payment methods.",
+    answer: "Yes. We verify sellers through their Instagram profiles and DigiLocker verification to ensure authenticity and identity verification. Since communication happens via Instagram, you can check the seller's profile history and credibility. Always meet in safe public places and use secure payment methods.",
     category: "general",
     icon: <Shield className="h-5 w-5" />
   },
