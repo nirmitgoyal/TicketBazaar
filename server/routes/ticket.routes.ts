@@ -97,11 +97,11 @@ router.get("/batch", async (req, res) => {
     // Clean up old cache entries (simple cleanup)
     if (ticketBatchCache.size > 100) {
       const cutoff = Date.now() - CACHE_TTL;
-      for (const [key, value] of ticketBatchCache.entries()) {
-        if (value.timestamp < cutoff) {
-          ticketBatchCache.delete(key);
-        }
-      }
+      const keysToDelete = Array.from(ticketBatchCache.keys()).filter(key => {
+        const entry = ticketBatchCache.get(key);
+        return entry && entry.timestamp < cutoff;
+      });
+      keysToDelete.forEach(key => ticketBatchCache.delete(key));
     }
     
     res.set('X-Cache', 'MISS');

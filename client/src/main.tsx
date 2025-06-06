@@ -23,8 +23,7 @@ import App from "./App";
 // (Browser-level WebSockets are patched in error-fixer.js)
 import "./lib/socket-fix";
 
-// Apply console filtering to remove irrelevant logs
-import "./utils/console-filter";
+// Console filtering is now handled in socket-fix.ts
 
 import "./index.css";
 
