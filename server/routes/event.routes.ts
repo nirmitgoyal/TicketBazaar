@@ -12,8 +12,34 @@ import {
 const router = Router();
 const eventController = new EventController();
 
+// Simple in-memory cache for events
+const eventsCache = new Map<string, { data: any[], timestamp: number }>();
+const EVENTS_CACHE_TTL = 60000; // 60 seconds cache
+
 // Get all events
-router.get("/", eventController.getAllEvents);
+router.get("/", async (req, res) => {
+  try {
+    // Check cache first
+    const cacheKey = 'all_events';
+    const cached = eventsCache.get(cacheKey);
+    if (cached && (Date.now() - cached.timestamp) < EVENTS_CACHE_TTL) {
+      res.set('X-Cache', 'HIT');
+      return res.json(cached.data);
+    }
+
+    // Get fresh data
+    const events = await storage.getAllEvents();
+    
+    // Cache the result
+    eventsCache.set(cacheKey, { data: events, timestamp: Date.now() });
+    
+    res.set('X-Cache', 'MISS');
+    res.json(events);
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    res.status(500).json({ error: "Failed to fetch events" });
+  }
+});
 
 // Get popular events for non-authenticated users
 router.get("/popular", async (req, res) => {

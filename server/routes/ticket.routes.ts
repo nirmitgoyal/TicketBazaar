@@ -59,12 +59,24 @@ const upload = multer({
 // Get all tickets
 router.get("/", ticketController.getAllTickets);
 
+// Simple in-memory cache for ticket batch requests
+const ticketBatchCache = new Map<string, { data: any[], timestamp: number }>();
+const CACHE_TTL = 30000; // 30 seconds cache
+
 // Get tickets in batch for multiple events
 router.get("/batch", async (req, res) => {
   try {
     const eventIds = req.query.eventIds as string;
     if (!eventIds) {
       return res.status(400).json({ error: "eventIds parameter is required" });
+    }
+    
+    // Check cache first
+    const cacheKey = `batch_${eventIds}`;
+    const cached = ticketBatchCache.get(cacheKey);
+    if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
+      res.set('X-Cache', 'HIT');
+      return res.json(cached.data);
     }
     
     const ids = eventIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
@@ -79,6 +91,20 @@ router.get("/batch", async (req, res) => {
     // Filter tickets by the requested event IDs
     const filteredTickets = allTickets.filter(ticket => ids.includes(ticket.id));
     
+    // Cache the result
+    ticketBatchCache.set(cacheKey, { data: filteredTickets, timestamp: Date.now() });
+    
+    // Clean up old cache entries (simple cleanup)
+    if (ticketBatchCache.size > 100) {
+      const cutoff = Date.now() - CACHE_TTL;
+      for (const [key, value] of ticketBatchCache.entries()) {
+        if (value.timestamp < cutoff) {
+          ticketBatchCache.delete(key);
+        }
+      }
+    }
+    
+    res.set('X-Cache', 'MISS');
     res.json(filteredTickets);
   } catch (error) {
     console.error("Error fetching batch tickets:", error);
