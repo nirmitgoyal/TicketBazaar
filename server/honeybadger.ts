@@ -1,53 +1,72 @@
 import { Request } from 'express';
 
-// Import Honeybadger using dynamic import since it's a CommonJS module
-let Honeybadger: any;
+// Initialize Honeybadger instance
+let honeybadgerInstance: any = null;
 
-// Initialize Honeybadger
-const initializeHoneybadger = async () => {
-  if (!Honeybadger) {
-    Honeybadger = await import('@honeybadger-io/js').then(m => m.default || m);
-    
-    // Configure Honeybadger with API key from environment
-    Honeybadger.configure({
-      apiKey: process.env.HONEYBADGER_API_KEY,
-      environment: process.env.NODE_ENV || 'development',
-      revision: process.env.HONEYBADGER_REVISION,
-      reportData: true,
-      // Enable development mode logging when not in production
-      developmentEnvironments: ['development', 'test']
-    });
+// Initialize and configure Honeybadger
+export const initHoneybadger = async () => {
+  if (!honeybadgerInstance) {
+    try {
+      // Dynamic import for CommonJS module compatibility
+      const HoneybadgerModule = await import('@honeybadger-io/js');
+      honeybadgerInstance = HoneybadgerModule.default || HoneybadgerModule;
+      
+      // Configure Honeybadger
+      honeybadgerInstance.configure({
+        apiKey: process.env.HONEYBADGER_API_KEY,
+        environment: process.env.NODE_ENV || 'development',
+        revision: process.env.HONEYBADGER_REVISION,
+        reportData: true,
+        developmentEnvironments: ['development', 'test']
+      });
+      
+      console.log('Honeybadger initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize Honeybadger:', error);
+    }
   }
-  return Honeybadger;
+  return honeybadgerInstance;
 };
 
 // Helper function to set user context
-export function setUserContext(userId?: number, userEmail?: string) {
-  Honeybadger.setContext({
-    user_id: userId,
-    user_email: userEmail
-  });
+export async function setUserContext(userId?: number, userEmail?: string) {
+  const hb = await initHoneybadger();
+  if (hb) {
+    hb.setContext({
+      user_id: userId,
+      user_email: userEmail
+    });
+  }
 }
 
 // Helper function to set custom context
-export function setContext(context: Record<string, any>) {
-  Honeybadger.setContext(context);
+export async function setContext(context: Record<string, any>) {
+  const hb = await initHoneybadger();
+  if (hb) {
+    hb.setContext(context);
+  }
 }
 
 // Helper function to manually notify errors with context
-export function notifyError(error: Error, context?: Record<string, any>) {
-  if (context) {
-    Honeybadger.setContext(context);
+export async function notifyError(error: Error, context?: Record<string, any>) {
+  const hb = await initHoneybadger();
+  if (hb) {
+    if (context) {
+      hb.setContext(context);
+    }
+    hb.notify(error);
   }
-  Honeybadger.notify(error);
 }
 
 // Helper function for async error notification (useful for serverless)
 export async function notifyErrorAsync(error: Error, context?: Record<string, any>) {
-  if (context) {
-    Honeybadger.setContext(context);
+  const hb = await initHoneybadger();
+  if (hb) {
+    if (context) {
+      hb.setContext(context);
+    }
+    return await hb.notifyAsync(error);
   }
-  return await Honeybadger.notifyAsync(error);
 }
 
 // Helper function to extract user context from request
@@ -68,4 +87,13 @@ export function extractUserContext(req: Request) {
   };
 }
 
-export default Honeybadger;
+// Get middleware functions
+export async function getMiddleware() {
+  const hb = await initHoneybadger();
+  return {
+    requestHandler: hb?.requestHandler || ((req: any, res: any, next: any) => next()),
+    errorHandler: hb?.errorHandler || ((err: any, req: any, res: any, next: any) => next(err))
+  };
+}
+
+export default initHoneybadger;
