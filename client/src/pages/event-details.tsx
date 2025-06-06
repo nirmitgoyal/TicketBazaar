@@ -10,12 +10,9 @@ import { TicketComparison } from "@/components/ticket-comparison";
 import { Link } from "wouter";
 import { Event, Ticket } from "@shared/schema";
 import { useAnalytics } from "@/hooks/use-analytics";
-import { SEOManager } from "@/components/helmet-manager";
-import CombinedSchema from "@/components/schema/combined-schema";
+import EnhancedSEO from "@/components/enhanced-seo";
+import { generateEventStructuredData, generateBreadcrumbStructuredData, generateOrganizationStructuredData } from "@/utils/seo-utils";
 import { SocialShare } from "@/components/social-share";
-import { EventSchema } from "@/components/schema/event-schema";
-import { BreadcrumbSchema } from "@/components/schema/breadcrumb-schema";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
 
 export default function EventDetails() {
   const { id } = useParams<{ id: string }>();
@@ -122,7 +119,7 @@ export default function EventDetails() {
   const currentUrl = `https://ticketbazaar.co.in${location}`;
 
   // Calculate ticket price range for schema
-  const ticketPrices = tickets.length > 0 ? {
+  const ticketPrices = (tickets && tickets.length > 0) ? {
     min: Math.min(...tickets.map(t => t.price)),
     max: Math.max(...tickets.map(t => t.price)),
     currency: "INR"
@@ -136,23 +133,44 @@ export default function EventDetails() {
     { name: event.eventTitle || event.title, url: `/event/${event.id}` }
   ];
 
+  // Generate structured data
+  const eventStructuredData = generateEventStructuredData({
+    title: event.eventTitle || event.title,
+    description: event.eventDescription || `${event.eventTitle || event.title} event at ${event.venue}`,
+    venue: event.venue,
+    date: event.eventDate.toISOString(),
+    category: event.category,
+    city: event.city || event.venue.split(',').pop()?.trim() || 'India',
+    price: ticketPrices?.min,
+    imageUrl: event.eventImageUrl ? event.eventImageUrl : undefined,
+    latitude: event.latitude ? event.latitude : undefined,
+    longitude: event.longitude ? event.longitude : undefined
+  }, availableTickets.length);
+
+  const breadcrumbStructuredData = generateBreadcrumbStructuredData([
+    { name: "Home", url: "https://ticketbazaar.co.in/" },
+    { name: "Events", url: "https://ticketbazaar.co.in/" },
+    { name: event.category, url: `https://ticketbazaar.co.in/events/category/${event.category}` },
+    { name: event.eventTitle || event.title, url: `https://ticketbazaar.co.in/event/${event.id}` }
+  ]);
+
+  const organizationStructuredData = generateOrganizationStructuredData();
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <SEOManager
-        title={`${event.eventTitle || event.title} Tickets | ${event.venue} | Ticket Bazaar`}
-        description={`Buy verified second hand tickets for ${event.eventTitle || event.title} at ${event.venue} on ${new Date(event.eventDate).toLocaleDateString()}. ${event.city} event tickets with secure escrow protection. Starting from ₹${ticketPrices?.min || 'TBD'}.`}
+      <EnhancedSEO
+        type="event"
+        data={{
+          title: event.eventTitle || event.title,
+          venue: event.venue,
+          city: event.city || event.venue.split(',').pop()?.trim() || 'India'
+        }}
         canonicalUrl={`https://ticketbazaar.co.in/event/${id}`}
-        keywords={`${event.eventTitle}, ${event.venue}, ${event.city}, ${event.category} tickets, event tickets, second hand tickets, 2nd hand tickets, resale tickets, ${new Date(event.eventDate).toLocaleDateString()}`}
         ogType="event"
-      >
-        <EventSchema event={event} ticketPrices={ticketPrices} />
-        <BreadcrumbSchema items={breadcrumbItems} />
-        <OrganizationSchema />
-      </SEOManager>
-      <CombinedSchema
-        event={event}
-        ticket={tickets?.[0]}
+        ogImage={event.eventImageUrl || undefined}
+        structuredData={[eventStructuredData, breadcrumbStructuredData, organizationStructuredData]}
       />
+      
       <Link href="/">
         <a className="inline-flex items-center text-primary mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to events
