@@ -1057,21 +1057,21 @@ export default function Home() {
                   Want to sell your tickets?
                 </h2>
                 <p className="text-textSecondary mb-6">
-                  List your tickets securely on India's trusted resale platform.
-                  We ensure fair pricing and secure transactions.
+                  List your tickets on India's trusted peer-to-peer platform.
+                  Connect directly with buyers through Instagram for secure transactions.
                 </p>
                 <ul className="mb-8 space-y-3">
                   <li className="flex items-start">
                     <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
-                    <span>Secure escrow payment system</span>
+                    <span>Instagram verification for authenticity</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
-                    <span>Verified buyers only</span>
+                    <span>DigiLocker identity verification</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
-                    <span>Fast payouts after successful transfers</span>
+                    <span>Direct communication with buyers</span>
                   </li>
                 </ul>
                 <Button
@@ -1091,10 +1091,9 @@ export default function Home() {
                       1
                     </div>
                     <div>
-                      <h4 className="font-medium mb-1">List your tickets</h4>
+                      <h4 className="font-medium mb-1">Create verified account</h4>
                       <p className="text-sm text-textSecondary">
-                        Upload your ticket details and set your price (up to
-                        original face value)
+                        Sign up with your Instagram profile and complete DigiLocker verification
                       </p>
                     </div>
                   </div>
