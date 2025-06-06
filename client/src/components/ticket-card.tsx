@@ -17,12 +17,46 @@ import { useAtmosphereContext } from "@/contexts/AtmosphereContext";
 import { useSoundEffects } from "@/lib/sound-effects";
 import { VerificationBadge } from "./verification-badge";
 import { VerificationModal } from "./verification-modal";
+import { TrustScoreMeter } from "./trust-score-meter";
 
 interface TicketCardProps {
   event: TicketType;
   onClick: () => void;
   index?: number; // For staggered animations
 }
+
+// Generate realistic trust score based on ticket data
+const generateTrustScore = (ticket: TicketType): { score: number; fraudRisk: 'low' | 'medium' | 'high' } => {
+  let baseScore = 50;
+  
+  // Event credibility factors
+  if (ticket.eventTitle.toLowerCase().includes('ipl') || 
+      ticket.eventTitle.toLowerCase().includes('concert') ||
+      ticket.venue.toLowerCase().includes('stadium')) {
+    baseScore += 20;
+  }
+  
+  // Price reasonableness
+  if (ticket.price > 10000) baseScore -= 15;
+  else if (ticket.price < 1000) baseScore += 10;
+  
+  // Venue credibility
+  if (ticket.venue.toLowerCase().includes('stadium') || 
+      ticket.venue.toLowerCase().includes('center') ||
+      ticket.venue.toLowerCase().includes('arena')) {
+    baseScore += 15;
+  }
+  
+  // Add some randomness for demo purposes
+  const variation = Math.floor(Math.random() * 20) - 10;
+  const finalScore = Math.max(15, Math.min(95, baseScore + variation));
+  
+  const fraudRisk: 'low' | 'medium' | 'high' = 
+    finalScore >= 70 ? 'low' : 
+    finalScore >= 45 ? 'medium' : 'high';
+    
+  return { score: finalScore, fraudRisk };
+};
 
 export function TicketCard({
   event,
@@ -33,6 +67,10 @@ export function TicketCard({
   const { setActiveEvent } = useAtmosphereContext();
   const { playTicketHover, playButtonHover, playClick } = useSoundEffects();
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showTrustScore, setShowTrustScore] = useState(false);
+  
+  // Generate trust score for this ticket
+  const trustData = generateTrustScore(event);
 
   const formatDate = (date: Date | string) => {
     try {
@@ -199,7 +237,7 @@ export function TicketCard({
           )}
         </div>
         
-        {/* Verification Section */}
+        {/* Trust Score Section */}
         <motion.div
           className="mt-4 pt-3 border-t border-gray-200"
           initial={{ opacity: 0, y: 10 }}
@@ -207,23 +245,35 @@ export function TicketCard({
           transition={{ delay: 0.3 + index * 0.05 }}
         >
           <div className="flex items-center justify-between">
-            <VerificationBadge 
-              status="unverified" 
-              size="sm"
-            />
+            <div className="flex items-center gap-3">
+              <TrustScoreMeter
+                score={trustData.score}
+                size="sm"
+                showDetails={false}
+                fraudRisk={trustData.fraudRisk}
+                animate={showTrustScore}
+              />
+              <VerificationBadge 
+                confidence={trustData.score}
+                fraudRisk={trustData.fraudRisk}
+                isVerified={trustData.score >= 60}
+                size="sm"
+                animated={showTrustScore}
+              />
+            </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
-                setShowVerificationModal(true);
+                setShowTrustScore(!showTrustScore);
                 playClick();
               }}
               onMouseEnter={handleButtonHover}
               className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
             >
               <Shield className="h-4 w-4 mr-1" />
-              Verify
+              {showTrustScore ? 'Hide' : 'Verify'}
             </Button>
           </div>
         </motion.div>
