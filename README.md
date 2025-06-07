@@ -12,7 +12,7 @@ TicketBazaar revolutionizes ticket reselling in India by eliminating traditional
 - **Location Intelligence**: Google Maps integration with venue discovery
 - **Real-time Communication**: WebSocket-powered instant messaging
 - **Mobile-First Design**: Optimized for Indian mobile usage patterns
-- **Multi-Modal Transport**: Support for buses, trains, flights, and events
+- **Multi-Modal Transport**: Support for buses, trains, flights, and events 
 
 ## 🏗️ System Architecture
 
