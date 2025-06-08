@@ -197,4 +197,26 @@ export class TestUtils {
       path: `test-results/screenshots/${name}.png`
     });
   }
+
+  // Test environment setup
+  async setupTestEnvironment(): Promise<void> {
+    // Clear browser storage
+    await this.page.evaluate(() => localStorage.clear());
+    await this.page.evaluate(() => sessionStorage.clear());
+    
+    // Set up test viewport
+    await this.page.setViewportSize({ width: 1280, height: 720 });
+    
+    // Wait for any initial network requests to complete
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  // Offline mode simulation
+  async simulateOfflineMode(offline: boolean = true): Promise<void> {
+    await this.page.context().setOffline(offline);
+  }
+
+  async waitForElement(selector: string, timeout: number = 5000) {
+    return this.page.waitForSelector(selector, { timeout });
+  }
 }
