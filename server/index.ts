@@ -64,16 +64,8 @@ import { apiBypassMiddleware, apiNotFoundMiddleware } from "./middleware/api-byp
     next();
   });
 
-  // Create a dedicated API sub-app to ensure proper JSON responses
-  const apiApp = express();
-  apiApp.use(express.json());
-  apiApp.use(express.urlencoded({ extended: false }));
-
-  // Register all API routes on the dedicated API app
-  const httpServer = await registerRoutes(apiApp);
-
-  // Mount the API app before any other middleware
-  app.use('/api', apiApp);
+  // Register API routes directly on the main app
+  const httpServer = await registerRoutes(app);
 
   // Create main server
   const server = createServer(app);
