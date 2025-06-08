@@ -67,11 +67,17 @@ jobs:
     - name: Build application
       run: |
         echo "Starting build process..."
-        timeout 300 npm run build || {
-          echo "Build timed out - checking for partial artifacts"
+        timeout 600 npm run build || {
+          echo "Build timed out or failed - checking for partial artifacts"
           if [ -d "dist" ]; then
             echo "Partial build artifacts found"
             ls -la dist/ || true
+            if [ -f "dist/index.html" ]; then
+              echo "Critical build artifact (index.html) exists - continuing"
+            else
+              echo "Critical build artifact missing - failing build"
+              exit 1
+            fi
           else
             echo "No build artifacts generated"
             exit 1

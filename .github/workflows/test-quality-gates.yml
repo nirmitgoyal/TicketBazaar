@@ -35,7 +35,7 @@ jobs:
     - name: Setup PostgreSQL
       uses: harmon758/postgresql-action@v1
       with:
-        postgresql version: '13'
+        postgresql version: '15'
         postgresql db: test
         postgresql user: test
         postgresql password: test
@@ -59,16 +59,15 @@ jobs:
       run: |
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
         npm run dev &
-        sleep 15
-        # Wait for server to be ready
-        for i in {1..30}; do
-          if curl -f http://localhost:5000 >/dev/null 2>&1; then
-            echo "Server is ready"
-            break
-          fi
-          echo "Waiting for server... attempt $i"
-          sleep 2
-        done
+        # Wait for server to be ready with improved timeout
+        timeout 120 bash -c 'until curl -f http://localhost:5000 >/dev/null 2>&1; do
+          echo "Waiting for server..."
+          sleep 5
+        done' || {
+          echo "Server failed to start within timeout"
+          exit 1
+        }
+        echo "Server is ready"
       env:
         NODE_ENV: development
 
