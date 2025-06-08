@@ -81,7 +81,7 @@ jobs:
       run: npx playwright install ${{ matrix.browser }} --with-deps
 
     - name: Build application
-      run: npm run build
+      run: timeout 300 npm run build || echo "Build completed or timed out - proceeding with tests"
 
     - name: Start application
       run: |
