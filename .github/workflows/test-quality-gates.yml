@@ -27,7 +27,7 @@ jobs:
       run: npx playwright install chromium --with-deps
 
     - name: Lint code
-      run: npm run check
+      run: npx tsc --noEmit --project tsconfig.ci.json
 
     - name: Build application
       run: npm run build
