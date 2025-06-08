@@ -35,9 +35,16 @@ jobs:
     - name: Install Playwright browsers
       run: npx playwright install --with-deps
 
+    - name: Setup PostgreSQL
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13'
+        postgresql db: test
+        postgresql user: test
+        postgresql password: test
+
     - name: Setup test database
       run: |
-        # Use local test database configuration
         echo "DATABASE_URL=postgresql://test:test@localhost:5432/test" >> $GITHUB_ENV
         echo "NODE_ENV=test" >> $GITHUB_ENV
         
