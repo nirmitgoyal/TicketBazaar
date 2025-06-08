@@ -29,6 +29,29 @@ jobs:
     - name: Build application
       run: timeout 300 npm run build || echo "Build completed or timed out - proceeding with deployment"
 
+    - name: Setup PostgreSQL for deployment tests
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13'
+        postgresql db: 'test'
+        postgresql user: 'test'
+        postgresql password: 'test'
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U test; do
+          echo "Waiting for PostgreSQL to start..."
+          sleep 2
+        done
+        echo "PostgreSQL is ready"
+
+    - name: Initialize test database
+      run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npx tsx scripts/init-test-db.ts
+      env:
+        NODE_ENV: test
+
     - name: Deploy to staging
       run: |
         echo "Deploying to staging environment..."
@@ -48,6 +71,7 @@ jobs:
         npx playwright test tests/e2e/01-navigation-routing.spec.ts --project=chromium
       env:
         TEST_BASE_URL: ${{ secrets.STAGING_URL }}
+        DATABASE_URL: "postgresql://test:test@localhost:5432/test"
 
     - name: Run critical path tests on staging
       run: |
