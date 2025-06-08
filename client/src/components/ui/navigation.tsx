@@ -25,6 +25,7 @@ export function Navigation() {
   return (
     <motion.header
       className="bg-white shadow-md"
+      data-testid="navigation"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
@@ -67,6 +68,7 @@ export function Navigation() {
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-gray-600 hover:text-primary hover:bg-gray-50"
               }`}
+              data-testid="nav-home"
               onClick={() =>
                 handleNavigation(
                   location === "/map" || location === "/events/map"
@@ -86,6 +88,7 @@ export function Navigation() {
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-gray-600 hover:text-primary hover:bg-gray-50"
               }`}
+              data-testid="nav-map"
               onClick={() => handleNavigation("/map")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -115,6 +118,7 @@ export function Navigation() {
                       ? "bg-primary/10 text-primary font-medium"
                       : "text-gray-600 hover:text-primary hover:bg-gray-50"
                   }`}
+                  data-testid="nav-list-ticket"
                   onClick={() => handleNavigation("/list-ticket")}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -128,6 +132,7 @@ export function Navigation() {
                       ? "bg-primary/10 text-primary font-medium"
                       : "text-gray-600 hover:text-primary hover:bg-gray-50"
                   }`}
+                  data-testid="nav-profile"
                   onClick={() => handleNavigation("/profile")}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
