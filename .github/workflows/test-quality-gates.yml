@@ -40,6 +40,13 @@ jobs:
         postgresql user: test
         postgresql password: test
 
+    - name: Initialize test database
+      run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npx tsx scripts/init-test-db.ts
+      env:
+        NODE_ENV: test
+
     - name: Start application
       run: |
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"

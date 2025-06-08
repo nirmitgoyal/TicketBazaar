@@ -43,8 +43,10 @@ jobs:
         postgresql user: test
         postgresql password: test
 
-    - name: Setup test database
+    - name: Initialize test database
       run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npx tsx scripts/init-test-db.ts
         echo "DATABASE_URL=postgresql://test:test@localhost:5432/test" >> $GITHUB_ENV
         echo "NODE_ENV=test" >> $GITHUB_ENV
         
