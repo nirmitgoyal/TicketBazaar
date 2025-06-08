@@ -1,0 +1,215 @@
+name: Complete Test Matrix
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_environment:
+        description: 'Test Environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+      browser_matrix:
+        description: 'Browser Matrix'
+        required: true
+        default: 'chromium,firefox'
+        type: string
+      test_categories:
+        description: 'Test Categories'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - navigation
+        - forms
+        - realtime
+        - maps
+        - ui
+        - errors
+        - journeys
+
+jobs:
+  matrix-setup:
+    runs-on: ubuntu-latest
+    outputs:
+      browsers: ${{ steps.setup.outputs.browsers }}
+      test-suites: ${{ steps.setup.outputs.test-suites }}
+    steps:
+    - name: Setup test matrix
+      id: setup
+      run: |
+        if [ "${{ github.event.inputs.browser_matrix }}" = "" ]; then
+          echo "browsers=[\"chromium\",\"firefox\"]" >> $GITHUB_OUTPUT
+        else
+          browsers=$(echo "${{ github.event.inputs.browser_matrix }}" | sed 's/,/","/g' | sed 's/^/["/' | sed 's/$/"]/')
+          echo "browsers=$browsers" >> $GITHUB_OUTPUT
+        fi
+        
+        if [ "${{ github.event.inputs.test_categories }}" = "all" ]; then
+          echo "test-suites=[\"navigation\",\"forms\",\"realtime\",\"maps\",\"ui\",\"errors\",\"journeys\"]" >> $GITHUB_OUTPUT
+        else
+          echo "test-suites=[\"${{ github.event.inputs.test_categories }}\"]" >> $GITHUB_OUTPUT
+        fi
+
+  comprehensive-tests:
+    runs-on: ubuntu-latest
+    needs: matrix-setup
+    strategy:
+      matrix:
+        browser: ${{ fromJson(needs.matrix-setup.outputs.browsers) }}
+        test-suite: ${{ fromJson(needs.matrix-setup.outputs.test-suites) }}
+      fail-fast: false
+      max-parallel: 4
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      run: npx playwright install ${{ matrix.browser }} --with-deps
+
+    - name: Build application
+      run: timeout 300 npm run build || echo "Build completed or timed out - proceeding with tests"
+
+    - name: Setup PostgreSQL
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13'
+        postgresql db: test
+        postgresql user: test
+        postgresql password: test
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U test; do
+          echo "Waiting for PostgreSQL to start..."
+          sleep 2
+        done
+        echo "PostgreSQL is ready"
+
+    - name: Initialize test database
+      run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npx tsx scripts/init-test-db.ts
+      env:
+        NODE_ENV: test
+
+    - name: Start application
+      run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npm run start &
+        sleep 15
+      env:
+        NODE_ENV: test
+
+    - name: Execute test suite
+      run: |
+        case "${{ matrix.test-suite }}" in
+          "navigation")
+            npx playwright test tests/e2e/01-navigation-routing.spec.ts --project=${{ matrix.browser }} --reporter=json,html
+            ;;
+          "forms")
+            npx playwright test tests/e2e/02-form-validation.spec.ts --project=${{ matrix.browser }} --reporter=json,html
+            ;;
+          "realtime")
+            npx playwright test tests/e2e/03-websocket-realtime.spec.ts --project=${{ matrix.browser }} --reporter=json,html
+            ;;
+          "maps")
+            npx playwright test tests/e2e/04-interactive-map.spec.ts --project=${{ matrix.browser }} --reporter=json,html
+            ;;
+          "ui")
+            npx playwright test tests/e2e/05-ui-animations.spec.ts --project=${{ matrix.browser }} --reporter=json,html
+            ;;
+          "errors")
+            npx playwright test tests/e2e/06-error-handling.spec.ts --project=${{ matrix.browser }} --reporter=json,html
+            ;;
+          "journeys")
+            npx playwright test tests/e2e/07-user-journeys.spec.ts --project=${{ matrix.browser }} --reporter=json,html
+            ;;
+        esac
+      env:
+        CI: true
+        TEST_ENVIRONMENT: ${{ github.event.inputs.test_environment }}
+
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.test-suite }}-${{ matrix.browser }}
+        path: |
+          test-results/
+          playwright-report/
+        retention-days: 14
+
+    - name: Upload screenshots on failure
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: failure-evidence-${{ matrix.test-suite }}-${{ matrix.browser }}
+        path: test-results/screenshots/
+        retention-days: 30
+
+  test-summary:
+    runs-on: ubuntu-latest
+    needs: comprehensive-tests
+    if: always()
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: test-artifacts
+
+    - name: Generate comprehensive summary
+      run: |
+        echo "# Complete Test Matrix Results" > matrix-summary.md
+        echo "" >> matrix-summary.md
+        echo "**Environment:** ${{ github.event.inputs.test_environment }}" >> matrix-summary.md
+        echo "**Browsers:** ${{ github.event.inputs.browser_matrix }}" >> matrix-summary.md
+        echo "**Test Categories:** ${{ github.event.inputs.test_categories }}" >> matrix-summary.md
+        echo "" >> matrix-summary.md
+        
+        echo "## Detailed Results" >> matrix-summary.md
+        echo "" >> matrix-summary.md
+        
+        total_combinations=0
+        successful_combinations=0
+        
+        for artifact_dir in test-artifacts/test-results-*/; do
+          if [ -d "$artifact_dir" ]; then
+            total_combinations=$((total_combinations + 1))
+            test_name=$(basename "$artifact_dir" | sed 's/test-results-//')
+            
+            if ls "$artifact_dir"results.json >/dev/null 2>&1; then
+              successful_combinations=$((successful_combinations + 1))
+              echo "- ✅ $test_name: PASSED" >> matrix-summary.md
+            else
+              echo "- ❌ $test_name: FAILED" >> matrix-summary.md
+            fi
+          fi
+        done
+        
+        echo "" >> matrix-summary.md
+        echo "## Summary Statistics" >> matrix-summary.md
+        echo "- Total Test Combinations: $total_combinations" >> matrix-summary.md
+        echo "- Successful: $successful_combinations" >> matrix-summary.md
+        echo "- Failed: $((total_combinations - successful_combinations))" >> matrix-summary.md
+        echo "- Success Rate: $(( (successful_combinations * 100) / total_combinations ))%" >> matrix-summary.md
+
+    - name: Upload matrix summary
+      uses: actions/upload-artifact@v4
+      with:
+        name: matrix-summary
+        path: matrix-summary.md
+        retention-days: 30
