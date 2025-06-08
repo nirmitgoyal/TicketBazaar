@@ -1,20 +1,38 @@
 # Test info
 
-- Name: Page Navigation & Routing >> should handle invalid URLs with graceful fallback
-- Location: /home/runner/workspace/tests/e2e/01-navigation-routing.spec.ts:36:3
+- Name: Page Navigation & Routing >> should maintain navigation state during page transitions
+- Location: /home/runner/workspace/tests/e2e/01-navigation-routing.spec.ts:56:3
 
 # Error details
 
 ```
-Error: browserType.launch: Executable doesn't exist at /home/runner/workspace/.cache/ms-playwright/firefox-1482/firefox/firefox
-╔═════════════════════════════════════════════════════════════════════════╗
-║ Looks like Playwright Test or Playwright was just installed or updated. ║
-║ Please run the following command to download new browsers:              ║
-║                                                                         ║
-║     npx playwright install                                              ║
-║                                                                         ║
-║ <3 Playwright Team                                                      ║
-╚═════════════════════════════════════════════════════════════════════════╝
+Error: browserType.launch: 
+╔══════════════════════════════════════════════════════╗
+║ Host system is missing dependencies to run browsers. ║
+║ Missing libraries:                                   ║
+║     libglib-2.0.so.0                                 ║
+║     libgobject-2.0.so.0                              ║
+║     libnss3.so                                       ║
+║     libnssutil3.so                                   ║
+║     libnspr4.so                                      ║
+║     libdbus-1.so.3                                   ║
+║     libatk-1.0.so.0                                  ║
+║     libatk-bridge-2.0.so.0                           ║
+║     libgio-2.0.so.0                                  ║
+║     libexpat.so.1                                    ║
+║     libatspi.so.0                                    ║
+║     libX11.so.6                                      ║
+║     libXcomposite.so.1                               ║
+║     libXdamage.so.1                                  ║
+║     libXext.so.6                                     ║
+║     libXfixes.so.3                                   ║
+║     libXrandr.so.2                                   ║
+║     libgbm.so.1                                      ║
+║     libxcb.so.1                                      ║
+║     libxkbcommon.so.0                                ║
+║     libudev.so.1                                     ║
+║     libasound.so.2                                   ║
+╚══════════════════════════════════════════════════════╝
 ```
 
 # Test source
@@ -55,8 +73,7 @@ Error: browserType.launch: Executable doesn't exist at /home/runner/workspace/.c
    33 |     await expect(page.url()).toContain('/profile');
    34 |   });
    35 |
->  36 |   test('should handle invalid URLs with graceful fallback', async ({ page }) => {
-      |   ^ Error: browserType.launch: Executable doesn't exist at /home/runner/workspace/.cache/ms-playwright/firefox-1482/firefox/firefox
+   36 |   test('should handle invalid URLs with graceful fallback', async ({ page }) => {
    37 |     const invalidUrls = [
    38 |       '/nonexistent-page',
    39 |       '/events/invalid-id',
@@ -76,7 +93,8 @@ Error: browserType.launch: Executable doesn't exist at /home/runner/workspace/.c
    53 |     }
    54 |   });
    55 |
-   56 |   test('should maintain navigation state during page transitions', async ({ page }) => {
+>  56 |   test('should maintain navigation state during page transitions', async ({ page }) => {
+      |   ^ Error: browserType.launch: 
    57 |     await utils.navigateToHome();
    58 |     
    59 |     // Navigate through multiple pages and verify browser history

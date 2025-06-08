@@ -14,16 +14,12 @@ Error: browserType.launch:
 ║     libgobject-2.0.so.0                              ║
 ║     libnss3.so                                       ║
 ║     libnssutil3.so                                   ║
-║     libsmime3.so                                     ║
 ║     libnspr4.so                                      ║
 ║     libdbus-1.so.3                                   ║
 ║     libatk-1.0.so.0                                  ║
 ║     libatk-bridge-2.0.so.0                           ║
-║     libcups.so.2                                     ║
 ║     libgio-2.0.so.0                                  ║
 ║     libexpat.so.1                                    ║
-║     libxcb.so.1                                      ║
-║     libxkbcommon.so.0                                ║
 ║     libatspi.so.0                                    ║
 ║     libX11.so.6                                      ║
 ║     libXcomposite.so.1                               ║
@@ -32,8 +28,8 @@ Error: browserType.launch:
 ║     libXfixes.so.3                                   ║
 ║     libXrandr.so.2                                   ║
 ║     libgbm.so.1                                      ║
-║     libpango-1.0.so.0                                ║
-║     libcairo.so.2                                    ║
+║     libxcb.so.1                                      ║
+║     libxkbcommon.so.0                                ║
 ║     libudev.so.1                                     ║
 ║     libasound.so.2                                   ║
 ╚══════════════════════════════════════════════════════╝
