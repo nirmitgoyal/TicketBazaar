@@ -1,18 +1,15 @@
 import { storage } from "../storage";
 import { UserReview, InsertUserReview } from "@shared/schema";
 import { UserService } from "./user.service";
-import { TransactionService } from "./transaction.service";
 
 /**
- * Service class to handle review-related business logic
+ * Service class to handle review-related business logic for P2P model
  */
 export class ReviewService {
   private userService: UserService;
-  private transactionService: TransactionService;
 
   constructor() {
     this.userService = new UserService();
-    this.transactionService = new TransactionService();
   }
 
   /**
@@ -43,24 +40,18 @@ export class ReviewService {
   }
 
   /**
-   * Get a review for a specific transaction
-   * @param userId User ID being reviewed
-   * @param transactionId Transaction ID
-   * @returns Review for the transaction or undefined if not found
-   */
-  async getUserReviewForTransaction(
-    userId: number,
-    transactionId: number,
-  ): Promise<UserReview | undefined> {
-    return storage.getUserReviewForTransaction(userId, transactionId);
-  }
-
-  /**
-   * Create a new review
+   * Create a new review for P2P transactions
    * @param reviewData Review data
    * @returns Created review
    */
-  async createReview(reviewData: InsertUserReview): Promise<UserReview> {
+  async createReview(reviewData: {
+    userId: number;
+    reviewerId: number;
+    rating: number;
+    comment?: string;
+    contactRequestId?: number;
+    reviewType: "buyer_review_seller" | "seller_review_buyer";
+  }): Promise<UserReview> {
     // Check if the user exists
     const user = await this.userService.getUserById(reviewData.userId);
     if (!user) {
@@ -73,31 +64,24 @@ export class ReviewService {
       throw new Error("Reviewer not found");
     }
 
-    // Check if the transaction exists and is completed
-    const transaction = await this.transactionService.getTransactionById(
-      reviewData.transactionId,
-    );
-    if (!transaction) {
-      throw new Error("Transaction not found");
-    }
-
-    if (transaction.status !== "completed") {
-      throw new Error("Cannot review a transaction that is not completed");
-    }
-
-    // Check if a review already exists for this transaction
-    const existingReview = await this.getUserReviewForTransaction(
-      reviewData.userId,
-      reviewData.transactionId,
-    );
-
-    if (existingReview) {
-      throw new Error("A review already exists for this transaction");
-    }
-
     // Validate rating (should be between 1 and 5)
     if (reviewData.rating < 1 || reviewData.rating > 5) {
       throw new Error("Rating must be between 1 and 5");
+    }
+
+    // In P2P model, users can review each other after contact requests
+    // Check if contact request exists (optional validation)
+    if (reviewData.contactRequestId) {
+      const contactRequest = await storage.getContactRequest(reviewData.contactRequestId);
+      if (!contactRequest) {
+        throw new Error("Contact request not found");
+      }
+      
+      // Ensure the reviewer was involved in the contact request
+      if (contactRequest.requesterId !== reviewData.reviewerId && 
+          contactRequest.sellerId !== reviewData.reviewerId) {
+        throw new Error("You can only review users you've contacted");
+      }
     }
 
     // Create the review

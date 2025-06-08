@@ -229,31 +229,11 @@ export const ticketViewsRelations = relations(ticketViews, ({ one }) => ({
 }));
 
 // Insert schemas
-export const insertUserSchema = createInsertSchema(users).pick({
-  password: true,
-  fullName: true,
-  email: true,
-  phone: true,
-  whatsapp: true,
-  instagram: true,
-  preferredContactMethod: true,
-  rating: true,
-  ratingsCount: true,
-});
+export const insertUserSchema = createInsertSchema(users);
 
-export const insertTicketSchema = createInsertSchema(tickets).omit({
-  id: true,
-  createdAt: true,
-  expiresAt: true,
-});
+export const insertTicketSchema = createInsertSchema(tickets);
 
-export const insertContactRequestSchema = createInsertSchema(
-  contactRequests,
-).omit({
-  id: true,
-  createdAt: true,
-  respondedAt: true,
-});
+export const insertContactRequestSchema = createInsertSchema(contactRequests);
 
 // Extended schema for contact requests with validations
 export const contactRequestSchema = insertContactRequestSchema.extend({
@@ -261,22 +241,11 @@ export const contactRequestSchema = insertContactRequestSchema.extend({
   contactMethod: z.enum(["whatsapp", "phone", "email", "instagram"]),
 });
 
-export const insertUserFeedbackSchema = createInsertSchema(userFeedback).omit({
-  id: true,
-  createdAt: true,
-  reviewedAt: true,
-});
+export const insertUserFeedbackSchema = createInsertSchema(userFeedback);
 
-export const insertUserReviewSchema = createInsertSchema(userReviews).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+export const insertUserReviewSchema = createInsertSchema(userReviews);
 
-export const insertTicketViewSchema = createInsertSchema(ticketViews).omit({
-  id: true,
-  viewedAt: true,
-});
+export const insertTicketViewSchema = createInsertSchema(ticketViews);
 
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -342,4 +311,30 @@ export const userReviewSchema = insertUserReviewSchema.extend({
     .min(1, "Rating must be at least 1 star")
     .max(5, "Rating cannot exceed 5 stars"),
   comment: z.string().optional(),
+  reviewerId: z.number(),
+  userId: z.number(),
+  contactRequestId: z.number().optional(),
+  reviewType: z.enum(["buyer_review_seller", "seller_review_buyer"]),
 });
+
+// Legacy types for backward compatibility (now removed from P2P model)
+export type Transaction = {
+  id: number;
+  buyerId: number;
+  sellerId: number;
+  ticketId: number;
+  status: string;
+  createdAt: Date;
+};
+
+export type Dispute = {
+  id: number;
+  transactionId: number;
+  initiatorId: number;
+  reason: string;
+  status: string;
+  createdAt: Date;
+};
+
+export type InsertDispute = Omit<Dispute, 'id' | 'createdAt'>;
+export type InsertEvent = Omit<Event, 'id' | 'createdAt'>;

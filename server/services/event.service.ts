@@ -1,5 +1,5 @@
 import { storage } from "../storage";
-import { Event, InsertEvent } from "@shared/schema";
+import { Event, InsertTicket } from "@shared/schema";
 
 /**
  * Type definition for search filters
@@ -27,12 +27,14 @@ export interface EventSearchFilters {
  */
 export class EventService {
   /**
-   * Get event by ID
-   * @param id Event ID
+   * Get event by ID (now gets event data from tickets)
+   * @param id Event ID (now ticket ID since events are embedded)
    * @returns Event object or undefined if not found
    */
   async getEventById(id: number): Promise<Event | undefined> {
-    return storage.getEvent(id);
+    // In P2P model, events are embedded in tickets
+    // So we get event data from the ticket
+    return storage.getTicket(id);
   }
 
   /**
@@ -53,12 +55,13 @@ export class EventService {
   }
 
   /**
-   * Create a new event
+   * Create a new event (now creates ticket with event data)
    * @param eventData Event data
    * @returns Created event
    */
-  async createEvent(eventData: InsertEvent): Promise<Event> {
-    return storage.createEvent(eventData);
+  async createEvent(eventData: InsertTicket): Promise<Event> {
+    // In P2P model, events are created as tickets with embedded event data
+    return storage.createTicket(eventData);
   }
 
   /**

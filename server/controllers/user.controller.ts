@@ -35,14 +35,6 @@ export class UserController {
       // Validate request body
       const validatedData = userRegisterSchema.parse(req.body);
 
-      // Check if username already exists
-      const existingUser = await this.userService.getUserByUsername(
-        validatedData.username,
-      );
-      if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
-      }
-
       // Check if email already exists
       const existingEmail = await this.userService.getUserByEmail(
         validatedData.email,

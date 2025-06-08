@@ -29,5 +29,19 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor libraries
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-router': ['wouter'],
+          'vendor-query': ['@tanstack/react-query'],
+          'vendor-ui': ['lucide-react', 'framer-motion', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+          'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
+          'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600, // Increase warning threshold slightly
   },
 });

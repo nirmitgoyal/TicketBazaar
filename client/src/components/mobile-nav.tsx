@@ -4,11 +4,11 @@ import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { Menu, Home, Search, User, Plus } from 'lucide-react';
 import { useAuth } from '../hooks/use-auth';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'wouter';
 
 export function MobileNav() {
   const { user } = useAuth();
-  const location = useLocation();
+  const [location] = useLocation();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const navItems = [
@@ -25,7 +25,7 @@ export function MobileNav() {
         <nav className="mobile:flex mobile:justify-around mobile:py-2">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.href;
+            const isActive = location === item.href;
             
             return (
               <Link
@@ -67,7 +67,7 @@ export function MobileNav() {
               <div className="space-y-2">
                 {navItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive = location.pathname === item.href;
+                  const isActive = location === item.href;
                   
                   return (
                     <Link

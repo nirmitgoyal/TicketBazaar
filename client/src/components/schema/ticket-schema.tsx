@@ -15,27 +15,27 @@ export const TicketSchema = ({ event, tickets, url }: TicketSchemaProps) => {
   if (!event || !tickets || tickets.length === 0) return null;
 
   // Find the lowest and highest prices for the tickets
-  const prices = tickets.map((ticket) => ticket.sellingPrice);
+  const prices = tickets.map((ticket) => ticket.price);
   const lowestPrice = Math.min(...prices);
   const highestPrice = Math.max(...prices);
 
   // Format date to ISO format with validation
-  const isValidDate = event.date && !isNaN(new Date(event.date).getTime());
+  const isValidDate = event.eventDate && !isNaN(new Date(event.eventDate).getTime());
   const fallbackDate = new Date().toISOString();
   
-  const eventDate = isValidDate ? new Date(event.date).toISOString() : fallbackDate;
+  const eventDate = isValidDate ? new Date(event.eventDate).toISOString() : fallbackDate;
   const eventEndDate = isValidDate 
-    ? new Date(new Date(event.date).getTime() + 3 * 60 * 60 * 1000).toISOString()
+    ? new Date(new Date(event.eventDate).getTime() + 3 * 60 * 60 * 1000).toISOString()
     : new Date(new Date().getTime() + 3 * 60 * 60 * 1000).toISOString(); // Assuming 3 hour events
 
   // Create the structured data
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: event.title,
+    name: event.eventTitle,
     description:
-      event.description ||
-      `${event.title} at ${event.venue}. Buy second hand and 2nd hand tickets with secure verification.`,
+      event.eventDescription ||
+      `${event.eventTitle} at ${event.venue}. Buy second hand and 2nd hand tickets with secure verification.`,
     startDate: eventDate,
     endDate: eventEndDate,
     eventStatus: "https://schema.org/EventScheduled",
@@ -50,10 +50,10 @@ export const TicketSchema = ({ event, tickets, url }: TicketSchemaProps) => {
         addressCountry: "IN",
       },
     },
-    image: [event.imageUrl || "/images/ticket-bazaar-social.png"],
+    image: [event.eventImageUrl || "/images/ticket-bazaar-social.png"],
     performer: {
       "@type": "PerformingGroup",
-      name: event.title.split(" at ")[0] || event.title,
+      name: event.eventTitle.split(" at ")[0] || event.eventTitle,
     },
     offers: {
       "@type": "AggregateOffer",

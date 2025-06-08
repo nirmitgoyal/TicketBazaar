@@ -184,9 +184,9 @@ export function EventRecommendations({
                   <div
                     className="h-48 bg-gradient-to-br from-blue-500 to-purple-600 relative overflow-hidden"
                     style={
-                      event.imageUrl
+                      event.eventImageUrl
                         ? {
-                            backgroundImage: `url(${event.imageUrl})`,
+                            backgroundImage: `url(${event.eventImageUrl})`,
                             backgroundSize: "cover",
                             backgroundPosition: "center",
                           }
@@ -235,10 +235,10 @@ export function EventRecommendations({
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
                       <span className="font-medium">
-                        {formatEventDate(event.date)}
+                        {formatEventDate(event.eventDate)}
                       </span>
                       <span className="ml-2 text-gray-500">
-                        {formatEventTime(event.date)}
+                        {formatEventTime(event.eventDate)}
                       </span>
                     </div>
 

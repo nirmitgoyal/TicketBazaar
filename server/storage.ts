@@ -213,7 +213,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ rating: newRating })
+      .set({ rating: newRating } as any)
       .where(eq(users.id, userId))
       .returning();
     return user || undefined;
@@ -225,7 +225,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ phone })
+      .set({ phone } as any)
       .where(eq(users.id, userId))
       .returning();
     return user || undefined;
@@ -244,7 +244,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db.insert(users).values(insertUser).returning();
+    const [user] = await db.insert(users).values(insertUser as any).returning();
     return user;
   }
 
@@ -403,7 +403,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTicket(ticket: InsertTicket): Promise<Ticket> {
-    const [newTicket] = await db.insert(tickets).values(ticket).returning();
+    const [newTicket] = await db.insert(tickets).values(ticket as any).returning();
     return newTicket;
   }
 
@@ -413,7 +413,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<Ticket | undefined> {
     const [ticket] = await db
       .update(tickets)
-      .set({ status })
+      .set({ status } as any)
       .where(eq(tickets.id, id))
       .returning();
     return ticket || undefined;
@@ -529,7 +529,7 @@ export class DatabaseStorage implements IStorage {
   // Pure P2P model - no transaction or dispute storage needed
 
   async createReview(review: InsertUserReview): Promise<UserReview> {
-    const [newReview] = await db.insert(userReviews).values(review).returning();
+    const [newReview] = await db.insert(userReviews).values(review as any).returning();
     return newReview;
   }
 
@@ -603,8 +603,8 @@ export class DatabaseStorage implements IStorage {
       .from(ticketViews)
       .where(
         and(
-          eq(ticketViews.userId, ticketView.userId),
-          eq(ticketViews.ticketId, ticketView.ticketId),
+          eq(ticketViews.userId, (ticketView as any).userId),
+          eq(ticketViews.ticketId, (ticketView as any).ticketId),
           sql`viewed_at > NOW() - INTERVAL '1 hour'`
         )
       );
@@ -613,7 +613,7 @@ export class DatabaseStorage implements IStorage {
     if (recentView.length === 0) {
       const [newView] = await db
         .insert(ticketViews)
-        .values(ticketView)
+        .values(ticketView as any)
         .returning();
       return newView;
     }
@@ -668,7 +668,7 @@ export class DatabaseStorage implements IStorage {
     try {
       const [newContactRequest] = await db
         .insert(contactRequests)
-        .values(contactRequest)
+        .values(contactRequest as any)
         .returning();
       return newContactRequest;
     } catch (error) {

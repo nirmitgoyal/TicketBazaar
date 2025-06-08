@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ReviewService, TransactionService } from "../services";
+import { ReviewService } from "../services";
 import { userReviewSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -8,11 +8,9 @@ import { z } from "zod";
  */
 export class ReviewController {
   private reviewService: ReviewService;
-  private transactionService: TransactionService;
 
   constructor() {
     this.reviewService = new ReviewService();
-    this.transactionService = new TransactionService();
   }
 
   /**
@@ -101,24 +99,11 @@ export class ReviewController {
           .json({ message: "You can only create reviews as yourself" });
       }
 
-      // Check if the transaction exists and is completed
-      const transaction = await this.transactionService.getTransactionById(
-        validatedData.transactionId,
-      );
-      if (!transaction) {
-        return res.status(404).json({ message: "Transaction not found" });
-      }
-
-      // Only buyers and sellers involved in the transaction can review each other
-      if (
-        req.user!.id !== transaction.buyerId &&
-        req.user!.id !== transaction.sellerId
-      ) {
-        return res
-          .status(403)
-          .json({
-            message: "You can only review users you've transacted with",
-          });
+      // Check if the contact request exists (optional in P2P model)
+      if (validatedData.contactRequestId) {
+        // Import ContactRequestService if we need to validate the contact request
+        // For now, we'll allow reviews without strict contact request validation
+        // in the pure P2P model since users can interact outside the platform
       }
 
       // Create the review

@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { AnyZodObject, ZodError } from "zod";
+import { AnyZodObject, ZodError, ZodSchema } from "zod";
 import { ValidationError } from "../services/error.service";
 
 /**
  * Middleware to validate request body against a schema
  * @param schema Schema to validate against
  */
-export const validateBody = (schema: AnyZodObject) => {
+export const validateBody = (schema: ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = schema.safeParse(req.body);
@@ -38,7 +38,7 @@ export const validateBody = (schema: AnyZodObject) => {
  * Middleware to validate request query against a schema
  * @param schema Schema to validate against
  */
-export const validateQuery = (schema: AnyZodObject) => {
+export const validateQuery = (schema: ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = schema.safeParse(req.query);
@@ -68,7 +68,7 @@ export const validateQuery = (schema: AnyZodObject) => {
  * Middleware to validate request params against a schema
  * @param schema Schema to validate against
  */
-export const validateParams = (schema: AnyZodObject) => {
+export const validateParams = (schema: ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = schema.safeParse(req.params);

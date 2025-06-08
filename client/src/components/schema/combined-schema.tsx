@@ -17,9 +17,9 @@ const CombinedSchema: React.FC<CombinedSchemaProps> = ({
     schemas.push({
       "@context": "https://schema.org",
       "@type": "Event",
-      name: event.title,
-      description: event.description,
-      startDate: event.date.toISOString(),
+      name: event.eventTitle,
+      description: event.eventDescription,
+      startDate: event.eventDate.toISOString(),
       location: {
         "@type": "Place",
         name: event.venue,
@@ -43,7 +43,7 @@ const CombinedSchema: React.FC<CombinedSchemaProps> = ({
         "@type": "Organization",
         name: "TicketBazaar",
       },
-      ...(event.imageUrl && { image: event.imageUrl }),
+      ...(event.eventImageUrl && { image: event.eventImageUrl }),
     });
   }
 
@@ -57,7 +57,7 @@ const CombinedSchema: React.FC<CombinedSchemaProps> = ({
       category: "Event Ticket",
       offers: {
         "@type": "Offer",
-        price: ticket.sellingPrice,
+        price: ticket.price,
         priceCurrency: "INR",
         availability:
           ticket.status === "available"
