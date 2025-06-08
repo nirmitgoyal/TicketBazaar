@@ -1,42 +1,48 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
+/**
+ * Simplified Playwright Configuration
+ * Basic setup for essential E2E testing
+ */
 export default defineConfig({
-  testDir: './tests/e2e',
-  fullyParallel: false, // Run sequentially for better debugging
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1,
-  workers: process.env.CI ? 1 : 2,
+  testDir: "./tests/e2e",
   
+  // Test execution settings
+  fullyParallel: false,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 1 : 0,
+  workers: 1, // Run tests sequentially for simplicity
+  
+  // Simple reporting
   reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['json', { outputFile: 'test-results/results.json' }],
-    ['line']
+    ["html", { outputFolder: "playwright-report" }],
+    ["line"]
   ],
   
+  // Basic test configuration
   use: {
-    baseURL: 'http://localhost:5001', // Use port 5001 to avoid AirPlay conflict on macOS
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    baseURL: "http://localhost:5001",
+    actionTimeout: 10000,
+    navigationTimeout: 15000,
+    screenshot: "only-on-failure",
   },
 
+  // Single browser project
   projects: [
     {
-      name: 'chromium',
+      name: "chromium",
       use: { 
-        ...devices['Desktop Chrome'],
+        ...devices["Desktop Chrome"],
         headless: true,
-        ignoreHTTPSErrors: true,
       },
     },
   ],
 
+  // Development server
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5000',
+    command: "npm run dev",
+    url: "http://localhost:5000",
     reuseExistingServer: true,
-    timeout: 120 * 1000,
+    timeout: 60 * 1000,
   },
 });

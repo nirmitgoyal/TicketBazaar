@@ -52,6 +52,7 @@ export function EventCard({
   return (
     <motion.div
       className="bg-white rounded-lg overflow-hidden border border-gray-200 cursor-pointer touch-manipulation shadow-sm hover:shadow-md mobile:hover:shadow-sm touch:hover:shadow-sm active:shadow-md transition-all duration-200 group"
+      data-testid="event-card"
       onClick={onClick}
       variants={fadeInUp}
       initial="hidden"

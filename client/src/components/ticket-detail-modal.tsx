@@ -98,7 +98,7 @@ export function TicketDetailModal({
   if (!tickets || tickets.length === 0) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl" data-testid="event-modal">
           <DialogHeader>
             <DialogTitle className="text-xl">
               {event?.title || "No Tickets Available"}
@@ -117,7 +117,7 @@ export function TicketDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl" data-testid="event-modal">
         <DialogHeader>
           <DialogTitle className="text-xl">
             {event?.title || "Available Tickets"}
