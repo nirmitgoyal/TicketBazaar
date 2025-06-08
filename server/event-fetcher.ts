@@ -1,10 +1,5 @@
-import OpenAI from "openai";
 import { db } from "./db";
 import { tickets } from "@shared/schema";
-import fetch from "node-fetch";
-import * as cheerio from "cheerio";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 interface EventData {
   title: string;
@@ -21,115 +16,17 @@ interface EventData {
 }
 
 /**
- * Fetch events from various Indian event platforms
+ * Placeholder for event data fetching
+ * NOTE: This function should be connected to official event APIs or 
+ * rely on users to manually add events through the platform
  */
 export async function fetchEventsFromInternet(): Promise<EventData[]> {
-  const eventSources = [
-    "https://insider.in/",
-    "https://www.bookmyshow.com/explore/home/mumbai",
-    "https://www.zomato.com/events",
-  ];
-
-  const allEvents: EventData[] = [];
-
-  for (const source of eventSources) {
-    try {
-      console.log(`Fetching events from: ${source}`);
-      const response = await fetch(source, {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        },
-      });
-
-      if (!response.ok) {
-        console.log(`Failed to fetch from ${source}: ${response.status}`);
-        continue;
-      }
-
-      const html = await response.text();
-      const $ = cheerio.load(html);
-
-      // Extract text content for OpenAI processing
-      const textContent = $("body").text().slice(0, 8000); // Limit to prevent token overflow
-
-      // Use OpenAI to extract event information
-      const events = await extractEventsWithOpenAI(textContent, source);
-      allEvents.push(...events);
-
-      // Add delay to be respectful to servers
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    } catch (error) {
-      console.error(`Error fetching from ${source}:`, error);
-    }
-  }
-
-  return allEvents;
+  // Return empty array - events should come from official APIs or user input
+  console.log("Event fetching disabled - connect to official event APIs for production use");
+  return [];
 }
 
-/**
- * Use OpenAI to extract structured event data from webpage content
- */
-async function extractEventsWithOpenAI(
-  content: string,
-  source: string,
-): Promise<EventData[]> {
-  try {
-    const prompt = `
-Extract event information from the following webpage content. Focus on upcoming events in India.
-Return a JSON array of events with this structure:
-{
-  "title": "Event name",
-  "description": "Brief description (max 200 chars)",
-  "venue": "Venue name and location", 
-  "date": "ISO date string (YYYY-MM-DDTHH:MM:SS.000Z)",
-  "category": "Concert|Sports|Theatre|Comedy|Festival|Conference",
-  "city": "City name (Mumbai, Delhi, Bangalore, etc.)",
-  "trending": boolean,
-  "sellingFast": boolean
-}
 
-Extract only real, upcoming events. Ignore past events. Limit to 5-8 events per source.
-Make dates realistic (within next 6 months). Use Indian cities.
-
-Website content:
-${content}
-`;
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are an expert at extracting structured event data from web content. Return only valid JSON arrays with complete event objects.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      response_format: { type: "json_object" },
-      max_tokens: 2000,
-    });
-
-    const result = JSON.parse(response.choices[0].message.content || "{}");
-
-    if (result.events && Array.isArray(result.events)) {
-      return result.events.map((event: any) => ({
-        ...event,
-        imageUrl: getDefaultImageForCategory(event.category),
-        latitude: getCityCoordinates(event.city).lat,
-        longitude: getCityCoordinates(event.city).lng,
-      }));
-    }
-
-    return [];
-  } catch (error) {
-    console.error("Error extracting events with OpenAI:", error);
-    return [];
-  }
-}
 
 /**
  * Get default image URLs for different event categories

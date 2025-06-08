@@ -1,7 +1,4 @@
-import OpenAI from "openai";
-
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Search hints service - provides search suggestions without external dependencies
 
 export interface SearchHint {
   suggestion: string;
@@ -27,96 +24,13 @@ export interface SearchContext {
   }[];
 }
 
-export class AISearchHintsService {
+export class SearchHintsService {
   async generateSearchHints(context: SearchContext): Promise<SearchHint[]> {
-    try {
-      const prompt = this.buildPrompt(context);
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are an expert search assistant for a ticket marketplace in India. Generate helpful, contextual search suggestions that will help users find relevant events. Focus on popular events, artists, sports teams, and venues in India.",
-          },
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.7,
-        max_tokens: 1000,
-      });
-
-      const result = JSON.parse(
-        response.choices[0].message.content || '{"hints": []}',
-      );
-      return result.hints || [];
-    } catch (error) {
-      console.error("Error generating search hints:", error);
-      return this.getFallbackHints(context);
-    }
+    // Use rule-based search hints instead of external AI services
+    return this.getFallbackHints(context);
   }
 
-  private buildPrompt(context: SearchContext): string {
-    const {
-      userQuery,
-      userLocation,
-      previousSearches,
-      userPreferences,
-      currentEvents,
-    } = context;
 
-    let prompt = `Generate 3-5 contextual search hints for a user searching for event tickets in India.
-
-User's current search: "${userQuery}"`;
-
-    if (userLocation) {
-      prompt += `\nUser's location: ${userLocation}`;
-    }
-
-    if (previousSearches?.length) {
-      prompt += `\nUser's previous searches: ${previousSearches.join(", ")}`;
-    }
-
-    if (userPreferences) {
-      if (userPreferences.categories?.length) {
-        prompt += `\nUser prefers these categories: ${userPreferences.categories.join(", ")}`;
-      }
-      if (userPreferences.priceRange) {
-        prompt += `\nUser's price range: ₹${userPreferences.priceRange[0]} - ₹${userPreferences.priceRange[1]}`;
-      }
-    }
-
-    if (currentEvents?.length) {
-      prompt += `\nCurrently available events: ${currentEvents.map((e) => `${e.title} (${e.category}) in ${e.city}`).join(", ")}`;
-    }
-
-    prompt += `
-
-Please generate search hints that:
-1. Are relevant to Indian events, artists, and venues
-2. Consider the user's context and preferences
-3. Include popular searches for concerts, sports, comedy shows, festivals
-4. Suggest specific artist names, team names, or event types popular in India
-5. Include location-specific suggestions if relevant
-
-Return response in JSON format:
-{
-  "hints": [
-    {
-      "suggestion": "search suggestion text",
-      "category": "Concert/Sports/Comedy/Festival/Theater",
-      "confidence": 0.8,
-      "reasoning": "why this suggestion is relevant"
-    }
-  ]
-}`;
-
-    return prompt;
-  }
 
   private getFallbackHints(context: SearchContext): SearchHint[] {
     const { userQuery, userLocation } = context;
