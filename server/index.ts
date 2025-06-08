@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes/index";
 import { log } from "./utils";
 import { initHoneybadger, extractUserContext, getMiddleware, notifyError } from "./honeybadger";
+import { apiBypassMiddleware, apiNotFoundMiddleware } from "./middleware/api-bypass.middleware";
 
 (async () => {
   // Initialize Honeybadger first
@@ -12,6 +13,9 @@ import { initHoneybadger, extractUserContext, getMiddleware, notifyError } from 
 
   // Add Honeybadger request handler BEFORE all other middleware
   app.use(requestHandler);
+
+  // Add API bypass middleware before other middleware
+  app.use(apiBypassMiddleware);
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
@@ -59,7 +63,22 @@ import { initHoneybadger, extractUserContext, getMiddleware, notifyError } from 
     next();
   });
 
-  const server = await registerRoutes(app);
+  // Create a dedicated API sub-app to ensure proper JSON responses
+  const apiApp = express();
+  apiApp.use(express.json());
+  apiApp.use(express.urlencoded({ extended: false }));
+
+  // Register all API routes on the dedicated API app
+  await registerRoutes(apiApp);
+
+  // Mount the API app before any other middleware
+  app.use('/api', apiApp);
+
+  // Create main server
+  const server = createServer(app);
+
+  // Add API not found handler before Vite middleware
+  app.use(apiNotFoundMiddleware);
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
