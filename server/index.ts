@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
-import { registerRoutes } from "./routes/index";
+import { registerRoutes } from "./routes";
 import { log } from "./utils";
 import { initHoneybadger, extractUserContext, getMiddleware, notifyError } from "./honeybadger";
 import { apiBypassMiddleware, apiNotFoundMiddleware } from "./middleware/api-bypass.middleware";
@@ -70,16 +70,13 @@ import { apiBypassMiddleware, apiNotFoundMiddleware } from "./middleware/api-byp
   apiApp.use(express.urlencoded({ extended: false }));
 
   // Register all API routes on the dedicated API app
-  await registerRoutes(apiApp);
+  const httpServer = await registerRoutes(apiApp);
 
   // Mount the API app before any other middleware
   app.use('/api', apiApp);
 
   // Create main server
   const server = createServer(app);
-
-  // Add API not found handler before Vite middleware
-  app.use(apiNotFoundMiddleware);
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
