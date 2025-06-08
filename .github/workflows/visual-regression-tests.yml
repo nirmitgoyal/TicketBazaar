@@ -57,15 +57,8 @@ jobs:
       run: |
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
         export PORT=5001
-        npm run start npm run start &
-        # Wait for server to be ready with timeout
-        timeout 60 bash -c 'until curl -f http://localhost:5001 >/dev/null 2>&1; do
-          echo "Waiting for server..."
-          sleep 3
-        done' || {
-          echo "Server failed to start within timeout"
-          exit 1
-        }
+        npm run start &
+        npx wait-on http://localhost:5001 --timeout 60000
         echo "Server is ready"
       env:
         NODE_ENV: test

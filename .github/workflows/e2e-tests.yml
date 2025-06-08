@@ -64,9 +64,7 @@ jobs:
     - name: Start application server
       run: |
         export PORT=5001
-        npm run start npm run start &
-        sleep 10
-        # Wait for server to be ready
+        npm run start &
         npx wait-on http://localhost:5001 --timeout 60000
 
     - name: Run E2E tests

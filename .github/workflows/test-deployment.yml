@@ -77,8 +77,8 @@ jobs:
       run: |
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
         export PORT=5001
-        npm run start npm run start &
-        sleep 15
+        npm run start &
+        npx wait-on http://localhost:5001 --timeout 60000
         npx playwright test tests/e2e/01-navigation-routing.spec.ts --project=chromium --grep="should navigate between key pages"
       env:
         NODE_ENV: test
