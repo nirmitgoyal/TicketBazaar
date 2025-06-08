@@ -109,7 +109,8 @@ jobs:
     - name: Start application
       run: |
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
-        npm run start &
+        export PORT=5001
+        npm run start npm run start &
         sleep 15
       env:
         NODE_ENV: test
@@ -124,10 +125,10 @@ jobs:
             npx playwright test tests/e2e/02-form-validation.spec.ts --project=${{ matrix.browser }} --reporter=json,html
             ;;
           "realtime")
-            npx playwright test tests/e2e/03-websocket-realtime.spec.ts --project=${{ matrix.browser }} --reporter=json,html
+            npx playwright test tests/e2e/03-realtime-websocket.spec.ts --project=${{ matrix.browser }} --reporter=json,html
             ;;
           "maps")
-            npx playwright test tests/e2e/04-interactive-map.spec.ts --project=${{ matrix.browser }} --reporter=json,html
+            npx playwright test tests/e2e/04-maps-geolocation.spec.ts --project=${{ matrix.browser }} --reporter=json,html
             ;;
           "ui")
             npx playwright test tests/e2e/05-ui-animations.spec.ts --project=${{ matrix.browser }} --reporter=json,html

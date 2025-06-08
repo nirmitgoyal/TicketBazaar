@@ -125,6 +125,8 @@ jobs:
       run: |
         if [ -d "dist" ] && [ "$(ls -A dist 2>/dev/null)" ]; then
           echo "✅ Production build verified"
+          echo "Build contents:"
+          ls -la dist/
         else
           echo "❌ Production build failed"
           exit 1
@@ -134,7 +136,10 @@ jobs:
       run: |
         echo "Deploying to production environment..."
         echo "Build artifacts ready for production deployment"
-        # Add actual production deployment commands here
+        # Simulate deployment process
+        echo "Running deployment script..."
+        bash deploy.sh
+        echo "Production deployment initiated"
         
     - name: Upload production build
       uses: actions/upload-artifact@v4
@@ -145,4 +150,6 @@ jobs:
         
     - name: Notify deployment success
       run: |
-        echo "Production deployment completed successfully!"
+        echo "✅ Production deployment completed successfully!"
+        echo "Build artifacts uploaded and ready"
+        echo "Deployment timestamp: $(date)"

@@ -38,20 +38,38 @@ jobs:
         postgresql user: test
         postgresql password: test
 
-    - name: Setup database for CI
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U test; do
+          echo "Waiting for PostgreSQL to start..."
+          sleep 2
+        done
+        echo "PostgreSQL is ready"
+
+    - name: Initialize test database
       run: |
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
-        npx tsx scripts/db-setup-ci.ts
+        npx tsx scripts/init-test-db.ts
       env:
         NODE_ENV: test
 
     - name: Start application
       run: |
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
-        npm run start &
-        sleep 15
+        export PORT=5001
+        npm run start npm run start &
+        # Wait for server to be ready with timeout
+        timeout 60 bash -c 'until curl -f http://localhost:5001 >/dev/null 2>&1; do
+          echo "Waiting for server..."
+          sleep 3
+        done' || {
+          echo "Server failed to start within timeout"
+          exit 1
+        }
+        echo "Server is ready"
       env:
         NODE_ENV: test
+        DATABASE_URL: "postgresql://test:test@localhost:5432/test"
 
     - name: Run visual regression tests
       run: |

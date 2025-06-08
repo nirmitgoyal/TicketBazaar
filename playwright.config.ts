@@ -14,7 +14,7 @@ export default defineConfig({
   ],
   
   use: {
-    baseURL: 'http://localhost:5000',
+    baseURL: 'http://localhost:5001', // Use port 5001 to avoid AirPlay conflict on macOS
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

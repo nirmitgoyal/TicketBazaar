@@ -55,7 +55,8 @@ jobs:
     - name: Start application
       run: |
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
-        npm run start &
+        export PORT=5001
+        npm run start npm run start &
         sleep 15
       env:
         NODE_ENV: test

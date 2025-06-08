@@ -63,10 +63,11 @@ jobs:
 
     - name: Start application server
       run: |
-        npm run start &
+        export PORT=5001
+        npm run start npm run start &
         sleep 10
         # Wait for server to be ready
-        npx wait-on http://localhost:5000 --timeout 60000
+        npx wait-on http://localhost:5001 --timeout 60000
 
     - name: Run E2E tests
       run: |
@@ -78,10 +79,10 @@ jobs:
             npx playwright test tests/e2e/02-form-validation.spec.ts --project=${{ matrix.browser }}
             ;;
           "realtime")
-            npx playwright test tests/e2e/03-websocket-realtime.spec.ts --project=${{ matrix.browser }}
+            npx playwright test tests/e2e/03-realtime-websocket.spec.ts --project=${{ matrix.browser }}
             ;;
           "maps")
-            npx playwright test tests/e2e/04-interactive-map.spec.ts --project=${{ matrix.browser }}
+            npx playwright test tests/e2e/04-maps-geolocation.spec.ts --project=${{ matrix.browser }}
             ;;
           "ui")
             npx playwright test tests/e2e/05-ui-animations.spec.ts --project=${{ matrix.browser }}

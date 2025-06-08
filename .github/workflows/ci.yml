@@ -115,6 +115,28 @@ jobs:
         name: build-artifacts
         path: dist/
 
+    - name: Setup PostgreSQL
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13'
+        postgresql db: test
+        postgresql user: test
+        postgresql password: test
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U test; do
+          sleep 2
+        done
+        echo "PostgreSQL is ready"
+
+    - name: Initialize test database
+      run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npx tsx scripts/init-test-db.ts
+      env:
+        NODE_ENV: test
+
     - name: Restore Playwright browsers
       uses: actions/cache@v4
       with:
@@ -123,8 +145,10 @@ jobs:
 
     - name: Start application
       run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        export PORT=5001
         npm run start &
-        npx wait-on http://localhost:5000 --timeout 60000
+        npx wait-on http://localhost:5001 --timeout 60000
       env:
         NODE_ENV: test
 
@@ -132,6 +156,7 @@ jobs:
       run: npx playwright test tests/e2e/01-navigation-routing.spec.ts --project=${{ matrix.browser }} --reporter=json
       env:
         CI: true
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
@@ -164,6 +189,28 @@ jobs:
         name: build-artifacts
         path: dist/
 
+    - name: Setup PostgreSQL
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13'
+        postgresql db: test
+        postgresql user: test
+        postgresql password: test
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U test; do
+          sleep 2
+        done
+        echo "PostgreSQL is ready"
+
+    - name: Initialize test database
+      run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npx tsx scripts/init-test-db.ts
+      env:
+        NODE_ENV: test
+
     - name: Restore Playwright browsers
       uses: actions/cache@v4
       with:
@@ -172,8 +219,10 @@ jobs:
 
     - name: Start application
       run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        export PORT=5001
         npm run start &
-        npx wait-on http://localhost:5000 --timeout 60000
+        npx wait-on http://localhost:5001 --timeout 60000
       env:
         NODE_ENV: test
 
@@ -181,6 +230,7 @@ jobs:
       run: npx playwright test tests/e2e/02-form-validation.spec.ts --project=${{ matrix.browser }} --reporter=json
       env:
         CI: true
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
@@ -210,6 +260,28 @@ jobs:
         name: build-artifacts
         path: dist/
 
+    - name: Setup PostgreSQL
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13'
+        postgresql db: test
+        postgresql user: test
+        postgresql password: test
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U test; do
+          sleep 2
+        done
+        echo "PostgreSQL is ready"
+
+    - name: Initialize test database
+      run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npx tsx scripts/init-test-db.ts
+      env:
+        NODE_ENV: test
+
     - name: Restore Playwright browsers
       uses: actions/cache@v4
       with:
@@ -218,15 +290,18 @@ jobs:
 
     - name: Start application
       run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        export PORT=5001
         npm run start &
-        npx wait-on http://localhost:5000 --timeout 60000
+        npx wait-on http://localhost:5001 --timeout 60000
       env:
         NODE_ENV: test
 
     - name: Run real-time feature tests
-      run: npx playwright test tests/e2e/03-websocket-realtime.spec.ts --project=chromium --reporter=json
+      run: npx playwright test tests/e2e/03-realtime-websocket.spec.ts --project=chromium --reporter=json
       env:
         CI: true
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
@@ -256,6 +331,28 @@ jobs:
         name: build-artifacts
         path: dist/
 
+    - name: Setup PostgreSQL
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13'
+        postgresql db: test
+        postgresql user: test
+        postgresql password: test
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U test; do
+          sleep 2
+        done
+        echo "PostgreSQL is ready"
+
+    - name: Initialize test database
+      run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npx tsx scripts/init-test-db.ts
+      env:
+        NODE_ENV: test
+
     - name: Restore Playwright browsers
       uses: actions/cache@v4
       with:
@@ -264,20 +361,24 @@ jobs:
 
     - name: Start application
       run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        export PORT=5001
         npm run start &
-        npx wait-on http://localhost:5000 --timeout 60000
+        npx wait-on http://localhost:5001 --timeout 60000
       env:
         NODE_ENV: test
 
     - name: Run map interaction tests
-      run: npx playwright test tests/e2e/04-interactive-map.spec.ts --project=chromium --reporter=json
+      run: npx playwright test tests/e2e/04-maps-geolocation.spec.ts --project=chromium --reporter=json
       env:
         CI: true
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
 
     - name: Run UI animation tests
       run: npx playwright test tests/e2e/05-ui-animations.spec.ts --project=chromium --reporter=json
       env:
         CI: true
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
@@ -307,6 +408,28 @@ jobs:
         name: build-artifacts
         path: dist/
 
+    - name: Setup PostgreSQL
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13'
+        postgresql db: test
+        postgresql user: test
+        postgresql password: test
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U test; do
+          sleep 2
+        done
+        echo "PostgreSQL is ready"
+
+    - name: Initialize test database
+      run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npx tsx scripts/init-test-db.ts
+      env:
+        NODE_ENV: test
+
     - name: Restore Playwright browsers
       uses: actions/cache@v4
       with:
@@ -315,8 +438,10 @@ jobs:
 
     - name: Start application
       run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        export PORT=5001
         npm run start &
-        npx wait-on http://localhost:5000 --timeout 60000
+        npx wait-on http://localhost:5001 --timeout 60000
       env:
         NODE_ENV: test
 
@@ -324,6 +449,7 @@ jobs:
       run: npx playwright test tests/e2e/06-error-handling.spec.ts --project=chromium --reporter=json
       env:
         CI: true
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
@@ -353,6 +479,28 @@ jobs:
         name: build-artifacts
         path: dist/
 
+    - name: Setup PostgreSQL
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13'
+        postgresql db: test
+        postgresql user: test
+        postgresql password: test
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U test; do
+          sleep 2
+        done
+        echo "PostgreSQL is ready"
+
+    - name: Initialize test database
+      run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        npx tsx scripts/init-test-db.ts
+      env:
+        NODE_ENV: test
+
     - name: Restore Playwright browsers
       uses: actions/cache@v4
       with:
@@ -361,8 +509,10 @@ jobs:
 
     - name: Start application
       run: |
+        export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+        export PORT=5001
         npm run start &
-        npx wait-on http://localhost:5000 --timeout 60000
+        npx wait-on http://localhost:5001 --timeout 60000
       env:
         NODE_ENV: test
 
@@ -370,6 +520,7 @@ jobs:
       run: npx playwright test tests/e2e/07-user-journeys.spec.ts --project=chromium --reporter=json
       env:
         CI: true
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
 
     - name: Upload test results
       uses: actions/upload-artifact@v4

@@ -1,0 +1,1176 @@
+{
+  "config": {
+    "configFile": "/Users/nirmit/VS_Code/TicketBazaar/playwright.config.ts",
+    "rootDir": "/Users/nirmit/VS_Code/TicketBazaar/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "line",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/nirmit/VS_Code/TicketBazaar/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {},
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/nirmit/VS_Code/TicketBazaar/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.52.0",
+    "workers": 2,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:5000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "01-navigation-routing.spec.ts",
+      "file": "01-navigation-routing.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Page Navigation & Routing",
+          "file": "01-navigation-routing.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should navigate between key pages and verify correct content rendering",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "46a3309fcf68cad74358-8bfbcc2e75a70b404344",
+              "file": "01-navigation-routing.spec.ts",
+              "line": 11,
+              "column": 3
+            },
+            {
+              "title": "should handle invalid URLs with graceful fallback",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "46a3309fcf68cad74358-36afc3e0c412697f4b09",
+              "file": "01-navigation-routing.spec.ts",
+              "line": 36,
+              "column": 3
+            },
+            {
+              "title": "should maintain navigation state during page transitions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "46a3309fcf68cad74358-3564773a2393dd1f2ec9",
+              "file": "01-navigation-routing.spec.ts",
+              "line": 56,
+              "column": 3
+            },
+            {
+              "title": "should handle direct URL access to protected routes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "46a3309fcf68cad74358-1efc502d4724f0366990",
+              "file": "01-navigation-routing.spec.ts",
+              "line": 78,
+              "column": 3
+            },
+            {
+              "title": "should render navigation consistently across viewport sizes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "46a3309fcf68cad74358-76cff02f967665856532",
+              "file": "01-navigation-routing.spec.ts",
+              "line": 90,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "02-form-validation.spec.ts",
+      "file": "02-form-validation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Robust Form Validation",
+          "file": "02-form-validation.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should handle valid form submissions successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e388fe3fc9797f9900ca-d4c06a81ac439e97580c",
+              "file": "02-form-validation.spec.ts",
+              "line": 12,
+              "column": 3
+            },
+            {
+              "title": "should validate empty required fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e388fe3fc9797f9900ca-35e7cd20cc5e5b1b17d2",
+              "file": "02-form-validation.spec.ts",
+              "line": 30,
+              "column": 3
+            },
+            {
+              "title": "should validate invalid input formats",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e388fe3fc9797f9900ca-371b0dfad60279c88cdb",
+              "file": "02-form-validation.spec.ts",
+              "line": 41,
+              "column": 3
+            },
+            {
+              "title": "should handle excessively long input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e388fe3fc9797f9900ca-a7ac103195efc5afdaad",
+              "file": "02-form-validation.spec.ts",
+              "line": 58,
+              "column": 3
+            },
+            {
+              "title": "should validate client-side and server-side errors consistently",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e388fe3fc9797f9900ca-473f4b729264e15f89a3",
+              "file": "02-form-validation.spec.ts",
+              "line": 78,
+              "column": 3
+            },
+            {
+              "title": "should handle special characters and Unicode input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e388fe3fc9797f9900ca-33b6f65c5f3a8533cb7b",
+              "file": "02-form-validation.spec.ts",
+              "line": 102,
+              "column": 3
+            },
+            {
+              "title": "should preserve form state during navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e388fe3fc9797f9900ca-b2c9239062e707075955",
+              "file": "02-form-validation.spec.ts",
+              "line": 119,
+              "column": 3
+            },
+            {
+              "title": "should handle form submission with network errors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e388fe3fc9797f9900ca-623ed98b9ab378f49a32",
+              "file": "02-form-validation.spec.ts",
+              "line": 140,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "03-realtime-websocket.spec.ts",
+      "file": "03-realtime-websocket.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Realtime WebSocket Communication",
+          "file": "03-realtime-websocket.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should establish WebSocket connection for live updates",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "844744cb357078ebb787-3887bed97bfd6b977854",
+              "file": "03-realtime-websocket.spec.ts",
+              "line": 15,
+              "column": 3
+            },
+            {
+              "title": "should receive live ticket status updates",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "844744cb357078ebb787-3a912b506ffd7305bd86",
+              "file": "03-realtime-websocket.spec.ts",
+              "line": 31,
+              "column": 3
+            },
+            {
+              "title": "should handle WebSocket connection failures gracefully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "844744cb357078ebb787-c461dca7d30431e0c691",
+              "file": "03-realtime-websocket.spec.ts",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "should reconnect after connection loss",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "844744cb357078ebb787-be2af279f7683cb2ac01",
+              "file": "03-realtime-websocket.spec.ts",
+              "line": 81,
+              "column": 3
+            },
+            {
+              "title": "should display real-time user activity indicators",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "844744cb357078ebb787-704cd0057a404641bbe3",
+              "file": "03-realtime-websocket.spec.ts",
+              "line": 104,
+              "column": 3
+            },
+            {
+              "title": "should handle concurrent user interactions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "844744cb357078ebb787-c84d4331cda13bf093f1",
+              "file": "03-realtime-websocket.spec.ts",
+              "line": 138,
+              "column": 3
+            },
+            {
+              "title": "should maintain WebSocket connection during navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "844744cb357078ebb787-d65a1a4669b5322303cf",
+              "file": "03-realtime-websocket.spec.ts",
+              "line": 166,
+              "column": 3
+            },
+            {
+              "title": "should handle message queuing during disconnection",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "844744cb357078ebb787-c423b9c6d7007f9664b6",
+              "file": "03-realtime-websocket.spec.ts",
+              "line": 192,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "04-maps-geolocation.spec.ts",
+      "file": "04-maps-geolocation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Maps and Geolocation Features",
+          "file": "04-maps-geolocation.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should load and display interactive map",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0168522e2be200abac45-18c75b261977835e6469",
+              "file": "04-maps-geolocation.spec.ts",
+              "line": 19,
+              "column": 3
+            },
+            {
+              "title": "should detect and use user location",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0168522e2be200abac45-f7487abe0f1d8240ec82",
+              "file": "04-maps-geolocation.spec.ts",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "should display venue locations on map",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0168522e2be200abac45-7fc34c2c6afcba33bf0f",
+              "file": "04-maps-geolocation.spec.ts",
+              "line": 85,
+              "column": 3
+            },
+            {
+              "title": "should handle location search and filtering",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0168522e2be200abac45-9e31c779c41f025700f4",
+              "file": "04-maps-geolocation.spec.ts",
+              "line": 142,
+              "column": 3
+            },
+            {
+              "title": "should calculate and display distances to venues",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0168522e2be200abac45-a40d5bc0e607dcd1e0a1",
+              "file": "04-maps-geolocation.spec.ts",
+              "line": 179,
+              "column": 3
+            },
+            {
+              "title": "should provide directions to venue",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0168522e2be200abac45-a853fba01a10e5a0d573",
+              "file": "04-maps-geolocation.spec.ts",
+              "line": 210,
+              "column": 3
+            },
+            {
+              "title": "should handle location permission denial gracefully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0168522e2be200abac45-ac6f48bb1a71011798a3",
+              "file": "04-maps-geolocation.spec.ts",
+              "line": 249,
+              "column": 3
+            },
+            {
+              "title": "should zoom and pan map interactions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0168522e2be200abac45-bb50e3a48987314a7c6a",
+              "file": "04-maps-geolocation.spec.ts",
+              "line": 279,
+              "column": 3
+            },
+            {
+              "title": "should display nearby events based on location",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0168522e2be200abac45-4a51c9fff939fd25b184",
+              "file": "04-maps-geolocation.spec.ts",
+              "line": 314,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "05-ui-animations.spec.ts",
+      "file": "05-ui-animations.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "UI Animation & Responsiveness",
+          "file": "05-ui-animations.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should animate page transitions smoothly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9309ec864b11828ab783-6a852420e54d758332fa",
+              "file": "05-ui-animations.spec.ts",
+              "line": 11,
+              "column": 3
+            },
+            {
+              "title": "should handle modal animations correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9309ec864b11828ab783-68b187e4fed547a2dfc8",
+              "file": "05-ui-animations.spec.ts",
+              "line": 28,
+              "column": 3
+            },
+            {
+              "title": "should maintain responsiveness across viewport sizes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9309ec864b11828ab783-89e3de3e7a2240e4580b",
+              "file": "05-ui-animations.spec.ts",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "title": "should animate form submissions with loading states",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9309ec864b11828ab783-5954842d45db873a513a",
+              "file": "05-ui-animations.spec.ts",
+              "line": 70,
+              "column": 3
+            },
+            {
+              "title": "should handle hover animations on interactive elements",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9309ec864b11828ab783-d482f6b22191084c6fb0",
+              "file": "05-ui-animations.spec.ts",
+              "line": 95,
+              "column": 3
+            },
+            {
+              "title": "should handle scroll animations and lazy loading",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9309ec864b11828ab783-686cba53dd90da83f760",
+              "file": "05-ui-animations.spec.ts",
+              "line": 111,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "06-error-handling.spec.ts",
+      "file": "06-error-handling.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Backend Error Handling",
+          "file": "06-error-handling.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should handle 400 Bad Request errors gracefully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "57a8cfaedf1aa1909314-a542ee5990cd7d5c2ac4",
+              "file": "06-error-handling.spec.ts",
+              "line": 11,
+              "column": 3
+            },
+            {
+              "title": "should handle 401 Unauthorized errors with authentication prompts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "57a8cfaedf1aa1909314-f64380bb59ccd52e658b",
+              "file": "06-error-handling.spec.ts",
+              "line": 40,
+              "column": 3
+            },
+            {
+              "title": "should handle 404 Not Found errors with proper fallback",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "57a8cfaedf1aa1909314-90a656686438c97caef2",
+              "file": "06-error-handling.spec.ts",
+              "line": 51,
+              "column": 3
+            },
+            {
+              "title": "should handle 500 Internal Server Error with user-friendly messages",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "57a8cfaedf1aa1909314-1c7fdc90da650a647a7f",
+              "file": "06-error-handling.spec.ts",
+              "line": 70,
+              "column": 3
+            },
+            {
+              "title": "should provide retry mechanisms for failed requests",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "57a8cfaedf1aa1909314-5126e2c31e5621f790a6",
+              "file": "06-error-handling.spec.ts",
+              "line": 91,
+              "column": 3
+            },
+            {
+              "title": "should handle network timeout errors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "57a8cfaedf1aa1909314-4ffbb67c2ecca001a2bb",
+              "file": "06-error-handling.spec.ts",
+              "line": 115,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "07-user-journeys.spec.ts",
+      "file": "07-user-journeys.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Complete User Journeys",
+          "file": "07-user-journeys.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should complete ticket discovery and contact flow",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5dbeed0b3189ed77273c-1d94831a1b2a201bd6c1",
+              "file": "07-user-journeys.spec.ts",
+              "line": 11,
+              "column": 3
+            },
+            {
+              "title": "should complete ticket listing journey",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5dbeed0b3189ed77273c-d48436bcc792b671799c",
+              "file": "07-user-journeys.spec.ts",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "title": "should complete search and filter journey",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5dbeed0b3189ed77273c-887b28aa2e956d45dae2",
+              "file": "07-user-journeys.spec.ts",
+              "line": 80,
+              "column": 3
+            },
+            {
+              "title": "should handle authentication flow",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5dbeed0b3189ed77273c-8cc88cd7b6bebf8139ac",
+              "file": "07-user-journeys.spec.ts",
+              "line": 107,
+              "column": 3
+            },
+            {
+              "title": "should complete mobile user journey",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5dbeed0b3189ed77273c-11ba1e3d21556c936136",
+              "file": "07-user-journeys.spec.ts",
+              "line": 120,
+              "column": 3
+            },
+            {
+              "title": "should handle interruption recovery",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5dbeed0b3189ed77273c-bdfff031feba0543baaa",
+              "file": "07-user-journeys.spec.ts",
+              "line": 150,
+              "column": 3
+            },
+            {
+              "title": "should handle concurrent user actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5dbeed0b3189ed77273c-d025a5db1412c2a85b97",
+              "file": "07-user-journeys.spec.ts",
+              "line": 169,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-06-08T17:38:08.109Z",
+    "duration": 28.25400000000002,
+    "expected": 0,
+    "skipped": 49,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
