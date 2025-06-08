@@ -36,7 +36,7 @@ export async function registerRoutes(app: Express) {
   app.use("/api/recommendations", recommendationRoutes);
   app.use("/api/search-hints", searchHintsRoutes);
   app.use("/api/ticket-views", ticketViewRoutes);
-  app.use("/health", healthRoutes);
+  app.use("/api/health", healthRoutes);
   
   return server;
 }
