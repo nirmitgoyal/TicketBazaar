@@ -1,4 +1,5 @@
 import express, { type Request, Response, NextFunction } from "express";
+import { createServer } from "http";
 import { registerRoutes } from "./routes/index";
 import { log } from "./utils";
 import { initHoneybadger, extractUserContext, getMiddleware, notifyError } from "./honeybadger";
