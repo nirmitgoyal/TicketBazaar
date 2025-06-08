@@ -1,5 +1,28 @@
 {pkgs}: {
   deps = [
+    pkgs.cairo
+    pkgs.pango
+    pkgs.cups
+    pkgs.alsa-lib
+    pkgs.systemd
+    pkgs.libxkbcommon
+    pkgs.xorg.libxcb
+    pkgs.mesa
+    pkgs.xorg.libXrandr
+    pkgs.xorg.libXfixes
+    pkgs.xorg.libXext
+    pkgs.xorg.libXdamage
+    pkgs.xorg.libXcomposite
+    pkgs.xorg.libX11
+    pkgs.at-spi2-core
+    pkgs.expat
+    pkgs.at-spi2-atk
+    pkgs.atk
+    pkgs.dbus
+    pkgs.nspr
+    pkgs.nss
+    pkgs.gobject-introspection
+    pkgs.glib
     pkgs.nodePackages.prettier
     pkgs.postgresql
     pkgs.jdk
