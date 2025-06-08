@@ -58,10 +58,19 @@ jobs:
     - name: Start application
       run: |
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
-        npm run start &
+        npm run dev &
         sleep 15
+        # Wait for server to be ready
+        for i in {1..30}; do
+          if curl -f http://localhost:5000 >/dev/null 2>&1; then
+            echo "Server is ready"
+            break
+          fi
+          echo "Waiting for server... attempt $i"
+          sleep 2
+        done
       env:
-        NODE_ENV: test
+        NODE_ENV: development
 
     - name: Run smoke tests
       run: npx playwright test tests/e2e/01-navigation-routing.spec.ts --project=chromium --grep="should navigate between key pages"
