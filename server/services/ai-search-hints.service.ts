@@ -91,45 +91,8 @@ export class SearchHintsService {
     userInput: string,
     availableEvents: any[],
   ): Promise<string[]> {
-    try {
-      const prompt = `Based on the user input "${userInput}" and available events, suggest 3-5 smart search completions.
-
-Available events: ${availableEvents.map((e) => e.title).join(", ")}
-
-Generate suggestions that are:
-1. Relevant to the user's partial input
-2. Match or are similar to available events
-3. Include popular search patterns for ticket marketplaces
-4. Are specific and actionable
-
-Return only the suggestions as a JSON array of strings.`;
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a search autocomplete assistant for an Indian ticket marketplace. Generate relevant search suggestions.",
-          },
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.5,
-        max_tokens: 300,
-      });
-
-      const result = JSON.parse(
-        response.choices[0].message.content || '{"suggestions": []}',
-      );
-      return result.suggestions || [];
-    } catch (error) {
-      console.error("Error generating smart suggestions:", error);
-      return this.getBasicSuggestions(userInput, availableEvents);
-    }
+    // Use rule-based suggestions instead of external AI services
+    return this.getBasicSuggestions(userInput, availableEvents);
   }
 
   private getBasicSuggestions(
@@ -167,4 +130,4 @@ Return only the suggestions as a JSON array of strings.`;
   }
 }
 
-export const aiSearchHintsService = new AISearchHintsService();
+export const searchHintsService = new SearchHintsService();
