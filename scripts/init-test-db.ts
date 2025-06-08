@@ -198,8 +198,6 @@ async function initTestDatabase() {
 }
 
 // Run the initialization
-if (require.main === module) {
-  initTestDatabase();
-}
+initTestDatabase();
 
 export { initTestDatabase };
