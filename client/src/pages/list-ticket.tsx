@@ -288,6 +288,7 @@ export default function ListTicket() {
             <CardContent>
               <Form {...form}>
                 <form
+                  data-testid="ticket-listing-form"
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-6"
                 >

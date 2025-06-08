@@ -650,7 +650,7 @@ export default function Home() {
       structuredData={structuredDataArray}
     >
       {/* Hero Section */}
-      <section className="bg-primary text-white py-6 md:py-12">
+      <section data-testid="hero-section" className="bg-primary text-white py-6 md:py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-xl md:text-3xl font-bold font-poppins mb-3 md:mb-4">
@@ -979,7 +979,7 @@ export default function Home() {
               <p className="text-muted-foreground">Loading events...</p>
             </div>
           ) : sortedEvents && sortedEvents.length > 0 ? (
-            <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
+            <div data-testid="event-grid" className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
               {sortedEvents.map((event, index) => (
                 <EventCard
                   key={event.id}

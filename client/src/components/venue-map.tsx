@@ -138,6 +138,7 @@ export function VenueMap({ venues, className = "" }: VenueMapProps) {
           onLoad={onLoad}
           onUnmount={onUnmount}
           options={GOOGLE_MAPS_OPTIONS}
+          data-testid="google-map"
         >
           {selectedVenue && (
             <InfoWindow
