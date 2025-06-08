@@ -22,31 +22,27 @@
 - **Smoke tests** for essential functionality
 - **Branch protection** enforcement
 
-### 4. Performance Testing (`performance-tests.yml`)
-- **Weekly performance benchmarks**
-- **Concurrent user simulation**
-- **Resource monitoring**
-- **Performance regression detection**
 
-### 5. Visual Regression (`visual-regression-tests.yml`)
+
+### 4. Visual Regression (`visual-regression-tests.yml`)
 - **UI consistency validation**
 - **Screenshot comparison**
 - **Visual change detection**
 - **Cross-browser visual parity**
 
-### 6. Deployment Pipeline (`test-deployment.yml`)
+### 5. Deployment Pipeline (`test-deployment.yml`)
 - **Staging deployment** with automated testing
 - **Production deployment** with health checks
 - **Environment-specific configurations**
 - **Rollback triggers** on test failures
 
-### 7. Test Status Monitoring (`test-status-check.yml`)
+### 6. Test Status Monitoring (`test-status-check.yml`)
 - **Framework health validation**
 - **Test file integrity checking**
 - **PR status reporting**
 - **Test coverage confirmation**
 
-### 8. Complete Test Matrix (`complete-test-matrix.yml`)
+### 7. Complete Test Matrix (`complete-test-matrix.yml`)
 - **Manual trigger** with configurable parameters
 - **Environment selection** (staging/production)
 - **Browser matrix customization**

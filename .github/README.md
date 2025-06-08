@@ -31,16 +31,9 @@ This repository uses GitHub Actions to run comprehensive E2E tests and maintain 
 
 **Purpose:** Prevents broken code from merging by running essential tests
 
-### 3. Performance Tests (`performance-tests.yml`)
-**Triggers:** Push to main, Weekly schedule, Manual dispatch
 
-**Performance Validation:**
-- Load testing with concurrent users
-- Animation performance benchmarks
-- Resource usage monitoring
-- Memory leak detection
 
-### 4. Visual Regression Tests (`visual-regression-tests.yml`)
+### 3. Visual Regression Tests (`visual-regression-tests.yml`)
 **Triggers:** Pull requests, Push to main
 
 **Visual Validation:**
@@ -49,7 +42,7 @@ This repository uses GitHub Actions to run comprehensive E2E tests and maintain 
 - Layout regression detection
 - Cross-browser visual parity
 
-### 5. Test Deployment Pipeline (`test-deployment.yml`)
+### 4. Test Deployment Pipeline (`test-deployment.yml`)
 **Triggers:** Push to main, Manual dispatch
 
 **Deployment Flow:**
@@ -59,7 +52,7 @@ This repository uses GitHub Actions to run comprehensive E2E tests and maintain 
 4. Run production health checks
 5. Alert on deployment failures
 
-### 6. Test Status Check (`test-status-check.yml`)
+### 5. Test Status Check (`test-status-check.yml`)
 **Triggers:** Pull requests, Push to main/develop
 
 **Framework Health:**
