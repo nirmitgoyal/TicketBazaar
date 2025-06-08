@@ -208,7 +208,7 @@ async function initTestDatabase() {
           category, price, city, latitude, longitude, trending
         ) VALUES (
           ${ticket.seller_id}, ${ticket.event_title}, ${ticket.description}, 
-          ${ticket.venue}, ${ticket.event_date}, ${ticket.category}, 
+          ${ticket.venue}, ${ticket.event_date.toISOString()}, ${ticket.category}, 
           ${ticket.price}, ${ticket.city}, ${ticket.latitude}, 
           ${ticket.longitude}, ${ticket.trending || false}
         )

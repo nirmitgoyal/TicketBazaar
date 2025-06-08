@@ -162,18 +162,22 @@ async function setupDatabaseForCI() {
       ('seller@example.com', 'Test Seller', 4.8)
     `;
 
-    // Insert test tickets
+    // Insert test tickets with proper timestamp formatting
+    const testDate1 = new Date('2024-12-31T20:00:00Z').toISOString();
+    const testDate2 = new Date('2024-12-25T15:00:00Z').toISOString();
+    const testDate3 = new Date('2024-12-20T19:30:00Z').toISOString();
+    
     await client`
       INSERT INTO tickets (
         seller_id, event_title, description, venue, event_date, 
         category, price, city, latitude, longitude, trending
       ) VALUES
       (1, 'Test Concert 2024', 'Amazing live performance', 'Test Arena Mumbai', 
-       '2024-12-31 20:00:00', 'Music', 2500, 'Mumbai', 19.0760, 72.8777, false),
+       ${testDate1}, 'Music', 2500, 'Mumbai', 19.0760, 72.8777, false),
       (2, 'Test Sports Match', 'Exciting cricket match', 'Test Stadium Delhi', 
-       '2024-12-25 15:00:00', 'Sports', 1500, 'Delhi', 28.6139, 77.2090, true),
+       ${testDate2}, 'Sports', 1500, 'Delhi', 28.6139, 77.2090, true),
       (3, 'Test Theatre Show', 'Classic drama performance', 'Test Theatre Bangalore', 
-       '2024-12-20 19:30:00', 'Theatre', 800, 'Bangalore', 12.9716, 77.5946, false)
+       ${testDate3}, 'Theatre', 800, 'Bangalore', 12.9716, 77.5946, false)
     `;
 
     console.log('Test data inserted successfully');

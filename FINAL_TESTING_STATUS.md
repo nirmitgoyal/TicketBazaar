@@ -21,7 +21,12 @@ The comprehensive end-to-end testing framework is **production-ready** with 87.5
 - **Solution**: Created `scripts/db-setup-ci.ts` with 20-retry connection logic
 - **Implementation**: Comprehensive database initialization for all workflows
 
-### 4. Visual Regression Test Failures
+### 4. Database Date Object Serialization
+- **Issue**: PostgreSQL `ERR_INVALID_ARG_TYPE` errors with Date objects
+- **Solution**: Convert Date objects to ISO strings before database insertion
+- **Implementation**: Updated `scripts/init-test-db.ts` and `scripts/db-setup-ci.ts`
+
+### 5. Visual Regression Test Failures
 - **Issue**: Database connection failures and output folder conflicts
 - **Solution**: Robust PostgreSQL setup with proper artifact collection
 - **Implementation**: Separated report folders and added connection validation
