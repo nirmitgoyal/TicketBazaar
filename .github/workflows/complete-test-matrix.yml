@@ -91,6 +91,14 @@ jobs:
         postgresql user: test
         postgresql password: test
 
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U test; do
+          echo "Waiting for PostgreSQL to start..."
+          sleep 2
+        done
+        echo "PostgreSQL is ready"
+
     - name: Initialize test database
       run: |
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"

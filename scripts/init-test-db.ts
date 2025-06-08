@@ -18,13 +18,43 @@ async function initTestDatabase() {
 
   console.log('Connecting to test database...');
   
+  // Retry logic for database connection
+  let retries = 10;
+  let client: any;
+  
+  while (retries > 0) {
+    try {
+      console.log(`Attempting database connection... (${11 - retries}/10)`);
+      
+      // Create postgres client with connection options
+      client = postgres(databaseUrl, { 
+        max: 1,
+        ssl: false,
+        prepare: false,
+        connect_timeout: 10,
+        idle_timeout: 20
+      });
+      
+      // Test the connection
+      await client`SELECT 1`;
+      console.log('Database connection successful');
+      break;
+      
+    } catch (error: any) {
+      console.log(`Connection failed: ${error.message}`);
+      retries--;
+      
+      if (retries === 0) {
+        console.error('Failed to connect to database after 10 attempts');
+        process.exit(1);
+      }
+      
+      console.log(`Retrying in 3 seconds... (${retries} attempts remaining)`);
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
+  }
+  
   try {
-    // Create postgres client
-    const client = postgres(databaseUrl, { 
-      max: 1,
-      ssl: false,
-      prepare: false
-    });
     
     // Initialize drizzle
     const db = drizzle(client, { schema });
