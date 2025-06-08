@@ -78,7 +78,7 @@ test.describe('Robust Form Validation', () => {
   test('should validate client-side and server-side errors consistently', async ({ page }) => {
     // First test client-side validation
     await page.fill('[data-testid="ticket-price"]', '-100');
-    await page.blur('[data-testid="ticket-price"]');
+    await page.click('[data-testid="ticket-title"]'); // Click elsewhere to trigger blur
     await utils.expectFormError('ticket-price');
 
     // Test server-side validation by submitting invalid data
