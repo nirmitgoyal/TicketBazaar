@@ -107,7 +107,14 @@ export class ReviewController {
       }
 
       // Create the review
-      const review = await this.reviewService.createReview(validatedData);
+      const review = await this.reviewService.createReview(validatedData as {
+        userId: number;
+        reviewerId: number;
+        rating: number;
+        comment?: string;
+        contactRequestId?: number;
+        reviewType: "buyer_review_seller" | "seller_review_buyer";
+      });
       res.status(201).json(review);
     } catch (error) {
       if (

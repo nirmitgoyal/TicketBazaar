@@ -305,7 +305,7 @@ export const userLoginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-export const userReviewSchema = insertUserReviewSchema.extend({
+export const userReviewSchema = z.object({
   rating: z
     .number()
     .min(1, "Rating must be at least 1 star")

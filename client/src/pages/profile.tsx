@@ -210,13 +210,10 @@ export default function Profile() {
   const disputedTransactions =
     transactions?.filter((t) => t.status === "disputed") || [];
 
-  const totalSpent = completedTransactions
-    .filter((t) => t.buyerId === user?.id)
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const totalEarned = completedTransactions
-    .filter((t) => t.sellerId === user?.id)
-    .reduce((sum, t) => sum + t.amount, 0);
+  // In P2P model, we don't track transaction amounts directly
+  // These are placeholder values - can be calculated from contact requests if needed
+  const totalSpent = 0; // Placeholder for P2P model
+  const totalEarned = 0; // Placeholder for P2P model
 
   if (!isAuthenticated) {
     return null; // Will redirect in the useEffect

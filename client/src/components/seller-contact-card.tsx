@@ -114,7 +114,7 @@ export function SellerContactCard({
           <div className="flex items-center justify-between">
             <div>
               <h4 className="font-medium">{seller.fullName}</h4>
-              <p className="text-sm text-textSecondary">@{seller.username}</p>
+              <p className="text-sm text-textSecondary">@{seller.instagram}</p>
             </div>
             <Button
               variant="ghost"

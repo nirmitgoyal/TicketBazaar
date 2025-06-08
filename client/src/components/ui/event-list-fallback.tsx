@@ -26,11 +26,11 @@ const EventListFallback: React.FC<EventListFallbackProps> = ({
               key={event.id}
               className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
             >
-              {event.imageUrl && (
+              {event.eventImageUrl && (
                 <div className="h-36 overflow-hidden">
                   <img
-                    src={event.imageUrl}
-                    alt={event.title}
+                    src={event.eventImageUrl}
+                    alt={event.eventTitle}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -44,7 +44,7 @@ const EventListFallback: React.FC<EventListFallbackProps> = ({
                   <p className="text-xs text-gray-500 mb-1">{event.city}</p>
                 )}
                 <p className="text-xs text-gray-500 mb-2">
-                  {new Date(event.date).toLocaleDateString()}
+                  {new Date(event.eventDate).toLocaleDateString()}
                 </p>
                 <div className="text-xs bg-blue-100 text-blue-800 rounded-full px-2 py-1 inline-block mb-2">
                   {event.category}

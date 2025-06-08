@@ -164,13 +164,12 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    Overall Verification Status
-                    <VerificationBadge 
-                      status={verification.verification.overall.fraudRisk === 'low' ? 'verified' : 
-                             verification.verification.overall.fraudRisk === 'medium' ? 'warning' : 'error'}
-                      confidence={verification.verification.overall.confidence}
-                      size="lg"
-                    />
+                    Overall Verification Status                      <VerificationBadge 
+                        isVerified={verification.verification.overall.fraudRisk === 'low'}
+                        confidence={verification.verification.overall.confidence}
+                        fraudRisk={verification.verification.overall.fraudRisk}
+                        size="lg"
+                      />
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -203,11 +202,10 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                       <div className="flex items-center gap-2 mb-2">
                         <Calendar className="h-4 w-4" />
                         <span className="font-medium">Event</span>
-                      </div>
-                      <VerificationBadge 
-                        status={verification.verification.event.fraudRisk === 'low' ? 'verified' : 
-                               verification.verification.event.fraudRisk === 'medium' ? 'warning' : 'error'}
+                      </div>                      <VerificationBadge 
+                        isVerified={verification.verification.event.fraudRisk === 'low'}
                         confidence={verification.verification.event.confidence}
+                        fraudRisk={verification.verification.event.fraudRisk}
                         size="sm"
                       />
                     </Card>
@@ -215,11 +213,10 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                       <div className="flex items-center gap-2 mb-2">
                         <User className="h-4 w-4" />
                         <span className="font-medium">Seller</span>
-                      </div>
-                      <VerificationBadge 
-                        status={verification.verification.seller.fraudRisk === 'low' ? 'verified' : 
-                               verification.verification.seller.fraudRisk === 'medium' ? 'warning' : 'error'}
+                      </div>                      <VerificationBadge 
+                        isVerified={verification.verification.seller.fraudRisk === 'low'}
                         confidence={verification.verification.seller.confidence}
+                        fraudRisk={verification.verification.seller.fraudRisk}
                         size="sm"
                       />
                     </Card>
@@ -227,11 +224,10 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                       <div className="flex items-center gap-2 mb-2">
                         <DollarSign className="h-4 w-4" />
                         <span className="font-medium">Pricing</span>
-                      </div>
-                      <VerificationBadge 
-                        status={verification.verification.pricing.fraudRisk === 'low' ? 'verified' : 
-                               verification.verification.pricing.fraudRisk === 'medium' ? 'warning' : 'error'}
+                      </div>                      <VerificationBadge 
+                        isVerified={verification.verification.pricing.fraudRisk === 'low'}
                         confidence={verification.verification.pricing.confidence}
+                        fraudRisk={verification.verification.pricing.fraudRisk}
                         size="sm"
                       />
                     </Card>
@@ -301,9 +297,9 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                   <CardTitle className="flex items-center justify-between">
                     Event Verification Analysis
                     <VerificationBadge 
-                      status={verification.verification.event.fraudRisk === 'low' ? 'verified' : 
-                             verification.verification.event.fraudRisk === 'medium' ? 'warning' : 'error'}
+                      isVerified={verification.verification.event.fraudRisk === 'low'}
                       confidence={verification.verification.event.confidence}
+                      fraudRisk={verification.verification.event.fraudRisk}
                     />
                   </CardTitle>
                 </CardHeader>
@@ -362,9 +358,9 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                   <CardTitle className="flex items-center justify-between">
                     Seller Verification Analysis
                     <VerificationBadge 
-                      status={verification.verification.seller.fraudRisk === 'low' ? 'verified' : 
-                             verification.verification.seller.fraudRisk === 'medium' ? 'warning' : 'error'}
+                      isVerified={verification.verification.seller.fraudRisk === 'low'}
                       confidence={verification.verification.seller.confidence}
+                      fraudRisk={verification.verification.seller.fraudRisk}
                     />
                   </CardTitle>
                 </CardHeader>
@@ -430,9 +426,9 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                   <CardTitle className="flex items-center justify-between">
                     Pricing Analysis
                     <VerificationBadge 
-                      status={verification.verification.pricing.fraudRisk === 'low' ? 'verified' : 
-                             verification.verification.pricing.fraudRisk === 'medium' ? 'warning' : 'error'}
+                      isVerified={verification.verification.pricing.fraudRisk === 'low'}
                       confidence={verification.verification.pricing.confidence}
+                      fraudRisk={verification.verification.pricing.fraudRisk}
                     />
                   </CardTitle>
                 </CardHeader>

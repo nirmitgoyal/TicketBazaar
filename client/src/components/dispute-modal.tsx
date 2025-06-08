@@ -25,7 +25,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { AlertCircle } from "lucide-react";
-import { Transaction, Dispute, InsertDispute } from "@shared/schema";
+import { Transaction, InsertUserFeedback } from "@shared/schema";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -71,14 +71,15 @@ export function DisputeModal({
     mutationFn: async (values: DisputeFormValues) => {
       if (!user) throw new Error("User not authenticated");
 
-      const disputeData: InsertDispute = {
-        transactionId: transaction.id,
-        reason: values.reason,
+      const feedbackData: InsertUserFeedback = {
+        userId: user.id,
+        ticketId: transaction.ticketId, // Use ticketId from transaction
+        feedbackType: "report",
         description: values.description,
-        status: "open",
+        status: "pending",
       };
 
-      const response = await apiRequest("POST", "/api/disputes", disputeData);
+      const response = await apiRequest("POST", "/api/user-feedback", feedbackData);
       return response.json();
     },
     onSuccess: () => {

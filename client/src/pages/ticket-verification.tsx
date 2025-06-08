@@ -60,7 +60,8 @@ export default function TicketVerificationPage() {
   });
 
   const handleGenerateQR = () => {
-    if (ticket && !ticket.qrCode) {
+    // In P2P model, QR codes are not generated - users handle verification directly
+    if (false) {
       generateQrMutation.mutate(ticket.id);
     }
   };
@@ -128,7 +129,7 @@ export default function TicketVerificationPage() {
         </div>
       )}
 
-      {ticket && !ticket.qrCode && isUserTicket && (
+      {ticket && false && isUserTicket && (
         <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
           <p className="text-blue-800 mb-3">
             This ticket doesn't have a QR code yet. Generate a QR code to enable
@@ -157,7 +158,7 @@ export default function TicketVerificationPage() {
             <dl className="space-y-2">
               <div className="grid grid-cols-3 gap-1">
                 <dt className="font-medium text-gray-500">Event ID:</dt>
-                <dd className="col-span-2">{ticket?.eventId || "-"}</dd>
+                <dd className="col-span-2">{ticket?.id || "-"}</dd>
               </div>
               <div className="grid grid-cols-3 gap-1">
                 <dt className="font-medium text-gray-500">Section:</dt>
@@ -178,7 +179,7 @@ export default function TicketVerificationPage() {
               <div className="grid grid-cols-3 gap-1">
                 <dt className="font-medium text-gray-500">Price:</dt>
                 <dd className="col-span-2">
-                  ₹{ticket?.sellingPrice?.toFixed(2) || "0.00"}
+                  ₹{ticket?.price?.toFixed(2) || "0.00"}
                 </dd>
               </div>
               <div className="grid grid-cols-3 gap-1">
@@ -200,7 +201,7 @@ export default function TicketVerificationPage() {
               <div className="grid grid-cols-3 gap-1">
                 <dt className="font-medium text-gray-500">Verified:</dt>
                 <dd className="col-span-2">
-                  {ticket?.verified ? (
+                  {false ? (
                     <span className="inline-flex items-center text-green-600">
                       Yes
                     </span>
@@ -214,7 +215,7 @@ export default function TicketVerificationPage() {
         </div>
 
         <div>
-          {ticket?.qrCode ? (
+          {false ? (
             <TicketVerification ticket={ticket} />
           ) : (
             <div className="bg-gray-50 rounded-lg border border-dashed border-gray-200 p-6 flex items-center justify-center h-full">

@@ -85,9 +85,9 @@ const EventMapPage: React.FC = () => {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (event) =>
-          event.title.toLowerCase().includes(query) ||
-          (event.description &&
-            event.description.toLowerCase().includes(query)) ||
+          event.eventTitle.toLowerCase().includes(query) ||
+          (event.eventDescription &&
+            event.eventDescription.toLowerCase().includes(query)) ||
           event.venue.toLowerCase().includes(query),
       );
     }
@@ -268,7 +268,7 @@ const EventMapPage: React.FC = () => {
 
                     <div className="flex items-center text-sm text-gray-500 mt-1">
                       <Calendar className="h-4 w-4 mr-1" />
-                      <span>{new Date(event.date).toLocaleDateString()}</span>
+                      <span>{new Date(event.eventDate).toLocaleDateString()}</span>
                     </div>
 
                     <div className="flex items-center text-sm text-gray-500 mt-1">
