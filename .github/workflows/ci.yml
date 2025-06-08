@@ -1,56 +1,404 @@
-
-name: Node.js CI
+name: Continuous Integration
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 env:
-  NODE_ENV: production
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  NODE_VERSION: '20'
+  PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/pw-browsers
 
 jobs:
-  # Build verification
-  build:
-    name: Build Verification
+  setup:
     runs-on: ubuntu-latest
-    
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.key }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js 20.x
+    - uses: actions/checkout@v4
+    
+    - name: Generate cache key
+      id: cache-key
+      run: echo "key=node-modules-${{ hashFiles('package-lock.json') }}" >> $GITHUB_OUTPUT
+
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20.x'
+        node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
-        
+
     - name: Install dependencies
       run: npm ci
-      
-    - name: Run TypeScript type checking
-      run: timeout 300s npm run check || echo "TypeScript check timed out - continuing"
-      
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+        key: playwright-browsers-${{ hashFiles('package-lock.json') }}
+
+    - name: Install Playwright browsers
+      run: npx playwright install chromium firefox --with-deps
+
+  lint-and-build:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Lint code
+      run: npm run check
+
     - name: Build application
-      run: timeout 600s npm run build || echo "Build timed out - checking artifacts"
-      
-    - name: Verify build artifacts
-      run: |
-        if [ -d "dist" ] && [ "$(ls -A dist 2>/dev/null)" ]; then
-          echo "✅ Build artifacts verified"
-        else
-          echo "❌ No build artifacts found"
-          exit 1
-        fi
-      
-    - name: Run tests
-      run: npm test
-      
+      run: npm run build
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-artifacts
         path: dist/
-        retention-days: 7
+        retention-days: 1
+
+  test-navigation:
+    runs-on: ubuntu-latest
+    needs: [setup, lint-and-build]
+    strategy:
+      matrix:
+        browser: [chromium, firefox]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: dist/
+
+    - name: Restore Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+        key: playwright-browsers-${{ hashFiles('package-lock.json') }}
+
+    - name: Start application
+      run: |
+        npm run start &
+        npx wait-on http://localhost:5000 --timeout 60000
+      env:
+        NODE_ENV: test
+
+    - name: Run navigation tests
+      run: npx playwright test tests/e2e/01-navigation-routing.spec.ts --project=${{ matrix.browser }} --reporter=json
+      env:
+        CI: true
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: navigation-test-results-${{ matrix.browser }}
+        path: test-results/
+
+  test-forms:
+    runs-on: ubuntu-latest
+    needs: [setup, lint-and-build]
+    strategy:
+      matrix:
+        browser: [chromium, firefox]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: dist/
+
+    - name: Restore Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+        key: playwright-browsers-${{ hashFiles('package-lock.json') }}
+
+    - name: Start application
+      run: |
+        npm run start &
+        npx wait-on http://localhost:5000 --timeout 60000
+      env:
+        NODE_ENV: test
+
+    - name: Run form validation tests
+      run: npx playwright test tests/e2e/02-form-validation.spec.ts --project=${{ matrix.browser }} --reporter=json
+      env:
+        CI: true
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: form-test-results-${{ matrix.browser }}
+        path: test-results/
+
+  test-realtime:
+    runs-on: ubuntu-latest
+    needs: [setup, lint-and-build]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: dist/
+
+    - name: Restore Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+        key: playwright-browsers-${{ hashFiles('package-lock.json') }}
+
+    - name: Start application
+      run: |
+        npm run start &
+        npx wait-on http://localhost:5000 --timeout 60000
+      env:
+        NODE_ENV: test
+
+    - name: Run real-time feature tests
+      run: npx playwright test tests/e2e/03-websocket-realtime.spec.ts --project=chromium --reporter=json
+      env:
+        CI: true
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: realtime-test-results
+        path: test-results/
+
+  test-ui-interactions:
+    runs-on: ubuntu-latest
+    needs: [setup, lint-and-build]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: dist/
+
+    - name: Restore Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+        key: playwright-browsers-${{ hashFiles('package-lock.json') }}
+
+    - name: Start application
+      run: |
+        npm run start &
+        npx wait-on http://localhost:5000 --timeout 60000
+      env:
+        NODE_ENV: test
+
+    - name: Run map interaction tests
+      run: npx playwright test tests/e2e/04-interactive-map.spec.ts --project=chromium --reporter=json
+      env:
+        CI: true
+
+    - name: Run UI animation tests
+      run: npx playwright test tests/e2e/05-ui-animations.spec.ts --project=chromium --reporter=json
+      env:
+        CI: true
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ui-interaction-test-results
+        path: test-results/
+
+  test-error-handling:
+    runs-on: ubuntu-latest
+    needs: [setup, lint-and-build]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: dist/
+
+    - name: Restore Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+        key: playwright-browsers-${{ hashFiles('package-lock.json') }}
+
+    - name: Start application
+      run: |
+        npm run start &
+        npx wait-on http://localhost:5000 --timeout 60000
+      env:
+        NODE_ENV: test
+
+    - name: Run error handling tests
+      run: npx playwright test tests/e2e/06-error-handling.spec.ts --project=chromium --reporter=json
+      env:
+        CI: true
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: error-handling-test-results
+        path: test-results/
+
+  test-user-journeys:
+    runs-on: ubuntu-latest
+    needs: [setup, lint-and-build]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: dist/
+
+    - name: Restore Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+        key: playwright-browsers-${{ hashFiles('package-lock.json') }}
+
+    - name: Start application
+      run: |
+        npm run start &
+        npx wait-on http://localhost:5000 --timeout 60000
+      env:
+        NODE_ENV: test
+
+    - name: Run user journey tests
+      run: npx playwright test tests/e2e/07-user-journeys.spec.ts --project=chromium --reporter=json
+      env:
+        CI: true
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: user-journey-test-results
+        path: test-results/
+
+  report-results:
+    runs-on: ubuntu-latest
+    needs: [test-navigation, test-forms, test-realtime, test-ui-interactions, test-error-handling, test-user-journeys]
+    if: always()
+    steps:
+    - name: Download all test results
+      uses: actions/download-artifact@v4
+      with:
+        path: all-test-results
+
+    - name: Generate test report
+      run: |
+        echo "# E2E Test Results Summary" > test-report.md
+        echo "" >> test-report.md
+        echo "## Test Execution Results" >> test-report.md
+        echo "" >> test-report.md
+        
+        # Count test artifacts to determine pass/fail status
+        total_tests=0
+        passed_tests=0
+        
+        for dir in all-test-results/*/; do
+          if [ -d "$dir" ]; then
+            total_tests=$((total_tests + 1))
+            if ls "$dir"*.json >/dev/null 2>&1; then
+              passed_tests=$((passed_tests + 1))
+            fi
+          fi
+        done
+        
+        echo "- Total Test Suites: $total_tests" >> test-report.md
+        echo "- Passed: $passed_tests" >> test-report.md
+        echo "- Failed: $((total_tests - passed_tests))" >> test-report.md
+        echo "" >> test-report.md
+        
+        if [ $passed_tests -eq $total_tests ]; then
+          echo "✅ All tests passed successfully" >> test-report.md
+        else
+          echo "❌ Some tests failed - please review test artifacts" >> test-report.md
+        fi
+
+    - name: Upload consolidated report
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-report
+        path: test-report.md
+        retention-days: 30
