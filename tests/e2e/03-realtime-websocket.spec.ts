@@ -1,14 +1,14 @@
 import { test, expect, Page } from '@playwright/test';
 import { TestUtils } from '../helpers/test-utils';
-import { PageObjectHelper } from '../helpers/page-objects';
+// import { PageObjectHelper } from '../helpers/page-objects';
 
 test.describe('Realtime WebSocket Communication', () => {
   let testUtils: TestUtils;
-  let pageHelper: PageObjectHelper;
+  // let pageHelper: PageObjectHelper;
 
   test.beforeEach(async ({ page }) => {
     testUtils = new TestUtils(page);
-    pageHelper = new PageObjectHelper(page);
+    // pageHelper = new PageObjectHelper(page);
     await testUtils.setupTestEnvironment();
   });
 

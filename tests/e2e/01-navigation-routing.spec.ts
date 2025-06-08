@@ -11,7 +11,7 @@ test.describe('Page Navigation & Routing', () => {
   test('should navigate between key pages and verify correct content rendering', async ({ page }) => {
     // Test home page navigation
     await utils.navigateToHome();
-    await utils.expectPageLoaded('TicketSwap');
+    await utils.expectPageLoaded('Ticket Bazaar');
     await expect(page.locator('[data-testid="hero-section"]')).toBeVisible();
     await expect(page.locator('[data-testid="event-grid"]')).toBeVisible();
 
