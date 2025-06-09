@@ -123,6 +123,12 @@ else
     else
         echo "❌ Server not responding on root endpoint either"
     fi
+    echo "🔄 Attempting fallback check against root endpoint..."
+    if curl -f http://localhost:5001/ 2>/dev/null; then
+        echo "✅ Root endpoint responding (server is running, but health endpoint is unavailable)"
+    else
+        echo "❌ Server not responding on root endpoint either"
+    fi
 fi
 
 # Clean up
