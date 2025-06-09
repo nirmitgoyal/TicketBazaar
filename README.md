@@ -413,7 +413,7 @@ interface WebSocketEvents {
 
 #### Multi-Layer Authentication
 ```typescript
-// Passport.js strategy configuration
+// Passport.js strategy  configuration
 const GoogleStrategy = new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
