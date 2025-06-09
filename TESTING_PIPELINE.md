@@ -24,14 +24,7 @@
 
 
 
-### 4. Visual Regression (`visual-regression-tests.yml`)
-- **UI consistency validation**
-- **Screenshot comparison**
-- **Visual change detection**
-- **Cross-browser visual parity**
-
-### 5. Deployment Pipeline (`test-deployment.yml`)
-- **Staging deployment** with automated testing
+### 4. Deployment Pipeline (`deploy.yml`)
 - **Production deployment** with health checks
 - **Environment-specific configurations**
 - **Rollback triggers** on test failures
