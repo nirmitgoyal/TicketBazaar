@@ -35,11 +35,12 @@ export function setupAuth(app: Express) {
       tableName: 'session'
     }),
     cookie: {
-      secure: false, // Allow non-HTTPS in development
+      secure: false,
       sameSite: "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      httpOnly: false, // Allow client-side access for development
-      domain: undefined // Don't restrict domain in development
+      httpOnly: false,
+      path: "/",
+      domain: undefined
     },
   };
 

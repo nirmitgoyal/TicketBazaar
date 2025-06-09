@@ -51,16 +51,25 @@ export default function Login() {
       }
       return response.json();
     },
-    onSuccess: () => {
-      // Invalidate the user query to refresh authentication state
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+    onSuccess: async () => {
+      // Force immediate session verification for mobile compatibility
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Invalidate and refetch the user query to refresh authentication state
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+      
       toast({
         title: "Login successful",
         description: "Welcome back!",
       });
-      const urlParams = new URLSearchParams(window.location.search);
-      const returnTo = urlParams.get("returnTo") || "/";
-      navigate(returnTo);
+      
+      // Force a small delay before navigation to ensure state updates
+      setTimeout(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnTo = urlParams.get("returnTo") || "/";
+        navigate(returnTo);
+      }, 200);
     },
     onError: (error: Error) => {
       setLoginError(error.message);
