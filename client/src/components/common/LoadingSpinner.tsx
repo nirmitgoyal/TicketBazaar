@@ -6,16 +6,7 @@ interface LoadingSpinnerProps {
   text?: string;
 }
 
-export function LoadingSpinner({ 
-  size = "md", 
-  className, 
-  text 
-}: LoadingSpinnerProps) {
-const sizeClasses = {
-  sm: "h-4 w-4",
-  md: "h-8 w-8", 
-  lg: "h-12 w-12"
-};
+// Removed duplicate, incomplete definition of LoadingSpinner
 
 export function LoadingSpinner({ 
   size = "md", 
