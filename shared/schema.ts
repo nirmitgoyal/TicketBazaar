@@ -376,6 +376,7 @@ export const userRegisterSchema = insertUserSchema
       .enum(["whatsapp", "phone", "email"])
       .default("whatsapp"),
     confirmPassword: z.string(),
+    referralCode: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",

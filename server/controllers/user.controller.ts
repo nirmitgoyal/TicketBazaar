@@ -44,8 +44,13 @@ export class UserController {
       }
 
       // Create the user
-      const { confirmPassword, ...userData } = validatedData;
+      const { confirmPassword, referralCode, ...userData } = validatedData;
       const user = await this.userService.createUser(userData);
+
+      // Handle referral code if provided
+      if (referralCode) {
+        await this.userService.processReferralCode(user.id, referralCode);
+      }
 
       // Log the user in
       req.login(user, (err) => {

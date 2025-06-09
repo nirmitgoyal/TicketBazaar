@@ -15,6 +15,7 @@ export default function Register() {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     password: "",
+    confirmPassword: "",
     fullName: "",
     email: "",
     phone: "",
@@ -138,6 +139,32 @@ export default function Register() {
                 required
               />
             </div>
+            <div>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                required
+              />
+            </div>
+            {formData.referralCode && (
+              <div>
+                <Label htmlFor="referralCode">Referral Code</Label>
+                <Input
+                  id="referralCode"
+                  type="text"
+                  value={formData.referralCode}
+                  onChange={(e) => handleInputChange("referralCode", e.target.value)}
+                  placeholder="Enter referral code (optional)"
+                  disabled
+                />
+                <p className="text-sm text-green-600 mt-1">
+                  🎉 You'll receive ₹25 bonus credits after registration!
+                </p>
+              </div>
+            )}
             <Button 
               type="submit" 
               className="w-full"

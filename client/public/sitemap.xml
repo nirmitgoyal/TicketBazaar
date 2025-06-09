@@ -44,38 +44,6 @@
     <priority>0.5</priority>
   </url>
   
-  <!-- Event Detail Pages (Sample, add all your events dynamically in production) -->
-  <url>
-    <loc>https://ticketbazaar.co.in/event/1</loc>
-    <lastmod>2025-05-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ticketbazaar.co.in/event/2</loc>
-    <lastmod>2025-05-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ticketbazaar.co.in/event/3</loc>
-    <lastmod>2025-05-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ticketbazaar.co.in/event/4</loc>
-    <lastmod>2025-05-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ticketbazaar.co.in/event/5</loc>
-    <lastmod>2025-05-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
   <!-- User-specific pages (lower priority for crawlers since they require login) -->
   <url>
     <loc>https://ticketbazaar.co.in/my-tickets</loc>
