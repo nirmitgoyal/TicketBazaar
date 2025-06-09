@@ -75,12 +75,7 @@ export default function MapPage() {
   const categories = Array.from(new Set(events?.map(e => e.category) || []));
 
   return (
-    <LoadScript
-      googleMapsApiKey={googleMapsApiKey}
-      libraries={GOOGLE_MAPS_LIBRARIES}
-      loadingElement={<div>Loading Maps...</div>}
-    >
-      <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
         <SEO
           title="Event Map - Find Second Hand Tickets Near You | Interactive Event Map | Ticket Bazaar"
           description="Discover events and second hand tickets near you with our interactive map. Find concerts, sports events, festivals and more across India. Real-time event locations with available 2nd hand tickets."
@@ -225,6 +220,5 @@ export default function MapPage() {
           </CardContent>
         </Card>
       </div>
-    </LoadScript>
   );
 }

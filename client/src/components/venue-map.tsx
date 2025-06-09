@@ -1,6 +1,8 @@
 import { useState, useCallback, useRef } from "react";
+import { GoogleMap, InfoWindow } from "@react-google-maps/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
+import { GOOGLE_MAPS_OPTIONS, DEFAULT_CENTER } from "@/lib/google-maps-config";
 
 interface VenueMapProps {
   venues: Array<{
