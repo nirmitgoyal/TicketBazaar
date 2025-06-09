@@ -21,6 +21,9 @@ export function LoadingSpinner({
     <div className={cn("flex items-center justify-center", className)}>
       <div className="flex flex-col items-center gap-2">
         <div 
+          role="status"
+          aria-live="polite"
+          aria-label={text || "Loading..."}
           className={cn(
             "animate-spin rounded-full border-2 border-gray-300 border-t-blue-600",
             sizeClasses[size]
