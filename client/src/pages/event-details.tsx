@@ -159,16 +159,11 @@ export default function EventDetails() {
   return (
     <div className="container mx-auto px-4 py-8">
       <SEO
-        type="event"
-        data={{
-          title: event.eventTitle || event.title,
-          venue: event.venue,
-          city: event.city || event.venue.split(',').pop()?.trim() || 'India'
-        }}
+        title={`${event.eventTitle || event.title} - Tickets Available | Ticket Bazaar`}
+        description={`Buy verified tickets for ${event.eventTitle || event.title} at ${event.venue}. Secure P2P ticket marketplace with escrow protection.`}
         canonicalUrl={`https://ticketbazaar.co.in/event/${id}`}
         ogType="event"
         ogImage={event.eventImageUrl || undefined}
-        structuredData={[eventStructuredData, breadcrumbStructuredData, organizationStructuredData]}
       />
       
       <Link href="/">

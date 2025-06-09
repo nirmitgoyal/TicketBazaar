@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Ticket, User, Event } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
-import { TicketVerificationSection } from "./ticket-verification-section";
+import { TicketVerification } from "./ticket-verification";
 
 interface TicketDetailModalProps {
   eventId: number;
@@ -196,7 +196,7 @@ export function TicketDetailModal({
                   )}
 
                   {/* Perplexity AI Verification Section */}
-                  <TicketVerificationSection ticket={ticket} />
+                  <TicketVerification ticket={ticket} />
 
                   <div className="mt-4 flex justify-end">
                     <Button
