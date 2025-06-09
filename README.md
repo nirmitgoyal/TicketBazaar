@@ -858,11 +858,24 @@ cd ticketbazaar
 # 2. Install dependencies
 npm install
 
+### Step-by-Step Setup
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd ticketbazaar
+
+# 2. Install dependencies
+npm install
+
 # 3. Set up environment variables
-# Create .env with required variables:
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env with your actual values:
 # - DATABASE_URL (PostgreSQL connection string)
 # - SESSION_SECRET (cryptographically secure key)
 # - GOOGLE_MAPS_API_KEY (for maps functionality)
+# - Other optional API keys as needed
 
 # 4. Initialize database schema
 npm run db:push
