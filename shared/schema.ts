@@ -25,6 +25,9 @@ export const users = pgTable("users", {
   rating: doublePrecision("rating").default(0),
   ratingsCount: integer("ratings_count").default(0),
   preferredContactMethod: text("preferred_contact_method").default("whatsapp"), // whatsapp, phone, email
+  credits: doublePrecision("credits").default(0), // User credits balance
+  referralCode: text("referral_code").unique(), // User's unique referral code
+  referredBy: integer("referred_by"), // ID of user who referred this user
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   ratingIdx: index("users_rating_idx").on(table.rating),
@@ -146,8 +149,40 @@ export const ticketViews = pgTable("ticket_views", {
   viewedAtIdx: index("ticket_views_viewed_at_idx").on(table.viewedAt),
 }));
 
+// Referral tracking and credits system
+export const referrals = pgTable("referrals", {
+  id: serial("id").primaryKey(),
+  referrerId: integer("referrer_id").notNull(), // User who made the referral
+  refereeId: integer("referee_id").notNull(), // User who was referred
+  status: text("status").notNull().default("pending"), // pending, completed, rewarded
+  referralCode: text("referral_code").notNull(), // Code used for referral
+  createdAt: timestamp("created_at").defaultNow(),
+  completedAt: timestamp("completed_at"), // When referee completed required action
+  rewardedAt: timestamp("rewarded_at"), // When rewards were given
+}, (table) => ({
+  referrerIdx: index("referrals_referrer_idx").on(table.referrerId),
+  refereeIdx: index("referrals_referee_idx").on(table.refereeId),
+  codeIdx: index("referrals_code_idx").on(table.referralCode),
+  statusIdx: index("referrals_status_idx").on(table.status),
+}));
+
+export const creditTransactions = pgTable("credit_transactions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  amount: doublePrecision("amount").notNull(), // Positive for credits, negative for debits
+  type: text("type").notNull(), // referral_bonus, referral_reward, ticket_purchase, credit_redemption
+  description: text("description").notNull(),
+  referralId: integer("referral_id"), // Link to referral if applicable
+  ticketId: integer("ticket_id"), // Link to ticket if applicable
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("credit_transactions_user_idx").on(table.userId),
+  typeIdx: index("credit_transactions_type_idx").on(table.type),
+  referralIdx: index("credit_transactions_referral_idx").on(table.referralId),
+}));
+
 // Relations
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   tickets: many(tickets),
   contactRequestsAsSeller: many(contactRequests, { relationName: "seller" }),
   contactRequestsAsRequester: many(contactRequests, {
@@ -157,6 +192,14 @@ export const usersRelations = relations(users, ({ many }) => ({
   reviewsGiven: many(userReviews, { relationName: "reviewer" }),
   reviewsReceived: many(userReviews, { relationName: "reviewee" }),
   ticketViews: many(ticketViews),
+  referrer: one(users, {
+    fields: [users.referredBy],
+    references: [users.id],
+    relationName: "referrer",
+  }),
+  referralsGiven: many(referrals, { relationName: "referrer" }),
+  referralsReceived: many(referrals, { relationName: "referee" }),
+  creditTransactions: many(creditTransactions),
 }));
 
 export const ticketsRelations = relations(tickets, ({ one, many }) => ({
@@ -228,6 +271,35 @@ export const ticketViewsRelations = relations(ticketViews, ({ one }) => ({
   }),
 }));
 
+export const referralsRelations = relations(referrals, ({ one, many }) => ({
+  referrer: one(users, {
+    fields: [referrals.referrerId],
+    references: [users.id],
+    relationName: "referrer",
+  }),
+  referee: one(users, {
+    fields: [referrals.refereeId],
+    references: [users.id],
+    relationName: "referee",
+  }),
+  creditTransactions: many(creditTransactions),
+}));
+
+export const creditTransactionsRelations = relations(creditTransactions, ({ one }) => ({
+  user: one(users, {
+    fields: [creditTransactions.userId],
+    references: [users.id],
+  }),
+  referral: one(referrals, {
+    fields: [creditTransactions.referralId],
+    references: [referrals.id],
+  }),
+  ticket: one(tickets, {
+    fields: [creditTransactions.ticketId],
+    references: [tickets.id],
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users);
 
@@ -247,6 +319,10 @@ export const insertUserReviewSchema = createInsertSchema(userReviews);
 
 export const insertTicketViewSchema = createInsertSchema(ticketViews);
 
+export const insertReferralSchema = createInsertSchema(referrals);
+
+export const insertCreditTransactionSchema = createInsertSchema(creditTransactions);
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -265,6 +341,12 @@ export type UserReview = typeof userReviews.$inferSelect;
 
 export type InsertTicketView = z.infer<typeof insertTicketViewSchema>;
 export type TicketView = typeof ticketViews.$inferSelect;
+
+export type InsertReferral = z.infer<typeof insertReferralSchema>;
+export type Referral = typeof referrals.$inferSelect;
+
+export type InsertCreditTransaction = z.infer<typeof insertCreditTransactionSchema>;
+export type CreditTransaction = typeof creditTransactions.$inferSelect;
 
 // Event type alias for compatibility (events are embedded in tickets)
 export type Event = Ticket;
