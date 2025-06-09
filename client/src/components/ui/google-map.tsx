@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { GoogleMap, useJsApiLoader, InfoWindow } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, InfoWindow, Marker } from "@react-google-maps/api";
 import { Event } from "@shared/schema";
 import { Link } from "wouter";
 import { Loader2, MapPin, Plus, Minus } from "lucide-react";
@@ -25,9 +25,7 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
   const [userLocation, setUserLocation] = useState<google.maps.LatLng | null>(
     null,
   );
-  const [markers, setMarkers] = useState<
-    google.maps.marker.AdvancedMarkerElement[]
-  >([]);
+  const [eventMarkers, setEventMarkers] = useState<Event[]>([]);
 
   // Track events with valid coordinates for analytics
   useEffect(() => {
@@ -56,7 +54,7 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     libraries: GOOGLE_MAPS_LIBRARIES,
-    mapIds: ["ticket-bazaar-map"], // Add a map ID for Advanced Markers
+    // Remove mapIds to fix the Advanced Markers warning
   });
 
   const onLoad = useCallback((map: google.maps.Map) => {
@@ -120,86 +118,13 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
   // Track if we've already set initial bounds
   const [initialBoundsSet, setInitialBoundsSet] = useState(false);
 
-  // Add markers to map using DOM manipulation to avoid deprecated warnings
+  // Set event markers for rendering
   useEffect(() => {
-    if (!map || !isLoaded || !window.google) return;
-
-    // Clear existing markers
-    markers.forEach((marker) => {
-      if (marker.map) {
-        marker.map = null;
-      }
-    });
-    setMarkers([]);
-
-    const newMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
-
-    // Add event markers
-    events
-      .filter((event) => event.latitude && event.longitude)
-      .forEach((event) => {
-        const markerElement = document.createElement("div");
-        markerElement.innerHTML = `
-        <div style="
-          width: 24px; 
-          height: 24px; 
-          background: #1976D2; 
-          border: 2px solid white; 
-          border-radius: 50%; 
-          cursor: pointer;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        "></div>
-      `;
-
-        const marker = new google.maps.marker.AdvancedMarkerElement({
-          position: { lat: event.latitude!, lng: event.longitude! },
-          map: map,
-          content: markerElement,
-          title: event.title,
-        });
-
-        markerElement.addEventListener("click", () => {
-          setSelectedEvent(event);
-        });
-
-        newMarkers.push(marker);
-      });
-
-    // Add user location marker if available
-    if (userLocation) {
-      const userMarkerElement = document.createElement("div");
-      userMarkerElement.innerHTML = `
-        <div style="
-          width: 16px; 
-          height: 16px; 
-          background: #4285F4; 
-          border: 2px solid white; 
-          border-radius: 50%;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        "></div>
-      `;
-
-      const userMarker = new google.maps.marker.AdvancedMarkerElement({
-        position: userLocation,
-        map: map,
-        content: userMarkerElement,
-        title: "Your Location",
-      });
-
-      newMarkers.push(userMarker);
-    }
-
-    setMarkers(newMarkers);
-
-    // Cleanup function
-    return () => {
-      newMarkers.forEach((marker) => {
-        if (marker.map) {
-          marker.map = null;
-        }
-      });
-    };
-  }, [map, events, userLocation, isLoaded]);
+    if (!map || !isLoaded) return;
+    
+    const validEvents = events.filter((event) => event.latitude && event.longitude);
+    setEventMarkers(validEvents);
+  }, [map, events, isLoaded]);
 
   // Fit map to all markers only on initial load
   useEffect(() => {
@@ -353,7 +278,42 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
         onBoundsChanged={onBoundsChanged}
         options={GOOGLE_MAPS_OPTIONS}
       >
-        {/* Markers are now handled with useEffect to avoid deprecated warnings */}
+        {/* Event Markers */}
+        {eventMarkers.map((event) => (
+          <Marker
+            key={event.id}
+            position={{
+              lat: event.latitude!,
+              lng: event.longitude!,
+            }}
+            title={event.eventTitle}
+            onClick={() => setSelectedEvent(event)}
+            icon={{
+              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" fill="#1976D2" stroke="white" stroke-width="2"/>
+                </svg>
+              `),
+              scaledSize: new window.google.maps.Size(24, 24),
+            }}
+          />
+        ))}
+
+        {/* User Location Marker */}
+        {userLocation && (
+          <Marker
+            position={userLocation}
+            title="Your Location"
+            icon={{
+              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="8" cy="8" r="6" fill="#4285F4" stroke="white" stroke-width="2"/>
+                </svg>
+              `),
+              scaledSize: new window.google.maps.Size(16, 16),
+            }}
+          />
+        )}
 
         {selectedEvent && selectedEvent.latitude && selectedEvent.longitude && (
           <InfoWindow
