@@ -6,6 +6,18 @@ import { InsertUser, User } from "@shared/schema";
  */
 export class UserService {
   /**
+   * Process referral code during user registration
+   */
+  async processReferralCode(userId: number, referralCode: string): Promise<void> {
+    try {
+      console.log(`Processing referral code ${referralCode} for user ${userId}`);
+      // The referral processing will be implemented once the database schema is properly integrated
+      // For now, we log the attempt and the system will work without referral rewards
+    } catch (error) {
+      console.error('Error processing referral code:', error);
+    }
+  }
+  /**
    * Get user by ID
    * @param id User ID
    * @returns User object or undefined if not found

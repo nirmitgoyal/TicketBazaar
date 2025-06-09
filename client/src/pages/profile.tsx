@@ -39,6 +39,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import SEO from "@/components/seo";
+import { ReferralCard } from "@/components/referral-card";
 
 const instagramSchema = z.object({
   instagram: z
@@ -395,7 +396,10 @@ export default function Profile() {
         </div>
 
         {/* Activity and Stats */}
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 space-y-6">
+          {/* Referral Program Card */}
+          <ReferralCard />
+          
           <Card>
             <CardHeader>
               <CardTitle>Account Settings</CardTitle>
