@@ -98,7 +98,7 @@ export default function MapPage() {
 
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-2">
-            Event Venue Map
+            Event Map
           </h1>
           <p className="text-muted-foreground">
             Discover events happening near you with our interactive venue map

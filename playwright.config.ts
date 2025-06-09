@@ -1,10 +1,4 @@
-import { defineConfig, devices } from "@playwrigh  // Development server (disabled in CI)
-  webServer: process.env.CI ? undefined : {
-    command: "npm run dev",
-    url: "http://localhost:5000",
-    reuseExistingServer: true,
-    timeout: 60 * 1000,
-  },;
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Simplified Playwright Configuration
@@ -27,19 +21,11 @@ export default defineConfig({
   
   // Basic test configuration
   use: {
-    baseURL: "http://localhost:5001",
+    baseURL: "http://localhost:3000",
     actionTimeout: 10000,
     navigationTimeout: 15000,
     screenshot: "only-on-failure",
-    // Visual testing configuration
     ignoreHTTPSErrors: true,
-  },
-
-  // Visual testing configuration
-  expect: {
-    // Threshold for visual comparisons (0.2 = 20% difference allowed)
-    toHaveScreenshot: { threshold: 0.2 },
-    toMatchSnapshot: { threshold: 0.2 },
   },
 
   // Single browser project
@@ -53,11 +39,14 @@ export default defineConfig({
     },
   ],
 
-  // Development server
-  webServer: {
+  // Development server configuration
+  webServer: process.env.CI ? undefined : {
     command: "npm run dev",
-    url: "http://localhost:5000",
+    url: "http://localhost:3000",
     reuseExistingServer: true,
     timeout: 60 * 1000,
   },
 });
+
+// Note: Simplified configuration focusing on basic DOM testing
+// Visual regression testing removed for better reliability

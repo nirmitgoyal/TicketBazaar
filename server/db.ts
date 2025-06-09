@@ -1,8 +1,12 @@
+import { config } from "dotenv";
 import { neon } from "@neondatabase/serverless";
 import { drizzle as drizzleNeon } from "drizzle-orm/neon-http";
 import { drizzle as drizzlePostgres } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "@shared/schema";
+
+// Load environment variables
+config();
 
 if (!process.env.DATABASE_URL) {
   throw new Error(

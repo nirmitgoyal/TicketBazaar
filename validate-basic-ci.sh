@@ -30,9 +30,19 @@ echo ""
 
 # Step 3: TypeScript check (with timeout simulation)
 echo "🔍 Step 3: TypeScript check"
-timeout 30s npm run check || {
-    echo "⚠️  TypeScript check timed out or failed (non-blocking in CI)"
-}
+if command -v timeout > /dev/null 2>&1; then
+    timeout 30s npm run check || {
+        echo "⚠️  TypeScript check timed out or failed (non-blocking in CI)"
+    }
+elif command -v gtimeout > /dev/null 2>&1; then
+    gtimeout 30s npm run check || {
+        echo "⚠️  TypeScript check timed out or failed (non-blocking in CI)"
+    }
+else
+    npm run check || {
+        echo "⚠️  TypeScript check failed (non-blocking in CI)"
+    }
+fi
 echo "✅ TypeScript check completed"
 echo ""
 

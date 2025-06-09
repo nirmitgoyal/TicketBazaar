@@ -1,9 +1,13 @@
 import express, { type Request, Response, NextFunction } from "express";
+import { config } from "dotenv";
 import { createServer } from "http";
 import { registerRoutes } from "./routes";
 import { log } from "./utils";
 import { initHoneybadger, extractUserContext, getMiddleware, notifyError } from "./honeybadger";
 import { apiBypassMiddleware, apiNotFoundMiddleware } from "./middleware/api-bypass.middleware";
+
+// Load environment variables
+config();
 
 (async () => {
   // Initialize Honeybadger first

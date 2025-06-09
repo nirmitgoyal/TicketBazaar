@@ -30,7 +30,8 @@ export function Navigation() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
     >
-      <div className="container mx-auto px-4 py-3">
+      <nav>
+        <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <motion.div
             className="flex items-center space-x-2 min-w-0 flex-shrink-0"
@@ -379,7 +380,8 @@ export function Navigation() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+        </div>
+      </nav>
     </motion.header>
   );
 }

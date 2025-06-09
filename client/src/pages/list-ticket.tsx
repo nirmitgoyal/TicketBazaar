@@ -213,7 +213,7 @@ export default function ListTicket() {
           <OrganizationSchema />
         </SEOManager>
         <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
-          Sell Your Tickets
+          List Your Ticket
         </h1>
 
         <div className="max-w-lg mx-auto">
@@ -272,7 +272,7 @@ export default function ListTicket() {
           <OrganizationSchema />
         </SEOManager>
         <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
-          Sell Your Tickets
+          List Your Ticket
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
@@ -304,6 +304,7 @@ export default function ListTicket() {
                           <FormLabel>Event Title</FormLabel>
                           <FormControl>
                             <Input
+                              data-testid="ticket-title"
                               placeholder="e.g., Arijit Singh Live Concert"
                               {...field}
                             />
@@ -503,6 +504,7 @@ export default function ListTicket() {
                           <FormLabel>Additional Information (Optional)</FormLabel>
                           <FormControl>
                             <Textarea
+                              data-testid="ticket-description"
                               placeholder="Any additional details about the tickets, seating information, or other relevant details..."
                               className="resize-none"
                               rows={3}
@@ -516,6 +518,7 @@ export default function ListTicket() {
                   </div>
 
                   <Button
+                    data-testid="submit-button"
                     type="submit"
                     className="w-full"
                     disabled={createTicketMutation.isPending}
