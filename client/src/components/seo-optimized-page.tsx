@@ -1,5 +1,5 @@
 import React from "react";
-import EnhancedSEO from "./enhanced-seo";
+import SEO from "./seo";
 import { generateOrganizationStructuredData } from "@/utils/seo-utils";
 
 interface SEOOptimizedPageProps {
@@ -35,7 +35,7 @@ export default function SEOOptimizedPage({
 
   return (
     <>
-      <EnhancedSEO
+      <SEO
         type={type}
         title={title}
         description={description}

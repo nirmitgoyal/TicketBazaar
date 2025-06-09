@@ -10,7 +10,7 @@ import { TicketComparison } from "@/components/ticket-comparison";
 import { Link } from "wouter";
 import { Event, Ticket } from "@shared/schema";
 import { useAnalytics } from "@/hooks/use-analytics";
-import EnhancedSEO from "@/components/enhanced-seo";
+import SEO from "@/components/seo";
 import { generateEventStructuredData, generateBreadcrumbStructuredData, generateOrganizationStructuredData } from "@/utils/seo-utils";
 import { SocialShare } from "@/components/social-share";
 
@@ -158,7 +158,7 @@ export default function EventDetails() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <EnhancedSEO
+      <SEO
         type="event"
         data={{
           title: event.eventTitle || event.title,
