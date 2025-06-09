@@ -4,7 +4,6 @@
 export const GOOGLE_MAPS_LIBRARIES: ("places" | "geometry")[] = ["places", "geometry"];
 
 export const GOOGLE_MAPS_OPTIONS = {
-  mapId: "8e0a97af9386fef", // Required for Advanced Markers
   fullscreenControl: true,
   streetViewControl: false,
   mapTypeControl: false,
