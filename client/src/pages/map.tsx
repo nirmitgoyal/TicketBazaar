@@ -1,12 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { LoadScript } from "@react-google-maps/api";
 import { VenueMap } from "@/components/venue-map";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Users } from "lucide-react";
 import SEO from "@/components/seo";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
-import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 import { BreadcrumbSchema } from "@/components/schema/breadcrumb-schema";
 
 interface TicketEvent {

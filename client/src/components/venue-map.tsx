@@ -1,8 +1,6 @@
 import { useState, useCallback, useRef } from "react";
-import { GoogleMap, InfoWindow } from "@react-google-maps/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
-import { GOOGLE_MAPS_OPTIONS, DEFAULT_CENTER } from "@/lib/google-maps-config";
 
 interface VenueMapProps {
   venues: Array<{
@@ -138,7 +136,6 @@ export function VenueMap({ venues, className = "" }: VenueMapProps) {
           onLoad={onLoad}
           onUnmount={onUnmount}
           options={GOOGLE_MAPS_OPTIONS}
-          data-testid="google-map"
         >
           {selectedVenue && (
             <InfoWindow

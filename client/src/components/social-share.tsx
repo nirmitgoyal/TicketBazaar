@@ -2,7 +2,6 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Event, Ticket } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
-import { CopyLinkIcon } from "@/components/ui/copy-link-icon";
 
 interface SocialShareProps {
   event?: Event;

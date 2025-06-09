@@ -37,8 +37,6 @@ import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import SEO from "@/components/seo";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 
 // Define schema for P2P ticket listing with event details
 const ticketWithEventSchema = z.object({
