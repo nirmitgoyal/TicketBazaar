@@ -407,7 +407,7 @@ user_reviews {
 -- Constraints: Unique(reviewer_id, contact_request_id)
 ```
 
-#### Ticket Views Table (Analytics)
+#### Ticket Views Table  (Analytics)
 ```sql
 ticket_views {
   id: SERIAL PRIMARY KEY
