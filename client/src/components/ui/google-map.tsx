@@ -5,6 +5,7 @@ import { Link } from "wouter";
 import { Loader2, MapPin, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EventListFallback from "./event-list-fallback";
+import SimpleMap from "./simple-map";
 import { 
   GOOGLE_MAPS_LIBRARIES, 
   GOOGLE_MAPS_OPTIONS, 
@@ -41,6 +42,16 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
   // Load the Google Maps JavaScript API
   // Use environment variable for API key security
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+  // Enhanced error logging for debugging
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Google Maps API Key configured:', !!GOOGLE_MAPS_API_KEY);
+      if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === 'demo') {
+        console.warn('Google Maps API key is missing or set to demo mode');
+      }
+    }
+  }, [GOOGLE_MAPS_API_KEY]);
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
@@ -257,15 +268,36 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
   if (loadError) {
     if (process.env.NODE_ENV === 'development') {
       console.error("Google Maps error:", loadError);
+      console.error("Error details:", {
+        message: loadError.message,
+        stack: loadError.stack,
+        apiKey: GOOGLE_MAPS_API_KEY ? 'Present' : 'Missing'
+      });
     }
 
     // Display events in a grid layout as fallback
     return (
-      <EventListFallback
-        events={events}
-        title="Events Map View"
-        description="Map view is temporarily unavailable. Displaying events in list view."
-      />
+      <div className="space-y-4">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <h3 className="font-semibold text-yellow-800 mb-2">Map Temporarily Unavailable</h3>
+          <p className="text-sm text-yellow-700 mb-3">
+            The map feature requires a valid Google Maps API key to display venue locations. 
+            Showing events in list format instead.
+          </p>
+          {process.env.NODE_ENV === 'development' && (
+            <details className="text-xs text-yellow-600">
+              <summary className="cursor-pointer">Technical Details</summary>
+              <pre className="mt-2 bg-yellow-100 p-2 rounded text-xs overflow-auto">
+                {loadError.message}
+              </pre>
+            </details>
+          )}
+        </div>
+        <SimpleMap
+          events={events}
+          onViewportChange={onViewportChange}
+        />
+      </div>
     );
   }
 
