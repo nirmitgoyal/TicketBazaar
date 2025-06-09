@@ -17,7 +17,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '22'
+        node-version: '22.x'
         cache: 'npm'
 
     - name: Install dependencies
@@ -25,20 +25,30 @@ jobs:
 
     - name: TypeScript check
       run: |
-        timeout 300 npm run check || {
-          echo "TypeScript check timed out or failed - continuing"
+        echo "Running TypeScript check..."
+        npm run check || {
+          echo "TypeScript check failed - continuing with build"
+          exit 0
         }
       continue-on-error: true
 
     - name: Build application
       run: |
-        timeout 600 npm run build || {
-          echo "Build timed out or failed"
+        echo "Building application..."
+        npm run build || {
+          echo "Build failed"
           exit 1
         }
 
     - name: Run basic tests
-      run: npm test 2>/dev/null || echo "No unit tests configured"
+      run: |
+        echo "Running basic tests..."
+        # Only run if Jest is configured and tests exist
+        if [ -d "tests/unit" ] || [ -f "jest.config.js" ] || [ -f "jest.config.ts" ]; then
+          npm test 2>/dev/null || echo "No unit tests found or Jest not configured"
+        else
+          echo "No unit test framework configured - skipping"
+        fi
       continue-on-error: true
 
   e2e-test:
@@ -52,7 +62,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '22'
+        node-version: '22.x'
         cache: 'npm'
 
     - name: Setup PostgreSQL
@@ -76,8 +86,13 @@ jobs:
 
     - name: Initialize test database
       run: |
+        echo "Setting up test database..."
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
-        npx tsx scripts/db-setup-ci.ts
+        echo "Database URL: $DATABASE_URL"
+        npx tsx scripts/db-setup-ci.ts || {
+          echo "Database setup failed"
+          exit 1
+        }
       env:
         NODE_ENV: test
 
@@ -89,14 +104,57 @@ jobs:
 
     - name: Start server and run E2E tests
       run: |
+        echo "Starting server for E2E tests..."
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
         export PORT=5001
+        export NODE_ENV=test
+        echo "Port: $PORT"
+        echo "Database URL: $DATABASE_URL"
+        echo "Node Environment: $NODE_ENV"
+        
+        # Start server in background
         npm run start &
-        npx wait-on http://localhost:5001 --timeout 60000
-        npm run test:e2e
+        SERVER_PID=$!
+        echo "Server started with PID: $SERVER_PID"
+        
+        # Wait for server to be ready with more robust checking
+        echo "Waiting for server to be ready..."
+        for i in {1..30}; do
+          if curl -f http://localhost:5001/api/health 2>/dev/null || curl -f http://localhost:5001 2>/dev/null; then
+            echo "Server is responding"
+            break
+          fi
+          if [ $i -eq 30 ]; then
+            echo "Server failed to start within timeout"
+            kill $SERVER_PID 2>/dev/null || true
+            exit 1
+          fi
+          echo "Waiting... ($i/30)"
+          sleep 2
+        done
+        
+        # Double-check server is still running
+        if ! kill -0 $SERVER_PID 2>/dev/null; then
+          echo "Server process died unexpectedly"
+          exit 1
+        fi
+        
+        echo "Server is ready, running E2E tests..."
+        # Run E2E tests with timeout protection
+        timeout 300 npm run test:e2e || {
+          exit_code=$?
+          echo "E2E tests failed or timed out (exit code: $exit_code)"
+          kill $SERVER_PID 2>/dev/null || true
+          exit 1
+        }
+        
+        # Clean up
+        kill $SERVER_PID 2>/dev/null || true
+        echo "Server stopped successfully"
       env:
         NODE_ENV: test
         DATABASE_URL: postgresql://test:test@localhost:5432/test
+        CI: true
 
     - name: Upload test results
       uses: actions/upload-artifact@v4

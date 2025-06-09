@@ -1,4 +1,10 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices } from "@playwrigh  // Development server (disabled in CI)
+  webServer: process.env.CI ? undefined : {
+    command: "npm run dev",
+    url: "http://localhost:5000",
+    reuseExistingServer: true,
+    timeout: 60 * 1000,
+  },;
 
 /**
  * Simplified Playwright Configuration
