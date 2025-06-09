@@ -30,7 +30,7 @@ export function Navigation() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
     >
-      <nav>
+      <nav aria-label="Main Navigation">
         <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <motion.div

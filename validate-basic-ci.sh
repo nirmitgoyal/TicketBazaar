@@ -117,6 +117,12 @@ if curl -f http://localhost:5001/api/health 2>/dev/null; then
     echo "✅ Health endpoint responding"
 else
     echo "⚠️  Health endpoint not responding (may be expected without database)"
+    echo "🔄 Attempting fallback check against root endpoint..."
+    if curl -f http://localhost:5001/ 2>/dev/null; then
+        echo "✅ Root endpoint responding (server is running, but health endpoint is unavailable)"
+    else
+        echo "❌ Server not responding on root endpoint either"
+    fi
 fi
 
 # Clean up
