@@ -10,8 +10,7 @@ import { WebSocketProvider } from "@/hooks/use-websocket";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "@/components/ui/page-transition";
 import { AtmosphereProvider } from "@/contexts/AtmosphereContext";
-import { HelmetProvider } from "@/components/helmet-manager";
-import { CanonicalUrlManager } from "@/components/canonical-url-manager";
+
 
 // Pages
 import Home from "@/pages/home";
@@ -169,17 +168,14 @@ function App() {
         <WebSocketProvider>
           <AnalyticsProvider>
             <AtmosphereProvider>
-              <HelmetProvider>
-                <CanonicalUrlManager />
-                <div className="min-h-screen flex flex-col safe-area-top">
-                  <Navigation />
-                  <main className="flex-grow container mx-auto mobile-container py-3 sm:py-6">
-                    <Router />
-                  </main>
-                  <Footer />
-                </div>
-                <Toaster />
-              </HelmetProvider>
+              <div className="min-h-screen flex flex-col safe-area-top">
+                <Navigation />
+                <main className="flex-grow container mx-auto mobile-container py-3 sm:py-6">
+                  <Router />
+                </main>
+                <Footer />
+              </div>
+              <Toaster />
             </AtmosphereProvider>
           </AnalyticsProvider>
         </WebSocketProvider>

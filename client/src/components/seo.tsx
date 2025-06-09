@@ -1,6 +1,12 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { useCanonicalUrl } from "@/hooks/use-canonical-url";
+// Simple canonical URL generation
+const useCanonicalUrl = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.href;
+  }
+  return '';
+};
 
 interface SEOProps {
   title?: string;

@@ -7,19 +7,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SEOManager } from "@/components/helmet-manager";
+import SEO from "@/components/seo";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 
 export default function PrivacyPolicy() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <SEOManager
+      <SEO
         title="Privacy Policy | Ticket Bazaar"
         description="Learn about how Ticket Bazaar collects, uses, and protects your personal information. Our privacy policy explains your rights and our data practices."
         canonicalUrl="https://ticketbazaar.co.in/privacy-policy"
       >
         <OrganizationSchema />
-      </SEOManager>
+      </SEO>
       <Card className="w-full shadow-lg">
         <CardHeader className="border-b border-border pb-4">
           <div className="flex items-center gap-2">

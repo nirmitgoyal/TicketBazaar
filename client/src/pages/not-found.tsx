@@ -1,12 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
-import { SEOManager } from "@/components/helmet-manager";
+import SEO from "@/components/seo";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 
 export default function NotFound() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <SEOManager
+      <SEO
         title="Page Not Found | 404 Error - Ticket Bazaar"
         description="The page you are looking for could not be found. Browse available events and tickets on India's leading ticket marketplace - Ticket Bazaar."
         canonicalUrl="https://ticketbazaar.co.in/404"

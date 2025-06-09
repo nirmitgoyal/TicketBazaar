@@ -4,7 +4,7 @@ import { VenueMap } from "@/components/venue-map";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Users } from "lucide-react";
-import { SEOManager } from "@/components/helmet-manager";
+import SEO from "@/components/seo";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 import { BreadcrumbSchema } from "@/components/schema/breadcrumb-schema";
@@ -83,7 +83,7 @@ export default function MapPage() {
       loadingElement={<div>Loading Maps...</div>}
     >
       <div className="container mx-auto px-4 py-8">
-        <SEOManager
+        <SEO
           title="Event Map - Find Second Hand Tickets Near You | Interactive Event Map | Ticket Bazaar"
           description="Discover events and second hand tickets near you with our interactive map. Find concerts, sports events, festivals and more across India. Real-time event locations with available 2nd hand tickets."
           canonicalUrl="https://ticketbazaar.co.in/map"
@@ -94,7 +94,7 @@ export default function MapPage() {
             { name: "Home", url: "/" },
             { name: "Event Map", url: "/map" }
           ]} />
-        </SEOManager>
+        </SEO>
 
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-2">

@@ -27,7 +27,7 @@ import {
 import { Ticket } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { DisputeModal } from "@/components/dispute-modal";
-import { SEOManager } from "@/components/helmet-manager";
+import SEO from "@/components/seo";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 import { SocialShare } from "@/components/social-share";
 
@@ -340,13 +340,13 @@ export default function MyTickets() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <SEOManager
+      <SEO
         title="My Tickets | Manage Your Purchases and Listings - Ticket Bazaar"
         description="View and manage all your purchased tickets and active ticket listings in one place. Access your ticket QR codes, transaction history, and update your listings."
         canonicalUrl="https://ticketbazaar.co.in/my-tickets"
       >
         <OrganizationSchema />
-      </SEOManager>
+      </SEO>
       <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
         My Tickets
       </h1>
