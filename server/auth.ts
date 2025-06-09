@@ -5,7 +5,7 @@ import session from "express-session";
 import bcrypt from "bcrypt";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
-import connectPg from "connect-pg-simple";
+import MemoryStore from "memorystore";
 
 /**
  * Extend Express User interface with our User type
@@ -21,23 +21,21 @@ declare global {
  * This function configures session management, passport strategies, and serialization
  */
 export function setupAuth(app: Express) {
-  // Create session store with PostgreSQL
-  const PostgresSessionStore = connectPg(session);
+  // Create in-memory session store for better compatibility
+  const MemorySessionStore = MemoryStore(session);
 
   // Configure session settings
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "ticket-bazaar-app-secret",
     resave: false,
     saveUninitialized: false,
-    store: new PostgresSessionStore({
-      conString: process.env.DATABASE_URL,
-      createTableIfMissing: true,
-      tableName: 'session'
+    store: new MemorySessionStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
     }),
     cookie: {
       secure: false,
       sameSite: "lax",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
       httpOnly: false,
       path: "/",
       domain: undefined
