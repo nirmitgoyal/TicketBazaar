@@ -13,10 +13,10 @@ echo "📋 Step 1: Node.js Environment Check"
 echo "Node.js version: $(node --version)"
 echo "NPM version: $(npm --version)"
 
-if [[ "$(node --version)" == v22.* ]]; then
-    echo "✅ Node.js 22.x detected"
-elif [[ "$(node --version)" == v23.* ]]; then
-    echo "⚠️  Node.js 23.x detected (CI expects 22.x)"
+if [[ "$(node --version)" == v20.* ]]; then
+    echo "✅ Node.js 20.x detected"
+elif [[ "$(node --version)" == v21.* || "$(node --version)" == v22.* || "$(node --version)" == v23.* ]]; then
+    echo "⚠️  Node.js $(node --version) detected (CI expects 20.x)"
 else
     echo "❌ Unexpected Node.js version"
 fi
