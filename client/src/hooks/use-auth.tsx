@@ -39,8 +39,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
       try {
-        const res = await apiRequest("GET", "/api/auth/user");
+        const res = await fetch("/api/auth/user", {
+          credentials: "include",
+        });
         if (res.status === 401) {
+          return null;
+        }
+        if (!res.ok) {
           return null;
         }
         return await res.json();
@@ -50,6 +55,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     retry: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
 
