@@ -10,6 +10,7 @@ import { WebSocketProvider } from "@/hooks/use-websocket";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "@/components/ui/page-transition";
 import { AtmosphereProvider } from "@/contexts/AtmosphereContext";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 
 // Pages
