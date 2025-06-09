@@ -918,6 +918,47 @@ npm test                # Run Jest tests
 npm run heroku-postbuild # Heroku build process
 ```
 
+## 🔐 Environment Variables & Security
+
+### Environment Variable Management
+
+**Important**: The `.env` file contains sensitive information and should never be committed to version control.
+
+#### Setting Up Environment Variables
+
+1. **Copy the example file**:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Required Variables** (must be configured):
+   - `DATABASE_URL` - PostgreSQL connection string
+   - `SESSION_SECRET` - Cryptographically secure session key
+   - `VITE_GOOGLE_MAPS_API_KEY` - Google Maps API key for map functionality
+
+3. **Optional Variables** (for enhanced features):
+   - `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` - Google OAuth for social login
+   - `OPENAI_API_KEY` - AI-powered event fetching and search
+   - `FIREBASE_*` - Analytics and monitoring
+   - `INSTAGRAM_*` - Profile verification features
+   - `HONEYBADGER_API_KEY` - Production error tracking
+   - `WHATSAPP_*` - Business notification features
+
+#### Security Best Practices
+
+- **Never commit `.env` files** - They are added to `.gitignore`
+- **Use strong session secrets** - Generate with `openssl rand -base64 32`
+- **Rotate API keys regularly** - Especially in production environments
+- **Use different credentials** - Separate keys for development, staging, and production
+- **Monitor API usage** - Check for unusual activity in your service dashboards
+
+#### Environment Validation
+
+The application includes automatic environment validation:
+- **Development**: Warnings for missing optional variables
+- **Production**: Strict validation exits if required variables are missing
+- **Health checks**: Monitor environment status at `/api/health`
+
 ## 🔒 Security & Privacy Features
 
 ### Authentication Security
