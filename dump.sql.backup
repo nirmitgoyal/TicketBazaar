@@ -69,13 +69,16 @@ ALTER SEQUENCE public.contact_requests_id_seq OWNED BY public.contact_requests.i
 
 --
 -- TOC entry 231 (class 1259 OID 98319)
+-- Name: credit_transactions; Type: TABLE; Schema: public; Owner: -
 --
 
+CREATE TABLE public.credit_transactions (
     id integer NOT NULL,
     user_id integer NOT NULL,
     amount double precision NOT NULL,
     type text NOT NULL,
     description text NOT NULL,
+    referral_id integer,
     ticket_id integer,
     created_at timestamp without time zone DEFAULT now()
 );
@@ -83,8 +86,10 @@ ALTER SEQUENCE public.contact_requests_id_seq OWNED BY public.contact_requests.i
 
 --
 -- TOC entry 230 (class 1259 OID 98318)
+-- Name: credit_transactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
+CREATE SEQUENCE public.credit_transactions_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -96,18 +101,23 @@ ALTER SEQUENCE public.contact_requests_id_seq OWNED BY public.contact_requests.i
 --
 -- TOC entry 3450 (class 0 OID 0)
 -- Dependencies: 230
+-- Name: credit_transactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
+ALTER SEQUENCE public.credit_transactions_id_seq OWNED BY public.credit_transactions.id;
 
 
 --
 -- TOC entry 229 (class 1259 OID 98308)
+-- Name: referrals; Type: TABLE; Schema: public; Owner: -
 --
 
+CREATE TABLE public.referrals (
     id integer NOT NULL,
     referrer_id integer NOT NULL,
     referee_id integer NOT NULL,
     status text DEFAULT 'pending'::text NOT NULL,
+    referral_code text NOT NULL,
     created_at timestamp without time zone DEFAULT now(),
     completed_at timestamp without time zone,
     rewarded_at timestamp without time zone
@@ -116,8 +126,10 @@ ALTER SEQUENCE public.contact_requests_id_seq OWNED BY public.contact_requests.i
 
 --
 -- TOC entry 228 (class 1259 OID 98307)
+-- Name: referrals_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
+CREATE SEQUENCE public.referrals_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -129,8 +141,10 @@ ALTER SEQUENCE public.contact_requests_id_seq OWNED BY public.contact_requests.i
 --
 -- TOC entry 3451 (class 0 OID 0)
 -- Dependencies: 228
+-- Name: referrals_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
+ALTER SEQUENCE public.referrals_id_seq OWNED BY public.referrals.id;
 
 
 --
@@ -349,6 +363,7 @@ CREATE TABLE public.users (
     preferred_contact_method text DEFAULT 'whatsapp'::text,
     instagram text,
     credits double precision DEFAULT 0,
+    referral_code text,
     referred_by integer
 );
 
@@ -386,14 +401,18 @@ ALTER TABLE ONLY public.contact_requests ALTER COLUMN id SET DEFAULT nextval('pu
 
 --
 -- TOC entry 3253 (class 2604 OID 98322)
+-- Name: credit_transactions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY public.credit_transactions ALTER COLUMN id SET DEFAULT nextval('public.credit_transactions_id_seq'::regclass);
 
 
 --
 -- TOC entry 3250 (class 2604 OID 98311)
+-- Name: referrals id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY public.referrals ALTER COLUMN id SET DEFAULT nextval('public.referrals_id_seq'::regclass);
 
 
 --
@@ -459,16 +478,20 @@ COPY public.contact_requests (id, ticket_id, requester_id, seller_id, status, cr
 --
 -- TOC entry 3443 (class 0 OID 98319)
 -- Dependencies: 231
+-- Data for Name: credit_transactions; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+COPY public.credit_transactions (id, user_id, amount, type, description, referral_id, ticket_id, created_at) FROM stdin;
 \.
 
 
 --
 -- TOC entry 3441 (class 0 OID 98308)
 -- Dependencies: 229
+-- Data for Name: referrals; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+COPY public.referrals (id, referrer_id, referee_id, status, referral_code, created_at, completed_at, rewarded_at) FROM stdin;
 \.
 
 
@@ -574,6 +597,7 @@ COPY public.user_reviews (id, reviewer_id, user_id, ticket_id, rating, comment, 
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+COPY public.users (id, password, full_name, email, phone, whatsapp, rating, ratings_count, preferred_contact_method, instagram, credits, referral_code, referred_by) FROM stdin;
 19	$2b$10$OfoPmLbZXthYAC.d0Y9BceVJLTUiX4fBHhUG0wTeFgH9SJ54buiwW	Raj Patel	raj.patel@gmail.com	9876543210	919876543210	4.8	25	whatsapp	raj_musiclover	0	\N	\N
 20	$2b$10$ULi0SAzgzVMXPf45I8nlQ.8GnJsGdivGobqLGgcwbDZMcgHjn/pYS	Priya Sharma	priya.sharma@yahoo.com	9876543211	919876543211	4.6	18	phone	priya_sportstickets	0	\N	\N
 21	$2b$10$4V.bha/se3RybP6DoNJWM.7.bi.qy2I.dtE8FZC6kLeW6Ls4e04zC	Amit Kumar	amit.kumar@outlook.com	9876543212	919876543212	4.3	12	whatsapp	amit_eventlife	0	\N	\N
@@ -603,15 +627,19 @@ SELECT pg_catalog.setval('public.contact_requests_id_seq', 10, true);
 --
 -- TOC entry 3458 (class 0 OID 0)
 -- Dependencies: 230
+-- Name: credit_transactions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
+SELECT pg_catalog.setval('public.credit_transactions_id_seq', 1, false);
 
 
 --
 -- TOC entry 3459 (class 0 OID 0)
 -- Dependencies: 228
+-- Name: referrals_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
+SELECT pg_catalog.setval('public.referrals_id_seq', 1, false);
 
 
 --
@@ -670,14 +698,20 @@ ALTER TABLE ONLY public.contact_requests
 
 --
 -- TOC entry 3281 (class 2606 OID 98327)
+-- Name: credit_transactions credit_transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY public.credit_transactions
+    ADD CONSTRAINT credit_transactions_pkey PRIMARY KEY (id);
 
 
 --
 -- TOC entry 3279 (class 2606 OID 98317)
+-- Name: referrals referrals_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY public.referrals
+    ADD CONSTRAINT referrals_pkey PRIMARY KEY (id);
 
 
 --
@@ -745,9 +779,11 @@ ALTER TABLE ONLY public.users
 
 --
 -- TOC entry 3269 (class 2606 OID 98306)
+-- Name: users users_referral_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_referral_code_key UNIQUE (referral_code);
 
 
 --
@@ -760,32 +796,42 @@ CREATE INDEX "IDX_session_expire" ON public.session USING btree (expire);
 
 --
 -- TOC entry 3282 (class 1259 OID 106500)
+-- Name: idx_credit_transactions_type; Type: INDEX; Schema: public; Owner: -
 --
 
+CREATE INDEX idx_credit_transactions_type ON public.credit_transactions USING btree (type);
 
 
 --
 -- TOC entry 3283 (class 1259 OID 106499)
+-- Name: idx_credit_transactions_user; Type: INDEX; Schema: public; Owner: -
 --
 
+CREATE INDEX idx_credit_transactions_user ON public.credit_transactions USING btree (user_id);
 
 
 --
 -- TOC entry 3275 (class 1259 OID 106498)
+-- Name: idx_referrals_code; Type: INDEX; Schema: public; Owner: -
 --
 
+CREATE INDEX idx_referrals_code ON public.referrals USING btree (referral_code);
 
 
 --
 -- TOC entry 3276 (class 1259 OID 106497)
+-- Name: idx_referrals_referee; Type: INDEX; Schema: public; Owner: -
 --
 
+CREATE INDEX idx_referrals_referee ON public.referrals USING btree (referee_id);
 
 
 --
 -- TOC entry 3277 (class 1259 OID 106496)
+-- Name: idx_referrals_referrer; Type: INDEX; Schema: public; Owner: -
 --
 
+CREATE INDEX idx_referrals_referrer ON public.referrals USING btree (referrer_id);
 
 
 --
