@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { VenueMap } from "@/components/venue-map";
+import { GoogleMapsProvider } from "@/components/maps/GoogleMapsProvider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Users } from "lucide-react";
@@ -164,7 +165,9 @@ export default function MapPage() {
         </div>
 
         {/* Map Component */}
-        <VenueMap venues={venuesForMap} className="mb-6" />
+        <GoogleMapsProvider venues={venuesForMap} className="mb-6">
+          <VenueMap venues={venuesForMap} className="mb-6" />
+        </GoogleMapsProvider>
 
         {/* Event List */}
         <Card>

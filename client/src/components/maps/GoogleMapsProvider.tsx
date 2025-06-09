@@ -1,6 +1,7 @@
 import { LoadScript } from "@react-google-maps/api";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, cloneElement, isValidElement } from "react";
+import { MapFallback } from "./MapFallback";
 
 interface GoogleMapsContextType {
   isLoaded: boolean;
@@ -12,20 +13,21 @@ export const useGoogleMaps = () => useContext(GoogleMapsContext);
 
 interface GoogleMapsProviderProps {
   children: ReactNode;
+  venues?: Array<{
+    id: number;
+    eventTitle: string;
+    venue: string;
+    venueAddress?: string;
+    category: string;
+  }>;
+  className?: string;
 }
 
-export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "demo";
+export function GoogleMapsProvider({ children, venues = [], className }: GoogleMapsProviderProps) {
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   if (!googleMapsApiKey || googleMapsApiKey === "demo") {
-    return (
-      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <p className="text-yellow-800 text-sm">
-          Google Maps functionality requires an API key. Contact support to enable map features.
-        </p>
-        {children}
-      </div>
-    );
+    return <MapFallback venues={venues} className={className} />;
   }
 
   return (
