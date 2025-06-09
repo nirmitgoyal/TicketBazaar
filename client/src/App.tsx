@@ -24,6 +24,7 @@ import TicketVerification from "@/pages/ticket-verification";
 import Profile from "@/pages/profile";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
+import Referrals from "@/pages/referrals";
 import CompleteProfile from "@/pages/complete-profile";
 import TermsOfService from "@/pages/terms-of-service";
 import PrivacyPolicy from "@/pages/privacy-policy";
@@ -144,6 +145,7 @@ function Router() {
 
       {/* Profile */}
       <ProtectedRoute path="/profile" component={Profile} />
+      <ProtectedRoute path="/referrals" component={Referrals} />
 
       {/* Legal pages */}
       <Route path="/terms-of-service" component={TermsOfService} />
