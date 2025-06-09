@@ -143,6 +143,23 @@ export interface IStorage {
   verifySellerAuthenticity(sellerId: number): Promise<any>;
   getComprehensiveVerification(ticketId: number): Promise<any>;
 
+  // Referral program operations
+  generateReferralCode(userId: number): Promise<string>;
+  createReferral(referral: InsertReferral): Promise<Referral>;
+  getReferralByCode(code: string): Promise<Referral | undefined>;
+  getUserReferrals(userId: number): Promise<Referral[]>;
+  updateReferralStatus(id: number, status: string, completedAt?: Date, rewardedAt?: Date): Promise<Referral | undefined>;
+  
+  // Credit system operations
+  addCredits(userId: number, amount: number, type: string, description: string, referralId?: number, ticketId?: number): Promise<CreditTransaction>;
+  deductCredits(userId: number, amount: number, type: string, description: string, ticketId?: number): Promise<CreditTransaction>;
+  getUserCredits(userId: number): Promise<number>;
+  getCreditTransactions(userId: number): Promise<CreditTransaction[]>;
+  
+  // Referral rewards
+  processReferralReward(referralId: number): Promise<boolean>;
+  checkAndRewardReferrals(userId: number): Promise<boolean>;
+
   // Session storage
   sessionStore: any;
 }
@@ -931,6 +948,302 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error deleting expired tickets:", error);
       throw error;
+    }
+  }
+
+  // Referral program implementation
+  async generateReferralCode(userId: number): Promise<string> {
+    try {
+      let code: string;
+      let isUnique = false;
+      let attempts = 0;
+      
+      while (!isUnique && attempts < 10) {
+        // Generate a 6-character alphanumeric code
+        code = Math.random().toString(36).substring(2, 8).toUpperCase();
+        
+        // Check if code already exists
+        const existing = await db
+          .select()
+          .from(users)
+          .where(eq(users.referralCode, code))
+          .limit(1);
+          
+        if (existing.length === 0) {
+          isUnique = true;
+          
+          // Update user with the new referral code
+          await db
+            .update(users)
+            .set({ referralCode: code })
+            .where(eq(users.id, userId));
+            
+          return code;
+        }
+        attempts++;
+      }
+      
+      throw new Error('Unable to generate unique referral code');
+    } catch (error) {
+      console.error("Error generating referral code:", error);
+      throw error;
+    }
+  }
+
+  async createReferral(referral: InsertReferral): Promise<Referral> {
+    try {
+      const [newReferral] = await db
+        .insert(referrals)
+        .values(referral)
+        .returning();
+      return newReferral;
+    } catch (error) {
+      console.error("Error creating referral:", error);
+      throw error;
+    }
+  }
+
+  async getReferralByCode(code: string): Promise<Referral | undefined> {
+    try {
+      const [referral] = await db
+        .select()
+        .from(referrals)
+        .where(eq(referrals.referralCode, code))
+        .limit(1);
+      return referral;
+    } catch (error) {
+      console.error("Error getting referral by code:", error);
+      throw error;
+    }
+  }
+
+  async getUserReferrals(userId: number): Promise<Referral[]> {
+    try {
+      return await db
+        .select()
+        .from(referrals)
+        .where(eq(referrals.referrerId, userId))
+        .orderBy(desc(referrals.createdAt));
+    } catch (error) {
+      console.error("Error getting user referrals:", error);
+      throw error;
+    }
+  }
+
+  async updateReferralStatus(
+    id: number, 
+    status: string, 
+    completedAt?: Date, 
+    rewardedAt?: Date
+  ): Promise<Referral | undefined> {
+    try {
+      const updateData: any = { status };
+      if (completedAt) updateData.completedAt = completedAt;
+      if (rewardedAt) updateData.rewardedAt = rewardedAt;
+
+      const [updatedReferral] = await db
+        .update(referrals)
+        .set(updateData)
+        .where(eq(referrals.id, id))
+        .returning();
+      return updatedReferral;
+    } catch (error) {
+      console.error("Error updating referral status:", error);
+      throw error;
+    }
+  }
+
+  async addCredits(
+    userId: number, 
+    amount: number, 
+    type: string, 
+    description: string, 
+    referralId?: number, 
+    ticketId?: number
+  ): Promise<CreditTransaction> {
+    try {
+      // Start transaction
+      const [transaction] = await db
+        .insert(creditTransactions)
+        .values({
+          userId,
+          amount: Math.abs(amount), // Ensure positive for credits
+          type,
+          description,
+          referralId,
+          ticketId,
+        })
+        .returning();
+
+      // Update user's credit balance
+      await db
+        .update(users)
+        .set({
+          credits: sql`${users.credits} + ${Math.abs(amount)}`,
+        })
+        .where(eq(users.id, userId));
+
+      // Clear cache
+      this.userCache.delete(userId);
+
+      return transaction;
+    } catch (error) {
+      console.error("Error adding credits:", error);
+      throw error;
+    }
+  }
+
+  async deductCredits(
+    userId: number, 
+    amount: number, 
+    type: string, 
+    description: string, 
+    ticketId?: number
+  ): Promise<CreditTransaction> {
+    try {
+      // Check if user has enough credits
+      const user = await this.getUser(userId);
+      if (!user || (user.credits || 0) < amount) {
+        throw new Error('Insufficient credits');
+      }
+
+      // Create transaction record
+      const [transaction] = await db
+        .insert(creditTransactions)
+        .values({
+          userId,
+          amount: -Math.abs(amount), // Negative for debits
+          type,
+          description,
+          ticketId,
+        })
+        .returning();
+
+      // Update user's credit balance
+      await db
+        .update(users)
+        .set({
+          credits: sql`${users.credits} - ${Math.abs(amount)}`,
+        })
+        .where(eq(users.id, userId));
+
+      // Clear cache
+      this.userCache.delete(userId);
+
+      return transaction;
+    } catch (error) {
+      console.error("Error deducting credits:", error);
+      throw error;
+    }
+  }
+
+  async getUserCredits(userId: number): Promise<number> {
+    try {
+      const user = await this.getUser(userId);
+      return user?.credits || 0;
+    } catch (error) {
+      console.error("Error getting user credits:", error);
+      return 0;
+    }
+  }
+
+  async getCreditTransactions(userId: number): Promise<CreditTransaction[]> {
+    try {
+      return await db
+        .select()
+        .from(creditTransactions)
+        .where(eq(creditTransactions.userId, userId))
+        .orderBy(desc(creditTransactions.createdAt));
+    } catch (error) {
+      console.error("Error getting credit transactions:", error);
+      throw error;
+    }
+  }
+
+  async processReferralReward(referralId: number): Promise<boolean> {
+    try {
+      const referral = await db
+        .select()
+        .from(referrals)
+        .where(eq(referrals.id, referralId))
+        .limit(1);
+
+      if (!referral[0] || referral[0].status !== 'completed' || referral[0].rewardedAt) {
+        return false; // Already rewarded or not eligible
+      }
+
+      const REFERRER_REWARD = 50; // ₹50 for referrer
+      const REFEREE_REWARD = 25;  // ₹25 for referee
+
+      // Add credits to referrer
+      await this.addCredits(
+        referral[0].referrerId,
+        REFERRER_REWARD,
+        'referral_reward',
+        'Reward for successful referral',
+        referralId
+      );
+
+      // Add credits to referee
+      await this.addCredits(
+        referral[0].refereeId,
+        REFEREE_REWARD,
+        'referral_bonus',
+        'Welcome bonus for joining via referral',
+        referralId
+      );
+
+      // Mark referral as rewarded
+      await this.updateReferralStatus(
+        referralId,
+        'rewarded',
+        referral[0].completedAt,
+        new Date()
+      );
+
+      return true;
+    } catch (error) {
+      console.error("Error processing referral reward:", error);
+      throw error;
+    }
+  }
+
+  async checkAndRewardReferrals(userId: number): Promise<boolean> {
+    try {
+      // Check if user was referred and hasn't been rewarded yet
+      const user = await this.getUser(userId);
+      if (!user?.referredBy) {
+        return false;
+      }
+
+      // Find the referral record
+      const referralRecords = await db
+        .select()
+        .from(referrals)
+        .where(
+          and(
+            eq(referrals.refereeId, userId),
+            eq(referrals.status, 'pending')
+          )
+        );
+
+      if (referralRecords.length === 0) {
+        return false;
+      }
+
+      // Mark referral as completed and process rewards
+      const referral = referralRecords[0];
+      await this.updateReferralStatus(
+        referral.id,
+        'completed',
+        new Date()
+      );
+
+      // Process the reward
+      return await this.processReferralReward(referral.id);
+    } catch (error) {
+      console.error("Error checking and rewarding referrals:", error);
+      return false;
     }
   }
 
