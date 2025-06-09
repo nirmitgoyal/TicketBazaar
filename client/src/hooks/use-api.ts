@@ -7,14 +7,14 @@ export function useApiQuery<T>(
   options?: {
     enabled?: boolean;
     staleTime?: number;
-    cacheTime?: number;
+    gcTime?: number;
   }
 ) {
   return useQuery<T>({
     queryKey: [endpoint],
     enabled: options?.enabled,
     staleTime: options?.staleTime,
-    cacheTime: options?.cacheTime,
+    gcTime: options?.gcTime,
   });
 }
 
@@ -31,12 +31,21 @@ export function useApiMutation<TData, TVariables = unknown>(
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (variables: TVariables) => {
-      const response = await apiRequest(endpoint, {
+    mutationFn: async (variables: TVariables): Promise<TData> => {
+      const options: RequestInit = {
         method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
         body: variables ? JSON.stringify(variables) : undefined,
-      });
-      return response;
+      };
+      
+      const response = await fetch(endpoint, options);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
     },
     onSuccess: (data) => {
       options?.onSuccess?.(data);

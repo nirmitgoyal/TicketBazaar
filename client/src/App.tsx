@@ -164,10 +164,11 @@ function App() {
   const [location] = useLocation();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <WebSocketProvider>
-          <AnalyticsProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <WebSocketProvider>
+            <AnalyticsProvider>
             <AtmosphereProvider>
               <div className="min-h-screen flex flex-col safe-area-top">
                 <Navigation />
@@ -178,10 +179,11 @@ function App() {
               </div>
               <Toaster />
             </AtmosphereProvider>
-          </AnalyticsProvider>
-        </WebSocketProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+            </AnalyticsProvider>
+          </WebSocketProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
