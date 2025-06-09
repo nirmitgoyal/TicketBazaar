@@ -4,7 +4,7 @@ A cutting-edge peer-to-peer ticket resale platform for the Indian event market, 
 
 ## 🌟 Key Features
 
-### Core Functionality
+### Core Functionality 
 - **Secure P2P Ticket Trading**: Direct buyer-seller interactions with comprehensive verification
 - **Advanced Verification System**: Multi-layer QR code verification and authenticity checks
 - **Real-time Price Intelligence**: AI-driven dynamic pricing based on demand patterns
