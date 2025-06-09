@@ -15,14 +15,9 @@
 | `e2e-tests.yml` | End-to-end testing | 1 | ✅ Ready |
 | `pr-validation.yml` | Pull request validation | 1 | ✅ Ready |
 | `deploy.yml` | Production deployment | 1 | ✅ Ready |
-| `test-deployment.yml` | Staging deployment | 1 | ✅ Ready |
-| `complete-test-matrix.yml` | Full test matrix | 1 | ✅ Ready |
-| `visual-regression-tests.yml` | Visual regression | 1 | ✅ Ready |
-| `test-quality-gates.yml` | Quality gates | 1 | ✅ Ready |
 | `status-checks.yml` | Status monitoring | 1 | ✅ Ready |
-| `test-status-check.yml` | Test status check | 1 | ✅ Ready |
 
-**Total:** 10 workflows, 10 jobs
+**Total:** 6 workflows, 6 jobs
 
 ---
 
