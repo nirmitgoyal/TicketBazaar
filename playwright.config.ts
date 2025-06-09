@@ -25,6 +25,15 @@ export default defineConfig({
     actionTimeout: 10000,
     navigationTimeout: 15000,
     screenshot: "only-on-failure",
+    // Visual testing configuration
+    ignoreHTTPSErrors: true,
+  },
+
+  // Visual testing configuration
+  expect: {
+    // Threshold for visual comparisons (0.2 = 20% difference allowed)
+    toHaveScreenshot: { threshold: 0.2 },
+    toMatchSnapshot: { threshold: 0.2 },
   },
 
   // Single browser project
