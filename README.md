@@ -1,18 +1,29 @@
-# TicketBazaar - Peer-to-Peer Ticket Marketplace
+# TicketBazaar - Secure Peer-to-Peer Ticket Marketplace
 
-A cutting-edge peer-to-peer ticket resale platform for the Indian market, delivering an engaging and accessible event discovery experience across major metropolitan cities.
+**A revolutionary ticket resale platform that connects buyers and sellers directly, eliminating intermediaries and making event access affordable and secure across India.**
 
-## 🌟 Project Overview
+## 🎯 What is TicketBazaar?
 
-TicketBazaar revolutionizes ticket reselling in India by eliminating traditional intermediaries and enabling direct peer-to-peer transactions. The platform serves as a trusted marketplace where users can list, discover, and purchase tickets for events, movies, sports, and transportation across Indian cities.
+TicketBazaar is a modern peer-to-peer marketplace designed specifically for the Indian market, where people can safely buy and sell tickets for events, movies, sports, concerts, and transportation. Unlike traditional ticket resale platforms that charge hefty fees, TicketBazaar enables direct connections between buyers and sellers with zero transaction fees.
+
+### The Problem We Solve
+
+In India's bustling event scene, tickets often sell out quickly through official channels, leaving many eager attendees empty-handed. Traditional resale platforms charge 15-25% fees, making already expensive tickets even more costly. TicketBazaar addresses these issues by:
+
+- **Eliminating middleman fees** - Direct peer-to-peer transactions
+- **Building trust through verification** - Social media linked profiles and rating systems
+- **Enabling fair pricing** - Market-driven pricing without platform markups
+- **Providing safe communication** - Structured contact and negotiation system
+- **Supporting local markets** - Focus on Indian cities and cultural events
 
 ### Key Innovations
-- **Pure P2P Model**: No transaction fees - users connect directly
-- **Social Verification**: Instagram-based profile verification system
-- **Location Intelligence**: Google Maps integration with venue discovery
-- **Real-time Communication**: WebSocket-powered instant messaging
-- **Mobile-First Design**: Optimized for Indian mobile usage patterns
-- **Multi-Modal Transport**: Support for buses, trains, flights, and events 
+
+- **🤝 Pure P2P Model**: Connect directly with sellers/buyers without platform transaction fees
+- **📱 Social Verification**: Instagram profile linking ensures authentic user identities
+- **🗺️ Location Intelligence**: Google Maps integration with venue discovery and directions
+- **💬 Real-time Communication**: WebSocket-powered instant messaging for quick negotiations
+- **🎨 Mobile-First Design**: Optimized for Indian mobile usage patterns and data constraints
+- **🚌 Multi-Modal Support**: Events, movies, sports, buses, trains, and flight tickets 
 
 ## 🏗️ System Architecture
 
@@ -106,37 +117,55 @@ TicketBazaar revolutionizes ticket reselling in India by eliminating traditional
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## 🚀 Core Features
+## 🚀 How TicketBazaar Works
 
-### 🎪 Event Discovery & Management
-- **Smart Search**: AI-powered search with location-based filtering
-- **Category Support**: Movies, Sports, Concerts, Bus/Train tickets
-- **Venue Mapping**: Interactive Google Maps with seat visualization
-- **Real-time Updates**: Live ticket availability and pricing
-- **Trending Events**: Algorithm-driven popular event recommendations
+### For Ticket Sellers
+1. **List Your Tickets**: Upload ticket details, set your price, choose transfer method
+2. **Get Discovered**: Your listing appears in relevant searches with location and event filters
+3. **Connect with Buyers**: Receive contact requests from interested buyers
+4. **Negotiate Safely**: Use our platform's messaging system to discuss price and meetup
+5. **Complete Transaction**: Meet in person, transfer digitally, or ship - your choice
+6. **Build Reputation**: Receive ratings that help you sell faster in the future
 
-### 👥 Peer-to-Peer Marketplace
-- **Direct Connections**: Zero-fee peer-to-peer ticket transactions
-- **Contact Requests**: Structured buyer-seller communication system
-- **Price Negotiation**: Built-in offer and counter-offer mechanism
-- **Meeting Coordination**: Location-based meetup suggestions
-- **Transfer Methods**: Support for in-person, electronic, and mail transfers
+### For Ticket Buyers
+1. **Search Events**: Find tickets using smart filters (location, price, date, category)
+2. **Browse Listings**: View detailed ticket information with seller profiles
+3. **Send Contact Requests**: Connect with sellers through our secure messaging system
+4. **Negotiate Terms**: Discuss pricing, meetup location, and transfer method
+5. **Complete Purchase**: Meet seller and verify ticket authenticity
+6. **Leave Reviews**: Rate your experience to help the community
 
-### 🔒 Trust & Safety
-- **Social Verification**: Mandatory Instagram profile linking
-- **Rating System**: Bilateral user rating and review system
-- **Identity Verification**: Google OAuth with social media validation
-- **Secure Communication**: Platform-mediated initial contact
-- **Fraud Prevention**: User behavior analytics and reporting
+## 🌟 Core Features
 
-### 📱 Mobile-Optimized Experience
-- **Responsive Design**: PWA-ready mobile-first interface
-- **Touch Interactions**: Gesture-based navigation and controls
-- **Offline Support**: Service worker for offline functionality
-- **Push Notifications**: Real-time updates via WebSocket
-- **Location Services**: GPS integration for nearby events
+### 🎪 Intelligent Event Discovery
+- **Smart Search Engine**: AI-powered search with natural language processing
+- **Advanced Filtering**: Location radius, price range, date flexibility, event categories
+- **Venue Integration**: Interactive Google Maps with venue details and directions
+- **Real-time Availability**: Live updates on ticket quantities and pricing trends
+- **Personalized Recommendations**: Algorithm-driven suggestions based on user preferences
 
-## 🛠 Technology Stack
+### 🤝 Peer-to-Peer Marketplace
+- **Zero Transaction Fees**: Direct buyer-seller connections without platform charges
+- **Structured Communication**: Professional contact request system with buyer profiles
+- **Flexible Negotiation**: Built-in offer/counter-offer system with price history
+- **Multiple Transfer Methods**: In-person meetups, digital transfers, secure shipping
+- **Location-Based Meetups**: Suggested safe public meeting locations
+
+### 🛡️ Trust & Security System
+- **Multi-Layer Verification**: Google OAuth + Instagram profile linking mandatory
+- **Bilateral Rating System**: Both buyers and sellers rate each other after transactions
+- **Profile Transparency**: View user history, ratings, and social media verification
+- **Secure Communication**: All initial contact happens through platform messaging
+- **Fraud Detection**: User behavior analytics and community reporting system
+
+### 📱 Mobile-First Experience
+- **Progressive Web App**: Fast, app-like experience that works offline
+- **Touch-Optimized Interface**: Gesture navigation and mobile-friendly controls
+- **Real-time Notifications**: WebSocket-powered instant updates
+- **GPS Integration**: Find nearby events and optimal meetup locations
+- **Low Bandwidth Optimized**: Efficient for Indian mobile data plans
+
+## 🛠 Technology Stack & Architecture
 
 ### Frontend Architecture
 ```
@@ -167,7 +196,7 @@ Node.js 22 + Express + TypeScript + TSX
 └── Testing: Jest with TypeScript support
 ```
 
-### Database Schema
+### Database Schema Design
 ```
 PostgreSQL Tables:
 ├── users (Profile, Auth, Social links)
@@ -178,656 +207,559 @@ PostgreSQL Tables:
 └── ticket_views (Analytics & tracking)
 ```
 
-## 🌐 Data Flow Architecture
+## 🏗️ Deep Technical Implementation
 
-```
-User Interaction Flow:
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Browser   │────│   React     │────│ React Query │
-│             │    │ Components  │    │   Cache     │
-└─────────────┘    └─────────────┘    └─────────────┘
-       │                  │                  │
-       ▼                  ▼                  ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ User Events │────│   Hooks     │────│ API Client  │
-│ (clicks,    │    │ (useAuth,   │    │ (fetch      │
-│  forms)     │    │  useSocket) │    │  wrapper)   │
-└─────────────┘    └─────────────┘    └─────────────┘
-                                              │
-                                              ▼
-                                    ┌─────────────┐
-                                    │   Express   │
-                                    │   Server    │
-                                    └─────────────┘
-                                              │
-                    ┌─────────────────────────┼─────────────────────────┐
-                    ▼                         ▼                         ▼
-          ┌─────────────┐           ┌─────────────┐           ┌─────────────┐
-          │   Routes    │           │ Middleware  │           │ Controllers │
-          │ (Express    │           │ (Auth,      │           │ (Business   │
-          │  routing)   │           │ Validation) │           │  Logic)     │
-          └─────────────┘           └─────────────┘           └─────────────┘
-                    │                         │                         │
-                    └─────────────────────────┼─────────────────────────┘
-                                              ▼
-                                    ┌─────────────┐
-                                    │  Services   │
-                                    │ (Data layer │
-                                    │  interface) │
-                                    └─────────────┘
-                                              │
-                    ┌─────────────────────────┼─────────────────────────┐
-                    ▼                         ▼                         ▼
-          ┌─────────────┐           ┌─────────────┐           ┌─────────────┐
-          │ PostgreSQL  │           │  WebSocket  │           │  External   │
-          │  Database   │           │   Service   │           │    APIs     │
-          │ (Drizzle    │           │ (Real-time  │           │ (Google,    │
-          │   ORM)      │           │  messaging) │           │  Stripe)    │
-          └─────────────┘           └─────────────┘           └─────────────┘
-```
+### Database Architecture & Relations
 
-## 🎯 User Journey & Features
+The platform uses a sophisticated PostgreSQL schema with Drizzle ORM that optimizes for peer-to-peer transactions:
 
-### 📱 Core User Flows
-
-#### 1. **User Registration & Onboarding**
-```
-New User Journey:
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Landing   │───▶│   Google    │───▶│  Complete   │
-│    Page     │    │   OAuth     │    │   Profile   │
-└─────────────┘    └─────────────┘    └─────────────┘
-       │                  │                  │
-       ▼                  ▼                  ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ Browse Mode │    │Auto Profile │    │ Instagram   │
-│ (Anonymous) │    │ Population  │    │Verification │
-└─────────────┘    └─────────────┘    └─────────────┘
-                                              │
-                                              ▼
-                                    ┌─────────────┐
-                                    │   Ready to  │
-                                    │ List/Browse │
-                                    │   Tickets   │
-                                    └─────────────┘
-```
-
-#### 2. **Ticket Listing Process**
-```
-Seller Flow:
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│Select Event │───▶│Enter Ticket │───▶│Set Transfer │
-│   Category  │    │  Details    │    │   Method    │
-└─────────────┘    └─────────────┘    └─────────────┘
-       │                  │                  │
-       ▼                  ▼                  ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│Set Location │    │Upload Proof │    │ Publish &   │
-│  & Venue    │    │(Optional)   │    │Go Live      │
-└─────────────┘    └─────────────┘    └─────────────┘
-```
-
-#### 3. **Ticket Discovery & Purchase**
-```
-Buyer Flow:
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Search    │───▶│ Filter by   │───▶│  Browse     │
-│   Events    │    │Location/    │    │  Results    │
-│             │    │Date/Price   │    │             │
-└─────────────┘    └─────────────┘    └─────────────┘
-       │                  │                  │
-       ▼                  ▼                  ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│Select Ticket│───▶│Send Contact │───▶│ Negotiate & │
-│ & View      │    │  Request    │    │   Meet      │
-│ Details     │    │             │    │             │
-└─────────────┘    └─────────────┘    └─────────────┘
-```
-
-#### 4. **Peer-to-Peer Communication**
-```
-P2P Communication Flow:
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│Buyer Sends  │───▶│Seller Gets  │───▶│ Seller      │
-│Contact      │    │Notification │    │ Reviews &   │
-│Request      │    │             │    │ Responds    │
-└─────────────┘    └─────────────┘    └─────────────┘
-       │                  │                  │
-       ▼                  ▼                  ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│Direct Chat  │───▶│Arrange      │───▶│Complete     │
-│Opens via    │    │Meeting/     │    │Transaction &│
-│WhatsApp/    │    │Transfer     │    │Leave Review │
-│Phone        │    │             │    │             │
-└─────────────┘    └─────────────┘    └─────────────┘
-```
-
-## 🏛️ Detailed Project Structure
-
-### Frontend Component Architecture
-```
-client/src/
-├── components/
-│   ├── ui/                          # Base UI components (shadcn/ui)
-│   │   └── [Radix UI components]    # Complete shadcn/ui component library
-│   │
-│   ├── app-sidebar.tsx             # Application sidebar navigation
-│   ├── canonical-url-manager.tsx   # SEO URL management
-│   ├── contact-request-modal.tsx   # P2P communication interface
-│   ├── dispute-modal.tsx           # Dispute resolution system
-│   ├── error-boundary.tsx          # Error boundary wrapper
-│   ├── event-atmosphere.tsx        # Dynamic event theming
-│   ├── event-card.tsx              # Event information display
-│   ├── event-recommendations.tsx   # AI-powered recommendations
-│   ├── filter-dropdown.tsx         # Advanced filtering options
-│   ├── helmet-manager.tsx          # SEO meta tag management
-│   ├── mobile-nav.tsx              # Mobile navigation menu
-│   ├── pull-to-refresh.tsx         # Mobile pull-to-refresh
-│   ├── real-time-notifications.tsx # WebSocket notifications
-│   ├── search-bar.tsx              # Intelligent search interface
-│   ├── search-hints.tsx            # AI search suggestions
-│   ├── seller-contact-card.tsx     # Seller profile information
-│   ├── seller-profile-modal.tsx    # Detailed seller profiles
-│   ├── seo.tsx                     # SEO optimization component
-│   ├── social-share.tsx            # Social media sharing
-│   ├── ticket-card.tsx             # Individual ticket display
-│   ├── ticket-comparison.tsx       # Ticket comparison tool
-│   ├── ticket-detail-modal.tsx     # Detailed ticket view
-│   ├── ticket-heatmap.tsx          # Seat availability visualization
-│   ├── ticket-verification.tsx     # Ticket validation system
-│   └── venue-map.tsx               # Google Maps integration
-│
-├── pages/
-│   ├── complete-profile.tsx        # Profile completion flow
-│   ├── data-deletion.tsx           # GDPR data deletion
-│   ├── event-details.tsx           # Detailed event information
-│   ├── event-map.tsx               # Map-based event discovery
-│   ├── home.tsx                    # Main marketplace dashboard
-│   ├── list-ticket.tsx             # Ticket creation form
-│   ├── login.tsx                   # Authentication page
-│   ├── map.tsx                     # Interactive map view
-│   ├── my-tickets.tsx              # User's ticket management
-│   ├── not-found.tsx               # 404 error page
-│   ├── privacy-policy.tsx          # Privacy policy page
-│   ├── profile.tsx                 # User profile & settings
-│   ├── register.tsx                # User registration
-│   ├── terms-of-service.tsx        # Terms of service
-│   └── ticket-verification.tsx     # Ticket validation page
-│
-├── hooks/
-│   ├── use-analytics.tsx           # Firebase analytics
-│   ├── use-auth.tsx                # Authentication state management
-│   ├── use-canonical-url.tsx       # SEO URL management
-│   ├── use-error-handler.ts        # Global error handling
-│   ├── use-mobile.tsx              # Mobile device detection
-│   ├── use-search-hints.ts         # AI-powered search suggestions
-│   ├── use-ticket-view.ts          # User analytics tracking
-│   ├── use-toast.ts                # Toast notification system
-│   ├── use-websocket.tsx           # Real-time communication
-│   ├── useEventAtmosphere.ts       # Event atmosphere management
-│   └── useHoverMusic.ts            # Audio hover effects
-│
-├── contexts/
-│   └── AtmosphereContext.tsx       # Event atmosphere & theming
-│
-├── lib/
-│   ├── animations.ts               # Framer Motion animation presets
-│   ├── api.ts                      # HTTP client configuration
-│   ├── google-maps-config.ts       # Google Maps configuration
-│   ├── protected-route.tsx         # Route protection component
-│   ├── queryClient.ts              # React Query configuration
-│   ├── socket-fix.ts               # WebSocket connection utilities
-│   ├── sound-effects.ts            # Audio effect management
-│   └── utils.ts                    # Utility functions
-│
-├── utils/
-│   ├── console-filter.ts           # Development console filtering
-│   └── logger.ts                   # Application logging
-│
-└── assets/
-    ├── instagram-logo.png          # Brand assets
-    └── ticket-icon.svg             # Application icons
-```
-
-### Backend Service Architecture
-```
-server/
-├── routes/
-│   ├── routes.ts                   # Main route registration
-│   ├── auth.routes.ts              # Authentication endpoints
-│   ├── event.routes.ts             # Event management API
-│   ├── ticket.routes.ts            # Ticket CRUD operations
-│   ├── review.routes.ts            # Rating & review system
-│   ├── contact-requests.ts         # P2P communication endpoints
-│   ├── search-hints.ts             # AI search suggestion API
-│   ├── data-privacy.ts             # GDPR compliance endpoints
-│   ├── ticket-views.ts             # Analytics tracking
-│   ├── recommendations.ts          # Event recommendation engine
-│   ├── health.routes.ts            # Health check endpoints
-│   ├── sitemap.ts                  # SEO sitemap generation
-│   └── index.ts                    # Route exports
-│
-├── controllers/
-│   ├── base.controller.ts          # Base controller with common methods
-│   ├── user.controller.ts          # User management operations
-│   ├── event.controller.ts         # Event business logic
-│   ├── ticket.controller.ts        # Ticket operations & validation
-│   ├── review.controller.ts        # Review system management
-│   └── index.ts                    # Controller exports
-│
-├── services/
-│   ├── event.service.ts            # Event data processing
-│   ├── ticket.service.ts           # Ticket business rules
-│   ├── user.service.ts             # User profile management
-│   ├── websocket.service.ts        # Real-time messaging service
-│   ├── ai-search-hints.service.ts  # AI-powered search
-│   ├── review.service.ts           # Review system service
-│   ├── error.service.ts            # Error handling service
-│   └── index.ts                    # Service exports
-│
-├── middleware/
-│   ├── auth.middleware.ts          # Authentication verification
-│   ├── validation.middleware.ts    # Request validation with Zod
-│   └── error.middleware.ts         # Global error handling
-│
-├── utils/
-│   ├── utils.ts                    # Server utilities
-│   └── logger.ts                   # Logging utilities
-│
-├── auth.ts                         # Passport.js configuration
-├── storage.ts                      # Database abstraction layer
-├── db.ts                           # Database connection
-├── event-fetcher.ts                # External event data fetching
-├── vite.ts                         # Development server setup
-├── index.ts                        # Main server entry point
-├── production.ts                   # Production configuration
-└── production-index.ts             # Production server entry
-```
-
-## 📊 Database Schema Deep Dive
-
-### Core Tables Structure
+#### Core Tables Structure
 ```sql
 -- Users table with social verification
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    full_name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    phone TEXT,
-    whatsapp TEXT,                    -- WhatsApp for direct contact
-    instagram TEXT NOT NULL,          -- Mandatory for verification
-    google_id TEXT UNIQUE,
-    rating DOUBLE PRECISION DEFAULT 0,
-    ratings_count INTEGER DEFAULT 0,
-    preferred_contact_method TEXT DEFAULT 'whatsapp'
-);
+users {
+  id: serial primary key
+  email: varchar unique
+  name: varchar
+  profilePicture: text
+  phone: varchar
+  instagram: varchar           -- Instagram verification
+  googleId: varchar           -- OAuth integration
+  avgRating: numeric(3,2)     -- Calculated average rating
+  totalRatings: integer       -- Rating count for credibility
+  isPhoneVerified: boolean
+  isInstagramVerified: boolean
+  createdAt: timestamp
+}
 
--- Tickets with embedded event data (P2P model)
-CREATE TABLE tickets (
-    id SERIAL PRIMARY KEY,
-    seller_id INTEGER NOT NULL,
-    title TEXT NOT NULL,
-    
-    -- Embedded event information
-    event_title TEXT NOT NULL,
-    event_description TEXT,
-    venue TEXT NOT NULL,
-    venue_address TEXT,
-    event_date TIMESTAMP NOT NULL,
-    category TEXT NOT NULL,           -- movies, sports, events, buses
-    event_image_url TEXT,
-    trending BOOLEAN DEFAULT FALSE,
-    selling_fast BOOLEAN DEFAULT FALSE,
-    latitude DOUBLE PRECISION,
-    longitude DOUBLE PRECISION,
-    city TEXT,
-    
-    -- Ticket specifics
-    section TEXT NOT NULL,
-    row TEXT,
-    seat TEXT,
-    price DOUBLE PRECISION NOT NULL,
-    quantity INTEGER NOT NULL,
-    status TEXT DEFAULT 'available',  -- available, contacted, sold, expired
-    is_transferrable BOOLEAN DEFAULT TRUE,
-    transfer_method TEXT NOT NULL,    -- in-person, electronic, mail
-    additional_info TEXT,
-    show_contact_info BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT NOW(),
-    expires_at TIMESTAMP
-);
+-- Tickets as event containers (no separate events table)
+tickets {
+  id: serial primary key
+  sellerId: integer → users.id
+  eventTitle: varchar         -- Event name
+  eventDescription: text      -- Event details
+  eventVenue: varchar         -- Venue name
+  eventDate: timestamp        -- Event date/time
+  eventCategory: varchar      -- Movies, Sports, Concerts, etc.
+  eventCity: varchar          -- City location
+  latitude: numeric           -- GPS coordinates
+  longitude: numeric
+  ticketType: varchar         -- VIP, General, etc.
+  originalPrice: numeric      -- Face value
+  sellingPrice: numeric       -- Seller's price
+  quantity: integer           -- Available tickets
+  transferMethod: varchar     -- InPerson, Digital, Mail
+  additionalInfo: text        -- Seller notes
+  isVerified: boolean         -- Platform verification
+  verificationCode: varchar   -- QR code data
+  qrCode: text               -- Base64 QR image
+  status: varchar            -- Available, Sold, Expired
+  trending: boolean          -- Algorithm flag
+  sellingFast: boolean       -- Scarcity indicator
+  createdAt: timestamp
+}
 
--- Contact requests for P2P communication
-CREATE TABLE contact_requests (
-    id SERIAL PRIMARY KEY,
-    ticket_id INTEGER NOT NULL,
-    requester_id INTEGER NOT NULL,
-    seller_id INTEGER NOT NULL,
-    status TEXT DEFAULT 'pending',    -- pending, approved, denied, completed
-    created_at TIMESTAMP DEFAULT NOW(),
-    responded_at TIMESTAMP,
-    contact_method TEXT NOT NULL,     -- whatsapp, phone, email, instagram
-    message TEXT NOT NULL,
-    offered_price DOUBLE PRECISION,
-    meeting_location TEXT,
-    preferred_time TEXT
-);
+-- P2P communication system
+contact_requests {
+  id: serial primary key
+  ticketId: integer → tickets.id
+  buyerId: integer → users.id
+  sellerId: integer → users.id
+  message: text              -- Buyer's initial message
+  offerPrice: numeric        -- Buyer's offer
+  status: varchar            -- Pending, Approved, Rejected
+  buyerPhone: varchar        -- Shared after approval
+  sellerResponse: text       -- Seller's reply
+  createdAt: timestamp
+  respondedAt: timestamp
+}
 
--- User reviews based on contact requests
-CREATE TABLE user_reviews (
-    id SERIAL PRIMARY KEY,
-    reviewer_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    contact_request_id INTEGER,
-    rating INTEGER NOT NULL,          -- 1-5 scale
-    comment TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- Bilateral rating system
+user_reviews {
+  id: serial primary key
+  contactRequestId: integer → contact_requests.id
+  reviewerId: integer → users.id    -- Who wrote the review
+  revieweeId: integer → users.id    -- Who is being reviewed
+  rating: integer                   -- 1-5 stars
+  comment: text                     -- Written feedback
+  reviewType: varchar               -- Buyer, Seller
+  createdAt: timestamp
+}
 
--- User feedback for platform improvement
-CREATE TABLE user_feedback (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    ticket_id INTEGER,
-    feedback_type TEXT NOT NULL,      -- positive, negative, suggestion, report
-    description TEXT NOT NULL,
-    status TEXT DEFAULT 'pending',    -- pending, reviewed, addressed
-    created_at TIMESTAMP DEFAULT NOW(),
-    reviewed_at TIMESTAMP
-);
+-- Analytics and user behavior
+ticket_views {
+  id: serial primary key
+  userId: integer → users.id
+  ticketId: integer → tickets.id
+  viewedAt: timestamp
+  sessionDuration: integer
+  deviceType: varchar
+}
+```
 
--- Ticket view analytics
-CREATE TABLE ticket_views (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER,
-    ticket_id INTEGER NOT NULL,
-    viewed_at TIMESTAMP DEFAULT NOW(),
-    source TEXT,                      -- search, map, direct, recommendation
-    user_agent TEXT
+#### Advanced Query Optimizations
+```sql
+-- Indexes for performance
+CREATE INDEX idx_tickets_city_category ON tickets(eventCity, eventCategory);
+CREATE INDEX idx_tickets_date_status ON tickets(eventDate, status);
+CREATE INDEX idx_contact_requests_status ON contact_requests(status, createdAt);
+CREATE INDEX idx_user_reviews_reviewee ON user_reviews(revieweeId, rating);
+
+-- Composite indexes for search
+CREATE INDEX idx_tickets_search ON tickets USING GIN(
+  to_tsvector('english', eventTitle || ' ' || eventDescription || ' ' || eventVenue)
 );
 ```
 
-## 🔄 API Documentation
+### API Architecture & Data Flow
 
-### Authentication Endpoints
+#### RESTful API Design
 ```typescript
-// Auth Routes - Secure user authentication and profile management
-POST   /api/auth/register       // User registration with validation
-POST   /api/auth/login          // Email/password authentication
-GET    /api/auth/google         // Google OAuth initiation
-GET    /api/auth/google/callback // OAuth callback handling
-POST   /api/auth/logout         // Secure user logout
-GET    /api/auth/user          // Get current authenticated user
-PATCH  /api/auth/profile       // Update user profile information
+// Core API Routes with detailed functionality
+
+// Authentication & User Management
+POST   /api/auth/register          // User registration with Google OAuth
+POST   /api/auth/login             // Login with email/password or OAuth
+POST   /api/auth/logout            // Secure session termination
+GET    /api/auth/me                // Current user profile
+PATCH  /api/users/profile          // Update profile information
+PATCH  /api/users/instagram        // Link Instagram for verification
+PATCH  /api/users/phone            // Add/verify phone number
+
+// Event Discovery & Search
+GET    /api/events                 // List all events with pagination
+GET    /api/events/search          // Advanced search with filters
+GET    /api/events/category/:cat   // Category-specific events
+GET    /api/events/trending        // Algorithm-based trending events
+GET    /api/events/nearby          // GPS-based location search
+GET    /api/search/hints           // AI-powered search suggestions
+
+// Ticket Management
+POST   /api/tickets               // Create new ticket listing
+GET    /api/tickets/:id           // Get specific ticket details
+GET    /api/tickets/event/:title  // All tickets for specific event
+GET    /api/tickets/my            // Seller's ticket listings
+PATCH  /api/tickets/:id           // Update ticket information
+DELETE /api/tickets/:id           // Remove ticket listing
+POST   /api/tickets/:id/verify    // Verify ticket authenticity
+
+// Peer-to-Peer Communication
+POST   /api/contact-requests      // Send contact request to seller
+GET    /api/contact-requests/sent // Buyer's sent requests
+GET    /api/contact-requests/received // Seller's received requests
+PATCH  /api/contact-requests/:id  // Approve/deny contact request
+GET    /api/contact-requests/:id  // Get detailed request information
+DELETE /api/contact-requests/:id  // Cancel contact request
+
+// Review & Rating System
+POST   /api/reviews               // Create user review after transaction
+GET    /api/reviews/user/:userId  // Get reviews for specific user
+GET    /api/reviews/by/:reviewerId // Reviews written by user
+PATCH  /api/reviews/:id           // Update existing review
+DELETE /api/reviews/:id           // Delete review (author only)
+GET    /api/reviews/stats/:userId // Get user rating statistics
+
+// Analytics & Insights
+POST   /api/ticket-views          // Record ticket view for analytics
+GET    /api/ticket-views/my       // User's viewing history
+GET    /api/analytics/popular     // Popular events and tickets
+GET    /api/analytics/trends      // Market trends and insights
+
+// Data Privacy & GDPR Compliance
+GET    /api/data-privacy/export/:userId   // Export all user data
+DELETE /api/data-privacy/delete/:userId   // Delete all user data
+GET    /api/data-privacy/policy           // Get privacy policy
+POST   /api/data-privacy/consent          // Update consent preferences
 ```
 
-### Event & Ticket Management
+#### Real-time WebSocket Events
 ```typescript
-// Event Routes - Event discovery and management
-GET    /api/events             // List all events with pagination
-GET    /api/events/:id         // Get specific event details
-GET    /api/events/search      // Advanced search with filters
-GET    /api/events/trending    // Get trending events by region
-GET    /api/events/categories  // Get available event categories
-GET    /api/events/nearby      // Location-based event discovery
-
-// Ticket Routes - Comprehensive ticket management
-GET    /api/tickets            // List tickets with advanced filtering
-POST   /api/tickets            // Create new ticket listing
-GET    /api/tickets/:id        // Get detailed ticket information
-PATCH  /api/tickets/:id        // Update ticket (seller authorization)
-DELETE /api/tickets/:id        // Delete ticket (seller authorization)
-GET    /api/tickets/my         // Get user's active tickets
-GET    /api/tickets/sold       // Get user's sold tickets
-GET    /api/tickets/event/:eventId // Get all tickets for event
-POST   /api/tickets/:id/verify // Verify ticket authenticity
-```
-
-### Peer-to-Peer Communication System
-```typescript
-// Contact Request Routes - Facilitate buyer-seller communication
-POST   /api/contact-requests           // Send contact request with message
-GET    /api/contact-requests/sent      // User's outgoing requests
-GET    /api/contact-requests/received  // User's incoming requests
-PATCH  /api/contact-requests/:id       // Approve/deny contact request
-GET    /api/contact-requests/:id       // Get detailed request information
-DELETE /api/contact-requests/:id       // Cancel contact request
-
-// Review Routes - User rating and feedback system
-POST   /api/reviews                    // Create user review after transaction
-GET    /api/reviews/user/:userId       // Get reviews for specific user
-GET    /api/reviews/by/:reviewerId     // Reviews written by user
-PATCH  /api/reviews/:id                // Update existing review
-DELETE /api/reviews/:id                // Delete review (author only)
-GET    /api/reviews/stats/:userId      // Get user rating statistics
-```
-
-### Analytics & Data Privacy
-```typescript
-// Analytics Routes - User behavior tracking
-POST   /api/ticket-views              // Record ticket view for analytics
-GET    /api/ticket-views/my           // User's viewing history
-GET    /api/analytics/popular         // Popular events and tickets
-GET    /api/search/hints              // AI-powered search suggestions
-
-// Data Privacy Routes - GDPR compliance
-GET    /api/data-privacy/export/:userId    // Export all user data
-DELETE /api/data-privacy/delete/:userId    // Delete all user data
-GET    /api/data-privacy/policy            // Get privacy policy
-POST   /api/data-privacy/consent           // Update consent preferences
-```
-
-### Real-time WebSocket Events
-```typescript
-// WebSocket Event Types for real-time communication
+// WebSocket event system for instant communication
 interface WebSocketEvents {
-  // Contact and messaging events
-  'contact_request_received': {
+  // Contact request notifications
+  'contact-request-received': {
     requestId: number;
-    fromUser: User;
-    ticketId: number;
-    message: string;
+    buyerName: string;
+    ticketTitle: string;
+    offerPrice: number;
   };
   
-  'contact_request_responded': {
+  // Response notifications
+  'contact-request-approved': {
     requestId: number;
-    status: 'approved' | 'denied';
-    sellerContact?: ContactInfo;
+    sellerPhone: string;
+    sellerName: string;
+    meetupSuggestions: Location[];
   };
   
-  // Ticket status updates
-  'ticket_sold': {
+  // Real-time ticket updates
+  'ticket-status-changed': {
     ticketId: number;
-    sellerId: number;
-    eventTitle: string;
-  };
-  
-  'ticket_updated': {
-    ticketId: number;
-    changes: Partial<Ticket>;
-  };
-  
-  // User presence and activity
-  'user_online': { userId: number };
-  'user_offline': { userId: number };
-  'typing_indicator': {
-    userId: number;
-    contactRequestId: number;
+    newStatus: string;
+    affectedUsers: number[];
   };
   
   // System notifications
-  'system_maintenance': {
-    message: string;
-    scheduledTime: Date;
+  'new-review-received': {
+    reviewId: number;
+    rating: number;
+    reviewerName: string;
   };
 }
 ```
 
-## 🌐 Deployment & Infrastructure
+### Security Implementation
 
-### Production Environment Setup
-```bash
-# Essential Production Environment Variables
-NODE_ENV=production
-PORT=5000
+#### Multi-Layer Authentication
+```typescript
+// Passport.js strategy configuration
+const GoogleStrategy = new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "/api/auth/google/callback"
+}, async (accessToken, refreshToken, profile, done) => {
+  // Auto-populate user profile from Google data
+  const userData = {
+    googleId: profile.id,
+    email: profile.emails[0].value,
+    name: profile.displayName,
+    profilePicture: profile.photos[0].value
+  };
+  
+  const user = await storage.createOrUpdateUser(userData);
+  return done(null, user);
+});
 
-# Database Configuration
-DATABASE_URL=postgresql://username:password@host:port/database
-
-# Session Security
-SESSION_SECRET=your-cryptographically-secure-session-key
-
-# Google OAuth Configuration
-GOOGLE_CLIENT_ID=your-google-oauth-client-id
-GOOGLE_CLIENT_SECRET=your-google-oauth-client-secret
-
-# External Service Integration
-GOOGLE_MAPS_API_KEY=your-google-maps-api-key
-
-# Payment Processing (Optional - Pure P2P model doesn't require payment processing)
-# STRIPE_PUBLIC_KEY=pk_live_your-stripe-public-key
-# STRIPE_SECRET_KEY=sk_live_your-stripe-secret-key
-
-# Firebase Analytics & Monitoring
-FIREBASE_PROJECT_ID=your-firebase-project-id
-FIREBASE_PRIVATE_KEY=your-firebase-private-key
-FIREBASE_CLIENT_EMAIL=your-firebase-client-email
-
-# WhatsApp Business Integration (Optional)
-WHATSAPP_ACCESS_TOKEN=your-whatsapp-business-token
-WHATSAPP_PHONE_NUMBER_ID=your-whatsapp-phone-number-id
-WHATSAPP_BUSINESS_ACCOUNT_ID=your-whatsapp-business-account-id
+// Session security configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  store: new (require('connect-pg-simple')(session))({
+    conString: process.env.DATABASE_URL,
+    tableName: 'user_sessions'
+  }),
+  resave: false,
+  saveUninitialized: false,
+  rolling: true,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  }
+}));
 ```
 
-## 🌐 Heroku Deployment
+#### Data Validation & Sanitization
+```typescript
+// Zod schemas for robust validation
+export const ticketListingSchema = z.object({
+  eventTitle: z.string().min(3).max(200),
+  eventVenue: z.string().min(3).max(200),
+  eventDate: z.string().datetime(),
+  eventCategory: z.enum(['Movies', 'Sports', 'Concerts', 'Theater', 'Bus', 'Train', 'Flight']),
+  originalPrice: z.number().positive().max(100000),
+  sellingPrice: z.number().positive().max(100000),
+  quantity: z.number().int().positive().max(20),
+  transferMethod: z.enum(['InPerson', 'Digital', 'Mail']),
+  additionalInfo: z.string().max(1000).optional()
+});
+
+export const contactRequestSchema = z.object({
+  ticketId: z.number().int().positive(),
+  message: z.string().min(10).max(500),
+  offerPrice: z.number().positive().optional(),
+  buyerPhone: z.string().regex(/^[6-9]\d{9}$/) // Indian mobile format
+});
+```
+
+## 🚀 Getting Started
 
 ### Prerequisites
+- Node.js 20 or higher
+- PostgreSQL 14 or higher (or use NeonDB cloud)
+- Google OAuth credentials
+- Google Maps API key
 
-1. Heroku CLI installed
-2. Git repository initialized
-3. Heroku account
+### Quick Setup
 
-### Deployment Steps
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd ticketbazaar
 
-1. **Create Heroku App**
+# 2. Install dependencies
+npm install
 
-   ```bash
-   heroku create your-app-name
-   ```
+# 3. Set up environment variables
+cp .env.example .env
 
-2. **Add PostgreSQL Database**
+# Edit .env with your actual values:
+# - DATABASE_URL (PostgreSQL connection string)
+# - SESSION_SECRET (cryptographically secure key)
+# - GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET (OAuth)
+# - VITE_GOOGLE_MAPS_API_KEY (for maps functionality)
 
-   ```bash
-   heroku addons:create heroku-postgresql:mini
-   ```
+# 4. Initialize database schema
+npm run db:push
 
-3. **Set Environment Variables**
+# 5. Start development server
+npm run dev
 
-   ```bash
-   heroku config:set NODE_ENV=production
-   heroku config:set SESSION_SECRET=$(openssl rand -base64 32)
-   heroku config:set GOOGLE_CLIENT_ID=your_google_client_id
-   heroku config:set GOOGLE_CLIENT_SECRET=your_google_client_secret
-   heroku config:set GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-   
-   # Optional: Only needed if implementing future payment features
-   # heroku config:set STRIPE_PUBLIC_KEY=your_stripe_public_key
-   # heroku config:set STRIPE_SECRET_KEY=your_stripe_secret_key
-   ```
+# The app will be available at http://localhost:5000
+```
 
-4. **Deploy**
+### Environment Variables Setup
 
-   ```bash
-   git add .
-   git commit -m "Deploy to Heroku"
-   git push heroku main
-   ```
+Create a `.env` file with the following variables:
 
-5. **Initialize Database**
-   ```bash
-   heroku run npm run db:push
-   ```
+```env
+# Database Configuration
+DATABASE_URL=postgresql://username:password@localhost:5432/ticketbazaar
 
-### Required Environment Variables
+# Session Security
+SESSION_SECRET=your-super-secure-random-string-here
 
-| Variable               | Description                                            | Required |
-| ---------------------- | ------------------------------------------------------ | -------- |
-| `DATABASE_URL`         | PostgreSQL connection string (auto-provided by Heroku) | Yes      |
-| `SESSION_SECRET`       | Secret for session management                          | Yes      |
-| `GOOGLE_CLIENT_ID`     | Google OAuth client ID                                 | Yes      |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret                             | Yes      |
-| `STRIPE_PUBLIC_KEY`    | Stripe publishable key (P2P model - optional)         | No       |
-| `STRIPE_SECRET_KEY`    | Stripe secret key (P2P model - optional)              | No       |
-| `GOOGLE_MAPS_API_KEY`  | Google Maps API key                                    | Yes      |
+# Google OAuth (Get from Google Cloud Console)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
 
-### Optional API Keys (Future Features)
+# Google Maps API (Enable Maps JavaScript API)
+VITE_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
 
-| Variable                       | Description                  |
-| ------------------------------ | ---------------------------- |
-| `WHATSAPP_ACCESS_TOKEN`        | WhatsApp Business API token  |
-| `WHATSAPP_PHONE_NUMBER_ID`     | WhatsApp phone number ID     |
-| `WHATSAPP_BUSINESS_ACCOUNT_ID` | WhatsApp business account ID |
+# Optional: Error Monitoring
+HONEYBADGER_API_KEY=your-honeybadger-key
 
-## 🧪 Testing & Development Scripts
+# Optional: AI Features
+OPENAI_API_KEY=your-openai-api-key
+
+# Optional: Payment Integration
+STRIPE_SECRET_KEY=your-stripe-secret-key
+RAZORPAY_KEY_ID=your-razorpay-key-id
+RAZORPAY_KEY_SECRET=your-razorpay-secret
+```
+
+## 📱 Development Workflow
 
 ### Available Scripts
+
 ```bash
-# Core development
+# Development
 npm run dev              # Start development server with hot reload
-npm run build           # Build production bundle
+npm run build           # Build for production
 npm run start           # Start production server
-npm run check           # TypeScript type checking
+npm run preview         # Preview production build locally
 
-# Database operations
+# Database Management
 npm run db:push         # Push schema changes to database
+npm run db:generate     # Generate migration files
+npm run db:migrate      # Run pending migrations
+npm run db:studio       # Open Drizzle Studio (database GUI)
 
-# Testing
+# Testing & Quality
 npm test                # Run Jest test suite
+npm run test:watch      # Run tests in watch mode
+npm run test:e2e        # Run Playwright end-to-end tests
+npm run typecheck       # TypeScript type checking
+npm run lint            # ESLint code linting
 
-# Production deployment
-npm run heroku-postbuild # Heroku production build
+# Database Seeding (Development)
+tsx scripts/init-db.ts                    # Initialize database tables
+tsx scripts/seed-users.ts                 # Create sample user accounts
+tsx scripts/seed-realistic-events.ts      # Add realistic Indian events
+tsx scripts/seed-tickets.ts               # Generate ticket listings
+tsx scripts/fetch-events.ts               # Fetch events from external sources
 ```
 
-### Testing Framework
-- **Jest**: TypeScript-enabled test runner
-- **Test Environment**: Node.js environment for server-side testing
-- **Setup**: Automated test configuration in tests/setup.ts
-- **Basic Tests**: Component and utility function validation
+### Development Database Setup
 
-### Test Coverage Areas
-```
-├── Basic Tests (Jest)
-│   ├── Component functionality
-│   ├── Utility function validation
-│   ├── API endpoint testing
-│   └── Database operations
-│
-├── Development Testing
-│   ├── Hot reload functionality
-│   ├── TypeScript compilation
-│   ├── Database connectivity
-│   └── Environment validation
-│
-└── Manual Testing Areas
-    ├── User authentication flow
-    ├── Ticket listing and discovery
-    ├── P2P communication process
-    ├── Mobile responsiveness
-    └── WebSocket connections
+```bash
+# Option 1: Local PostgreSQL
+createdb ticketbazaar
+psql ticketbazaar -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+
+# Option 2: Use NeonDB (Recommended)
+# Sign up at https://neon.tech
+# Create a database and copy the connection string to DATABASE_URL
+
+# Initialize schema
+npm run db:push
+
+# Seed with sample data
+tsx scripts/init-db.ts
+tsx scripts/seed-realistic-events.ts
 ```
 
-## 🎵 Unique Features & Innovations
+## 🧪 Testing Strategy
 
-### Audio Experience System
-- **Hover Music**: 5-second audio previews for different event types
-- **Event-Specific Sounds**: Coldplay concerts play Coldplay snippets
-- **Category-Based Audio**: Sports events play stadium atmosphere
-- **Regional Customization**: Mumbai events feature Bollywood music
+### Test Architecture
+```
+tests/
+├── unit/                    # Unit tests for individual functions
+│   ├── auth.test.ts        # Authentication logic
+│   ├── validation.test.ts  # Zod schema validation
+│   └── storage.test.ts     # Database operations
+├── integration/            # API integration tests
+│   ├── tickets.test.ts     # Ticket CRUD operations
+│   ├── users.test.ts       # User management
+│   └── reviews.test.ts     # Review system
+├── e2e/                    # End-to-end tests
+│   ├── user-journey.spec.ts # Complete user flows
+│   ├── ticket-listing.spec.ts # Ticket creation/management
+│   └── p2p-communication.spec.ts # Contact requests
+└── fixtures/               # Test data and utilities
+    ├── test-data.ts        # Sample data generators
+    └── test-helpers.ts     # Common test utilities
+```
 
-### Advanced SEO & Performance
-- **Canonical URL Management**: Automated SEO-friendly URL structure
-- **Dynamic Meta Tags**: Event-specific social media previews
+### Running Tests
+```bash
+# Unit and integration tests
+npm test                    # Run all tests once
+npm run test:watch          # Run tests in watch mode
+npm run test:coverage       # Generate coverage report
+
+# End-to-end tests
+npm run test:e2e           # Run Playwright tests
+npm run test:e2e:headed    # Run tests with browser UI
+npm run test:e2e:debug     # Debug mode with inspector
+```
+
+## 🌐 Deployment
+
+### Production Deployment on Replit
+
+The project is optimized for Replit deployment with zero configuration:
+
+1. **Import to Replit**: Fork or import the repository
+2. **Set Environment Variables**: Add required secrets in Replit Secrets
+3. **Deploy**: Click the Deploy button in Replit
+
+### Manual Deployment
+
+```bash
+# Build for production
+npm run build
+
+# Set production environment variables
+export NODE_ENV=production
+export DATABASE_URL=your-production-db-url
+export SESSION_SECRET=your-production-secret
+
+# Start production server
+npm start
+```
+
+### Environment-Specific Configurations
+
+```typescript
+// Production optimizations are automatically applied
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Security enhancements
+if (isProduction) {
+  app.set('trust proxy', 1); // Trust reverse proxy
+  app.use(helmet()); // Security headers
+  app.use(compression()); // Gzip compression
+}
+```
+
+## 🔧 Advanced Configuration
+
+### Google OAuth Setup
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized redirect URIs:
+   - `http://localhost:5000/api/auth/google/callback` (development)
+   - `https://yourdomain.com/api/auth/google/callback` (production)
+
+### Google Maps API Setup
+1. Enable Maps JavaScript API in Google Cloud Console
+2. Create an API key
+3. Restrict the key to your domains for security
+4. Add to environment variables as `VITE_GOOGLE_MAPS_API_KEY`
+
+### Database Optimization
+```sql
+-- Performance monitoring queries
+SELECT schemaname, tablename, attname, n_distinct, correlation 
+FROM pg_stats 
+WHERE tablename IN ('users', 'tickets', 'contact_requests');
+
+-- Index usage analysis
+SELECT schemaname, tablename, indexname, idx_scan, idx_tup_read, idx_tup_fetch
+FROM pg_stat_user_indexes 
+ORDER BY idx_scan DESC;
+```
+
+## 🤝 Contributing
+
+### Development Guidelines
+
+1. **Code Style**: Follow TypeScript strict mode and ESLint rules
+2. **Commit Messages**: Use conventional commits (feat:, fix:, docs:, etc.)
+3. **Testing**: Write tests for new features and bug fixes
+4. **Documentation**: Update README and code comments for significant changes
+
+### Pull Request Process
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes and add tests
+4. Ensure all tests pass (`npm test && npm run test:e2e`)
+5. Update documentation if needed
+6. Commit with descriptive messages
+7. Push to your fork and submit a pull request
+
+### Code Review Checklist
+
+- [ ] Code follows TypeScript and React best practices
+- [ ] All tests pass and coverage is maintained
+- [ ] No security vulnerabilities introduced
+- [ ] Performance impact considered
+- [ ] Documentation updated
+- [ ] Responsive design maintained
+- [ ] Accessibility standards met
+
+## 📋 Project Roadmap
+
+### Phase 1: Core P2P Platform ✅
+- User authentication and profiles
+- Ticket listing and discovery
+- Contact request system
+- Basic review system
+
+### Phase 2: Enhanced Trust & Safety (Current)
+- Instagram verification integration
+- Advanced fraud detection
+- Dispute resolution system
+- Comprehensive user analytics
+
+### Phase 3: Market Expansion
+- WhatsApp Business API integration
+- Payment gateway integration (Stripe/Razorpay)
+- Multi-language support
+- Mobile app development
+
+### Phase 4: Advanced Features
+- AI-powered price recommendations
+- Blockchain ticket verification
+- Group buying functionality
+- Event organizer partnerships
+
+## 📞 Support & Community
+
+- **Issues**: Report bugs and request features via GitHub Issues
+- **Discussions**: Join community discussions for questions and ideas
+- **Security**: Report security vulnerabilities privately to security@ticketbazaar.com
+- **Documentation**: Comprehensive docs available in `/docs` directory
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ for the Indian event community**
 - **Pull-to-Refresh**: Native mobile app experience
 - **Sitemap Generation**: Automated search engine optimization
 
