@@ -1,7 +1,7 @@
 // Centralized Google Maps configuration to prevent LoadScript reloading issues
 // Keep libraries as a static constant to avoid performance warnings
 
-export const GOOGLE_MAPS_LIBRARIES: ("places" | "geometry" | "marker")[] = ["places", "geometry", "marker"];
+export const GOOGLE_MAPS_LIBRARIES: ("places" | "geometry")[] = ["places", "geometry"];
 
 export const GOOGLE_MAPS_OPTIONS = {
   fullscreenControl: true,

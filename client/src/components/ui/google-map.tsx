@@ -289,12 +289,12 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
             title={event.eventTitle}
             onClick={() => setSelectedEvent(event)}
             icon={{
-              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="10" fill="#1976D2" stroke="white" stroke-width="2"/>
-                </svg>
-              `),
-              scaledSize: new window.google.maps.Size(24, 24),
+              path: window.google.maps.SymbolPath.CIRCLE,
+              scale: 8,
+              fillColor: '#1976D2',
+              fillOpacity: 1,
+              strokeColor: 'white',
+              strokeWeight: 2,
             }}
           />
         ))}
@@ -305,12 +305,12 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
             position={userLocation}
             title="Your Location"
             icon={{
-              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="8" cy="8" r="6" fill="#4285F4" stroke="white" stroke-width="2"/>
-                </svg>
-              `),
-              scaledSize: new window.google.maps.Size(16, 16),
+              path: window.google.maps.SymbolPath.CIRCLE,
+              scale: 6,
+              fillColor: '#4285F4',
+              fillOpacity: 1,
+              strokeColor: 'white',
+              strokeWeight: 2,
             }}
           />
         )}
