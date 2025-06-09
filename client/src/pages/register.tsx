@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
@@ -19,7 +19,17 @@ export default function Register() {
     email: "",
     phone: "",
     instagram: "",
+    referralCode: "",
   });
+
+  // Extract referral code from URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref');
+    if (refCode) {
+      setFormData(prev => ({ ...prev, referralCode: refCode }));
+    }
+  }, []);
 
   const registerMutation = useMutation({
     mutationFn: async (userData: z.infer<typeof userRegisterSchema>) => {
