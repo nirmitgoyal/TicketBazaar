@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Event } from "@shared/schema";
-import { EventAtmosphere } from "@/components/event-atmosphere";
+
 
 interface AtmosphereContextType {
   activeEvent: Event | null;
@@ -37,7 +37,7 @@ export const AtmosphereProvider: React.FC<AtmosphereProviderProps> = ({
       value={{ activeEvent, setActiveEvent, isAtmosphereActive }}
     >
       {children}
-      <EventAtmosphere event={activeEvent} isActive={isAtmosphereActive} />
+      {/* EventAtmosphere component removed during cleanup */}
     </AtmosphereContext.Provider>
   );
 };

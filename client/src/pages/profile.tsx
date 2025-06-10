@@ -221,11 +221,7 @@ export default function Profile() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <SEO
-        title="My Profile | Account Management - Ticket Bazaar"
-        description="Manage your Ticket Bazaar profile, view transaction history, update contact information, and configure account settings."
-        keywords="profile, account, user settings, transaction history, ticket bazaar"
-      />
+      {/* SEO component removed during cleanup */}
       <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
         My Profile
       </h1>

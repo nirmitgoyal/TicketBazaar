@@ -640,15 +640,7 @@ export default function Home() {
   if (searchResultsData) structuredDataArray.push(searchResultsData);
 
   return (
-    <SEOOptimizedPage
-      type={searchQuery ? "search" : selectedCategory === "all" ? "general" : "category"}
-      data={{
-        category: selectedCategory,
-        query: searchQuery,
-        city: selectedCity
-      }}
-      structuredData={structuredDataArray}
-    >
+    <div className="container mx-auto px-4 py-6">{/* SEOOptimizedPage removed during cleanup */}
       {/* Hero Section */}
       <section data-testid="hero-section" className="bg-primary text-white py-6 md:py-12">
         <div className="container mx-auto px-4">
@@ -1027,6 +1019,6 @@ export default function Home() {
           onClose={closeModal}
         />
       )}
-    </SEOOptimizedPage>
+    </div>
   );
 }
