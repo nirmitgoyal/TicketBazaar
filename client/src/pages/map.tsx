@@ -197,7 +197,7 @@ export default function MapPage() {
     return filtered;
   }, [events, filters, userLocation, calculateDistance]);
 
-  const processedEvents = filteredEvents();
+  const processedEvents = useMemo(() => filteredEvents(), [filteredEvents]);
 
   if (isLoading) {
     return (
