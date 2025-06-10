@@ -170,10 +170,11 @@ export default function MapPage() {
         if (distance > filters.radius) return false;
         
         // Add distance to event object
-        event.distance = Math.round(distance * 10) / 10; // Round to 1 decimal
+        const updatedEvent = { ...event, distance: Math.round(distance * 10) / 10 }; // Round to 1 decimal
+        return updatedEvent;
       }
 
-      return true;
+      return { ...event };
     });
 
     // Sort events
