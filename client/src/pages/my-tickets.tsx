@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { Ticket } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { DisputeModal } from "@/components/dispute-modal";
+
 import { SEOManager } from "@/components/helmet-manager";
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 import { SocialShare } from "@/components/social-share";

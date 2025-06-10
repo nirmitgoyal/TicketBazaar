@@ -9,7 +9,7 @@ import { TicketHeatMap } from "@/components/ticket-heatmap";
 import { TicketComparison } from "@/components/ticket-comparison";
 import { Link } from "wouter";
 import { Event, Ticket } from "@shared/schema";
-import { useAnalytics } from "@/hooks/use-analytics";
+
 import EnhancedSEO from "@/components/enhanced-seo";
 import { generateEventStructuredData, generateBreadcrumbStructuredData, generateOrganizationStructuredData } from "@/utils/seo-utils";
 import { SocialShare } from "@/components/social-share";

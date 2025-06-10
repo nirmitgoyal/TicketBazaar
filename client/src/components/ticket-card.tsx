@@ -14,7 +14,7 @@ import {
   pulseAnimation,
 } from "@/lib/animations";
 import { useAtmosphereContext } from "@/contexts/AtmosphereContext";
-import { useSoundEffects } from "@/lib/sound-effects";
+
 import { VerificationBadge } from "./verification-badge";
 import { VerificationModal } from "./verification-modal";
 import { TrustScoreMeter } from "./trust-score-meter";
@@ -65,7 +65,7 @@ export function TicketCard({
 }: TicketCardProps) {
   const { id, eventTitle: title, venue, eventDate: date, eventImageUrl: imageUrl, trending, sellingFast } = event;
   const { setActiveEvent } = useAtmosphereContext();
-  const { playTicketHover, playButtonHover, playClick } = useSoundEffects();
+
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showTrustScore, setShowTrustScore] = useState(false);
   
@@ -82,7 +82,7 @@ export function TicketCard({
 
   const handleMouseEnter = () => {
     setActiveEvent(event);
-    playTicketHover(event.category, event.eventTitle);
+
   };
 
   const handleMouseLeave = () => {
@@ -90,7 +90,7 @@ export function TicketCard({
   };
 
   const handleButtonHover = () => {
-    playButtonHover();
+
   };
 
   const handleButtonClick = () => {
@@ -267,7 +267,7 @@ export function TicketCard({
               onClick={(e) => {
                 e.stopPropagation();
                 setShowTrustScore(!showTrustScore);
-                playClick();
+
               }}
               onMouseEnter={handleButtonHover}
               className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"

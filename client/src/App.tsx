@@ -167,21 +167,19 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <WebSocketProvider>
-          <AnalyticsProvider>
-            <AtmosphereProvider>
-              <HelmetProvider>
-                <CanonicalUrlManager />
-                <div className="min-h-screen flex flex-col safe-area-top">
-                  <Navigation />
-                  <main className="flex-grow container mx-auto mobile-container py-3 sm:py-6">
-                    <Router />
-                  </main>
-                  <Footer />
-                </div>
-                <Toaster />
-              </HelmetProvider>
-            </AtmosphereProvider>
-          </AnalyticsProvider>
+          <AtmosphereProvider>
+            <HelmetProvider>
+              <CanonicalUrlManager />
+              <div className="min-h-screen flex flex-col safe-area-top">
+                <Navigation />
+                <main className="flex-grow container mx-auto mobile-container py-3 sm:py-6">
+                  <Router />
+                </main>
+                <Footer />
+              </div>
+              <Toaster />
+            </HelmetProvider>
+          </AtmosphereProvider>
         </WebSocketProvider>
       </AuthProvider>
     </QueryClientProvider>
