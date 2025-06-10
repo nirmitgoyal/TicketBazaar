@@ -18,7 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { Ticket, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import SEO from "@/components/seo";
+
 import { userLoginSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -89,11 +89,7 @@ export default function Login() {
 
   return (
     <div className="container max-w-md mx-auto px-4 py-8">
-      <SEO
-        title="Login | Access Your Account - Ticket Bazaar"
-        description="Sign in to your Ticket Bazaar account to buy and sell verified tickets for concerts, sports events, and festivals across India."
-        keywords="login, sign in, ticket bazaar, user account, secure login"
-      />
+      {/* SEO component removed during cleanup */}
       <div className="flex justify-center mb-6">
         <div className="flex items-center space-x-1">
           <Ticket className="h-8 w-8 text-primary" />

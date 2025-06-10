@@ -26,7 +26,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import SEO from "@/components/seo";
+
 import { OrganizationSchema } from "@/components/schema/organization-schema";
 
 const EventMapPage: React.FC = () => {
@@ -150,11 +150,7 @@ const EventMapPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <SEO
-        title="Events Near You on Map | Find Local Tickets - Ticket Bazaar"
-        description="Discover upcoming events near you on our interactive map. Find and buy verified tickets for concerts, sports events, and festivals across India with secure transactions and escrow protection."
-        canonicalUrl="https://ticketbazaar.co.in/events/map"
-      />
+      {/* SEO component removed during cleanup */}
       <OrganizationSchema />
 
       {/* Added back to home button */}

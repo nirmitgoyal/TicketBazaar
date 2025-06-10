@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Shield, Mail, User, AlertTriangle } from "lucide-react";
 import { Link } from "wouter";
-import SEO from "@/components/seo";
+
 
 interface DeletionInstructions {
   title: string;
@@ -54,11 +54,7 @@ export default function DataDeletion() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <SEO
-        title="Data Deletion Instructions - Ticket Bazaar"
-        description="Learn how to request deletion of your personal data from Ticket Bazaar. Complete guide for account and data removal."
-        keywords="data deletion, privacy, account deletion, GDPR, data protection, user rights"
-      />
+      {/* SEO component removed during cleanup */}
       
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
