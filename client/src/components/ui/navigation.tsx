@@ -24,7 +24,7 @@ export function Navigation() {
 
   return (
     <motion.header
-      className="bg-white shadow-md"
+      className="bg-white shadow-md sticky top-0 z-50"
       data-testid="navigation"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -46,8 +46,8 @@ export function Navigation() {
                 whileTap={{ scale: 0.95 }}
               >
                 <Ticket className="h-6 w-6 text-primary" />
-                <motion.div className="hidden sm:block">
-                  <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+                <motion.div>
+                  <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">
                     Ticket Bazaar
                   </h1>
                   <p className="text-xs text-gray-500 -mt-1">P2P Marketplace</p>
