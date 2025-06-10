@@ -24,7 +24,7 @@ export function Navigation() {
 
   return (
     <motion.header
-      className="bg-white shadow-md md:sticky md:top-0 md:z-50"
+      className="bg-white shadow-md sticky top-0 z-50"
       data-testid="navigation"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
