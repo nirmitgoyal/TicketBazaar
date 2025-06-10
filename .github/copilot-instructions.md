@@ -4,7 +4,7 @@
 - Full‑stack TypeScript: React + Vite frontend, Node.js + Express backend.
 - Drizzle ORM with PostgreSQL.
 - WebSocket real‑time messaging.
-- Google Maps, Firebase Analytics, Instagram verification.
+- Google Maps, Google Analytics, Instagram verification.
 
 ## 📏 Coding Standards & Style
 - Use TypeScript types/interfaces everywhere.
@@ -21,8 +21,7 @@
 - Match naming and folder structure exactly.
 
 ## 🧪 Testing & Quality Assurance
-- Use Jest + React Testing Library for front; supertest for backend.
-- Always include unit + integration tests for new modules.
+- Always include visual + integration tests for new modules.
 - Enforce ESLint and Prettier.
 - Flag missing types, tests, or lint errors in PRs.
 
