@@ -671,7 +671,7 @@ export default function Home() {
       </section>
 
       {/* Main Tab Navigation */}
-      <section className="bg-white shadow-sm md:sticky md:top-0 md:z-40">
+      <section className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto">
           <div className="flex overflow-x-auto scrollbar-hide">
             {categories.map((category) => (
