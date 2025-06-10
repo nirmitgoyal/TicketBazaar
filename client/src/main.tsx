@@ -18,13 +18,6 @@ window.onerror = function (message, source, lineno, colno, error) {
 // Main app initialization
 import { createRoot } from "react-dom/client";
 import App from "./App";
-
-// Import WebSocket patch for app-level WebSockets
-// (Browser-level WebSockets are patched in error-fixer.js)
-import "./lib/socket-fix";
-
-// Console filtering is now handled in socket-fix.ts
-
 import "./index.css";
 
 // Fix any lingering issues with WebSocket
