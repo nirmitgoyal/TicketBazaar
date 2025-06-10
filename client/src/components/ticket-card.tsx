@@ -15,8 +15,7 @@ import {
 } from "@/lib/animations";
 import { useAtmosphereContext } from "@/contexts/AtmosphereContext";
 
-import { VerificationBadge } from "./verification-badge";
-import { VerificationModal } from "./verification-modal";
+
 import { TrustScoreMeter } from "./trust-score-meter";
 
 interface TicketCardProps {
@@ -66,7 +65,7 @@ export function TicketCard({
   const { id, eventTitle: title, venue, eventDate: date, eventImageUrl: imageUrl, trending, sellingFast } = event;
   const { setActiveEvent } = useAtmosphereContext();
 
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
+
   const [showTrustScore, setShowTrustScore] = useState(false);
   
   // Generate trust score for this ticket
@@ -252,13 +251,7 @@ export function TicketCard({
                 fraudRisk={trustData.fraudRisk}
                 animate={showTrustScore}
               />
-              <VerificationBadge 
-                confidence={trustData.score}
-                fraudRisk={trustData.fraudRisk}
-                isVerified={trustData.score >= 60}
-                size="sm"
-                animated={showTrustScore}
-              />
+
             </div>
             <Button
               variant="ghost"
@@ -278,12 +271,7 @@ export function TicketCard({
         </motion.div>
       </div>
       
-      {/* Verification Modal */}
-      <VerificationModal
-        isOpen={showVerificationModal}
-        onClose={() => setShowVerificationModal(false)}
-        ticket={event}
-      />
+
     </motion.div>
   );
 }
