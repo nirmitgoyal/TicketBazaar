@@ -799,5 +799,3 @@ CREATE INDEX idx_tickets_seller_id ON public.tickets USING btree (seller_id);
 
 --
 -- PostgreSQL database dump complete
---
-
