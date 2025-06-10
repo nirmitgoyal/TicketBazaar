@@ -526,8 +526,9 @@ export default function MapPage() {
                             <span className="line-clamp-1">{event.venue}</span>
                           </div>
 
-                          {event.city && (
+                          {(event.city || event.venueAddress) && (
                             <p className="line-clamp-1 pl-4">
+                              {event.venueAddress ? `${event.venueAddress}, ` : ""}
                               {event.city}
                             </p>
                           )}
