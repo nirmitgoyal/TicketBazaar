@@ -20,7 +20,7 @@ export default function EventDetails() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   // Initialize analytics
-  const { trackEvent, trackUserAction } = useAnalytics();
+
 
   // Fetch event details
   const {
@@ -41,9 +41,9 @@ export default function EventDetails() {
   // Track event view when data is loaded
   useEffect(() => {
     if (event && !eventLoading) {
-      trackEvent("view_event_details", "Event View", event.title);
+
     }
-  }, [event, eventLoading, trackEvent]);
+  }, [event, eventLoading]);
 
   const formatDate = (date: Date | string) => {
     try {
@@ -63,7 +63,7 @@ export default function EventDetails() {
     // Track when user views available tickets
     if (event) {
       // Custom event tracking for ticket view
-      trackEvent("view_tickets", "Ticket Selection", event.title);
+
     }
   };
 
@@ -253,10 +253,6 @@ export default function EventDetails() {
             tickets={availableTickets}
             event={event}
             onSelectTicket={(ticket) => {
-              trackUserAction("view_item", {
-                ticketId: ticket.id,
-                eventId: event.id,
-              });
               handleOpenModal();
             }}
           />

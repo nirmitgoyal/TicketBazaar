@@ -94,7 +94,6 @@ export function TicketCard({
   };
 
   const handleButtonClick = () => {
-    playClick();
     onClick();
   };
 
