@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
             <p className="text-muted-foreground mb-3">
-              Ticket Bazaar operates as a peer-to-peer (P2P) ticket marketplace connecting individual ticket sellers with buyers across India. We respect your privacy and are committed to protecting your personal data in compliance with applicable data protection laws including the Digital Personal Data Protection Act, 2023 (India) and international standards.
+              Ticket Bazaar operates as a discovery and contact platform connecting individual ticket sellers with buyers across India. We are not a reseller or broker - we do not handle ticket payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer ticket transfers. We respect your privacy and are committed to protecting your personal data in compliance with applicable data protection laws including the Digital Personal Data Protection Act, 2023 (India) and international standards.
             </p>
             <p className="text-muted-foreground">
               This Privacy Policy explains how we collect, use, process, and safeguard your information when you use our website, mobile applications, and related services. By using our platform, you consent to the data practices described in this policy.
@@ -44,7 +44,7 @@ export default function PrivacyPolicy() {
               2. Information We Collect
             </h2>
             <p className="text-muted-foreground mb-3">
-              As a P2P marketplace, we collect information necessary to facilitate secure transactions between users:
+              As a discovery and contact platform, we collect information necessary to connect users and improve trust in peer-to-peer transfers:
             </p>
             
             <h3 className="text-lg font-medium mb-2">Personal Information:</h3>
