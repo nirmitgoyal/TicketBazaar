@@ -33,6 +33,10 @@ export class UserController extends BaseController {
       
       const { password, confirmPassword, fullName, email, phone, instagram, preferredContactMethod } = validatedData;
 
+      // Ensure password and confirmPassword match
+      if (password !== confirmPassword) {
+        return this.sendError(res, "Passwords do not match", 400);
+      }
       // Check if user already exists
       const existingUserByEmail = await storage.getUserByEmail(email);
       if (existingUserByEmail) {

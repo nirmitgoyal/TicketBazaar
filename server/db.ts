@@ -17,11 +17,7 @@ const queryClient = postgres(process.env.DATABASE_URL, {
   max: 10,
   idle_timeout: 20,
   connect_timeout: 10,
-<<<<<<< HEAD
   ssl: 'require',
-=======
-  ssl: process.env.NODE_ENV === 'production' ? 'require' : false,
->>>>>>> ab0e74f (Legal (#24))
   transform: {
     undefined: null,
   },
