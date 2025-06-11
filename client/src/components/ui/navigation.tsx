@@ -349,7 +349,7 @@ export function Navigation() {
 
                     <motion.div variants={listItem}>
                       <button
-                        className="py-3 px-2 text-textPrimary cursor-pointer block w-full text-left touch-target rounded-md transition-colors hover:bg-gray-50"
+                        className="py-3 px-2 text-muted-foreground cursor-pointer block w-full text-left touch-target rounded-md transition-colors hover:bg-accent"
                         onClick={() => {
                           logoutMutation.mutate(undefined, {
                             onSuccess: () => {
@@ -386,6 +386,11 @@ export function Navigation() {
                     </motion.div>
                   </>
                 )}
+
+                {/* Mobile Theme Status */}
+                <motion.div variants={listItem} className="px-2 py-3 border-t">
+                  <ThemeStatus />
+                </motion.div>
               </motion.nav>
             </motion.div>
           )}

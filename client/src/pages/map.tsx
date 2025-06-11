@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LoadScript } from "@react-google-maps/api";
 import { VenueMap } from "@/components/venue-map";
