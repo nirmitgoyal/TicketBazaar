@@ -15,6 +15,7 @@ export default function Register() {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     password: "",
+    confirmPassword: "",
     fullName: "",
     email: "",
     phone: "",
@@ -125,6 +126,16 @@ export default function Register() {
                 type="password"
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                 required
               />
             </div>

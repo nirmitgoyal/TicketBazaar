@@ -34,7 +34,9 @@ export const users = pgTable("users", {
 export const tickets = pgTable("tickets", {
   id: serial("id").primaryKey(),
   sellerId: integer("seller_id").notNull(),
-  title: text("title").notNull(), // Title for the ticket listing
+  
+  // Ticket details
+  title: text("title").notNull(),
   
   // Event details embedded in tickets
   eventTitle: text("event_title").notNull(),
@@ -42,30 +44,30 @@ export const tickets = pgTable("tickets", {
   venue: text("venue").notNull(),
   venueAddress: text("venue_address"),
   eventDate: timestamp("event_date").notNull(),
-  category: text("category").notNull(), // 'movies', 'buses', 'sports', 'events'
+  category: text("category").notNull(),
   eventImageUrl: text("event_image_url"),
   trending: boolean("trending").default(false),
   sellingFast: boolean("selling_fast").default(false),
   latitude: doublePrecision("latitude"),
   longitude: doublePrecision("longitude"),
-  city: text("city"), // Made optional since we'll extract from venue address
+  city: text("city"),
   
   // Ticket specific details
-  section: text("section").notNull(),
+  section: text("section"),
   row: text("row"),
   seat: text("seat"),
-  price: doublePrecision("price").notNull(), // Listed price for information only
+  price: doublePrecision("price").notNull(),
   quantity: integer("quantity").notNull(),
-  status: text("status").notNull().default("available"), // available, contacted, sold, expired
+  status: text("status").notNull().default("available"),
   isTransferrable: boolean("is_transferrable").default(true),
-  transferMethod: text("transfer_method").notNull(), // in-person, electronic, mail
+  transferMethod: text("transfer_method").notNull(),
   additionalInfo: text("additional_info"),
-  showContactInfo: boolean("show_contact_info").default(true),
-  // Removed verification fields - pure P2P means users handle verification themselves
+  showContactInfo: boolean("show_contact_info").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  expiresAt: timestamp("expires_at"), // When the ticket listing expires
+  expiresAt: timestamp("expires_at"),
 }, (table) => ({
   sellerIdx: index("tickets_seller_id_idx").on(table.sellerId),
+  titleIdx: index("tickets_title_idx").on(table.title),
   eventTitleIdx: index("tickets_event_title_idx").on(table.eventTitle),
   categoryIdx: index("tickets_category_idx").on(table.category),
   eventDateIdx: index("tickets_event_date_idx").on(table.eventDate),

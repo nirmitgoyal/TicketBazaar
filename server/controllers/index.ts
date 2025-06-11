@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import passport from "passport";
 import QRCode from "qrcode";
 import { userRegisterSchema, userLoginSchema } from "@shared/schema";
+import { z } from "zod";
 
 // Base controller with common functionality
 export class BaseController {
@@ -27,8 +28,15 @@ export class UserController extends BaseController {
   // User registration
   public register = async (req: Request, res: Response) => {
     try {
-      const { password, fullName, email, phone, instagram, preferredContactMethod } = req.body;
+      // Validate request body using the registration schema
+      const validatedData = userRegisterSchema.parse(req.body);
+      
+      const { password, confirmPassword, fullName, email, phone, instagram, preferredContactMethod } = validatedData;
 
+      // Ensure password and confirmPassword match
+      if (password !== confirmPassword) {
+        return this.sendError(res, "Passwords do not match", 400);
+      }
       // Check if user already exists
       const existingUserByEmail = await storage.getUserByEmail(email);
       if (existingUserByEmail) {
@@ -39,7 +47,7 @@ export class UserController extends BaseController {
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-      // Create user
+      // Create user (exclude confirmPassword from creation)
       const newUser = await storage.createUser({
         password: hashedPassword,
         fullName,
@@ -59,6 +67,9 @@ export class UserController extends BaseController {
       }, 201);
     } catch (error) {
       console.error("Registration error:", error);
+      if (error instanceof z.ZodError) {
+        return this.sendError(res, error.errors[0].message, 400);
+      }
       this.handleError(error, res);
     }
   };
