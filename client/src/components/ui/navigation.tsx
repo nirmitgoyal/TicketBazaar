@@ -167,6 +167,15 @@ export function Navigation() {
                 Start Selling
               </motion.button>
             )}
+
+            {/* Theme Status Component */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+            >
+              <ThemeStatus />
+            </motion.div>
           </motion.div>
 
           {/* Mobile Navigation Controls */}
@@ -236,7 +245,7 @@ export function Navigation() {
             )}
 
             <motion.button
-              className="text-textPrimary touch-target p-1"
+              className="text-foreground touch-target p-1"
               onClick={toggleMenu}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -286,7 +295,7 @@ export function Navigation() {
               >
                 <motion.div variants={listItem}>
                   <button
-                    className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/" ? "text-primary bg-primary/5" : "text-textPrimary hover:bg-gray-50"}`}
+                    className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
                     onClick={() =>
                       handleNavigation(
                         location === "/map" || location === "/events/map"
@@ -301,7 +310,7 @@ export function Navigation() {
 
                 <motion.div variants={listItem}>
                   <button
-                    className={`flex items-center gap-2 py-3 px-2 text-left w-full touch-target rounded-md transition-colors ${location === "/events/map" || location === "/map" ? "text-primary bg-primary/5" : "text-textPrimary hover:bg-gray-50"}`}
+                    className={`flex items-center gap-2 py-3 px-2 text-left w-full touch-target rounded-md transition-colors ${location === "/events/map" || location === "/map" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
                     onClick={() => handleNavigation("/map")}
                   >
                     <Map className="h-4 w-4" />
@@ -313,7 +322,7 @@ export function Navigation() {
                   <>
                     <motion.div variants={listItem}>
                       <button
-                        className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/my-tickets" ? "text-primary bg-primary/5" : "text-textPrimary hover:bg-gray-50"}`}
+                        className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/my-tickets" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
                         onClick={() => handleNavigation("/my-tickets")}
                       >
                         My Tickets
@@ -322,7 +331,7 @@ export function Navigation() {
 
                     <motion.div variants={listItem}>
                       <button
-                        className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/list-ticket" ? "text-primary bg-primary/5" : "text-textPrimary hover:bg-gray-50"}`}
+                        className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/list-ticket" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
                         onClick={() => handleNavigation("/list-ticket")}
                       >
                         Sell Tickets
@@ -331,7 +340,7 @@ export function Navigation() {
 
                     <motion.div variants={listItem}>
                       <button
-                        className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/profile" ? "text-primary bg-primary/5" : "text-textPrimary hover:bg-gray-50"}`}
+                        className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/profile" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
                         onClick={() => handleNavigation("/profile")}
                       >
                         Profile
