@@ -36,7 +36,7 @@ export const FAQSchema: React.FC<FAQSchemaProps> = ({ faqs }) => {
 export const ticketBazaarFAQs: FAQItem[] = [
   {
     question: "Is it safe to buy second hand tickets on Ticket Bazaar?",
-    answer: "Yes, Ticket Bazaar provides secure escrow protection for all transactions. We verify ticket authenticity and ensure secure payment processing."
+    answer: "Yes, Ticket Bazaar is a discovery and contact platform that connects verified buyers and sellers. We are not a reseller or broker - we don't handle payments, hold inventory, or facilitate transactions. We ensure trust through verified profiles and secure communication channels."
   },
   {
     question: "How do I verify if my tickets are authentic?",

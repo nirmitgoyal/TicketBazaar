@@ -603,7 +603,7 @@ export default function Home() {
   const ticketBazaarFAQs = [
         {
             question: "Is Ticket Bazaar a safe platform to buy and sell tickets?",
-            answer: "Yes, Ticket Bazaar uses a secure escrow payment system to ensure safe transactions for both buyers and sellers. We verify tickets and offer fast payouts."
+            answer: "Yes, Ticket Bazaar is a discovery and contact platform that connects verified buyers and sellers. We are not a reseller or broker - we don't handle payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer transfers through verified profiles and secure communication."
         },
         {
             question: "What types of tickets can I find on Ticket Bazaar?",
@@ -619,7 +619,7 @@ export default function Home() {
         },
         {
             question: "What happens if the event is canceled?",
-            answer: "In the event of a cancellation, buyers will receive a full refund, ensuring a risk-free purchase experience."
+            answer: "Since we are a discovery platform that doesn't handle payments or transactions, refund arrangements depend on your agreement with the seller. We recommend discussing cancellation policies before any transaction. Contact the seller directly for refund arrangements."
         }
     ];
   // Generate structured data for the homepage
