@@ -25,7 +25,7 @@ export function Navigation() {
 
   return (
     <motion.header
-      className="bg-white shadow-md sticky top-0 z-50"
+      className="bg-background border-b shadow-md sticky top-0 z-50"
       data-testid="navigation"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -48,10 +48,10 @@ export function Navigation() {
               >
                 <Ticket className="h-6 w-6 text-primary" />
                 <motion.div>
-                  <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">
+                  <h1 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
                     Ticket Bazaar
                   </h1>
-                  <p className="text-xs text-gray-500 -mt-1">P2P Marketplace</p>
+                  <p className="text-xs text-muted-foreground -mt-1">P2P Marketplace</p>
                 </motion.div>
               </motion.div>
             </Link>
@@ -68,7 +68,7 @@ export function Navigation() {
               className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
                 location === "/"
                   ? "bg-primary/10 text-primary font-medium"
-                  : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                  : "text-muted-foreground hover:text-primary hover:bg-accent"
               }`}
               data-testid="nav-home"
               onClick={() =>
@@ -88,7 +88,7 @@ export function Navigation() {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
                 location === "/events/map" || location === "/map"
                   ? "bg-primary/10 text-primary font-medium"
-                  : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                  : "text-muted-foreground hover:text-primary hover:bg-accent"
               }`}
               data-testid="nav-map"
               onClick={() => handleNavigation("/map")}
@@ -105,7 +105,7 @@ export function Navigation() {
                   className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
                     location === "/my-tickets"
                       ? "bg-primary/10 text-primary font-medium"
-                      : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                      : "text-muted-foreground hover:text-primary hover:bg-accent"
                   }`}
                   onClick={() => handleNavigation("/my-tickets")}
                   whileHover={{ scale: 1.05 }}
@@ -118,7 +118,7 @@ export function Navigation() {
                   className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
                     location === "/list-ticket"
                       ? "bg-primary/10 text-primary font-medium"
-                      : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                      : "text-muted-foreground hover:text-primary hover:bg-accent"
                   }`}
                   data-testid="nav-list-ticket"
                   onClick={() => handleNavigation("/list-ticket")}
@@ -132,7 +132,7 @@ export function Navigation() {
                   className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
                     location === "/profile"
                       ? "bg-primary/10 text-primary font-medium"
-                      : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                      : "text-muted-foreground hover:text-primary hover:bg-accent"
                   }`}
                   data-testid="nav-profile"
                   onClick={() => handleNavigation("/profile")}
@@ -143,7 +143,7 @@ export function Navigation() {
                 </motion.button>
 
                 <motion.button
-                  className="text-gray-600 hover:text-primary hover:bg-gray-50 px-4 py-2 rounded-lg transition-all duration-200 touch-target"
+                  className="text-muted-foreground hover:text-primary hover:bg-accent px-4 py-2 rounded-lg transition-all duration-200 touch-target"
                   onClick={() => {
                     logoutMutation.mutate(undefined, {
                       onSuccess: () => setLocation("/"),
