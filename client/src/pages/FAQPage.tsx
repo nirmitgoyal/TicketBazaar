@@ -15,7 +15,7 @@ const faqData: FAQItem[] = [
   {
     id: 1,
     question: "What is Ticket Bazaar?",
-    answer: "Ticket Bazaar is India's premier secure ticket resale platform, enabling users to buy and sell event tickets safely and efficiently.",
+    answer: "Ticket Bazaar is a discovery and contact platform that connects ticket buyers with sellers across India. We are not a reseller or broker - we do not handle ticket payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer ticket transfers through verified user profiles and secure communication channels.",
     category: "general",
     icon: <HelpCircle className="h-5 w-5" />
   },
@@ -43,14 +43,14 @@ const faqData: FAQItem[] = [
   {
     id: 5,
     question: "What payment methods can I use?",
-    answer: "Since this is a peer-to-peer platform, you negotiate payment methods directly with the seller or buyer. Common options include UPI, bank transfers, digital wallets, or cash transactions. We recommend using secure, traceable payment methods for your protection.",
+    answer: "Ticket Bazaar does not handle payments or transactions. As a discovery and contact platform, you negotiate payment methods directly with the seller or buyer through Instagram. Common options include UPI, bank transfers, digital wallets, or cash transactions. We recommend using secure, traceable payment methods for your protection. All financial transactions occur independently between users.",
     category: "payment",
     icon: <CreditCard className="h-5 w-5" />
   },
   {
     id: 6,
     question: "What happens if an event is canceled?",
-    answer: "Since transactions occur directly between users, refund arrangements depend on your agreement with the seller. We recommend discussing cancellation policies before completing any transaction. For official event cancellations, contact the seller immediately to arrange a refund.",
+    answer: "Since Ticket Bazaar is a discovery platform that doesn't handle payments or transactions, refund arrangements depend entirely on your agreement with the seller. We recommend discussing cancellation policies before completing any transaction. For official event cancellations, contact the seller immediately to arrange a refund. As we don't facilitate transactions, we cannot process refunds directly.",
     category: "payment",
     icon: <RefreshCcw className="h-5 w-5" />
   },
@@ -74,6 +74,13 @@ const faqData: FAQItem[] = [
     answer: "Check their Instagram profile for authenticity, agree on meeting location (preferably public places), confirm payment method, and ensure you have proper ticket verification. Always prioritize your safety and inform someone about your meeting.",
     category: "general",
     icon: <Shield className="h-5 w-5" />
+  },
+  {
+    id: 10,
+    question: "Does Ticket Bazaar handle payments or hold tickets?",
+    answer: "No. Ticket Bazaar is not a reseller or broker. We do not handle ticket payments, hold inventory, or facilitate transactions. We are a discovery and contact platform that ensures full legal compliance while improving trust in peer-to-peer ticket transfers. All transactions occur directly between users through their agreed payment methods.",
+    category: "general",
+    icon: <HelpCircle className="h-5 w-5" />
   }
 ];
 

@@ -44,11 +44,11 @@ export default function TermsOfService() {
             <h2 className="text-xl font-semibold mb-3">
               2. Service Description
             </h2>
+            <p className="text-muted-foreground mb-3">
+              Ticket Bazaar operates as a discovery and contact platform connecting ticket buyers with sellers across India. We are not a reseller or broker and do not handle ticket payments, hold inventory, or facilitate transactions.
+            </p>
             <p className="text-muted-foreground">
-              Ticket Bazaar provides a platform for users to buy and sell
-              tickets for events in India. We facilitate transactions between
-              buyers and sellers but do not guarantee the validity of tickets or
-              the occurrence of events.
+              Our platform ensures full legal compliance while improving trust in peer-to-peer ticket transfers through verified user profiles and secure communication channels. All transactions occur directly between users, and we do not guarantee the validity of tickets or the occurrence of events.
             </p>
           </section>
 
@@ -87,10 +87,7 @@ export default function TermsOfService() {
           <section>
             <h2 className="text-xl font-semibold mb-3">6. Payment and Fees</h2>
             <p className="text-muted-foreground">
-              Ticket Bazaar charges service fees for facilitating transactions
-              on our platform. These fees are displayed during the checkout
-              process. Payment processing is handled securely through our
-              payment partners.
+              As a discovery and contact platform, Ticket Bazaar does not handle payments or process transactions between users. All payment arrangements are made directly between buyers and sellers through their preferred methods. Any service fees for platform usage are clearly communicated and separate from transaction payments.
             </p>
           </section>
 
@@ -108,30 +105,34 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              8. Dispute Resolution
+              8. Platform Role and Limitations
             </h2>
             <p className="text-muted-foreground">
-              Disputes between buyers and sellers should first be addressed
-              through our platform's dispute resolution system. If a resolution
-              cannot be reached, users may pursue remedies available under
-              Indian law.
+              Ticket Bazaar is not a reseller or broker. We do not handle ticket payments, hold inventory, or facilitate transactions. We are a discovery and contact platform ensuring full legal compliance while improving trust in peer-to-peer ticket transfers. All financial transactions and ticket transfers occur independently between users through their chosen methods and locations.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              9. Limitation of Liability
+              9. Dispute Resolution
             </h2>
             <p className="text-muted-foreground">
-              Ticket Bazaar is not liable for the actions of users, the validity
-              of tickets, or the cancellation or rescheduling of events. Our
-              liability is limited to the fees paid for our services.
+              Since we do not facilitate transactions, disputes between buyers and sellers must be resolved directly between the parties involved. We may provide guidance and support, but cannot mediate financial disputes or enforce transaction agreements. Users may pursue remedies available under Indian law for transaction-related disputes.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              10. Modifications to Terms
+              10. Limitation of Liability
+            </h2>
+            <p className="text-muted-foreground">
+              As a discovery and contact platform that does not handle payments, hold inventory, or facilitate transactions, Ticket Bazaar is not liable for the actions of users, the validity of tickets, transaction disputes, payment issues, or the cancellation or rescheduling of events. Our liability is limited to platform-related services only and does not extend to user-to-user transactions.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              11. Modifications to Terms
             </h2>
             <p className="text-muted-foreground">
               We may modify these terms at any time by posting updated terms on
@@ -141,7 +142,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">11. Governing Law</h2>
+            <h2 className="text-xl font-semibold mb-3">12. Governing Law</h2>
             <p className="text-muted-foreground">
               These terms are governed by the laws of India. Any disputes
               arising from these terms shall be subject to the exclusive
@@ -151,7 +152,7 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              12. Contact Information
+              13. Contact Information
             </h2>
             <p className="text-muted-foreground">
               For questions regarding these Terms of Service, please contact us
