@@ -656,11 +656,11 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-xl md:text-3xl font-bold font-poppins mb-3 md:mb-4">
-              India's Secure Ticket Resale Marketplace
+              Global Secure Ticket Resale Marketplace
             </h2>
             <p className="text-base md:text-lg mb-4 md:mb-6">
-              Sell and Buy tickets safely for concerts, sports, and events
-              across India
+              Buy and sell tickets worldwide for concerts, sports, and events
+              across multiple countries and currencies
             </p>
 
             <SearchBar
@@ -669,6 +669,13 @@ export default function Home() {
               onSearch={handleSearch}
             />
           </div>
+        </div>
+      </section>
+
+      {/* Global Marketplace Statistics */}
+      <section className="py-8 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <GlobalMarketplaceStats />
         </div>
       </section>
 
