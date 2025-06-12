@@ -9,7 +9,7 @@ echo "Starting production build..."
 
 # Install dependencies
 echo "Installing dependencies..."
-npm ci
+npm install --production
 
 # Build application (client + server)
 echo "Building application..."
