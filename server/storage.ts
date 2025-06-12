@@ -318,6 +318,16 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(tickets.city, filters.city));
     }
 
+    // Filter by country
+    if (filters?.country && filters.country !== "all") {
+      conditions.push(eq(tickets.country, filters.country));
+    }
+
+    // Filter by currency
+    if (filters?.currency && filters.currency !== "all") {
+      conditions.push(eq(tickets.currency, filters.currency));
+    }
+
     // Filter by location/venue
     if (filters?.location) {
       conditions.push(ilike(tickets.venue, `%${filters.location}%`));

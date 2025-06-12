@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, Info, MapPin, X } from "lucide-react";
+import { AlertCircle, Info, MapPin, X, Globe, DollarSign } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
@@ -39,25 +39,16 @@ import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
+import { getAllCountries, getCountryInfo, detectUserCountry } from "@/lib/country-utils";
+import { getAllCurrencies, formatCurrency } from "@/lib/currency-utils";
+import { ticketListingSchema } from "@shared/schema";
 
-// Define schema for P2P ticket listing with event details
-const ticketWithEventSchema = z.object({
-  // Event details
-  eventTitle: z.string().min(1, "Event title is required"),
-  eventDate: z.string().min(1, "Event date is required"),
-  eventTime: z.string().min(1, "Event time is required"),
-  eventVenue: z.string().min(1, "Venue is required"),
-  eventVenueAddress: z.string().optional(),
-  eventLatitude: z.number().optional(),
-  eventLongitude: z.number().optional(),
-  eventCategory: z.string().min(1, "Category is required"),
-  
-  // Basic listing details for P2P marketplace
-  quantity: z.number().min(1, "Quantity must be at least 1"),
-  additionalInfo: z.string().optional(),
-});
-
-type TicketWithEventForm = z.infer<typeof ticketWithEventSchema>;
+// Use the global ticket listing schema with international support
+type TicketWithEventForm = z.infer<typeof ticketListingSchema> & {
+  eventDate: string;
+  eventTime: string;
+  eventVenueAddress: string;
+};
 
 export default function ListTicket() {
   const { user, isAuthenticated } = useAuth();
@@ -69,20 +60,50 @@ export default function ListTicket() {
   const [venueInputValue, setVenueInputValue] = useState("");
 
   const form = useForm<TicketWithEventForm>({
-    resolver: zodResolver(ticketWithEventSchema),
+    resolver: zodResolver(ticketListingSchema.extend({
+      eventDate: z.string().min(1, "Event date is required"),
+      eventTime: z.string().min(1, "Event time is required"),
+      eventVenueAddress: z.string().optional(),
+    })),
     defaultValues: {
+      title: "",
       eventTitle: "",
       eventDate: "",
       eventTime: "",
-      eventVenue: "",
+      venue: "",
       eventVenueAddress: "",
-      eventLatitude: undefined,
-      eventLongitude: undefined,
-      eventCategory: "",
+      latitude: undefined,
+      longitude: undefined,
+      category: "concerts",
+      price: 0,
+      currency: "USD",
+      transferMethod: "electronic",
       quantity: 1,
+      status: "available",
+      city: "",
+      country: "US",
+      state: "",
+      postalCode: "",
+      eventTimezone: "UTC",
+      ageRestriction: "",
       additionalInfo: "",
+      isTransferrable: true,
+      showContactInfo: false,
     },
   });
+
+  // Auto-detect user's location and set defaults
+  useEffect(() => {
+    const detectedCountry = detectUserCountry();
+    const countryInfo = getCountryInfo(detectedCountry);
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    if (countryInfo) {
+      form.setValue("country", detectedCountry);
+      form.setValue("currency", countryInfo.currency);
+      form.setValue("eventTimezone", userTimezone);
+    }
+  }, [form]);
 
   const onPlaceChanged = useCallback(() => {
     if (selectedPlace) {
@@ -92,11 +113,11 @@ export default function ListTicket() {
       const lat = place.geometry?.location?.lat();
       const lng = place.geometry?.location?.lng();
 
-      form.setValue("eventVenue", venue);
+      form.setValue("venue", venue);
       form.setValue("eventVenueAddress", address);
       if (lat && lng) {
-        form.setValue("eventLatitude", lat);
-        form.setValue("eventLongitude", lng);
+        form.setValue("latitude", lat);
+        form.setValue("longitude", lng);
       }
       setVenueInputValue(venue);
     }
@@ -107,14 +128,14 @@ export default function ListTicket() {
 
   const handleVenueSearch = useCallback((query: string) => {
     setVenueInputValue(query);
-    form.setValue("eventVenue", query);
+    form.setValue("venue", query);
     
     // Clear previous selection when user starts typing again
     if (selectedPlace && query !== selectedPlace.name) {
       setSelectedPlace(null);
       form.setValue("eventVenueAddress", "");
-      form.setValue("eventLatitude", undefined);
-      form.setValue("eventLongitude", undefined);
+      form.setValue("latitude", undefined);
+      form.setValue("longitude", undefined);
     }
     
     if (query.length < 2) {
@@ -150,11 +171,11 @@ export default function ListTicket() {
     const lat = place.geometry?.location?.lat();
     const lng = place.geometry?.location?.lng();
 
-    form.setValue("eventVenue", venue);
+    form.setValue("venue", venue);
     form.setValue("eventVenueAddress", address);
     if (lat && lng) {
-      form.setValue("eventLatitude", lat);
-      form.setValue("eventLongitude", lng);
+      form.setValue("latitude", lat);
+      form.setValue("longitude", lng);
     }
     
     setVenueInputValue(venue);
