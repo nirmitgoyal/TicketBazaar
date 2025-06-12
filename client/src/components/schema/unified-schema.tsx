@@ -159,7 +159,7 @@ export const ticketBazaarFAQs: FAQItem[] = [
   },
   {
     question: "What cities does Ticket Bazaar serve?",
-    answer: "Ticket Bazaar serves major cities across India including Delhi, Mumbai, Bangalore, Chennai, Hyderabad, Pune, Kolkata, and many more."
+    answer: "Ticket Bazaar serves major cities worldwide including New York, London, Sydney, Tokyo, Berlin, Toronto, São Paulo, and many more across multiple countries."
   },
   {
     question: "How quickly can I sell my tickets?",
@@ -167,7 +167,7 @@ export const ticketBazaarFAQs: FAQItem[] = [
   },
   {
     question: "What types of events can I find tickets for?",
-    answer: "You can find tickets for concerts, sports events, festivals, comedy shows, theatre performances, workshops, and other live events across India."
+    answer: "You can find tickets for concerts, sports events, festivals, comedy shows, theatre performances, workshops, and other live events worldwide across multiple countries."
   }
 ];
 

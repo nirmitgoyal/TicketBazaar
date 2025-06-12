@@ -608,15 +608,15 @@ export default function Home() {
         },
         {
             question: "What types of tickets can I find on Ticket Bazaar?",
-            answer: "You can find second hand tickets for a variety of events including concerts, sports events, festivals, theatre, and comedy shows across India."
+            answer: "You can find second hand tickets for a variety of events including concerts, sports events, festivals, theatre, and comedy shows worldwide."
         },
         {
             question: "How does Ticket Bazaar ensure the authenticity of tickets?",
             answer: "We verify all tickets listed on our platform to ensure they are legitimate, providing buyers with confidence in their purchase."
         },
         {
-            question: "Can I sell tickets on Ticket Bazaar even if I am not a resident of India?",
-            answer: "Currently, selling tickets on Ticket Bazaar is restricted to Indian residents due to payment and verification processes."
+            question: "Can I sell tickets on Ticket Bazaar from any country?",
+            answer: "Yes, Ticket Bazaar supports sellers from multiple countries worldwide. Users can list tickets in their local currency and connect with buyers globally through our international marketplace."
         },
         {
             question: "What happens if the event is canceled?",
