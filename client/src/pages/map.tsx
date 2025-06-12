@@ -11,9 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { MapPin, Calendar, Users, Search, Navigation, Filter, Locate } from "lucide-react";
 import { SEOManager } from "@/components/helmet-manager";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
+import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
-import { BreadcrumbSchema } from "@/components/schema/breadcrumb-schema";
 import { useToast } from "@/hooks/use-toast";
 
 interface TicketEvent {

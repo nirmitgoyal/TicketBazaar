@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import SEO from "@/components/seo";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
+import { UnifiedSchema } from "@/components/schema/unified-schema";
 
 const EventMapPage: React.FC = () => {
   const { toast } = useToast();
