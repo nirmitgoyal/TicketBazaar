@@ -4,6 +4,8 @@
 # This script builds the application for production deployment
 
 set -e
+set -o pipefail
+set -u
 
 echo "Starting production build..."
 
