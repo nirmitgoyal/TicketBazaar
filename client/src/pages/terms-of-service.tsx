@@ -45,10 +45,10 @@ export default function TermsOfService() {
               2. Service Description
             </h2>
             <p className="text-muted-foreground mb-3">
-              Ticket Bazaar operates as a discovery and contact platform connecting ticket buyers with sellers across India. We are not a reseller or broker and do not handle ticket payments, hold inventory, or facilitate transactions.
+              Ticket Bazaar operates as a global discovery and contact platform connecting ticket buyers with sellers worldwide. We are not a reseller or broker and do not handle ticket payments, hold inventory, or facilitate transactions.
             </p>
             <p className="text-muted-foreground">
-              Our platform ensures full legal compliance while improving trust in peer-to-peer ticket transfers through verified user profiles and secure communication channels. All transactions occur directly between users, and we do not guarantee the validity of tickets or the occurrence of events.
+              Our platform ensures compliance with applicable local laws while improving trust in peer-to-peer ticket transfers through verified user profiles and secure communication channels. All transactions occur directly between users, and we do not guarantee the validity of tickets or the occurrence of events.
             </p>
           </section>
 
@@ -68,9 +68,9 @@ export default function TermsOfService() {
             </h2>
             <p className="text-muted-foreground">
               Sellers must accurately represent the tickets they list and must
-              have the legal right to sell them. Resale prices may not exceed
-              the original ticket price in accordance with applicable laws and
-              regulations governing ticket resale in India.
+              have the legal right to sell them. Resale prices must comply with
+              applicable local laws and regulations governing ticket resale in
+              the seller's and buyer's respective jurisdictions.
             </p>
           </section>
 
@@ -117,7 +117,7 @@ export default function TermsOfService() {
               9. Dispute Resolution
             </h2>
             <p className="text-muted-foreground">
-              Since we do not facilitate transactions, disputes between buyers and sellers must be resolved directly between the parties involved. We may provide guidance and support, but cannot mediate financial disputes or enforce transaction agreements. Users may pursue remedies available under Indian law for transaction-related disputes.
+              Since we do not facilitate transactions, disputes between buyers and sellers must be resolved directly between the parties involved. We may provide guidance and support, but cannot mediate financial disputes or enforce transaction agreements. Users may pursue remedies available under applicable local laws for transaction-related disputes.
             </p>
           </section>
 
@@ -144,9 +144,10 @@ export default function TermsOfService() {
           <section>
             <h2 className="text-xl font-semibold mb-3">12. Governing Law</h2>
             <p className="text-muted-foreground">
-              These terms are governed by the laws of India. Any disputes
-              arising from these terms shall be subject to the exclusive
-              jurisdiction of the courts in Delhi, India.
+              These terms are governed by the laws of the jurisdiction where
+              our company is registered. Disputes arising from these terms
+              shall be resolved through applicable legal channels based on
+              the user's and our company's respective jurisdictions.
             </p>
           </section>
 
@@ -156,7 +157,7 @@ export default function TermsOfService() {
             </h2>
             <p className="text-muted-foreground">
               For questions regarding these Terms of Service, please contact us
-              at legal@ticketbazaar.co.in.
+              at legal@ticketbazaar.com.
             </p>
           </section>
         </CardContent>

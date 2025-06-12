@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
             <p className="text-muted-foreground mb-3">
-              Ticket Bazaar operates as a discovery and contact platform connecting individual ticket sellers with buyers across India. We are not a reseller or broker - we do not handle ticket payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer ticket transfers. We respect your privacy and are committed to protecting your personal data in compliance with applicable data protection laws including the Digital Personal Data Protection Act, 2023 (India) and international standards.
+              Ticket Bazaar operates as a global discovery and contact platform connecting individual ticket sellers with buyers worldwide. We are not a reseller or broker - we do not handle ticket payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer ticket transfers. We respect your privacy and are committed to protecting your personal data in compliance with applicable data protection laws including GDPR, CCPA, and other international standards.
             </p>
             <p className="text-muted-foreground">
               This Privacy Policy explains how we collect, use, process, and safeguard your information when you use our website, mobile applications, and related services. By using our platform, you consent to the data practices described in this policy.
@@ -209,7 +209,7 @@ export default function PrivacyPolicy() {
               6. Your Rights and Choices
             </h2>
             <p className="text-muted-foreground mb-3">
-              Under applicable privacy laws, including India's Digital Personal Data Protection Act, 2023, you have specific rights regarding your personal data:
+              Under applicable privacy laws, including GDPR, CCPA, and other international standards, you have specific rights regarding your personal data:
             </p>
 
             <h3 className="text-lg font-medium mb-2">Data Subject Rights:</h3>
@@ -240,7 +240,7 @@ export default function PrivacyPolicy() {
             </ul>
 
             <p className="text-muted-foreground">
-              To exercise any of these rights, contact us at privacy@ticketbazaar.co.in or use the data management tools in your account settings. We will respond within 30 days of receiving your request.
+              To exercise any of these rights, contact us at privacy@ticketbazaar.com or use the data management tools in your account settings. We will respond within 30 days of receiving your request.
             </p>
           </section>
 
