@@ -122,26 +122,87 @@ export default function Register() {
                 required
               />
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="country">Country</Label>
+                <Select
+                  value={formData.country}
+                  onValueChange={(value) => {
+                    handleInputChange("country", value);
+                    const countryInfo = getCountryInfo(value);
+                    if (countryInfo) {
+                      handleInputChange("currency", countryInfo.currency);
+                      handleInputChange("timezone", countryInfo.timezone);
+                      handleInputChange("language", countryInfo.language);
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getAllCountries().map((country) => (
+                      <SelectItem key={country.code} value={country.code}>
+                        {country.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="currency">Preferred Currency</Label>
+                <Select
+                  value={formData.currency}
+                  onValueChange={(value) => handleInputChange("currency", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getAllCurrencies().map((currency) => (
+                      <SelectItem key={currency.code} value={currency.code}>
+                        {currency.symbol} {currency.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <div>
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">Phone (Optional)</Label>
               <Input
                 id="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleInputChange("phone", e.target.value)}
-                required
+                placeholder={getCountryInfo(formData.country)?.phoneCode || "+1"}
               />
             </div>
             <div>
-              <Label htmlFor="instagram">Instagram Handle</Label>
+              <Label htmlFor="instagram">Instagram Handle (Optional)</Label>
               <Input
                 id="instagram"
                 type="text"
                 value={formData.instagram}
                 onChange={(e) => handleInputChange("instagram", e.target.value)}
                 placeholder="@yourusername"
-                required
               />
+            </div>
+            <div>
+              <Label htmlFor="preferredContactMethod">Preferred Contact Method</Label>
+              <Select
+                value={formData.preferredContactMethod}
+                onValueChange={(value) => handleInputChange("preferredContactMethod", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="email">Email</SelectItem>
+                  <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                  <SelectItem value="phone">Phone</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label htmlFor="password">Password</Label>

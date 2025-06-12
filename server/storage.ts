@@ -283,6 +283,8 @@ export class DatabaseStorage implements IStorage {
       sellingFast?: boolean;
       dateRange?: string;
       city?: string;
+      country?: string;
+      currency?: string;
       bounds?: {
         north: number;
         south: number;

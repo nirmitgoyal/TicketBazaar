@@ -3,7 +3,7 @@ import { useState } from "react";
 import { formatDistanceToNow, format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ticket as TicketIcon, MapPin, Calendar, Shield } from "lucide-react";
+import { Ticket as TicketIcon, MapPin, Calendar, Shield, Globe } from "lucide-react";
 import { Ticket as TicketType } from "@shared/schema";
 import { motion } from "framer-motion";
 import {
@@ -18,6 +18,8 @@ import { useSoundEffects } from "@/lib/sound-effects";
 import { VerificationBadge } from "./verification-badge";
 import { VerificationModal } from "./verification-modal";
 import { TrustScoreMeter } from "./trust-score-meter";
+import { formatCurrency } from "@/lib/currency-utils";
+import { getCountryInfo } from "@/lib/country-utils";
 
 interface TicketCardProps {
   event: TicketType;
@@ -185,13 +187,48 @@ export function TicketCard({
               <MapPin className="h-4 w-4 mr-1" /> {venue}
             </motion.p>
             <motion.p
-              className="text-sm text-textSecondary flex items-center"
+              className="text-sm text-textSecondary flex items-center mb-2"
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.05 }}
             >
               <Calendar className="h-4 w-4 mr-1" /> {formatDate(date)}
             </motion.p>
+            
+            {/* Location and Currency Info */}
+            <motion.div
+              className="flex items-center gap-2 text-xs text-textSecondary mb-2"
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 + index * 0.05 }}
+            >
+              <Globe className="h-3 w-3" />
+              <span>{event.city}, {getCountryInfo(event.country)?.name || event.country}</span>
+            </motion.div>
+            
+            {/* Price Display */}
+            <motion.div
+              className="flex items-center justify-between"
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + index * 0.05 }}
+            >
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold text-primary">
+                  {formatCurrency(event.price, event.currency || 'USD')}
+                </span>
+                {event.originalPrice && event.originalPrice !== event.price && (
+                  <span className="text-sm text-textSecondary line-through">
+                    {formatCurrency(event.originalPrice, event.currency || 'USD')}
+                  </span>
+                )}
+              </div>
+              {event.quantity > 1 && (
+                <Badge variant="secondary" className="text-xs">
+                  {event.quantity} available
+                </Badge>
+              )}
+            </motion.div>
           </div>
 
           {trending && (

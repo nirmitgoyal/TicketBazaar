@@ -89,6 +89,10 @@ export interface SearchFilters {
   trending?: boolean;
   sellingFast?: boolean;
   city?: string;
+  country?: string;
+  currency?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 // Category icons mapping
