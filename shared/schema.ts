@@ -20,14 +20,24 @@ export const users = pgTable("users", {
   fullName: text("full_name").notNull(),
   email: text("email").notNull().unique(),
   phone: text("phone"),
-  whatsapp: text("whatsapp"), // Added WhatsApp number for direct contact
-  instagram: text("instagram").notNull(), // Instagram handle for profile verification (mandatory)
+  whatsapp: text("whatsapp"), // WhatsApp number for direct contact
+  instagram: text("instagram"), // Instagram handle for profile verification (optional globally)
   rating: doublePrecision("rating").default(0),
   ratingsCount: integer("ratings_count").default(0),
-  preferredContactMethod: text("preferred_contact_method").default("whatsapp"), // whatsapp, phone, email
+  preferredContactMethod: text("preferred_contact_method").default("email"), // email, whatsapp, phone
+  country: text("country").notNull().default("US"), // ISO 3166-1 alpha-2 country code
+  timezone: text("timezone").default("UTC"), // User's timezone
+  language: text("language").default("en"), // Preferred language (ISO 639-1)
+  currency: text("currency").default("USD"), // Preferred currency (ISO 4217)
+  verificationStatus: text("verification_status").default("unverified"), // unverified, pending, verified
+  governmentIdVerified: boolean("government_id_verified").default(false),
+  phoneVerified: boolean("phone_verified").default(false),
+  emailVerified: boolean("email_verified").default(false),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   ratingIdx: index("users_rating_idx").on(table.rating),
+  countryIdx: index("users_country_idx").on(table.country),
+  verificationIdx: index("users_verification_idx").on(table.verificationStatus),
 }));
 
 // Pure P2P ticket listings with embedded event information
@@ -51,18 +61,25 @@ export const tickets = pgTable("tickets", {
   latitude: doublePrecision("latitude"),
   longitude: doublePrecision("longitude"),
   city: text("city"),
+  country: text("country").notNull().default("US"), // ISO 3166-1 alpha-2 country code
+  state: text("state"), // State/province for better location filtering
+  postalCode: text("postal_code"), // Postal/ZIP code
   
   // Ticket specific details
   section: text("section"),
   row: text("row"),
   seat: text("seat"),
   price: doublePrecision("price").notNull(),
+  currency: text("currency").notNull().default("USD"), // ISO 4217 currency code
+  originalPrice: doublePrecision("original_price"), // Face value of ticket
   quantity: integer("quantity").notNull(),
   status: text("status").notNull().default("available"),
   isTransferrable: boolean("is_transferrable").default(true),
   transferMethod: text("transfer_method").notNull(),
   additionalInfo: text("additional_info"),
   showContactInfo: boolean("show_contact_info").default(false),
+  eventTimezone: text("event_timezone").default("UTC"), // Event timezone
+  ageRestriction: text("age_restriction"), // 18+, 21+, All Ages, etc.
   createdAt: timestamp("created_at").notNull().defaultNow(),
   expiresAt: timestamp("expires_at"),
 }, (table) => ({
@@ -73,7 +90,9 @@ export const tickets = pgTable("tickets", {
   eventDateIdx: index("tickets_event_date_idx").on(table.eventDate),
   statusIdx: index("tickets_status_idx").on(table.status),
   cityIdx: index("tickets_city_idx").on(table.city),
+  countryIdx: index("tickets_country_idx").on(table.country),
   priceIdx: index("tickets_price_idx").on(table.price),
+  currencyIdx: index("tickets_currency_idx").on(table.currency),
   createdAtIdx: index("tickets_created_at_idx").on(table.createdAt),
   trendingIdx: index("tickets_trending_idx").on(table.trending),
   locationIdx: index("tickets_location_idx").on(table.latitude, table.longitude),
@@ -274,33 +293,48 @@ export type Event = Ticket;
 // Pure P2P model - transactions and disputes removed
 
 // Extended schemas with validations for forms
-export const ticketListingSchema = insertTicketSchema.extend({
-  price: z.number().positive("Price must be greater than 0"),
-  transferMethod: z.enum(["in-person", "electronic", "mail"]),
-  eventTitle: z.string().min(1, "Event title is required"),
-  venue: z.string().min(1, "Venue is required"),
-  eventDate: z.date(),
-  category: z.enum(["movies", "buses", "sports", "events"]),
-  city: z.string().min(1, "City is required"),
-});
-
-export const userRegisterSchema = insertUserSchema
+export const ticketListingSchema = insertTicketSchema
+  .omit({ id: true, createdAt: true, sellerId: true })
   .extend({
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    fullName: z.string().min(2, "Full name is required"),
-    email: z.string().email("Invalid email address"),
-    phone: z.string().optional(),
-    whatsapp: z.string().optional(),
-    instagram: z.string().min(1, "Instagram ID is required"),
-    preferredContactMethod: z
-      .enum(["whatsapp", "phone", "email"])
-      .default("whatsapp"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
+    price: z.number().positive("Price must be greater than 0"),
+    currency: z.string().length(3, "Currency must be 3-letter ISO code").default("USD"),
+    transferMethod: z.enum(["in-person", "electronic", "mail", "digital"]),
+    eventTitle: z.string().min(1, "Event title is required"),
+    venue: z.string().min(1, "Venue is required"),
+    eventDate: z.date(),
+    category: z.enum([
+      "concerts", "sports", "theater", "comedy", "festivals", 
+      "conferences", "exhibitions", "movies", "dance", "opera",
+      "classical", "family", "nightlife", "education", "networking"
+    ]),
+    city: z.string().min(1, "City is required"),
+    country: z.string().length(2, "Country must be 2-letter ISO code"),
+    state: z.string().optional(),
+    postalCode: z.string().optional(),
+    eventTimezone: z.string().default("UTC"),
+    ageRestriction: z.string().optional(),
   });
+
+export const userRegisterSchema = z.object({
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  fullName: z.string().min(2, "Full name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().optional(),
+  whatsapp: z.string().optional(),
+  instagram: z.string().optional(), // Made optional for global markets
+  country: z.string().length(2, "Country must be 2-letter ISO code"),
+  timezone: z.string().default("UTC"),
+  language: z.string().length(2, "Language must be 2-letter ISO code").default("en"),
+  currency: z.string().length(3, "Currency must be 3-letter ISO code").default("USD"),
+  preferredContactMethod: z
+    .enum(["email", "whatsapp", "phone"])
+    .default("email"), // Email as global default
+  confirmPassword: z.string(),
+})
+.refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
 
 export const userLoginSchema = z.object({
   email: z.string().email("Valid email is required"),
