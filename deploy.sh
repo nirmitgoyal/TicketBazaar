@@ -16,7 +16,7 @@ echo "Building application..."
 npm run build
 
 # Push database schema
-echo "Pushing database schema..."
-npm run db:push
+echo "Applying database migrations..."
+npm run db:migrate
 
 echo "Production build completed successfully!"
