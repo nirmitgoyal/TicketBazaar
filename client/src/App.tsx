@@ -20,6 +20,7 @@ import EventDetails from "@/pages/event-details";
 import EventMap from "@/pages/event-map";
 import MapPage from "@/pages/map";
 import ListTicket from "@/pages/list-ticket";
+import ListTicketGlobal from "@/pages/list-ticket-global";
 import MyTickets from "@/pages/my-tickets";
 import TicketVerification from "@/pages/ticket-verification";
 import Profile from "@/pages/profile";
@@ -135,6 +136,7 @@ function Router() {
 
       {/* Ticket routes */}
       <Route path="/list-ticket" component={ListTicket} />
+      <Route path="/list-ticket-global" component={ListTicketGlobal} />
       <ProtectedRoute path="/my-tickets" component={MyTickets} />
       <Route path="/ticket-verification" component={TicketVerification} />
       <Route path="/verification-demo" component={VerificationDemo} />
