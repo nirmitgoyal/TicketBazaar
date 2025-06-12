@@ -15,7 +15,7 @@ const faqData: FAQItem[] = [
   {
     id: 1,
     question: "What is Ticket Bazaar?",
-    answer: "Ticket Bazaar is a discovery and contact platform that connects ticket buyers with sellers across India. We are not a reseller or broker - we do not handle ticket payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer ticket transfers through verified user profiles and secure communication channels.",
+    answer: "Ticket Bazaar is a global discovery and contact platform that connects ticket buyers with sellers worldwide. We are not a reseller or broker - we do not handle ticket payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer ticket transfers through verified user profiles and secure communication channels.",
     category: "general",
     icon: <HelpCircle className="h-5 w-5" />
   },
@@ -36,14 +36,14 @@ const faqData: FAQItem[] = [
   {
     id: 4,
     question: "Is it safe to buy tickets on Ticket Bazaar?",
-    answer: "Yes. We verify sellers through their Instagram profiles and DigiLocker verification to ensure authenticity and identity verification. Since communication happens via Instagram, you can check the seller's profile history and credibility. Always meet in safe public places and use secure payment methods.",
+    answer: "Yes. We verify sellers through their social media profiles and identity verification to ensure authenticity. Since communication happens through social platforms, you can check the seller's profile history and credibility. Always meet in safe public places and use secure payment methods.",
     category: "general",
     icon: <Shield className="h-5 w-5" />
   },
   {
     id: 5,
     question: "What payment methods can I use?",
-    answer: "Ticket Bazaar does not handle payments or transactions. As a discovery and contact platform, you negotiate payment methods directly with the seller or buyer through Instagram. Common options include UPI, bank transfers, digital wallets, or cash transactions. We recommend using secure, traceable payment methods for your protection. All financial transactions occur independently between users.",
+    answer: "Ticket Bazaar does not handle payments or transactions. As a discovery and contact platform, you negotiate payment methods directly with the seller or buyer through social media. Common options include bank transfers, digital wallets, credit cards, or cash transactions. We recommend using secure, traceable payment methods for your protection. All financial transactions occur independently between users.",
     category: "payment",
     icon: <CreditCard className="h-5 w-5" />
   },

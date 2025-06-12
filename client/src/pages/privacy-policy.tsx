@@ -302,7 +302,7 @@ export default function PrivacyPolicy() {
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
               <li>We do not knowingly collect data from users under 18</li>
               <li>If we discover a minor has created an account, we will immediately suspend it</li>
-              <li>Parents/guardians can report underage accounts to privacy@ticketbazaar.co.in</li>
+              <li>Parents/guardians can report underage accounts to privacy@ticketbazaar.com</li>
               <li>We will delete any data collected from minors upon discovery</li>
             </ul>
 
@@ -316,14 +316,14 @@ export default function PrivacyPolicy() {
               9. International Data Transfers
             </h2>
             <p className="text-muted-foreground mb-3">
-              As a global platform serving users across India and potentially internationally, we may transfer your data across borders:
+              As a global platform serving users worldwide, we may transfer your data across borders:
             </p>
 
             <h3 className="text-lg font-medium mb-2">Data Processing Locations:</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
-              <li>Primary data processing occurs within India</li>
-              <li>Cloud services may store data in secure international data centers</li>
-              <li>Third-party service providers may process data in other countries</li>
+              <li>Data processing occurs in secure international data centers</li>
+              <li>Cloud services may store data in multiple geographic regions</li>
+              <li>Third-party service providers may process data in various countries</li>
             </ul>
 
             <h3 className="text-lg font-medium mb-2">Transfer Safeguards:</h3>
@@ -352,8 +352,8 @@ export default function PrivacyPolicy() {
 
             <h3 className="text-lg font-medium mb-2">Payment and Financial Services:</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
-              <li><strong>Stripe:</strong> International payment processing</li>
-              <li><strong>Razorpay:</strong> Indian payment gateway services</li>
+              <li><strong>Stripe:</strong> International payment processing and financial transactions</li>
+              <li><strong>Regional Payment Processors:</strong> Local payment services based on your location</li>
               <li>These services have their own privacy policies governing data use</li>
             </ul>
 
@@ -437,9 +437,9 @@ export default function PrivacyPolicy() {
 
             <h3 className="text-lg font-medium mb-2">General Privacy Inquiries:</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
-              <li><strong>Email:</strong> privacy@ticketbazaar.co.in</li>
+              <li><strong>Email:</strong> privacy@ticketbazaar.com</li>
               <li><strong>Response Time:</strong> We will respond within 30 days</li>
-              <li><strong>Languages:</strong> English and Hindi</li>
+              <li><strong>Languages:</strong> Multiple languages supported based on your region</li>
             </ul>
 
             <h3 className="text-lg font-medium mb-2">Data Subject Rights Requests:</h3>
@@ -452,15 +452,15 @@ export default function PrivacyPolicy() {
             <h3 className="text-lg font-medium mb-2">Company Information:</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
               <li><strong>Company Name:</strong> Ticket Bazaar</li>
-              <li><strong>Address:</strong> Sector 110, Noida, 201304, Uttar Pradesh, India</li>
-              <li><strong>Business Hours:</strong> Monday to Friday, 9:00 AM to 6:00 PM IST</li>
+              <li><strong>Global Operations:</strong> Serving customers worldwide</li>
+              <li><strong>Business Hours:</strong> 24/7 support across multiple time zones</li>
             </ul>
 
             <h3 className="text-lg font-medium mb-2">Regulatory Complaints:</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4">
               <li>You have the right to lodge complaints with relevant data protection authorities</li>
-              <li>In India: Data Protection Board (when established under DPDP Act 2023)</li>
-              <li>For EU users: Your local data protection authority</li>
+              <li>Contact your local data protection authority in your jurisdiction</li>
+              <li>We comply with GDPR, CCPA, and other applicable privacy regulations</li>
             </ul>
 
             <div className="mt-6 p-4 bg-muted rounded-lg">
