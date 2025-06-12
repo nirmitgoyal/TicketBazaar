@@ -720,6 +720,47 @@ ORDER BY idx_scan DESC;
 - [ ] Responsive design maintained
 - [ ] Accessibility standards met
 
+## 🔧 Troubleshooting
+
+### Database Connection Issues
+
+**Problem**: SSL connection errors when connecting to PostgreSQL  
+**Solution**: The application now uses environment-aware SSL configuration. SSL is automatically:
+- **Enabled** in production environments (`NODE_ENV=production`) 
+- **Enabled** when `DATABASE_URL` contains `sslmode=require` or `ssl=true`
+- **Disabled** in development, testing, and CI environments
+
+**Testing**: Run `npx tsx scripts/test-db-connection.ts` to verify your database connection.
+
+### Common Development Issues
+
+**Port Already in Use**:
+```bash
+# Kill process using port 5000
+lsof -ti:5000 | xargs kill -9
+```
+
+**TypeScript Errors**:
+```bash
+# Clear TypeScript cache and rebuild
+rm -rf node_modules/.cache
+npm run check
+```
+
+**Database Schema Issues**:
+```bash
+# Reset database schema
+npm run db:push
+tsx scripts/setup-db.ts
+```
+
+**Missing Environment Variables**:
+```bash
+# Copy example environment file
+cp .env.example .env
+# Edit .env with your actual values
+```
+
 ## 📋 Project Roadmap
 
 ### Phase 1: Core P2P Platform ✅
