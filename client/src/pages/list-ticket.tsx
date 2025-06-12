@@ -36,7 +36,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { SEOManager } from "@/components/helmet-manager";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
+import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 
@@ -210,7 +210,7 @@ export default function ListTicket() {
           description="Please log in to list your event tickets for sale on Ticket Bazaar."
           canonicalUrl="https://ticketbazaar.co.in/list-ticket"
         >
-          <OrganizationSchema />
+          <UnifiedSchema />
         </SEOManager>
         <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
           List Your Ticket
@@ -269,7 +269,7 @@ export default function ListTicket() {
           description="Sell your unused event tickets safely and securely on Ticket Bazaar. List tickets for concerts, sports events, and festivals with our transparent pricing policy and secure payment system."
           canonicalUrl="https://ticketbazaar.co.in/list-ticket"
         >
-          <OrganizationSchema />
+          <UnifiedSchema />
         </SEOManager>
         <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
           List Your Ticket

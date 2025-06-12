@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SEOManager } from "@/components/helmet-manager";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
+import { UnifiedSchema } from "@/components/schema/unified-schema";
 
 export default function PrivacyPolicy() {
   return (
@@ -18,7 +18,7 @@ export default function PrivacyPolicy() {
         description="Learn about how Ticket Bazaar collects, uses, and protects your personal information. Our privacy policy explains your rights and our data practices."
         canonicalUrl="https://ticketbazaar.co.in/privacy-policy"
       >
-        <OrganizationSchema />
+        <UnifiedSchema />
       </SEOManager>
       <Card className="w-full shadow-lg">
         <CardHeader className="border-b border-border pb-4">

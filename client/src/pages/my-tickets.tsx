@@ -28,7 +28,7 @@ import { Ticket } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { DisputeModal } from "@/components/dispute-modal";
 import { SEOManager } from "@/components/helmet-manager";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
+import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { SocialShare } from "@/components/social-share";
 
 // ViewedTicketsSection component
@@ -345,7 +345,7 @@ export default function MyTickets() {
         description="View and manage all your purchased tickets and active ticket listings in one place. Access your ticket QR codes, transaction history, and update your listings."
         canonicalUrl="https://ticketbazaar.co.in/my-tickets"
       >
-        <OrganizationSchema />
+        <UnifiedSchema />
       </SEOManager>
       <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
         My Tickets

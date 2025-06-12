@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, TicketX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SEOManager } from "@/components/helmet-manager";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
+import { UnifiedSchema } from "@/components/schema/unified-schema";
 
 export default function TicketVerificationPage() {
   const [, setLocation] = useLocation();
@@ -106,7 +106,7 @@ export default function TicketVerificationPage() {
         description="Verify your ticket authenticity and access your QR code for event entry. Secure ticket verification system protects against fraud and ensures valid entry."
         canonicalUrl={`https://ticketbazaar.co.in/ticket/verify/${ticket.id}`}
       >
-        <OrganizationSchema />
+        <UnifiedSchema />
       </SEOManager>
       <div className="flex items-center mb-8">
         <Button

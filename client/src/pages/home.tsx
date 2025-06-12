@@ -24,7 +24,7 @@ import {
 import { queryClient } from "@/lib/queryClient";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import SEOOptimizedPage from "@/components/seo-optimized-page";
+import EnhancedSEO from "@/components/enhanced-seo";
 import { generateSearchResultsStructuredData, generateFAQStructuredData } from "@/utils/seo-utils";
 
 import { useWebSocket } from "@/hooks/use-websocket";
@@ -640,15 +640,16 @@ export default function Home() {
   if (searchResultsData) structuredDataArray.push(searchResultsData);
 
   return (
-    <SEOOptimizedPage
-      type={searchQuery ? "search" : selectedCategory === "all" ? "general" : "category"}
-      data={{
-        category: selectedCategory,
-        query: searchQuery,
-        city: selectedCity
-      }}
-      structuredData={structuredDataArray}
-    >
+    <>
+      <EnhancedSEO
+        type={searchQuery ? "search" : selectedCategory === "all" ? "general" : "category"}
+        data={{
+          category: selectedCategory,
+          query: searchQuery,
+          city: selectedCity
+        }}
+        structuredData={structuredDataArray}
+      />
       {/* Hero Section */}
       <section data-testid="hero-section" className="bg-primary text-white py-6 md:py-12">
         <div className="container mx-auto px-4">
@@ -1027,6 +1028,6 @@ export default function Home() {
           onClose={closeModal}
         />
       )}
-    </SEOOptimizedPage>
+    </>
   );
 }
