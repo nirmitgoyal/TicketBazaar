@@ -26,7 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import EnhancedSEO from "@/components/enhanced-seo";
 import { generateSearchResultsStructuredData, generateFAQStructuredData } from "@/utils/seo-utils";
-import { GlobalMarketplaceStats } from "@/components/global-marketplace-stats";
+
 
 import { useWebSocket } from "@/hooks/use-websocket";
 
@@ -672,12 +672,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Global Marketplace Statistics */}
-      <section className="py-8 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <GlobalMarketplaceStats />
-        </div>
-      </section>
+
 
       {/* Main Tab Navigation */}
       <section className="bg-white shadow-sm sticky top-0 z-40">

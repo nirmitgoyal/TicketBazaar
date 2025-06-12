@@ -49,7 +49,7 @@ export function Navigation() {
                 <Ticket className="h-6 w-6 text-primary" />
                 <motion.div>
                   <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">
-                    TicketGlobal
+                    Ticket Bazaar
                   </h1>
                   <p className="text-xs text-gray-500 -mt-1">Worldwide Marketplace</p>
                 </motion.div>
