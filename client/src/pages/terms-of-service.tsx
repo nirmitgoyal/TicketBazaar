@@ -18,7 +18,7 @@ export default function TermsOfService() {
         description="Read the Ticket Bazaar terms of service agreement. Learn about user rights and responsibilities, ticket resale policies, dispute resolution, and more."
         canonicalUrl="https://ticketbazaar.co.in/terms-of-service"
       >
-        <OrganizationSchema />
+        <UnifiedSchema />
       </SEOManager>
       <Card className="w-full shadow-lg">
         <CardHeader className="border-b border-border pb-4">

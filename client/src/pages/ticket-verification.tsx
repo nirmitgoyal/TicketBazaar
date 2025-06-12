@@ -106,7 +106,7 @@ export default function TicketVerificationPage() {
         description="Verify your ticket authenticity and access your QR code for event entry. Secure ticket verification system protects against fraud and ensures valid entry."
         canonicalUrl={`https://ticketbazaar.co.in/ticket/verify/${ticket.id}`}
       >
-        <OrganizationSchema />
+        <UnifiedSchema />
       </SEOManager>
       <div className="flex items-center mb-8">
         <Button

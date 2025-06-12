@@ -210,7 +210,7 @@ export default function ListTicket() {
           description="Please log in to list your event tickets for sale on Ticket Bazaar."
           canonicalUrl="https://ticketbazaar.co.in/list-ticket"
         >
-          <OrganizationSchema />
+          <UnifiedSchema />
         </SEOManager>
         <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
           List Your Ticket
@@ -269,7 +269,7 @@ export default function ListTicket() {
           description="Sell your unused event tickets safely and securely on Ticket Bazaar. List tickets for concerts, sports events, and festivals with our transparent pricing policy and secure payment system."
           canonicalUrl="https://ticketbazaar.co.in/list-ticket"
         >
-          <OrganizationSchema />
+          <UnifiedSchema />
         </SEOManager>
         <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
           List Your Ticket
