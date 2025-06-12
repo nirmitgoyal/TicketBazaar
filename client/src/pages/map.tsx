@@ -258,6 +258,10 @@ export default function MapPage() {
           keywords="event map, events near me, ticket map, second hand tickets map, event locations, interactive map, concerts near me, sports events map, festival map, India events map"
         >
           <UnifiedSchema />
+          <UnifiedSchema breadcrumbs={[
+            { name: "Home", url: "/" },
+            { name: "Event Map", url: "/map" }
+          ]} />
         </SEOManager>
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-2">
