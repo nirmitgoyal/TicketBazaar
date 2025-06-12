@@ -19,6 +19,6 @@ npm run build
 
 # Push database schema
 echo "Applying database migrations..."
-npm run db:migrate
+npm run db:push
 
 echo "Production build completed successfully!"
