@@ -155,7 +155,7 @@ const EventMapPage: React.FC = () => {
         description="Discover upcoming events near you on our interactive map. Find and buy verified tickets for concerts, sports events, and festivals across India with secure transactions and escrow protection."
         canonicalUrl="https://ticketbazaar.co.in/events/map"
       />
-      <OrganizationSchema />
+      <UnifiedSchema />
 
       {/* Added back to home button */}
       <div className="flex items-center justify-between mb-6">

@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { SEOManager } from "@/components/helmet-manager";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
+import { UnifiedSchema } from "@/components/schema/unified-schema";
 
 export default function NotFound() {
   return (
@@ -11,7 +11,7 @@ export default function NotFound() {
         description="The page you are looking for could not be found. Browse available events and tickets on India's leading ticket marketplace - Ticket Bazaar."
         canonicalUrl="https://ticketbazaar.co.in/404"
       />
-      <OrganizationSchema />
+      <UnifiedSchema />
       <Card className="w-full max-w-md mx-4">
         <CardContent className="pt-6">
           <div className="flex flex-col items-center text-center mb-6">

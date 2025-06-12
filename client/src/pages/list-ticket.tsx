@@ -36,7 +36,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { SEOManager } from "@/components/helmet-manager";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
+import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 

@@ -257,7 +257,7 @@ export default function MapPage() {
           canonicalUrl="https://ticketbazaar.co.in/map"
           keywords="event map, events near me, ticket map, second hand tickets map, event locations, interactive map, concerts near me, sports events map, festival map, India events map"
         >
-          <OrganizationSchema />
+          <UnifiedSchema />
           <BreadcrumbSchema items={[
             { name: "Home", url: "/" },
             { name: "Event Map", url: "/map" }

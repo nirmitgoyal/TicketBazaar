@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SEOManager } from "@/components/helmet-manager";
-import { OrganizationSchema } from "@/components/schema/organization-schema";
+import { UnifiedSchema } from "@/components/schema/unified-schema";
 
 export default function PrivacyPolicy() {
   return (
