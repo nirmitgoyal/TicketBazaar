@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
@@ -7,8 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { userRegisterSchema } from "@shared/schema";
 import { z } from "zod";
+import { getAllCountries, detectUserCountry, getCountryInfo } from "@/lib/country-utils";
+import { getAllCurrencies } from "@/lib/currency-utils";
 
 export default function Register() {
   const [, navigate] = useLocation();
@@ -20,7 +23,28 @@ export default function Register() {
     email: "",
     phone: "",
     instagram: "",
+    country: "",
+    timezone: "",
+    language: "en",
+    currency: "",
+    preferredContactMethod: "email",
   });
+
+  // Auto-detect user's location and preferences on component mount
+  useEffect(() => {
+    const detectedCountry = detectUserCountry();
+    const countryInfo = getCountryInfo(detectedCountry);
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const userLanguage = navigator.language.split('-')[0];
+
+    setFormData(prev => ({
+      ...prev,
+      country: detectedCountry,
+      timezone: userTimezone,
+      language: userLanguage,
+      currency: countryInfo?.currency || "USD",
+    }));
+  }, []);
 
   const registerMutation = useMutation({
     mutationFn: async (userData: z.infer<typeof userRegisterSchema>) => {
