@@ -8,12 +8,16 @@ interface EventCardProps {
   event: Ticket;
   onClick?: () => void;
   index?: number; // For staggered animations
+  ticketCount?: number;
+  hasAvailableTickets?: boolean;
 }
 
 export function EventCard({
   event,
   onClick,
   index = 0,
+  ticketCount = 0,
+  hasAvailableTickets = false,
 }: EventCardProps) {
   const { id, eventTitle: title, venue, eventDate: date } = event;
 
@@ -113,13 +117,26 @@ export function EventCard({
               {venue}
             </motion.p>
             <motion.p
-              className="text-xs text-textSecondary"
+              className="text-xs text-textSecondary mb-1"
               initial={{ opacity: 0, y: 3 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.03 }}
             >
               {formatTime(date)}
             </motion.p>
+            {ticketCount > 0 && (
+              <motion.div
+                className="flex items-center gap-1 mt-1"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.24 + index * 0.03 }}
+              >
+                <div className={`w-2 h-2 rounded-full ${hasAvailableTickets ? 'bg-green-500' : 'bg-gray-400'}`} />
+                <span className="text-xs text-textSecondary">
+                  {ticketCount} ticket{ticketCount !== 1 ? 's' : ''} {hasAvailableTickets ? 'available' : 'listed'}
+                </span>
+              </motion.div>
+            )}
           </div>
         </div>
       </div>
