@@ -25,7 +25,7 @@ import { queryClient } from "@/lib/queryClient";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
-import { UnifiedSchema, ticketHubGlobalFAQs } from "@/components/schema/unified-schema";
+import { UnifiedSchema, ticketBazaarGlobalFAQs } from "@/components/schema/unified-schema";
 import InternationalSEO from "@/components/international-seo";
 import AdvancedStructuredData from "@/components/advanced-structured-data";
 import { 
@@ -617,7 +617,7 @@ export default function Home() {
     generateCategorySEO(selectedCategory);
 
   // Generate structured data for the homepage
-  const faqStructuredData = generateFAQStructuredData(ticketHubGlobalFAQs);
+  const faqStructuredData = generateFAQStructuredData(ticketBazaarGlobalFAQs);
   const searchResultsData = searchQuery && events ? 
     generateSearchResultsStructuredData(searchQuery, events.length, events.map(event => ({
       eventTitle: event.eventTitle || event.title,
@@ -633,13 +633,13 @@ export default function Home() {
 
   // Dynamic title and description based on context
   const dynamicTitle = searchQuery ? 
-    `${searchQuery} Event Tickets Worldwide | Global Discovery - TicketHub` :
+    `${searchQuery} Event Tickets Worldwide | Global Discovery - Ticket Bazaar` :
     selectedCategory === "all" ?
       seoData.title :
-      `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Tickets Worldwide | Global Discovery - TicketHub`;
+      `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Tickets Worldwide | Global Discovery - Ticket Bazaar`;
 
   const dynamicDescription = searchQuery ?
-    `Find ${searchQuery} event tickets worldwide. Connect with verified sellers across multiple countries and currencies on TicketHub's global discovery platform.` :
+    `Find ${searchQuery} event tickets worldwide. Connect with verified sellers across multiple countries and currencies on Ticket Bazaar's global discovery platform.` :
     getGEOOptimizedDescription(selectedCategory === "all" ? "homepage" : "category", { category: selectedCategory });
 
   const dynamicKeywords = getGEOOptimizedKeywords(
@@ -654,12 +654,12 @@ export default function Home() {
         description={dynamicDescription}
         keywords={dynamicKeywords}
         canonicalUrl={selectedCategory === "all" ? 
-          "https://tickethub.global" : 
-          `https://tickethub.global/category/${selectedCategory}`}
+          "https://ticketbazaar.global" : 
+          `https://ticketbazaar.global/category/${selectedCategory}`}
       />
       
       <UnifiedSchema
-        faqs={ticketHubGlobalFAQs}
+        faqs={ticketBazaarGlobalFAQs}
         includeOrganization={true}
       />
       
