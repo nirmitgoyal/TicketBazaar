@@ -546,8 +546,8 @@ export default function MapPage() {
                         </div>
 
                         <div className="flex justify-between items-center pt-2 border-t">
-                          <div className="text-sm font-medium">
-                            ₹{event.price.toLocaleString()}
+                          <div className="text-sm font-medium text-gray-600">
+                            Contact seller for details
                           </div>
                           <Badge 
                             variant={event.status === "available" ? "default" : "secondary"}
