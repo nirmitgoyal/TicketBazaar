@@ -363,15 +363,7 @@ export default function FAQPage() {
             Can't find the answer you're looking for? Our customer support team is here to help you with any questions or concerns.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="https://www.linkedin.com/company/ticket-bazaar-co-in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              <MessageCircle className="h-5 w-5 mr-2" />
-              Contact Support
-            </a>
+            
             <a
               href="mailto:support@ticketbazaar.in"
               className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-semibold rounded-xl border-2 border-primary hover:bg-primary hover:text-white transition-all duration-200 shadow-lg hover:shadow-xl"
