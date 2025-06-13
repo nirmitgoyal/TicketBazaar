@@ -24,6 +24,7 @@ export function useSunsetTheme() {
   const [location, setLocation] = useState<LocationCoords | null>(null);
   const [sunsetData, setSunsetData] = useState<SunsetData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [userThemePreference, setUserThemePreference] = useState<'light' | 'dark' | 'auto'>('auto');
 
   // Get user's location
   const getUserLocation = (): Promise<LocationCoords> => {
@@ -130,9 +131,11 @@ export function useSunsetTheme() {
     initializeTheme();
   }, []);
 
-  // Update theme every minute to catch sunset/sunrise transitions
+
+
+  // Update theme every minute to catch sunset/sunrise transitions (only if auto mode)
   useEffect(() => {
-    if (!sunsetData) return;
+    if (!sunsetData || userThemePreference !== 'auto') return;
 
     const interval = setInterval(() => {
       const shouldBeDark = isDarkTime(sunsetData);
@@ -144,26 +147,27 @@ export function useSunsetTheme() {
     }, 60000); // Check every minute
 
     return () => clearInterval(interval);
-  }, [sunsetData, theme]);
+  }, [sunsetData, theme, userThemePreference]);
 
   // Listen for system theme changes as fallback
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = (e: MediaQueryListEvent) => {
-      // Only use system preference if we don't have sunset data
-      if (!sunsetData && !isLoading) {
+      // Only use system preference if we don't have sunset data and user hasn't set manual preference
+      if (!sunsetData && !isLoading && userThemePreference === 'auto') {
         applyTheme(e.matches ? 'dark' : 'light');
       }
     };
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [sunsetData, isLoading]);
+  }, [sunsetData, isLoading, userThemePreference]);
 
-  // Manual theme toggle (optional)
+  // Manual theme toggle - disables automatic switching
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
+    setUserThemePreference(newTheme);
     applyTheme(newTheme);
   };
 

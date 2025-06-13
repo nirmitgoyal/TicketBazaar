@@ -402,7 +402,6 @@ export function SearchBar({
 
   // Handle autocomplete selection
   const handleAutocompleteSelect = (suggestion: string) => {
-    console.log('Autocomplete clicked:', suggestion);
     setQuery(suggestion);
     setShowAutocomplete(false);
     setAutocompleteIndex(-1);
@@ -410,11 +409,9 @@ export function SearchBar({
     // Immediately navigate to search results for this suggestion
     if (onSearch) {
       // If there's a custom onSearch handler, use it
-      console.log('Using custom onSearch handler');
       onSearch(suggestion.trim(), {});
     } else {
       // Otherwise navigate to the search results page
-      console.log('Navigating to search results page');
       const params = new URLSearchParams();
       params.set("q", suggestion.trim());
       navigate(`/?${params.toString()}`);
