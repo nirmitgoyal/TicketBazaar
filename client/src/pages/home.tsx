@@ -149,10 +149,15 @@ export default function Home() {
       const url = `${endpoint}${params.toString() ? `?${params.toString()}` : ""}`;
 
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
         const res = await fetch(url, {
           credentials: "include",
-          signal: AbortSignal.timeout(8000), // Add timeout to prevent hanging requests
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         if (!res.ok) {
           console.warn(`Failed to fetch events: ${res.status}`);
@@ -161,6 +166,10 @@ export default function Home() {
 
         return res.json();
       } catch (error) {
+        if (error.name === 'AbortError') {
+          console.warn("Events fetch timeout");
+          return [];
+        }
         console.warn("Error fetching events:", error);
         return [];
       }
@@ -181,10 +190,15 @@ export default function Home() {
       const eventIds = events.map(e => e.id).join(',');
       
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
         const response = await fetch(`/api/tickets/batch?eventIds=${eventIds}`, {
-          signal: AbortSignal.timeout(10000), // 10 second timeout
+          signal: controller.signal,
           credentials: "include",
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
           console.warn(`Failed to fetch tickets: ${response.status}`);
@@ -193,6 +207,10 @@ export default function Home() {
 
         return await response.json();
       } catch (error) {
+        if (error.name === 'AbortError') {
+          console.warn("Tickets fetch timeout");
+          return [];
+        }
         console.warn("Error fetching batch tickets:", error);
         return []; // Return empty array on error
       }
@@ -1024,14 +1042,23 @@ export default function Home() {
             </div>
           ) : sortedEvents && sortedEvents.length > 0 ? (
             <div data-testid="event-grid" className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-              {sortedEvents.map((event, index) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  onClick={() => openModal(event.id)}
-                  index={index}
-                />
-              ))}
+              {sortedEvents.map((event, index) => {
+                // Find tickets for this event
+                const eventTickets = tickets?.filter(ticket => 
+                  ticket.eventTitle === event.eventTitle || ticket.id === event.id
+                ) || [];
+                
+                return (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    onClick={() => openModal(event.id)}
+                    index={index}
+                    ticketCount={eventTickets.length}
+                    hasAvailableTickets={eventTickets.some(t => t.status === 'available')}
+                  />
+                );
+              })}
             </div>
           ) : (
             <div className="py-12 text-center">
