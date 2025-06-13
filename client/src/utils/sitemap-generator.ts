@@ -63,7 +63,7 @@ export function generateMainSitemapUrls(): SitemapUrl[] {
  * Generate category sitemap URLs
  */
 export function generateCategorySitemapUrls(): SitemapUrl[] {
-  const baseUrl = 'https://tickethub.global';
+  const baseUrl = 'https://ticketbazaar.global';
   const currentDate = new Date().toISOString().split('T')[0];
 
   return Object.keys(GLOBAL_EVENT_CATEGORIES).map(category => ({
@@ -74,7 +74,7 @@ export function generateCategorySitemapUrls(): SitemapUrl[] {
     alternates: [
       { hreflang: 'en', href: `${baseUrl}/events/category/${category}` },
       { hreflang: 'en-US', href: `${baseUrl}/events/category/${category}` },
-      { hreflang: 'en-GB', href: `https://uk.tickethub.global/events/category/${category}` },
+      { hreflang: 'en-GB', href: `https://uk.ticketbazaar.global/events/category/${category}` },
       { hreflang: 'x-default', href: `${baseUrl}/events/category/${category}` }
     ]
   }));
@@ -84,7 +84,7 @@ export function generateCategorySitemapUrls(): SitemapUrl[] {
  * Generate city sitemap URLs
  */
 export function generateCitySitemapUrls(): SitemapUrl[] {
-  const baseUrl = 'https://tickethub.global';
+  const baseUrl = 'https://ticketbazaar.global';
   const currentDate = new Date().toISOString().split('T')[0];
 
   return Object.entries(GLOBAL_CITIES).map(([slug, city]) => ({
@@ -103,7 +103,7 @@ export function generateCitySitemapUrls(): SitemapUrl[] {
  * Generate event-specific sitemap URLs
  */
 export function generateEventSitemapUrls(events: any[]): SitemapUrl[] {
-  const baseUrl = 'https://tickethub.global';
+  const baseUrl = 'https://ticketbazaar.global';
   const currentDate = new Date().toISOString().split('T')[0];
 
   return events.map(event => ({

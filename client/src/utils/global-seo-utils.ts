@@ -372,18 +372,18 @@ export function generateFAQStructuredData(faqs: Array<{question: string, answer:
  */
 export function generateHreflangLinks(basePath: string = '') {
   const hreflangs = [
-    { lang: 'en', url: `https://tickethub.global${basePath}` },
-    { lang: 'en-US', url: `https://tickethub.global${basePath}` },
-    { lang: 'en-GB', url: `https://uk.tickethub.global${basePath}` },
-    { lang: 'en-AU', url: `https://au.tickethub.global${basePath}` },
-    { lang: 'en-CA', url: `https://ca.tickethub.global${basePath}` },
-    { lang: 'es', url: `https://es.tickethub.global${basePath}` },
-    { lang: 'fr', url: `https://fr.tickethub.global${basePath}` },
-    { lang: 'de', url: `https://de.tickethub.global${basePath}` },
-    { lang: 'it', url: `https://it.tickethub.global${basePath}` },
-    { lang: 'pt', url: `https://pt.tickethub.global${basePath}` },
-    { lang: 'ja', url: `https://ja.tickethub.global${basePath}` },
-    { lang: 'x-default', url: `https://tickethub.global${basePath}` }
+    { lang: 'en', url: `https://ticketbazaar.global${basePath}` },
+    { lang: 'en-US', url: `https://ticketbazaar.global${basePath}` },
+    { lang: 'en-GB', url: `https://uk.ticketbazaar.global${basePath}` },
+    { lang: 'en-AU', url: `https://au.ticketbazaar.global${basePath}` },
+    { lang: 'en-CA', url: `https://ca.ticketbazaar.global${basePath}` },
+    { lang: 'es', url: `https://es.ticketbazaar.global${basePath}` },
+    { lang: 'fr', url: `https://fr.ticketbazaar.global${basePath}` },
+    { lang: 'de', url: `https://de.ticketbazaar.global${basePath}` },
+    { lang: 'it', url: `https://it.ticketbazaar.global${basePath}` },
+    { lang: 'pt', url: `https://pt.ticketbazaar.global${basePath}` },
+    { lang: 'ja', url: `https://ja.ticketbazaar.global${basePath}` },
+    { lang: 'x-default', url: `https://ticketbazaar.global${basePath}` }
   ];
 
   return hreflangs;
