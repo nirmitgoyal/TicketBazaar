@@ -149,7 +149,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
             >
               <div className="text-center">
                 <TrustScoreMeter
-                  score={verificationResult.verification.event.confidence}
+                  score={verificationResult?.verificationResults?.event?.confidence || 0}
                   label="Event"
                   size="sm"
                   showDetails={false}
@@ -158,7 +158,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
               </div>
               <div className="text-center">
                 <TrustScoreMeter
-                  score={verificationResult.verification.seller.confidence}
+                  score={verificationResult?.verificationResults?.seller?.confidence || 0}
                   label="Seller"
                   size="sm"
                   showDetails={false}
@@ -167,7 +167,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
               </div>
               <div className="text-center">
                 <TrustScoreMeter
-                  score={verificationResult.verification.pricing.confidence}
+                  score={verificationResult?.verificationResults?.pricing?.confidence || 0}
                   label="Pricing"
                   size="sm"
                   showDetails={false}
@@ -188,7 +188,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
                 AI Analysis
               </div>
               <div className="text-xs text-gray-600 space-y-1">
-                {verificationResult.verification.overall.reasons?.map((reason: string, index: number) => (
+                {verificationResult?.recommendations?.map((reason: string, index: number) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, x: -10 }}
@@ -199,7 +199,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
                     <div className="w-1 h-1 bg-blue-500 rounded-full mt-1.5 flex-shrink-0" />
                     <span>{reason}</span>
                   </motion.div>
-                ))}
+                )) || []}
               </div>
             </motion.div>
             
