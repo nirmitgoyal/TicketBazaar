@@ -286,25 +286,40 @@ export type Event = Ticket;
 // Pure P2P model - transactions and disputes removed
 
 // Extended schemas with validations for forms
-export const ticketListingSchema = insertTicketSchema
-  .omit({ id: true, createdAt: true, sellerId: true })
-  .extend({
-    transferMethod: z.enum(["in-person", "electronic", "mail", "digital"]),
-    eventTitle: z.string().min(1, "Event title is required"),
-    venue: z.string().min(1, "Venue is required"),
-    eventDate: z.date(),
-    category: z.enum([
-      "concerts", "sports", "theater", "comedy", "festivals", 
-      "conferences", "exhibitions", "movies", "dance", "opera",
-      "classical", "family", "nightlife", "education", "networking"
-    ]),
-    city: z.string().min(1, "City is required"),
-    country: z.string().length(2, "Country must be 2-letter ISO code"),
-    state: z.string().optional(),
-    postalCode: z.string().optional(),
-    eventTimezone: z.string().default("UTC"),
-    ageRestriction: z.string().optional(),
-  });
+export const ticketListingSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  eventTitle: z.string().min(1, "Event title is required"),
+  eventDescription: z.string().optional(),
+  venue: z.string().min(1, "Venue is required"),
+  venueAddress: z.string().optional(),
+  eventDate: z.coerce.date(),
+  category: z.enum([
+    "concerts", "sports", "theater", "comedy", "festivals", 
+    "conferences", "exhibitions", "movies", "dance", "opera",
+    "classical", "family", "nightlife", "education", "networking"
+  ]),
+  eventImageUrl: z.string().optional(),
+  trending: z.boolean().default(false),
+  sellingFast: z.boolean().default(false),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  city: z.string().min(1, "City is required"),
+  country: z.string().length(2, "Country must be 2-letter ISO code"),
+  state: z.string().optional(),
+  postalCode: z.string().optional(),
+  section: z.string().optional(),
+  row: z.string().optional(),
+  seat: z.string().optional(),
+  quantity: z.number().int().positive(),
+  status: z.string().default("available"),
+  isTransferrable: z.boolean().default(true),
+  transferMethod: z.enum(["in-person", "electronic", "mail", "digital"]),
+  additionalInfo: z.string().optional(),
+  showContactInfo: z.boolean().default(false),
+  eventTimezone: z.string().default("UTC"),
+  ageRestriction: z.string().optional(),
+  expiresAt: z.coerce.date().optional(),
+});
 
 export const userRegisterSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
