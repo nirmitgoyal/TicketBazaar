@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, Info, MapPin, X, Globe, DollarSign } from "lucide-react";
+import { AlertCircle, Info, MapPin, X, Globe } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
@@ -40,7 +40,7 @@ import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 import { getAllCountries, getCountryInfo, detectUserCountry } from "@/lib/country-utils";
-import { getAllCurrencies, formatCurrency } from "@/lib/currency-utils";
+
 import { ticketListingSchema } from "@shared/schema";
 
 // Use the global ticket listing schema with international support
@@ -100,7 +100,7 @@ export default function ListTicket() {
 
     if (countryInfo) {
       form.setValue("country", detectedCountry);
-      form.setValue("currency", countryInfo.currency);
+
       form.setValue("eventTimezone", userTimezone);
     }
   }, [form]);

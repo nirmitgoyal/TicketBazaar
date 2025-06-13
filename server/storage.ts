@@ -389,7 +389,7 @@ export class DatabaseStorage implements IStorage {
   async getTicketsByEvent(eventTitle: string): Promise<Ticket[]> {
     return await db.select().from(tickets)
       .where(eq(tickets.eventTitle, eventTitle))
-      .orderBy(desc(tickets.price))
+      .orderBy(desc(tickets.eventDate))
       .limit(20);
   }
 
@@ -468,7 +468,6 @@ export class DatabaseStorage implements IStorage {
         name: string;
         count: number;
         available: number;
-        priceSum: number;
       }
     >();
 
@@ -483,13 +482,11 @@ export class DatabaseStorage implements IStorage {
           name: sectionName,
           count: 0,
           available: 0,
-          priceSum: 0,
         });
       }
 
       const section = sections.get(sectionId)!;
       section.count++;
-      section.priceSum += 100; // Default price for calculation purposes
 
       if (ticket.status === "available") {
         section.available++;
@@ -512,10 +509,6 @@ export class DatabaseStorage implements IStorage {
           popularity,
           availableTickets: section.available,
           totalTickets: section.count,
-          averagePrice:
-            section.count > 0
-              ? Math.round(section.priceSum / section.count)
-              : 0,
         };
       },
     );
