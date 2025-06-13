@@ -371,8 +371,8 @@ export default function Home() {
               </Button>
             </div>
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {/* Main Content */}
       <section className="py-8">
