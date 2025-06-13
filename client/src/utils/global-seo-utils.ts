@@ -297,7 +297,7 @@ export function generateSearchResultsStructuredData(query: string, resultCount: 
   return {
     "@context": "https://schema.org",
     "@type": "SearchResultsPage",
-    "url": `https://tickethub.global/search?q=${encodeURIComponent(query)}`,
+    "url": `https://ticketbazaar.global/search?q=${encodeURIComponent(query)}`,
     "mainEntity": {
       "@type": "ItemList",
       "numberOfItems": resultCount,
