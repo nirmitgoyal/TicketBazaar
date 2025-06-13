@@ -84,6 +84,7 @@ export default function Home() {
     const maxPrice = urlParams.get("maxPrice");
     const dateRange = urlParams.get("dateRange");
     const location = urlParams.get("location");
+    const city = urlParams.get("city");
     const date = urlParams.get("date");
     const sortBy = urlParams.get("sortBy");
     const verified = urlParams.get("verified");
@@ -101,6 +102,7 @@ export default function Home() {
     const searchFilters: SearchFilters = {};
     if (categoryFromUrl) searchFilters.category = categoryFromUrl;
     if (location) searchFilters.location = location;
+    if (city) searchFilters.city = city;
     if (date) {
       try {
         searchFilters.date = parseISO(date);
@@ -114,7 +116,7 @@ export default function Home() {
 
     setFilters(urlFilters);
     setSelectedSearchFilters(searchFilters);
-  }, [location, params.category]);
+  }, [location, params.category, searchParams]);
 
   // Get search query from URL if present
   const searchQuery = searchParams?.get("q") || "";
@@ -138,6 +140,7 @@ export default function Home() {
       // Add all filters to query params
       if (filters.category) params.set("category", filters.category);
       if (filters.location) params.set("location", filters.location);
+      if (filters.city) params.set("city", filters.city);
       if (filters.date) params.set("date", format(filters.date, "yyyy-MM-dd"));
       if (filters.dateRange) params.set("dateRange", filters.dateRange);
       if (filters.trending) params.set("trending", "true");

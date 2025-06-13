@@ -403,12 +403,32 @@ export function SearchBar({
     
     // Immediately navigate to search results for this suggestion
     if (onSearch) {
-      // If there's a custom onSearch handler, use it
-      onSearch(suggestionText.trim(), {});
+      // If there's a custom onSearch handler, use it with appropriate filters
+      const filters: SearchFilters = {};
+      
+      // Apply filters based on suggestion type
+      if (suggestion.type === 'city') {
+        filters.city = suggestionText.trim();
+      } else if (suggestion.type === 'venue') {
+        filters.location = suggestionText.trim();
+      } else if (suggestion.type === 'event') {
+        // For events, search by the event title
+        // Don't apply city filter, let the event title search naturally
+      }
+      
+      onSearch(suggestionText.trim(), filters);
     } else {
       // Otherwise navigate to the search results page
       const params = new URLSearchParams();
       params.set("q", suggestionText.trim());
+      
+      // Add appropriate filters to URL based on suggestion type
+      if (suggestion.type === 'city') {
+        params.set("city", suggestionText.trim());
+      } else if (suggestion.type === 'venue') {
+        params.set("location", suggestionText.trim());
+      }
+      
       navigate(`/?${params.toString()}`);
     }
   };
