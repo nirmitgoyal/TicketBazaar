@@ -232,12 +232,20 @@ export class DatabaseStorage implements IStorage {
     userId: number,
     instagram: string,
   ): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set({ instagram })
-      .where(eq(users.id, userId))
-      .returning();
-    return user || undefined;
+    try {
+      const [user] = await db
+        .update(users)
+        .set({ instagram })
+        .where(eq(users.id, userId))
+        .returning();
+      
+      // Clear cache after update
+      this.userCache.delete(userId);
+      return user || undefined;
+    } catch (error) {
+      console.error('Error updating user Instagram:', error);
+      return undefined;
+    }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
