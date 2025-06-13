@@ -31,7 +31,6 @@ export interface SeatSection {
   popularity: number; // 0-100 scale
   availableTickets: number;
   totalTickets: number;
-  averagePrice: number;
 }
 
 export interface VenueMap {
@@ -64,8 +63,6 @@ export interface IStorage {
       category?: string;
       location?: string;
       date?: Date;
-      minPrice?: number;
-      maxPrice?: number;
       trending?: boolean;
       sellingFast?: boolean;
       dateRange?: string;
@@ -251,7 +248,7 @@ export class DatabaseStorage implements IStorage {
   async getEventTickets(eventTitle: string): Promise<Ticket[]> {
     return await db.select().from(tickets)
       .where(eq(tickets.eventTitle, eventTitle))
-      .orderBy(desc(tickets.price))
+      .orderBy(desc(tickets.eventDate))
       .limit(20);
   }
 
@@ -323,10 +320,7 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(tickets.country, filters.country));
     }
 
-    // Filter by currency
-    if (filters?.currency && filters.currency !== "all") {
-      conditions.push(eq(tickets.currency, filters.currency));
-    }
+
 
     // Filter by location/venue
     if (filters?.location) {
@@ -350,13 +344,7 @@ export class DatabaseStorage implements IStorage {
       }
     }
 
-    // Filter by price range
-    if (filters?.minPrice) {
-      conditions.push(sql`${tickets.price} >= ${filters.minPrice}`);
-    }
-    if (filters?.maxPrice) {
-      conditions.push(sql`${tickets.price} <= ${filters.maxPrice}`);
-    }
+
 
     // Filter by trending
     if (filters?.trending) {
