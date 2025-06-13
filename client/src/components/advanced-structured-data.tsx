@@ -25,14 +25,14 @@ export const AdvancedStructuredData: React.FC<AdvancedStructuredDataProps> = ({
   const generateMarketplaceData = () => ({
     "@context": "https://schema.org",
     "@type": "OnlineMarketplace",
-    "name": "TicketHub",
+    "name": "Ticket Bazaar",
     "description": "Global ticket discovery and contact platform connecting verified buyers and sellers worldwide",
-    "url": "https://tickethub.global",
-    "logo": "https://tickethub.global/logo.svg",
+    "url": "https://ticketbazaar.global",
+    "logo": "https://ticketbazaar.global/logo.svg",
     "foundingDate": "2024",
     "founder": {
       "@type": "Organization",
-      "name": "TicketHub Global"
+      "name": "Ticket Bazaar"
     },
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
@@ -81,8 +81,8 @@ export const AdvancedStructuredData: React.FC<AdvancedStructuredDataProps> = ({
   const generateDiscoveryData = () => ({
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "TicketHub - Global Ticket Discovery",
-    "url": "https://tickethub.global",
+    "name": "Ticket Bazaar - Global Ticket Discovery",
+    "url": "https://ticketbazaar.global",
     "description": "Discover and connect with verified ticket buyers and sellers worldwide for concerts, comedy shows, sports events, travel experiences, movies, and festivals",
     "inLanguage": "en-US",
     "isAccessibleForFree": true,
@@ -90,25 +90,25 @@ export const AdvancedStructuredData: React.FC<AdvancedStructuredDataProps> = ({
       {
         "@type": "WebPage",
         "name": "Global Cities",
-        "url": "https://tickethub.global/cities",
+        "url": "https://ticketbazaar.global/cities",
         "description": "Explore event tickets in major cities worldwide"
       },
       {
         "@type": "WebPage", 
         "name": "Event Categories",
-        "url": "https://tickethub.global/events/category",
+        "url": "https://ticketbazaar.global/events/category",
         "description": "Browse events by category including concerts, sports, comedy, and more"
       }
     ],
     "potentialAction": [
       {
         "@type": "SearchAction",
-        "target": "https://tickethub.global/search?q={search_term_string}",
+        "target": "https://ticketbazaar.global/search?q={search_term_string}",
         "query-input": "required name=search_term_string"
       },
       {
         "@type": "DiscoverAction",
-        "target": "https://tickethub.global/cities",
+        "target": "https://ticketbazaar.global/cities",
         "object": {
           "@type": "Place",
           "name": "Global Cities"
@@ -117,7 +117,7 @@ export const AdvancedStructuredData: React.FC<AdvancedStructuredDataProps> = ({
     ],
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://tickethub.global"
+      "@id": "https://ticketbazaar.global"
     }
   });
 
@@ -128,9 +128,9 @@ export const AdvancedStructuredData: React.FC<AdvancedStructuredDataProps> = ({
     return {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
-      "name": `TicketHub ${location.city}`,
+      "name": `Ticket Bazaar ${location.city}`,
       "description": `Ticket discovery platform serving ${location.city}, ${location.country}`,
-      "url": `https://tickethub.global/city/${location.city.toLowerCase().replace(/\s+/g, '-')}`,
+      "url": `https://ticketbazaar.global/city/${location.city.toLowerCase().replace(/\s+/g, '-')}`,
       "areaServed": {
         "@type": "City",
         "name": location.city,
@@ -155,21 +155,21 @@ export const AdvancedStructuredData: React.FC<AdvancedStructuredDataProps> = ({
   const generateWebPageData = () => ({
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": data.title || "TicketHub - Global Ticket Discovery Platform",
+    "name": data.title || "Ticket Bazaar - Global Ticket Discovery Platform",
     "description": data.description || "Discover and connect with verified ticket sellers worldwide",
-    "url": data.url || "https://tickethub.global",
+    "url": data.url || "https://ticketbazaar.global",
     "inLanguage": "en-US",
     "isPartOf": {
       "@type": "WebSite",
-      "name": "TicketHub",
-      "url": "https://tickethub.global"
+      "name": "Ticket Bazaar",
+      "url": "https://ticketbazaar.global"
     },
     "mainEntity": {
       "@type": "Service",
       "name": "Global Ticket Discovery",
       "provider": {
         "@type": "Organization",
-        "name": "TicketHub"
+        "name": "Ticket Bazaar"
       }
     },
     "breadcrumb": data.breadcrumbs ? {

@@ -73,12 +73,12 @@ export const InternationalSEO: React.FC<InternationalSEOProps> = ({
       <meta name="payment-methods" content="varies-by-region" />
       
       {/* DNS prefetch for international domains */}
-      <link rel="dns-prefetch" href="//uk.tickethub.global" />
-      <link rel="dns-prefetch" href="//au.tickethub.global" />
-      <link rel="dns-prefetch" href="//ca.tickethub.global" />
-      <link rel="dns-prefetch" href="//es.tickethub.global" />
-      <link rel="dns-prefetch" href="//fr.tickethub.global" />
-      <link rel="dns-prefetch" href="//de.tickethub.global" />
+      <link rel="dns-prefetch" href="//uk.ticketbazaar.global" />
+      <link rel="dns-prefetch" href="//au.ticketbazaar.global" />
+      <link rel="dns-prefetch" href="//ca.ticketbazaar.global" />
+      <link rel="dns-prefetch" href="//es.ticketbazaar.global" />
+      <link rel="dns-prefetch" href="//fr.ticketbazaar.global" />
+      <link rel="dns-prefetch" href="//de.ticketbazaar.global" />
       
       {children}
     </Helmet>

@@ -675,8 +675,8 @@ export default function Home() {
           title: dynamicTitle,
           description: dynamicDescription,
           url: selectedCategory === "all" ? 
-            "https://tickethub.global" : 
-            `https://tickethub.global/category/${selectedCategory}`
+            "https://ticketbazaar.global" : 
+            `https://ticketbazaar.global/category/${selectedCategory}`
         }}
       />
       
