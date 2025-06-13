@@ -155,17 +155,20 @@ export default function Home() {
         });
 
         if (!res.ok) {
-          throw new Error("Failed to fetch events");
+          console.warn(`Failed to fetch events: ${res.status}`);
+          return [];
         }
 
         return res.json();
       } catch (error) {
-        console.error("Error fetching events:", error);
-        throw error;
+        console.warn("Error fetching events:", error);
+        return [];
       }
     },
     staleTime: 60000, // Cache results for 1 minute
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    retry: false,
+    throwOnError: false
   });
 
   // Fetch all available tickets - optimized single batch request
