@@ -19,9 +19,9 @@ export function EventCard({
 
   const formatDate = (date: Date | string) => {
     try {
-      return format(new Date(date), "MMM");
+      return format(new Date(date), "MMM yyyy");
     } catch {
-      return "---";
+      return "--- ----";
     }
   };
 
