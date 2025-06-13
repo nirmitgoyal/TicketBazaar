@@ -20,8 +20,6 @@ export interface EventSEOData {
   country: string;
   category: string;
   date: Date;
-  price: number;
-  currency: string;
 }
 
 export interface LocationSEOData {
@@ -29,7 +27,6 @@ export interface LocationSEOData {
   country: string;
   countryCode: string;
   timezone: string;
-  currency: string;
 }
 
 // Global event categories with SEO-optimized keywords
@@ -275,8 +272,6 @@ export function generateEventStructuredData(event: EventSEOData) {
     },
     "offers": {
       "@type": "Offer",
-      "price": event.price.toString(),
-      "priceCurrency": event.currency,
       "availability": "https://schema.org/InStock",
       "url": `https://ticketbazaar.global/event/${event.eventTitle.toLowerCase().replace(/\s+/g, '-')}`
     },
@@ -319,8 +314,7 @@ export function generateSearchResultsStructuredData(query: string, resultCount: 
           },
           "offers": {
             "@type": "Offer",
-            "price": event.price.toString(),
-            "priceCurrency": event.currency
+            "availability": "https://schema.org/InStock"
           }
         }
       }))

@@ -202,8 +202,6 @@ export const UnifiedSchema: React.FC<UnifiedSchemaProps> = ({
       category: "Event Ticket",
       offers: {
         "@type": "Offer",
-        price: ticket.price.toString(),
-        priceCurrency: "INR",
         availability: ticket.status === "available" ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       },
     });

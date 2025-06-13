@@ -14,7 +14,6 @@ export interface EventSEOData {
   date: string;
   category: string;
   city: string;
-  price?: number;
   imageUrl?: string;
   latitude?: number;
   longitude?: number;

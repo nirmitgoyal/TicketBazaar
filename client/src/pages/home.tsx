@@ -626,9 +626,7 @@ export default function Home() {
       city: event.city || '',
       country: event.country || 'Global',
       category: event.category,
-      date: new Date(event.eventDate),
-      price: event.price || 0,
-      currency: event.currency || 'USD'
+      date: new Date(event.eventDate)
     }))) : null;
 
   // Dynamic title and description based on context
