@@ -6,7 +6,7 @@ import { UserCircle, Menu, X, Map, Ticket } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeInDown, listItem, staggerContainer } from "@/lib/animations";
 import { RealTimeNotifications } from "@/components/real-time-notifications";
-import { ThemeStatus } from "@/components/theme-status";
+
 
 export function Navigation() {
   const { user, isAuthenticated, logoutMutation } = useAuth();
@@ -181,14 +181,7 @@ export function Navigation() {
               </motion.button>
             )}
 
-            {/* Theme Status Component */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: 0.2 }}
-            >
-              <ThemeStatus />
-            </motion.div>
+
           </motion.div>
 
           {/* Mobile Navigation Controls */}
