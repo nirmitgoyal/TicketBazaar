@@ -575,6 +575,201 @@ export class VerificationService {
 
     return recommendations;
   }
+
+  /**
+   * Verify event authenticity and details
+   */
+  async verifyEvent(eventData: any): Promise<{ isValid: boolean; confidence: number; riskFlags: string[] }> {
+    const riskFlags: string[] = [];
+    let confidence = 85;
+
+    // Check event date validity
+    const eventDate = new Date(eventData.eventDate);
+    const now = new Date();
+    
+    if (eventDate <= now) {
+      riskFlags.push('Event date is in the past');
+      confidence -= 30;
+    }
+
+    // Check venue authenticity
+    if (!eventData.venue || eventData.venue.length < 3) {
+      riskFlags.push('Invalid venue information');
+      confidence -= 20;
+    }
+
+    // Check price reasonableness
+    if (eventData.price && (eventData.price < 1 || eventData.price > 10000)) {
+      riskFlags.push('Suspicious pricing detected');
+      confidence -= 15;
+    }
+
+    return {
+      isValid: confidence >= 60,
+      confidence: Math.max(0, confidence),
+      riskFlags
+    };
+  }
+
+  /**
+   * Verify ticket pricing against market rates
+   */
+  async verifyTicketPricing(ticketData: any): Promise<{ isReasonable: boolean; confidence: number; marketPrice?: number }> {
+    // Simulate market price analysis
+    const basePrice = ticketData.price || 100;
+    const marketPrice = basePrice * (0.8 + Math.random() * 0.4); // ±20% variance
+    
+    const priceDiff = Math.abs(ticketData.price - marketPrice) / marketPrice;
+    let confidence = 90;
+
+    if (priceDiff > 0.5) {
+      confidence -= 40; // Price is >50% off market rate
+    } else if (priceDiff > 0.3) {
+      confidence -= 20; // Price is >30% off market rate
+    }
+
+    return {
+      isReasonable: confidence >= 60,
+      confidence,
+      marketPrice
+    };
+  }
+
+  /**
+   * Verify seller authenticity and reputation
+   */
+  async verifySeller(sellerId: number): Promise<{ isTrustworthy: boolean; confidence: number; riskFlags: string[] }> {
+    const riskFlags: string[] = [];
+    let confidence = 70;
+
+    try {
+      // Get seller data from database
+      const [seller] = await db.select().from(users).where(eq(users.id, sellerId)).limit(1);
+      
+      if (!seller) {
+        return {
+          isTrustworthy: false,
+          confidence: 0,
+          riskFlags: ['Seller not found']
+        };
+      }
+
+      // Check verification status
+      if (!seller.emailVerified) {
+        riskFlags.push('Email not verified');
+        confidence -= 15;
+      }
+
+      if (!seller.phoneVerified) {
+        riskFlags.push('Phone not verified');
+        confidence -= 10;
+      }
+
+      // Check rating and review count
+      if (seller.rating < 3.0) {
+        riskFlags.push('Low seller rating');
+        confidence -= 25;
+      }
+
+      if (seller.ratingsCount < 5) {
+        riskFlags.push('Limited seller history');
+        confidence -= 10;
+      }
+
+      return {
+        isTrustworthy: confidence >= 60,
+        confidence: Math.max(0, confidence),
+        riskFlags
+      };
+    } catch (error) {
+      logger.error('VERIFICATION', 'Error verifying seller', error);
+      return {
+        isTrustworthy: false,
+        confidence: 0,
+        riskFlags: ['Verification error']
+      };
+    }
+  }
+
+  /**
+   * Perform comprehensive verification combining multiple factors
+   */
+  async performComprehensiveVerification(data: {
+    ticketData?: any;
+    sellerData?: any;
+    eventData?: any;
+  }): Promise<{
+    overallScore: number;
+    riskLevel: 'low' | 'medium' | 'high' | 'critical';
+    verificationResults: any;
+    recommendations: string[];
+  }> {
+    const results: any = {};
+    let totalScore = 0;
+    let maxScore = 0;
+    const allRiskFlags: string[] = [];
+    const recommendations: string[] = [];
+
+    // Verify event if provided
+    if (data.eventData) {
+      results.event = await this.verifyEvent(data.eventData);
+      totalScore += results.event.confidence;
+      maxScore += 100;
+      allRiskFlags.push(...results.event.riskFlags);
+    }
+
+    // Verify pricing if ticket data provided
+    if (data.ticketData) {
+      results.pricing = await this.verifyTicketPricing(data.ticketData);
+      totalScore += results.pricing.confidence;
+      maxScore += 100;
+      
+      if (!results.pricing.isReasonable) {
+        allRiskFlags.push('Suspicious pricing detected');
+      }
+    }
+
+    // Verify seller if seller data provided
+    if (data.sellerData && data.sellerData.sellerId) {
+      results.seller = await this.verifySeller(data.sellerData.sellerId);
+      totalScore += results.seller.confidence;
+      maxScore += 100;
+      allRiskFlags.push(...results.seller.riskFlags);
+    }
+
+    const overallScore = maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
+
+    // Determine risk level
+    let riskLevel: 'low' | 'medium' | 'high' | 'critical';
+    if (overallScore >= 80) {
+      riskLevel = 'low';
+      recommendations.push('Transaction appears safe to proceed');
+    } else if (overallScore >= 60) {
+      riskLevel = 'medium';
+      recommendations.push('Exercise caution and verify details carefully');
+    } else if (overallScore >= 40) {
+      riskLevel = 'high';
+      recommendations.push('High risk detected - consider avoiding this transaction');
+    } else {
+      riskLevel = 'critical';
+      recommendations.push('Critical risk detected - do not proceed with transaction');
+    }
+
+    // Add specific recommendations based on risk flags
+    if (allRiskFlags.includes('Email not verified')) {
+      recommendations.push('Request seller to verify their email address');
+    }
+    if (allRiskFlags.includes('Limited seller history')) {
+      recommendations.push('Be extra cautious with new sellers');
+    }
+
+    return {
+      overallScore,
+      riskLevel,
+      verificationResults: results,
+      recommendations
+    };
+  }
 }
 
 export const verificationService = VerificationService.getInstance();

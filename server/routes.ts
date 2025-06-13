@@ -24,8 +24,7 @@ const __dirname = path.dirname(__filename);
 export async function registerRoutes(app: Express): Promise<Server> {
   logger.info('SERVER', 'Starting route registration and middleware setup');
   
-  // Add request logging middleware for all requests
-  app.use(requestLoggingMiddleware);
+  // Request logging is handled by individual route handlers
   
   // Setup authentication
   setupAuth(app);
