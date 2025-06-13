@@ -3,6 +3,11 @@ import { validateBody } from "../middleware/validation.middleware";
 import { ticketListingSchema } from "@shared/schema";
 import { TicketController } from "../controllers/ticket.controller";
 import { isAuthenticated } from "../middleware/auth.middleware";
+import { 
+  assessTicketListingFraud, 
+  addFraudAssessmentToResponse,
+  verificationBasedRateLimit 
+} from "../middleware/fraud-protection.middleware";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
