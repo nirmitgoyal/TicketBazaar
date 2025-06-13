@@ -168,7 +168,7 @@ export class DatabaseStorage implements IStorage {
       const duration = Date.now() - startTime;
       
       if (duration > 1000) {
-        logger.dbOperation('SELECT', 'users', duration, id);
+        logger.info('DATABASE', `Slow query: SELECT users by id ${id} took ${duration}ms`);
       }
 
       // Cache the result if user exists
@@ -179,7 +179,7 @@ export class DatabaseStorage implements IStorage {
       return user || undefined;
     } catch (error) {
       const duration = Date.now() - startTime;
-      logger.dbOperation('SELECT', 'users', duration, id, error);
+      logger.error('DATABASE', `Error in SELECT users by id ${id} (${duration}ms)`, error);
       throw error;
     }
   }
@@ -190,12 +190,12 @@ export class DatabaseStorage implements IStorage {
       const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
       const duration = Date.now() - startTime;
       if (duration > 1000) {
-        logger.dbOperation('SELECT', 'users', duration);
+        logger.info('DATABASE', `Slow query: SELECT users by email took ${duration}ms`);
       }
       return user || undefined;
     } catch (error) {
       const duration = Date.now() - startTime;
-      logger.dbOperation('SELECT', 'users', duration, undefined, error);
+      logger.error('DATABASE', `Error in SELECT users by email (${duration}ms)`, error);
       throw error;
     }
   }

@@ -12,7 +12,7 @@ import contactRequestRoutes from "./routes/contact-requests";
 import searchHintsRoutes from "./routes/search-hints";
 import dataPrivacyRoutes from "./routes/data-privacy";
 import { WebSocketService } from "./services/websocket.service";
-import { logger, requestLoggingMiddleware } from "./utils/logger";
+import { logger } from "./utils/logger";
 import { cleanupService } from "./services/cleanup.service";
 import path from "path";
 import { fileURLToPath } from "url";

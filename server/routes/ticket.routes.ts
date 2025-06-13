@@ -150,12 +150,22 @@ router.post(
   },
 );
 
-// Create a new ticket listing (now expects file info)
-router.post("/", isAuthenticated, ticketController.createTicket);
+// Create a new ticket listing with fraud detection
+router.post("/", 
+  isAuthenticated, 
+  verificationBasedRateLimit,
+  assessTicketListingFraud,
+  addFraudAssessmentToResponse,
+  ticketController.createTicket
+);
 
-// Create ticket with event details
-router.post("/with-event", isAuthenticated, (req, res) =>
-  ticketController.createTicketWithEvent(req, res),
+// Create ticket with event details and fraud detection
+router.post("/with-event", 
+  isAuthenticated, 
+  verificationBasedRateLimit,
+  assessTicketListingFraud,
+  addFraudAssessmentToResponse,
+  (req, res) => ticketController.createTicketWithEvent(req, res)
 );
 
 // Generate QR code for ticket

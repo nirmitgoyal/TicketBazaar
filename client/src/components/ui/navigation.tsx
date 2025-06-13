@@ -130,6 +130,19 @@ export function Navigation() {
 
                 <motion.button
                   className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
+                    location === "/enhanced-verification"
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-muted-foreground hover:text-primary hover:bg-accent"
+                  }`}
+                  onClick={() => handleNavigation("/enhanced-verification")}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Verification
+                </motion.button>
+
+                <motion.button
+                  className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
                     location === "/profile"
                       ? "bg-primary/10 text-primary font-medium"
                       : "text-muted-foreground hover:text-primary hover:bg-accent"

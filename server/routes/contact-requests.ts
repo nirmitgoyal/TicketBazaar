@@ -6,26 +6,37 @@ import {
   contactRequestSchema,
   insertContactRequestSchema,
 } from "@shared/schema";
+import { 
+  assessContactRequestFraud, 
+  addFraudAssessmentToResponse,
+  verificationBasedRateLimit 
+} from "../middleware/fraud-protection.middleware";
 
 const router = Router();
 
-// Create a contact request
-router.post("/", isAuthenticated, async (req, res) => {
-  try {
-    const validatedData = insertContactRequestSchema.parse(req.body);
-    const contactRequest = await storage.createContactRequest(validatedData);
-    res.status(201).json(contactRequest);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      res
-        .status(400)
-        .json({ error: "Validation failed", details: error.errors });
-    } else {
-      console.error("Error creating contact request:", error);
-      res.status(500).json({ error: "Failed to create contact request" });
+// Create a contact request with fraud detection
+router.post("/", 
+  isAuthenticated, 
+  verificationBasedRateLimit,
+  assessContactRequestFraud,
+  addFraudAssessmentToResponse,
+  async (req, res) => {
+    try {
+      const validatedData = insertContactRequestSchema.parse(req.body);
+      const contactRequest = await storage.createContactRequest(validatedData);
+      res.status(201).json(contactRequest);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res
+          .status(400)
+          .json({ error: "Validation failed", details: error.errors });
+      } else {
+        console.error("Error creating contact request:", error);
+        res.status(500).json({ error: "Failed to create contact request" });
+      }
     }
   }
-});
+);
 
 // Get contact requests for the current user (as requester)
 router.get("/my-requests", isAuthenticated, async (req, res) => {
