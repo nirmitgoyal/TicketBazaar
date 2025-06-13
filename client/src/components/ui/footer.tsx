@@ -14,11 +14,12 @@ export function Footer() {
             <div className="flex items-center space-x-1 mb-4">
               <Ticket className="h-6 w-6 text-primary" />
               <h3 className="text-lg font-bold font-poppins text-primary">
-                Ticket Bazaar
+                TicketHub
               </h3>
+              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Global</span>
             </div>
             <p className="text-sm text-textSecondary mb-4">
-              Discovery and contact platform for event tickets. We are not a reseller or broker - we don't handle payments, hold inventory, or facilitate transactions. We ensure legal compliance in peer-to-peer transfers.
+              Global ticket discovery and contact platform connecting verified buyers and sellers worldwide for concerts, comedy shows, sports events, travel experiences, movies, and festivals across multiple countries and currencies.
             </p>
             <div className="flex space-x-3">
               <a

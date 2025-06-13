@@ -130,6 +130,10 @@ function Router() {
       {/* Category routes - all redirect to home with category filter */}
       <Route path="/events/category/:category" component={Home} />
 
+      {/* Global city routes for SEO */}
+      <Route path="/cities" component={GlobalCities} />
+      <Route path="/city/:citySlug" component={CityEvents} />
+
       {/* Auth routes */}
       <Route path="/auth" component={Login} />
       <Route path="/login" component={Login} />

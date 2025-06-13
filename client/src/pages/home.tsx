@@ -26,6 +26,8 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema, ticketHubGlobalFAQs } from "@/components/schema/unified-schema";
+import InternationalSEO from "@/components/international-seo";
+import AdvancedStructuredData from "@/components/advanced-structured-data";
 import { 
   generateHomepageSEO, 
   generateCategorySEO, 
@@ -659,6 +661,23 @@ export default function Home() {
       <UnifiedSchema
         faqs={ticketHubGlobalFAQs}
         includeOrganization={true}
+      />
+      
+      <InternationalSEO 
+        currentPath={location}
+        currentCountry="GLOBAL"
+      />
+      
+      <AdvancedStructuredData
+        type={selectedCategory === "all" ? "discovery" : "marketplace"}
+        events={events || []}
+        data={{
+          title: dynamicTitle,
+          description: dynamicDescription,
+          url: selectedCategory === "all" ? 
+            "https://tickethub.global" : 
+            `https://tickethub.global/category/${selectedCategory}`
+        }}
       />
       
       {searchResultsData && (
