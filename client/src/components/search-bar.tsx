@@ -175,54 +175,119 @@ export function SearchBar({
       const params = new URLSearchParams();
       params.set('q', debouncedAutocompleteQuery);
       
-      const response = await fetch(`/api/events/search?${params}`);
+      const response = await fetch(`/api/autocomplete/suggestions?${params}`);
       if (!response.ok) throw new Error('Failed to fetch suggestions');
       
       const results = await response.json();
       
+      // The autocomplete endpoint already returns structured suggestions
+      return results;
+      
       // Extract and prioritize suggestions from the results
       const suggestions = new Map<string, { text: string; type: string; priority: number; category?: string }>();
       
+      // Helper function to calculate string similarity (for typo tolerance)
+      const calculateSimilarity = (str1: string, str2: string): number => {
+        const longer = str1.length > str2.length ? str1 : str2;
+        const shorter = str1.length > str2.length ? str2 : str1;
+        const editDistance = levenshteinDistance(longer, shorter);
+        return (longer.length - editDistance) / longer.length;
+      };
+      
+      // Simple Levenshtein distance calculation
+      const levenshteinDistance = (str1: string, str2: string): number => {
+        const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
+        for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
+        for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
+        for (let j = 1; j <= str2.length; j++) {
+          for (let i = 1; i <= str1.length; i++) {
+            const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+            matrix[j][i] = Math.min(
+              matrix[j][i - 1] + 1,
+              matrix[j - 1][i] + 1,
+              matrix[j - 1][i - 1] + cost
+            );
+          }
+        }
+        return matrix[str2.length][str1.length];
+      };
+
       results.forEach((event: any) => {
         const query = debouncedAutocompleteQuery.toLowerCase();
         
-        // Event titles (highest priority) - exact starts with match gets highest score
-        if (event.eventTitle && event.eventTitle.toLowerCase().includes(query)) {
-          const key = event.eventTitle.toLowerCase();
-          if (!suggestions.has(key)) {
-            const startsWithQuery = event.eventTitle.toLowerCase().startsWith(query);
-            suggestions.set(key, {
-              text: event.eventTitle,
-              type: 'event',
-              priority: startsWithQuery ? 5 : 3,
-              category: event.category
-            });
+        // Event titles (highest priority)
+        if (event.eventTitle) {
+          const eventTitle = event.eventTitle.toLowerCase();
+          const exactMatch = eventTitle.includes(query);
+          const startsWithQuery = eventTitle.startsWith(query);
+          const similarity = calculateSimilarity(query, eventTitle);
+          
+          if (exactMatch || similarity > 0.6) {
+            const key = event.eventTitle.toLowerCase();
+            if (!suggestions.has(key)) {
+              let priority = 3;
+              if (startsWithQuery) priority = 5;
+              else if (exactMatch) priority = 4;
+              else if (similarity > 0.8) priority = 3;
+              else priority = 2;
+              
+              suggestions.set(key, {
+                text: event.eventTitle,
+                type: 'event',
+                priority,
+                category: event.category
+              });
+            }
           }
         }
         
         // Venues (medium priority)
-        if (event.venue && event.venue.toLowerCase().includes(query)) {
-          const key = event.venue.toLowerCase();
-          if (!suggestions.has(key)) {
-            const startsWithQuery = event.venue.toLowerCase().startsWith(query);
-            suggestions.set(key, {
-              text: event.venue,
-              type: 'venue',
-              priority: startsWithQuery ? 4 : 2
-            });
+        if (event.venue) {
+          const venue = event.venue.toLowerCase();
+          const exactMatch = venue.includes(query);
+          const startsWithQuery = venue.startsWith(query);
+          const similarity = calculateSimilarity(query, venue);
+          
+          if (exactMatch || similarity > 0.6) {
+            const key = event.venue.toLowerCase();
+            if (!suggestions.has(key)) {
+              let priority = 2;
+              if (startsWithQuery) priority = 4;
+              else if (exactMatch) priority = 3;
+              else if (similarity > 0.8) priority = 2;
+              else priority = 1;
+              
+              suggestions.set(key, {
+                text: event.venue,
+                type: 'venue',
+                priority
+              });
+            }
           }
         }
         
         // Cities (lower priority)
-        if (event.city && event.city.toLowerCase().includes(query)) {
-          const key = event.city.toLowerCase();
-          if (!suggestions.has(key)) {
-            const startsWithQuery = event.city.toLowerCase().startsWith(query);
-            suggestions.set(key, {
-              text: event.city,
-              type: 'city',
-              priority: startsWithQuery ? 3 : 1
-            });
+        if (event.city) {
+          const city = event.city.toLowerCase();
+          const exactMatch = city.includes(query);
+          const startsWithQuery = city.startsWith(query);
+          const similarity = calculateSimilarity(query, city);
+          
+          if (exactMatch || similarity > 0.6) {
+            const key = event.city.toLowerCase();
+            if (!suggestions.has(key)) {
+              let priority = 1;
+              if (startsWithQuery) priority = 3;
+              else if (exactMatch) priority = 2;
+              else if (similarity > 0.8) priority = 1;
+              else priority = 1;
+              
+              suggestions.set(key, {
+                text: event.city,
+                type: 'city',
+                priority
+              });
+            }
           }
         }
       });

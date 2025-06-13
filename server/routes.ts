@@ -58,6 +58,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const fraudDetectionRoutes = (await import("./routes/fraud-detection.routes")).default;
   apiRouter.use("/fraud-detection", fraudDetectionRoutes);
 
+  // Import and register autocomplete routes
+  const autocompleteRoutes = (await import("./routes/autocomplete")).default;
+  apiRouter.use("/autocomplete", autocompleteRoutes);
+
   // Import and register sitemap routes
   const { generateSitemap, generateRobotsTxt } = await import("./routes/sitemap");
   
