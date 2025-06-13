@@ -23,15 +23,15 @@ export const HelmetProvider: React.FC<{ children: React.ReactNode }> = ({
   const [helmetData, setHelmetData] = useState<HelmetData>({});
 
   const defaultTitle =
-    "TicketHub: Global Ticket Discovery & Contact Platform | Connect Buyers & Sellers Worldwide";
+    "Ticket Bazaar: Global Ticket Discovery & Contact Platform | Connect Buyers & Sellers Worldwide";
   const defaultDescription =
     "Discover and connect with ticket buyers and sellers worldwide for concerts, comedy shows, sports events, travel experiences, movies, and festivals. Global marketplace connecting verified users across multiple countries and currencies.";
   const defaultKeywords =
     "ticket discovery, global ticket marketplace, concert tickets, comedy show tickets, sports tickets, travel tickets, movie tickets, event tickets worldwide, ticket buyers sellers, international events, multi-currency tickets, global entertainment, worldwide events, ticket connection platform, verified ticket sellers, international marketplace, cross-border tickets, global event discovery";
 
   const fullTitle =
-    helmetData.title && !helmetData.title.includes("TicketHub")
-      ? `${helmetData.title} | TicketHub`
+    helmetData.title && !helmetData.title.includes("Ticket Bazaar")
+      ? `${helmetData.title} | Ticket Bazaar`
       : helmetData.title || defaultTitle;
 
   return (
@@ -48,7 +48,7 @@ export const HelmetProvider: React.FC<{ children: React.ReactNode }> = ({
         />
         <link
           rel="canonical"
-          href={helmetData.canonicalUrl || "https://tickethub.global"}
+          href={helmetData.canonicalUrl || "https://ticketbazaar.global"}
         />
 
         <meta httpEquiv="content-language" content="en" />
@@ -68,14 +68,14 @@ export const HelmetProvider: React.FC<{ children: React.ReactNode }> = ({
         />
         <meta
           property="og:url"
-          content={helmetData.canonicalUrl || "https://tickethub.global"}
+          content={helmetData.canonicalUrl || "https://ticketbazaar.global"}
         />
         <meta property="og:type" content={helmetData.ogType || "website"} />
         <meta
           property="og:image"
-          content={helmetData.ogImage || "/images/tickethub-global-social.png"}
+          content={helmetData.ogImage || "/images/ticketbazaar-global-social.png"}
         />
-        <meta property="og:site_name" content="TicketHub" />
+        <meta property="og:site_name" content="Ticket Bazaar" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:locale:alternate" content="en_GB" />
         <meta property="og:locale:alternate" content="en_AU" />
@@ -95,12 +95,12 @@ export const HelmetProvider: React.FC<{ children: React.ReactNode }> = ({
         />
         <meta
           name="twitter:image"
-          content={helmetData.ogImage || "/images/tickethub-global-social.png"}
+          content={helmetData.ogImage || "/images/ticketbazaar-global-social.png"}
         />
 
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-        <meta name="author" content="TicketHub" />
-        <meta name="publisher" content="TicketHub" />
+        <meta name="author" content="Ticket Bazaar" />
+        <meta name="publisher" content="Ticket Bazaar" />
         <meta name="distribution" content="global" />
         <meta name="rating" content="general" />
         <meta name="revisit-after" content="1 day" />
@@ -118,27 +118,27 @@ export const HelmetProvider: React.FC<{ children: React.ReactNode }> = ({
         <meta property="og:image:height" content="630" />
         
         {/* Additional Twitter tags */}
-        <meta name="twitter:site" content="@tickethub" />
-        <meta name="twitter:creator" content="@tickethub" />
+        <meta name="twitter:site" content="@ticketbazaar" />
+        <meta name="twitter:creator" content="@ticketbazaar" />
         
         {/* App-specific meta tags */}
-        <meta name="application-name" content="TicketHub" />
+        <meta name="application-name" content="Ticket Bazaar" />
         <meta name="msapplication-TileColor" content="#1976D2" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
         
         {/* Hreflang for international SEO */}
-        <link rel="alternate" hrefLang="en" href={helmetData.canonicalUrl || "https://tickethub.global"} />
-        <link rel="alternate" hrefLang="en-US" href={helmetData.canonicalUrl || "https://tickethub.global"} />
-        <link rel="alternate" hrefLang="en-GB" href={(helmetData.canonicalUrl || "https://tickethub.global").replace('tickethub.global', 'uk.tickethub.global')} />
-        <link rel="alternate" hrefLang="en-AU" href={(helmetData.canonicalUrl || "https://tickethub.global").replace('tickethub.global', 'au.tickethub.global')} />
-        <link rel="alternate" hrefLang="en-CA" href={(helmetData.canonicalUrl || "https://tickethub.global").replace('tickethub.global', 'ca.tickethub.global')} />
-        <link rel="alternate" hrefLang="es" href={(helmetData.canonicalUrl || "https://tickethub.global").replace('tickethub.global', 'es.tickethub.global')} />
-        <link rel="alternate" hrefLang="fr" href={(helmetData.canonicalUrl || "https://tickethub.global").replace('tickethub.global', 'fr.tickethub.global')} />
-        <link rel="alternate" hrefLang="de" href={(helmetData.canonicalUrl || "https://tickethub.global").replace('tickethub.global', 'de.tickethub.global')} />
-        <link rel="alternate" hrefLang="it" href={(helmetData.canonicalUrl || "https://tickethub.global").replace('tickethub.global', 'it.tickethub.global')} />
-        <link rel="alternate" hrefLang="pt" href={(helmetData.canonicalUrl || "https://tickethub.global").replace('tickethub.global', 'pt.tickethub.global')} />
-        <link rel="alternate" hrefLang="ja" href={(helmetData.canonicalUrl || "https://tickethub.global").replace('tickethub.global', 'ja.tickethub.global')} />
-        <link rel="alternate" hrefLang="x-default" href={helmetData.canonicalUrl || "https://tickethub.global"} />
+        <link rel="alternate" hrefLang="en" href={helmetData.canonicalUrl || "https://ticketbazaar.global"} />
+        <link rel="alternate" hrefLang="en-US" href={helmetData.canonicalUrl || "https://ticketbazaar.global"} />
+        <link rel="alternate" hrefLang="en-GB" href={(helmetData.canonicalUrl || "https://ticketbazaar.global").replace('ticketbazaar.global', 'uk.ticketbazaar.global')} />
+        <link rel="alternate" hrefLang="en-AU" href={(helmetData.canonicalUrl || "https://ticketbazaar.global").replace('ticketbazaar.global', 'au.ticketbazaar.global')} />
+        <link rel="alternate" hrefLang="en-CA" href={(helmetData.canonicalUrl || "https://ticketbazaar.global").replace('ticketbazaar.global', 'ca.ticketbazaar.global')} />
+        <link rel="alternate" hrefLang="es" href={(helmetData.canonicalUrl || "https://ticketbazaar.global").replace('ticketbazaar.global', 'es.ticketbazaar.global')} />
+        <link rel="alternate" hrefLang="fr" href={(helmetData.canonicalUrl || "https://ticketbazaar.global").replace('ticketbazaar.global', 'fr.ticketbazaar.global')} />
+        <link rel="alternate" hrefLang="de" href={(helmetData.canonicalUrl || "https://ticketbazaar.global").replace('ticketbazaar.global', 'de.ticketbazaar.global')} />
+        <link rel="alternate" hrefLang="it" href={(helmetData.canonicalUrl || "https://ticketbazaar.global").replace('ticketbazaar.global', 'it.ticketbazaar.global')} />
+        <link rel="alternate" hrefLang="pt" href={(helmetData.canonicalUrl || "https://ticketbazaar.global").replace('ticketbazaar.global', 'pt.ticketbazaar.global')} />
+        <link rel="alternate" hrefLang="ja" href={(helmetData.canonicalUrl || "https://ticketbazaar.global").replace('ticketbazaar.global', 'ja.ticketbazaar.global')} />
+        <link rel="alternate" hrefLang="x-default" href={helmetData.canonicalUrl || "https://ticketbazaar.global"} />
         
         {/* GEO-specific meta tags for discovery */}
         <meta name="geo.country" content="GLOBAL" />
