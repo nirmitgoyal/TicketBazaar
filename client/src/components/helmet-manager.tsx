@@ -151,9 +151,9 @@ export const HelmetProvider: React.FC<{ children: React.ReactNode }> = ({
         <meta name="topic" content="Event Tickets, Concert Tickets, Sports Tickets, Comedy Shows, Travel Experiences, Movie Tickets" />
         <meta name="summary" content="Connect with verified ticket buyers and sellers worldwide for all types of events and entertainment experiences" />
         <meta name="classification" content="Marketplace, Entertainment, Events, Tickets, Discovery Platform" />
-        <meta name="owner" content="TicketHub Global" />
-        <meta name="url" content={helmetData.canonicalUrl || "https://tickethub.global"} />
-        <meta name="identifier-URL" content={helmetData.canonicalUrl || "https://tickethub.global"} />
+        <meta name="owner" content="Ticket Bazaar Global" />
+        <meta name="url" content={helmetData.canonicalUrl || "https://ticketbazaar.global"} />
+        <meta name="identifier-URL" content={helmetData.canonicalUrl || "https://ticketbazaar.global"} />
         <meta name="directory" content="submission" />
         <meta name="category" content="Entertainment, Events, Marketplace, Discovery" />
         <meta name="coverage" content="Worldwide" />

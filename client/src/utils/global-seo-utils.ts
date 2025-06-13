@@ -155,7 +155,7 @@ export const GLOBAL_CITIES = {
  */
 export function generateHomepageSEO(): GlobalSEOData {
   return {
-    title: "TicketHub: Global Ticket Discovery & Contact Platform | Connect Buyers & Sellers Worldwide",
+    title: "Ticket Bazaar: Global Ticket Discovery & Contact Platform | Connect Buyers & Sellers Worldwide",
     description: "Discover and connect with ticket buyers and sellers worldwide for concerts, comedy shows, sports events, travel experiences, movies, and festivals. Global marketplace with multi-currency support across 50+ countries.",
     keywords: [
       "global ticket discovery",

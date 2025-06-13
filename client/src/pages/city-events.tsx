@@ -86,8 +86,8 @@ export default function CityEvents() {
       answer: `Yes, tickets in ${cityData.name} are typically listed in ${cityData.currency}. Our platform supports multiple currencies and provides currency conversion for international buyers.`
     },
     {
-      question: `What makes TicketHub safe for ${cityData.name} events?`,
-      answer: `TicketHub verifies all sellers in ${cityData.name} and provides secure communication channels. We're a discovery platform that connects you safely with local ticket holders without handling transactions directly.`
+      question: `What makes Ticket Bazaar safe for ${cityData.name} events?`,
+      answer: `Ticket Bazaar verifies all sellers in ${cityData.name} and provides secure communication channels. We're a discovery platform that connects you safely with local ticket holders without handling transactions directly.`
     }
   ];
 

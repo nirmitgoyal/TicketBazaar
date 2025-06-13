@@ -44,7 +44,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <div className="flex items-center gap-2 px-4 py-2">
           <Ticket className="h-6 w-6 text-primary" />
-          <span className="font-bold text-lg">TicketHub</span>
+          <span className="font-bold text-lg">Ticket Bazaar</span>
           <span className="text-xs text-muted-foreground bg-blue-100 px-2 py-1 rounded-full">Global</span>
         </div>
       </SidebarHeader>

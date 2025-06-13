@@ -44,8 +44,8 @@ export default function GlobalCities() {
 
   const citiesFAQs = [
     {
-      question: "Which cities does TicketHub serve worldwide?",
-      answer: "TicketHub serves major cities across 6 continents including New York, London, Tokyo, Sydney, Berlin, Toronto, Paris, Madrid, Rome, São Paulo, and many more. We connect verified ticket buyers and sellers in over 50 cities worldwide."
+      question: "Which cities does Ticket Bazaar serve worldwide?",
+      answer: "Ticket Bazaar serves major cities across 6 continents including New York, London, Tokyo, Sydney, Berlin, Toronto, Paris, Madrid, Rome, São Paulo, and many more. We connect verified ticket buyers and sellers in over 50 cities worldwide."
     },
     {
       question: "How do I find events in a specific city?",
@@ -72,10 +72,10 @@ export default function GlobalCities() {
   return (
     <>
       <SEOManager
-        title="Global Cities - Event Tickets Worldwide | TicketHub"
+        title="Global Cities - Event Tickets Worldwide | Ticket Bazaar"
         description="Discover event tickets in major cities worldwide. Connect with verified sellers in New York, London, Tokyo, Sydney, Berlin, Toronto, Paris, and 50+ cities globally."
         keywords="global cities, worldwide events, international tickets, city events, global marketplace, multi-city tickets, international entertainment, worldwide venues"
-        canonicalUrl="https://tickethub.global/cities"
+        canonicalUrl="https://ticketbazaar.global/cities"
       />
       
       <UnifiedSchema
