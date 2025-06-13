@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { WebSocketProvider } from "@/hooks/use-websocket";
 
 // Pages
-import Home from "@/pages/home";
+import Home from "@/pages/home-simplified";
 import EventDetails from "@/pages/event-details";
 import EventMap from "@/pages/event-map";
 import MapPage from "@/pages/map";
