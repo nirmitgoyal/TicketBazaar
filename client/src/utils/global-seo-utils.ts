@@ -1,5 +1,5 @@
 /**
- * Global SEO and GEO utilities for TicketHub
+ * Global SEO and GEO utilities for Ticket Bazaar
  * Comprehensive SEO optimization for global ticket discovery platform
  */
 
@@ -173,20 +173,20 @@ export function generateHomepageSEO(): GlobalSEOData {
       "cross-border ticket discovery",
       "international ticket connection"
     ],
-    canonicalUrl: "https://tickethub.global",
+    canonicalUrl: "https://ticketbazaar.global",
     hreflang: {
-      "en": "https://tickethub.global",
-      "en-US": "https://tickethub.global", 
-      "en-GB": "https://uk.tickethub.global",
-      "en-AU": "https://au.tickethub.global",
-      "en-CA": "https://ca.tickethub.global",
-      "es": "https://es.tickethub.global",
-      "fr": "https://fr.tickethub.global",
-      "de": "https://de.tickethub.global",
-      "it": "https://it.tickethub.global",
-      "pt": "https://pt.tickethub.global",
-      "ja": "https://ja.tickethub.global",
-      "x-default": "https://tickethub.global"
+      "en": "https://ticketbazaar.global",
+      "en-US": "https://ticketbazaar.global", 
+      "en-GB": "https://uk.ticketbazaar.global",
+      "en-AU": "https://au.ticketbazaar.global",
+      "en-CA": "https://ca.ticketbazaar.global",
+      "es": "https://es.ticketbazaar.global",
+      "fr": "https://fr.ticketbazaar.global",
+      "de": "https://de.ticketbazaar.global",
+      "it": "https://it.ticketbazaar.global",
+      "pt": "https://pt.ticketbazaar.global",
+      "ja": "https://ja.ticketbazaar.global",
+      "x-default": "https://ticketbazaar.global"
     },
     structuredData: []
   };
@@ -203,7 +203,7 @@ export function generateCategorySEO(category: string): GlobalSEOData {
   }
 
   return {
-    title: `${categoryData.name} Tickets Worldwide | Global Discovery Platform - TicketHub`,
+    title: `${categoryData.name} Tickets Worldwide | Global Discovery Platform - Ticket Bazaar`,
     description: `${categoryData.description}. Connect with verified sellers across 50+ countries with multi-currency support.`,
     keywords: [
       ...categoryData.keywords,
@@ -213,12 +213,12 @@ export function generateCategorySEO(category: string): GlobalSEOData {
       `${category} tickets discovery`,
       `verified ${category} sellers`
     ],
-    canonicalUrl: `https://tickethub.global/category/${category}`,
+    canonicalUrl: `https://ticketbazaar.global/category/${category}`,
     hreflang: {
-      "en": `https://tickethub.global/category/${category}`,
-      "en-US": `https://tickethub.global/category/${category}`,
-      "en-GB": `https://uk.tickethub.global/category/${category}`,
-      "x-default": `https://tickethub.global/category/${category}`
+      "en": `https://ticketbazaar.global/category/${category}`,
+      "en-US": `https://ticketbazaar.global/category/${category}`,
+      "en-GB": `https://uk.ticketbazaar.global/category/${category}`,
+      "x-default": `https://ticketbazaar.global/category/${category}`
     },
     structuredData: []
   };
@@ -235,7 +235,7 @@ export function generateCitySEO(citySlug: string): GlobalSEOData {
   }
 
   return {
-    title: `${cityData.name} Event Tickets | Discover Local Events - TicketHub`,
+    title: `${cityData.name} Event Tickets | Discover Local Events - Ticket Bazaar`,
     description: `Find and connect with ticket sellers in ${cityData.name}, ${cityData.country}. Discover concerts, comedy shows, sports events, and entertainment with verified local sellers.`,
     keywords: [
       ...cityData.keywords,
@@ -245,10 +245,10 @@ export function generateCitySEO(citySlug: string): GlobalSEOData {
       `${cityData.country} events`,
       `local ${cityData.name} tickets`
     ],
-    canonicalUrl: `https://tickethub.global/city/${citySlug}`,
+    canonicalUrl: `https://ticketbazaar.global/city/${citySlug}`,
     hreflang: {
-      "en": `https://tickethub.global/city/${citySlug}`,
-      "x-default": `https://tickethub.global/city/${citySlug}`
+      "en": `https://ticketbazaar.global/city/${citySlug}`,
+      "x-default": `https://ticketbazaar.global/city/${citySlug}`
     },
     structuredData: []
   };
@@ -278,12 +278,12 @@ export function generateEventStructuredData(event: EventSEOData) {
       "price": event.price.toString(),
       "priceCurrency": event.currency,
       "availability": "https://schema.org/InStock",
-      "url": `https://tickethub.global/event/${event.eventTitle.toLowerCase().replace(/\s+/g, '-')}`
+      "url": `https://ticketbazaar.global/event/${event.eventTitle.toLowerCase().replace(/\s+/g, '-')}`
     },
     "organizer": {
       "@type": "Organization", 
-      "name": "TicketHub",
-      "url": "https://tickethub.global"
+      "name": "Ticket Bazaar",
+      "url": "https://ticketbazaar.global"
     },
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
     "eventStatus": "https://schema.org/EventScheduled"
