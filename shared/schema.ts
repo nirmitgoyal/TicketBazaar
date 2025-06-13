@@ -28,7 +28,6 @@ export const users = pgTable("users", {
   country: text("country").notNull().default("US"), // ISO 3166-1 alpha-2 country code
   timezone: text("timezone").default("UTC"), // User's timezone
   language: text("language").default("en"), // Preferred language (ISO 639-1)
-  currency: text("currency").default("USD"), // Preferred currency (ISO 4217)
   verificationStatus: text("verification_status").default("unverified"), // unverified, pending, verified
   governmentIdVerified: boolean("government_id_verified").default(false),
   phoneVerified: boolean("phone_verified").default(false),
@@ -69,9 +68,6 @@ export const tickets = pgTable("tickets", {
   section: text("section"),
   row: text("row"),
   seat: text("seat"),
-  price: doublePrecision("price").notNull(),
-  currency: text("currency").notNull().default("USD"), // ISO 4217 currency code
-  originalPrice: doublePrecision("original_price"), // Face value of ticket
   quantity: integer("quantity").notNull(),
   status: text("status").notNull().default("available"),
   isTransferrable: boolean("is_transferrable").default(true),
@@ -91,8 +87,6 @@ export const tickets = pgTable("tickets", {
   statusIdx: index("tickets_status_idx").on(table.status),
   cityIdx: index("tickets_city_idx").on(table.city),
   countryIdx: index("tickets_country_idx").on(table.country),
-  priceIdx: index("tickets_price_idx").on(table.price),
-  currencyIdx: index("tickets_currency_idx").on(table.currency),
   createdAtIdx: index("tickets_created_at_idx").on(table.createdAt),
   trendingIdx: index("tickets_trending_idx").on(table.trending),
   locationIdx: index("tickets_location_idx").on(table.latitude, table.longitude),
@@ -109,7 +103,6 @@ export const contactRequests = pgTable("contact_requests", {
   respondedAt: timestamp("responded_at"),
   contactMethod: text("contact_method").notNull(), // whatsapp, phone, email, instagram
   message: text("message").notNull(), // Message from the requester to the seller
-  offeredPrice: doublePrecision("offered_price"), // Price offered by buyer
   meetingLocation: text("meeting_location"), // Suggested meeting location for in-person transfers
   preferredTime: text("preferred_time"), // Preferred time for contact/meeting
 }, (table) => ({
@@ -296,8 +289,6 @@ export type Event = Ticket;
 export const ticketListingSchema = insertTicketSchema
   .omit({ id: true, createdAt: true, sellerId: true })
   .extend({
-    price: z.number().positive("Price must be greater than 0"),
-    currency: z.string().length(3, "Currency must be 3-letter ISO code").default("USD"),
     transferMethod: z.enum(["in-person", "electronic", "mail", "digital"]),
     eventTitle: z.string().min(1, "Event title is required"),
     venue: z.string().min(1, "Venue is required"),
@@ -325,7 +316,6 @@ export const userRegisterSchema = z.object({
   country: z.string().length(2, "Country must be 2-letter ISO code"),
   timezone: z.string().default("UTC"),
   language: z.string().length(2, "Language must be 2-letter ISO code").default("en"),
-  currency: z.string().length(3, "Currency must be 3-letter ISO code").default("USD"),
   preferredContactMethod: z
     .enum(["email", "whatsapp", "phone"])
     .default("email"), // Email as global default

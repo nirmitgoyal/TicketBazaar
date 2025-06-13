@@ -187,8 +187,6 @@ export const UnifiedSchema: React.FC<UnifiedSchemaProps> = ({
       },
       offers: {
         "@type": "Offer",
-        price: event.price.toString(),
-        priceCurrency: "INR",
         availability: "https://schema.org/InStock",
       },
     });
