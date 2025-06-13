@@ -39,15 +39,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
       try {
-        const res = await apiRequest("GET", "/api/auth/user");
+        const res = await fetch("/api/auth/user", {
+          credentials: "include",
+        });
         if (res.status === 401) {
+          return null;
+        }
+        if (!res.ok) {
           return null;
         }
         return await res.json();
       } catch (error) {
+        console.warn("Auth check failed:", error);
         return null;
       }
     },
+    retry: false,
+    throwOnError: false,
   });
 
 

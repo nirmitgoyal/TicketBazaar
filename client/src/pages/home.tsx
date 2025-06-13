@@ -187,18 +187,21 @@ export default function Home() {
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          console.warn(`Failed to fetch tickets: ${response.status}`);
+          return [];
         }
 
         return await response.json();
       } catch (error) {
-        console.error("Error fetching batch tickets:", error);
+        console.warn("Error fetching batch tickets:", error);
         return []; // Return empty array on error
       }
     },
     enabled: !!events && events.length > 0,
     staleTime: 60000, // Cache results for 1 minute
-    gcTime: 300000, // Keep in cache for 5 minutes
+    retry: false,
+    throwOnError: false,
+    gcTime: 300000 // Keep in cache for 5 minutes
   });
 
   // Filter events based on category and other UI filters - search is handled by the backend API
