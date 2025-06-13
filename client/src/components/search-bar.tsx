@@ -402,6 +402,7 @@ export function SearchBar({
 
   // Handle autocomplete selection
   const handleAutocompleteSelect = (suggestion: string) => {
+    console.log('Autocomplete clicked:', suggestion);
     setQuery(suggestion);
     setShowAutocomplete(false);
     setAutocompleteIndex(-1);
@@ -409,9 +410,11 @@ export function SearchBar({
     // Immediately navigate to search results for this suggestion
     if (onSearch) {
       // If there's a custom onSearch handler, use it
+      console.log('Using custom onSearch handler');
       onSearch(suggestion.trim(), {});
     } else {
       // Otherwise navigate to the search results page
+      console.log('Navigating to search results page');
       const params = new URLSearchParams();
       params.set("q", suggestion.trim());
       navigate(`/?${params.toString()}`);
@@ -530,15 +533,18 @@ export function SearchBar({
                 
                 {/* Autocomplete Dropdown */}
                 {showAutocomplete && autocompleteResults && autocompleteResults.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                  <div className="autocomplete-dropdown absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
                     {autocompleteResults.map((suggestion, index) => (
                       <button
                         key={suggestion}
                         type="button"
-                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors ${
+                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors cursor-pointer ${
                           index === autocompleteIndex ? 'bg-primary/5 text-primary' : 'text-gray-700'
                         }`}
-                        onClick={() => handleAutocompleteSelect(suggestion)}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          handleAutocompleteSelect(suggestion);
+                        }}
                         onMouseEnter={() => setAutocompleteIndex(index)}
                       >
                         <div className="flex items-center">
