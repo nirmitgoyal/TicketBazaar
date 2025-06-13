@@ -33,33 +33,138 @@ export const UnifiedSchema: React.FC<UnifiedSchemaProps> = ({
     schemas.push({
       "@context": "https://schema.org",
       "@type": "Organization",
-      name: "Ticket Bazaar",
-      url: "https://ticketbazaar.co.in",
-      logo: "https://ticketbazaar.co.in/logo.svg",
+      name: "TicketHub",
+      alternateName: "TicketHub Global",
+      url: "https://tickethub.global",
+      logo: "https://tickethub.global/logo.svg",
       sameAs: [
-        "https://www.instagram.com/ticketbazaar.co.in/",
-        "https://linkedin.com/in/nirmitgoyal",
+        "https://www.instagram.com/tickethub.global/",
+        "https://www.facebook.com/tickethub.global/",
+        "https://twitter.com/tickethub",
+        "https://www.linkedin.com/company/tickethub-global/",
       ],
-      contactPoint: {
-        "@type": "ContactPoint",
-        contactType: "customer service",
-        availableLanguage: ["English", "Hindi"],
-      },
+      contactPoint: [
+        {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          availableLanguage: ["English", "Spanish", "French", "German", "Italian", "Portuguese", "Japanese"],
+          serviceArea: "Worldwide"
+        },
+        {
+          "@type": "ContactPoint",
+          contactType: "sales",
+          availableLanguage: ["English"],
+          serviceArea: "Global"
+        }
+      ],
       description:
-        "India's secure second hand ticket marketplace for buying and selling verified 2nd hand event tickets. Buy and sell tickets for concerts, sports, and festivals with escrow protection.",
+        "Global ticket discovery and contact platform connecting verified buyers and sellers worldwide for concerts, comedy shows, sports events, travel experiences, movies, and festivals across multiple countries and currencies.",
       address: {
         "@type": "PostalAddress",
-        addressCountry: "IN",
+        addressCountry: "GLOBAL",
+        addressRegion: "Global",
       },
-      areaServed: {
-        "@type": "Country",
-        name: "India",
-      },
+      areaServed: [
+        {
+          "@type": "Country",
+          name: "United States",
+        },
+        {
+          "@type": "Country", 
+          name: "United Kingdom",
+        },
+        {
+          "@type": "Country",
+          name: "Canada",
+        },
+        {
+          "@type": "Country",
+          name: "Australia",
+        },
+        {
+          "@type": "Country",
+          name: "Germany",
+        },
+        {
+          "@type": "Country",
+          name: "France",
+        },
+        {
+          "@type": "Country",
+          name: "Spain",
+        },
+        {
+          "@type": "Country",
+          name: "Italy",
+        },
+        {
+          "@type": "Country",
+          name: "Japan",
+        },
+        {
+          "@type": "Country",
+          name: "Brazil",
+        }
+      ],
+      serviceType: [
+        "Ticket Discovery Platform",
+        "Event Marketplace",
+        "Buyer-Seller Connection Service",
+        "Global Entertainment Platform"
+      ],
+      knowsAbout: [
+        "Concert Tickets",
+        "Comedy Show Tickets", 
+        "Sports Event Tickets",
+        "Travel Experience Tickets",
+        "Movie Tickets",
+        "Festival Tickets",
+        "Theater Tickets",
+        "Entertainment Events"
+      ],
       potentialAction: {
         "@type": "SearchAction",
-        target: "https://ticketbazaar.co.in/search?q={search_term_string}",
+        target: "https://tickethub.global/search?q={search_term_string}",
         "query-input": "required name=search_term_string",
       },
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Global Event Tickets",
+        itemListElement: [
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Concert Ticket Discovery",
+              category: "Entertainment"
+            }
+          },
+          {
+            "@type": "Offer", 
+            itemOffered: {
+              "@type": "Service",
+              name: "Sports Ticket Discovery",
+              category: "Sports"
+            }
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service", 
+              name: "Comedy Show Ticket Discovery",
+              category: "Comedy"
+            }
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Travel Experience Discovery",
+              category: "Travel"
+            }
+          }
+        ]
+      }
     });
   }
 
@@ -147,27 +252,31 @@ export const UnifiedSchema: React.FC<UnifiedSchemaProps> = ({
   );
 };
 
-// Common FAQs for the platform
-export const ticketBazaarFAQs: FAQItem[] = [
+// Common FAQs for the global platform
+export const ticketHubGlobalFAQs: FAQItem[] = [
   {
-    question: "Is it safe to buy second hand tickets on Ticket Bazaar?",
-    answer: "Yes, Ticket Bazaar is a discovery and contact platform that connects verified buyers and sellers. We are not a reseller or broker - we don't handle payments, hold inventory, or facilitate transactions. We ensure trust through verified profiles and secure communication channels."
+    question: "How does TicketHub work as a global discovery platform?",
+    answer: "TicketHub is a global discovery and contact platform that connects verified buyers and sellers worldwide. We help you find and connect with ticket holders for concerts, comedy shows, sports events, travel experiences, movies, and festivals across multiple countries. We don't handle payments or transactions - we facilitate secure connections between people."
   },
   {
-    question: "How do I verify if my tickets are authentic?",
-    answer: "Our platform includes ticket verification features including QR code scanning and seller verification to ensure ticket authenticity."
+    question: "What types of events can I discover tickets for on TicketHub?",
+    answer: "You can discover tickets for concerts, comedy shows, sports events, travel experiences, movie premieres, festivals, theater performances, and entertainment events worldwide. Our platform covers events across major cities in the US, UK, Canada, Australia, Germany, France, Spain, Italy, Japan, Brazil, and many more countries."
   },
   {
-    question: "What cities does Ticket Bazaar serve?",
-    answer: "Ticket Bazaar serves major cities worldwide including New York, London, Sydney, Tokyo, Berlin, Toronto, São Paulo, and many more across multiple countries."
+    question: "Which countries and currencies does TicketHub support?",
+    answer: "TicketHub operates globally with support for multiple currencies including USD, EUR, GBP, CAD, AUD, JPY, and more. We serve major cities worldwide including New York, London, Sydney, Tokyo, Berlin, Toronto, São Paulo, Paris, Rome, Madrid, and hundreds of other locations."
   },
   {
-    question: "How quickly can I sell my tickets?",
-    answer: "Tickets can be listed immediately and are visible to buyers right away. Many tickets sell within 24-48 hours depending on demand."
+    question: "How do I verify ticket authenticity on TicketHub?",
+    answer: "Our platform includes comprehensive verification features including QR code scanning, seller verification, and authenticity checks. We also provide trust scores and verification badges for both tickets and sellers to ensure secure connections."
   },
   {
-    question: "What types of events can I find tickets for?",
-    answer: "You can find tickets for concerts, sports events, festivals, comedy shows, theatre performances, workshops, and other live events worldwide across multiple countries."
+    question: "Is TicketHub safe for international ticket discovery?",
+    answer: "Yes, TicketHub prioritizes safety through verified user profiles, secure communication channels, and comprehensive verification systems. As a discovery platform, we connect you with verified sellers - all transactions and arrangements are made directly between users with our safety guidelines."
+  },
+  {
+    question: "How quickly can I connect with ticket sellers on TicketHub?",
+    answer: "Ticket listings are visible immediately and our real-time notification system ensures fast connections. Most users connect with sellers within hours, and many successful arrangements are made within 24-48 hours depending on event popularity and location."
   }
 ];
 
