@@ -20,7 +20,7 @@ export interface SitemapUrl {
  * Generate main sitemap URLs
  */
 export function generateMainSitemapUrls(): SitemapUrl[] {
-  const baseUrl = 'https://tickethub.global';
+  const baseUrl = 'https://ticketbazaar.global';
   const currentDate = new Date().toISOString().split('T')[0];
 
   return [
@@ -32,9 +32,9 @@ export function generateMainSitemapUrls(): SitemapUrl[] {
       alternates: [
         { hreflang: 'en', href: baseUrl },
         { hreflang: 'en-US', href: baseUrl },
-        { hreflang: 'en-GB', href: `https://uk.tickethub.global` },
-        { hreflang: 'en-AU', href: `https://au.tickethub.global` },
-        { hreflang: 'en-CA', href: `https://ca.tickethub.global` },
+        { hreflang: 'en-GB', href: `https://uk.ticketbazaar.global` },
+        { hreflang: 'en-AU', href: `https://au.ticketbazaar.global` },
+        { hreflang: 'en-CA', href: `https://ca.ticketbazaar.global` },
         { hreflang: 'x-default', href: baseUrl }
       ]
     },
@@ -161,7 +161,7 @@ ${xmlUrls}
  * Generate sitemap index XML for multiple sitemaps
  */
 export function generateSitemapIndexXML(sitemaps: Array<{name: string, lastmod: string}>): string {
-  const baseUrl = 'https://tickethub.global';
+  const baseUrl = 'https://ticketbazaar.global';
   
   const sitemapXml = sitemaps.map(sitemap => `  <sitemap>
     <loc>${baseUrl}/sitemaps/${sitemap.name}.xml</loc>
@@ -178,7 +178,7 @@ ${sitemapXml}
  * Generate robots.txt content
  */
 export function generateRobotsTxt(): string {
-  const baseUrl = 'https://tickethub.global';
+  const baseUrl = 'https://ticketbazaar.global';
   
   return `User-agent: *
 Allow: /

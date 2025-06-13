@@ -167,7 +167,7 @@ export function generateSearchResultsStructuredData(
           "@type": "Event",
           "name": event.title,
           "description": event.description,
-          "url": `https://ticketbazaar.co.in/event/${encodeURIComponent(event.title)}`
+          "url": `https://ticketbazaar.global/event/${encodeURIComponent(event.title)}`
         }
       }))
     }
@@ -178,7 +178,7 @@ export function generateSearchResultsStructuredData(
  * Generate canonical URL based on current path
  */
 export function generateCanonicalUrl(path: string = ""): string {
-  const baseUrl = "https://ticketbazaar.co.in";
+  const baseUrl = "https://ticketbazaar.global";
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
   return `${baseUrl}${cleanPath}`;
 }

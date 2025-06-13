@@ -327,7 +327,7 @@ export function generateSearchResultsStructuredData(query: string, resultCount: 
     },
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://tickethub.global/search?q={search_term_string}",
+      "target": "https://ticketbazaar.global/search?q={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };
@@ -344,7 +344,7 @@ export function generateBreadcrumbStructuredData(breadcrumbs: Array<{name: strin
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      "item": item.url.startsWith('http') ? item.url : `https://tickethub.global${item.url}`
+      "item": item.url.startsWith('http') ? item.url : `https://ticketbazaar.global${item.url}`
     }))
   };
 }
