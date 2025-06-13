@@ -405,8 +405,17 @@ export function SearchBar({
     setQuery(suggestion);
     setShowAutocomplete(false);
     setAutocompleteIndex(-1);
-    searchInputRef.current?.focus();
-    performSearch();
+    
+    // Immediately navigate to search results for this suggestion
+    if (onSearch) {
+      // If there's a custom onSearch handler, use it
+      onSearch(suggestion.trim(), {});
+    } else {
+      // Otherwise navigate to the search results page
+      const params = new URLSearchParams();
+      params.set("q", suggestion.trim());
+      navigate(`/?${params.toString()}`);
+    }
   };
 
   // Handle keyboard navigation in autocomplete
