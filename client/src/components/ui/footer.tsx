@@ -84,7 +84,7 @@ export function Footer() {
         <div className="border-t mt-8 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-textSecondary mb-4 md:mb-0">
-              © {year} Ticket Bazaar. All rights reserved.
+              © {year} TicketHub Global. All rights reserved.
             </p>
             <div className="flex space-x-4 text-sm">
               <a
