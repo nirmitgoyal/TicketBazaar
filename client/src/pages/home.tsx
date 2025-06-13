@@ -149,15 +149,9 @@ export default function Home() {
       const url = `${endpoint}${params.toString() ? `?${params.toString()}` : ""}`;
 
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
-        
         const res = await fetch(url, {
           credentials: "include",
-          signal: controller.signal,
         });
-
-        clearTimeout(timeoutId);
 
         if (!res.ok) {
           console.warn(`Failed to fetch events: ${res.status}`);
@@ -166,10 +160,6 @@ export default function Home() {
 
         return res.json();
       } catch (error) {
-        if (error.name === 'AbortError') {
-          console.warn("Events fetch timeout");
-          return [];
-        }
         console.warn("Error fetching events:", error);
         return [];
       }
@@ -190,15 +180,9 @@ export default function Home() {
       const eventIds = events.map(e => e.id).join(',');
       
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-        
         const response = await fetch(`/api/tickets/batch?eventIds=${eventIds}`, {
-          signal: controller.signal,
           credentials: "include",
         });
-
-        clearTimeout(timeoutId);
 
         if (!response.ok) {
           console.warn(`Failed to fetch tickets: ${response.status}`);
@@ -207,10 +191,6 @@ export default function Home() {
 
         return await response.json();
       } catch (error) {
-        if (error.name === 'AbortError') {
-          console.warn("Tickets fetch timeout");
-          return [];
-        }
         console.warn("Error fetching batch tickets:", error);
         return []; // Return empty array on error
       }
