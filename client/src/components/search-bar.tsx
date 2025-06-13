@@ -166,26 +166,31 @@ export function SearchBar({
 
   // Fetch autocomplete suggestions
   const { data: autocompleteResults } = useQuery({
-    queryKey: ['/api/events/search', debouncedAutocompleteQuery],
+    queryKey: ['/api/autocomplete/suggestions', debouncedAutocompleteQuery],
     queryFn: async () => {
       if (!debouncedAutocompleteQuery || debouncedAutocompleteQuery.length < 2) {
         return [];
       }
       
-      const params = new URLSearchParams();
-      params.set('q', debouncedAutocompleteQuery);
-      
-      const response = await fetch(`/api/autocomplete/suggestions?${params}`);
-      if (!response.ok) throw new Error('Failed to fetch suggestions');
-      
-      const results = await response.json();
-      
-      // The autocomplete endpoint already returns structured suggestions
-      return results;
-
+      try {
+        const params = new URLSearchParams();
+        params.set('q', debouncedAutocompleteQuery);
+        
+        const response = await fetch(`/api/autocomplete/suggestions?${params}`);
+        if (!response.ok) {
+          return [];
+        }
+        
+        const results = await response.json();
+        return results || [];
+      } catch (error) {
+        return [];
+      }
     },
     enabled: debouncedAutocompleteQuery.length >= 2,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+    throwOnError: false, // Prevent errors from being thrown
   });
 
   // Initialize form based on URL params
