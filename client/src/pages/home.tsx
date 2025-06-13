@@ -1023,10 +1023,27 @@ export default function Home() {
           ) : sortedEvents && sortedEvents.length > 0 ? (
             <div data-testid="event-grid" className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
               {sortedEvents.map((event, index) => {
-                // Find tickets for this event
+                // Find tickets for this event - match by eventTitle or title
                 const eventTickets = tickets?.filter(ticket => 
-                  ticket.eventTitle === event.eventTitle || ticket.id === event.id
+                  ticket.eventTitle === event.eventTitle || 
+                  ticket.eventTitle === event.title ||
+                  ticket.title === event.eventTitle ||
+                  ticket.title === event.title
                 ) || [];
+                
+                // Debug logging for first few events
+                if (index < 2) {
+                  console.log(`Event ${index}:`, {
+                    eventTitle: event.eventTitle,
+                    eventName: event.title,
+                    ticketsCount: tickets?.length || 0,
+                    matchedTickets: eventTickets.length,
+                    sampleTicket: tickets?.[0] ? {
+                      title: tickets[0].title,
+                      eventTitle: tickets[0].eventTitle
+                    } : null
+                  });
+                }
                 
                 return (
                   <EventCard
