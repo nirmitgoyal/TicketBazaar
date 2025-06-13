@@ -75,11 +75,11 @@ export function EventCard({
         transition: { duration: 0.08 },
       }}
     >
-      <div className="p-2 sm:p-3 lg:p-4">
-        {/* Mobile-first vertical layout for 4-column grid */}
-        <div className="flex flex-col space-y-2">
+      <div className="p-3 sm:p-4">
+        {/* Optimized layout for 2-column mobile grid */}
+        <div className="flex flex-col space-y-3">
           <motion.div
-            className="bg-background rounded-md text-center p-1.5 sm:p-2"
+            className="bg-background rounded-lg text-center p-2"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.08 + index * 0.03 }}
@@ -87,7 +87,7 @@ export function EventCard({
             <p className="text-xs text-textSecondary">
               {formatDate(date)}
             </p>
-            <p className="text-sm sm:text-lg font-bold text-textPrimary">
+            <p className="text-lg font-bold text-textPrimary">
               {formatDay(date)}
             </p>
             <p className="text-xs text-textSecondary">
@@ -97,7 +97,7 @@ export function EventCard({
           
           <div className="flex-1 min-w-0">
             <motion.h3
-              className="font-poppins font-semibold text-xs sm:text-sm lg:text-base mb-1 line-clamp-2 leading-tight"
+              className="font-poppins font-semibold text-sm sm:text-base mb-2 line-clamp-2 leading-snug"
               initial={{ opacity: 0, y: 3 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.12 + index * 0.03 }}
@@ -105,7 +105,7 @@ export function EventCard({
               {title}
             </motion.h3>
             <motion.p
-              className="text-xs text-textSecondary mb-1 line-clamp-1"
+              className="text-xs sm:text-sm text-textSecondary mb-1 line-clamp-1"
               initial={{ opacity: 0, y: 3 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.16 + index * 0.03 }}
