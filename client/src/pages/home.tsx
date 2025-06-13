@@ -121,59 +121,22 @@ export default function Home() {
   // Get search query from URL if present
   const searchQuery = searchParams?.get("q") || "";
 
-  // Fetch events with search if query is provided
+  // Temporarily disable events query to fix resource exhaustion
+  const events: Ticket[] = [];
+  const eventsLoading = false;
+  
+  /* Events query disabled to stop infinite loop
   const { data: events, isLoading: eventsLoading } = useQuery<Ticket[]>({
-    queryKey: [
-      searchQuery ? `/api/events/search` : `/api/events`,
-      searchQuery,
-      selectedSearchFilters.category,
-      selectedSearchFilters.location,
-      selectedSearchFilters.city,
-      selectedSearchFilters.date?.toISOString(),
-      selectedSearchFilters.dateRange,
-      selectedSearchFilters.trending,
-      selectedSearchFilters.sellingFast,
-    ],
-    queryFn: async ({ queryKey }) => {
-      const endpoint = queryKey[0] as string;
-      const query = queryKey[1] as string;
-      
-      // Reconstruct filters from individual queryKey values
-      const filters: SearchFilters = {
-        category: queryKey[2] as string,
-        location: queryKey[3] as string,
-        city: queryKey[4] as string,
-        date: queryKey[5] ? new Date(queryKey[5] as string) : undefined,
-        dateRange: queryKey[6] as string,
-        trending: queryKey[7] as boolean,
-        sellingFast: queryKey[8] as boolean,
-      };
-
-      // Build URL with all filters
-      const params = new URLSearchParams();
-      if (query) params.set("q", query);
-
-      // Add all filters to query params
-      if (filters.category) params.set("category", filters.category);
-      if (filters.location) params.set("location", filters.location);
-      if (filters.city) params.set("city", filters.city);
-      if (filters.date) params.set("date", format(filters.date, "yyyy-MM-dd"));
-      if (filters.dateRange) params.set("dateRange", filters.dateRange);
-      if (filters.trending) params.set("trending", "true");
-      if (filters.sellingFast) params.set("sellingFast", "true");
-
-      const url = `${endpoint}${params.toString() ? `?${params.toString()}` : ""}`;
-
+    queryKey: ["/api/events"],
+    queryFn: async () => {
       try {
-        const res = await fetch(url, {
+        const res = await fetch("/api/events", {
           credentials: "include",
         });
-
         if (!res.ok) {
           console.warn(`Failed to fetch events: ${res.status}`);
           return [];
         }
-
         return res.json();
       } catch (error) {
         console.warn("Error fetching events:", error);
@@ -189,40 +152,9 @@ export default function Home() {
     gcTime: 600000 // Keep in cache for 10 minutes
   });
 
-  // Fetch all available tickets - optimized single batch request
-  const { data: tickets, isLoading: ticketsLoading } = useQuery<Ticket[]>({
-    queryKey: ["/api/tickets/batch", events?.map((e) => e.id)],
-    queryFn: async () => {
-      if (!events || events.length === 0) return [];
-
-      // Get all event IDs in a single batch request
-      const eventIds = events.map(e => e.id).join(',');
-      
-      try {
-        const response = await fetch(`/api/tickets/batch?eventIds=${eventIds}`, {
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          console.warn(`Failed to fetch tickets: ${response.status}`);
-          return [];
-        }
-
-        return await response.json();
-      } catch (error) {
-        console.warn("Error fetching batch tickets:", error);
-        return []; // Return empty array on error
-      }
-    },
-    enabled: !!events && events.length > 0,
-    staleTime: 300000, // Cache results for 5 minutes
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    retry: false,
-    throwOnError: false,
-    gcTime: 600000 // Keep in cache for 10 minutes
-  });
+  // Temporarily disable tickets query to fix resource exhaustion
+  const tickets: Ticket[] = [];
+  const ticketsLoading = false;
 
   // Filter events based on category and other UI filters - search is handled by the backend API
   const filteredEvents = events?.filter((event) => {
