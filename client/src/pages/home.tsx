@@ -24,8 +24,16 @@ import {
 import { queryClient } from "@/lib/queryClient";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import EnhancedSEO from "@/components/enhanced-seo";
-import { generateSearchResultsStructuredData, generateFAQStructuredData } from "@/utils/seo-utils";
+import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSchema, ticketHubGlobalFAQs } from "@/components/schema/unified-schema";
+import { 
+  generateHomepageSEO, 
+  generateCategorySEO, 
+  generateSearchResultsStructuredData, 
+  generateFAQStructuredData,
+  getGEOOptimizedDescription,
+  getGEOOptimizedKeywords
+} from "@/utils/global-seo-utils";
 
 
 import { useWebSocket } from "@/hooks/use-websocket";
@@ -601,65 +609,72 @@ export default function Home() {
         }
     }, [params.category]);
 
-  const ticketBazaarFAQs = [
-        {
-            question: "Is Ticket Bazaar a safe platform to buy and sell tickets?",
-            answer: "Yes, Ticket Bazaar is a discovery and contact platform that connects verified buyers and sellers. We are not a reseller or broker - we don't handle payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer transfers through verified profiles and secure communication."
-        },
-        {
-            question: "What types of tickets can I find on Ticket Bazaar?",
-            answer: "You can find second hand tickets for a variety of events including concerts, sports events, festivals, theatre, and comedy shows worldwide."
-        },
-        {
-            question: "How does Ticket Bazaar ensure the authenticity of tickets?",
-            answer: "We verify all tickets listed on our platform to ensure they are legitimate, providing buyers with confidence in their purchase."
-        },
-        {
-            question: "Can I sell tickets on Ticket Bazaar from any country?",
-            answer: "Yes, Ticket Bazaar supports sellers from multiple countries worldwide. Users can list tickets in their local currency and connect with buyers globally through our international marketplace."
-        },
-        {
-            question: "What happens if the event is canceled?",
-            answer: "Since we are a discovery platform that doesn't handle payments or transactions, refund arrangements depend on your agreement with the seller. We recommend discussing cancellation policies before any transaction. Contact the seller directly for refund arrangements."
-        }
-    ];
+  // Generate SEO data based on current context
+  const seoData = selectedCategory === "all" ? 
+    generateHomepageSEO() : 
+    generateCategorySEO(selectedCategory);
+
   // Generate structured data for the homepage
-  const faqStructuredData = generateFAQStructuredData(ticketBazaarFAQs);
+  const faqStructuredData = generateFAQStructuredData(ticketHubGlobalFAQs);
   const searchResultsData = searchQuery && events ? 
     generateSearchResultsStructuredData(searchQuery, events.length, events.map(event => ({
-      title: event.eventTitle || event.title,
-      description: event.eventDescription || '',
+      eventTitle: event.eventTitle || event.title,
+      eventDescription: event.eventDescription || '',
       venue: event.venue,
-      date: event.eventDate.toISOString(),
-      category: event.category,
       city: event.city || '',
-      imageUrl: event.eventImageUrl ? event.eventImageUrl : undefined
+      country: event.country || 'Global',
+      category: event.category,
+      date: new Date(event.eventDate),
+      price: event.price || 0,
+      currency: event.currency || 'USD'
     }))) : null;
 
-  const structuredDataArray: object[] = [];
-  structuredDataArray.push(faqStructuredData);
-  if (searchResultsData) structuredDataArray.push(searchResultsData);
+  // Dynamic title and description based on context
+  const dynamicTitle = searchQuery ? 
+    `${searchQuery} Event Tickets Worldwide | Global Discovery - TicketHub` :
+    selectedCategory === "all" ?
+      seoData.title :
+      `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Tickets Worldwide | Global Discovery - TicketHub`;
+
+  const dynamicDescription = searchQuery ?
+    `Find ${searchQuery} event tickets worldwide. Connect with verified sellers across multiple countries and currencies on TicketHub's global discovery platform.` :
+    getGEOOptimizedDescription(selectedCategory === "all" ? "homepage" : "category", { category: selectedCategory });
+
+  const dynamicKeywords = getGEOOptimizedKeywords(
+    selectedCategory === "all" ? "homepage" : "category", 
+    { category: selectedCategory }
+  ).join(", ");
 
   return (
     <>
-      <EnhancedSEO
-        type={searchQuery ? "search" : selectedCategory === "all" ? "general" : "category"}
-        data={{
-          category: selectedCategory,
-          query: searchQuery,
-          city: selectedCity
-        }}
-        structuredData={structuredDataArray}
+      <SEOManager
+        title={dynamicTitle}
+        description={dynamicDescription}
+        keywords={dynamicKeywords}
+        canonicalUrl={selectedCategory === "all" ? 
+          "https://tickethub.global" : 
+          `https://tickethub.global/category/${selectedCategory}`}
       />
+      
+      <UnifiedSchema
+        faqs={ticketHubGlobalFAQs}
+        includeOrganization={true}
+      />
+      
+      {searchResultsData && (
+        <script type="application/ld+json">
+          {JSON.stringify(searchResultsData)}
+        </script>
+      )}
       {/* Hero Section */}
       <section data-testid="hero-section" className="bg-primary text-white py-6 md:py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-xl md:text-3xl font-bold font-poppins mb-3 md:mb-4">
-              Secure Ticket Resale Marketplace
-            </h2>
+            <h1 className="text-xl md:text-3xl font-bold font-poppins mb-3 md:mb-4">
+              Global Ticket Discovery & Contact Platform
+            </h1>
             <p className="text-base md:text-lg mb-4 md:mb-6">
-              Buy and sell tickets worldwide for comedy shows, concerts, sports, travel, movies and events
+              Discover and connect with verified ticket buyers and sellers worldwide for concerts, comedy shows, sports events, travel experiences, movies and festivals
             </p>
 
             <SearchBar

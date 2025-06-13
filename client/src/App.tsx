@@ -34,6 +34,8 @@ import NotFound from "@/pages/not-found";
 import VerificationDemo from "@/pages/verification-demo";
 import FAQPage from "@/pages/FAQPage";
 import SellerPolicy from "@/pages/SellerPolicy";
+import CityEvents from "@/pages/city-events";
+import GlobalCities from "@/pages/global-cities";
 
 // Components
 import { Navigation } from "@/components/ui/navigation";
