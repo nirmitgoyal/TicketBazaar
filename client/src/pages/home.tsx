@@ -656,11 +656,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-xl md:text-3xl font-bold font-poppins mb-3 md:mb-4">
-              Global Secure Ticket Resale Marketplace
+              Secure Ticket Resale Marketplace
             </h2>
             <p className="text-base md:text-lg mb-4 md:mb-6">
-              Buy and sell tickets worldwide for concerts, sports, and events
-              across multiple countries and currencies
+              Buy and sell tickets worldwide for comedy shows, concerts, sports, travel, movies and events
             </p>
 
             <SearchBar

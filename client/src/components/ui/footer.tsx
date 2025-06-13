@@ -18,7 +18,7 @@ export function Footer() {
               </h3>
             </div>
             <p className="text-sm text-textSecondary mb-4">
-              India's discovery and contact platform for event tickets. We are not a reseller or broker - we don't handle payments, hold inventory, or facilitate transactions. We ensure legal compliance in peer-to-peer transfers.
+              Discovery and contact platform for event tickets. We are not a reseller or broker - we don't handle payments, hold inventory, or facilitate transactions. We ensure legal compliance in peer-to-peer transfers.
             </p>
             <div className="flex space-x-3">
               <a
