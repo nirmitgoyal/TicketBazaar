@@ -25,6 +25,7 @@ import {
   Users,
 } from "lucide-react";
 import { SearchHints } from "@/components/search-hints";
+import { useQuery } from "@tanstack/react-query";
 
 // Debounce utility function to prevent excessive API calls
 function useDebounce<T>(value: T, delay: number): T {
@@ -152,11 +153,46 @@ export function SearchBar({
   const [activeFiltersCount, setActiveFiltersCount] = useState<number>(0);
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
+  // Autocomplete states
+  const [showAutocomplete, setShowAutocomplete] = useState<boolean>(false);
+  const [autocompleteIndex, setAutocompleteIndex] = useState<number>(-1);
+
   const [, navigate] = useLocation();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Create debounced versions of state values for improved performance
   const debouncedQuery = useDebounce(query, 500);
+  const debouncedAutocompleteQuery = useDebounce(query, 300);
+
+  // Fetch autocomplete suggestions
+  const { data: autocompleteResults } = useQuery({
+    queryKey: ['/api/events/search', debouncedAutocompleteQuery],
+    queryFn: async () => {
+      if (!debouncedAutocompleteQuery || debouncedAutocompleteQuery.length < 2) {
+        return [];
+      }
+      
+      const params = new URLSearchParams();
+      params.set('q', debouncedAutocompleteQuery);
+      
+      const response = await fetch(`/api/events/search?${params}`);
+      if (!response.ok) throw new Error('Failed to fetch suggestions');
+      
+      const results = await response.json();
+      
+      // Extract unique suggestions from the results
+      const suggestions = new Set<string>();
+      results.forEach((event: any) => {
+        if (event.eventTitle) suggestions.add(event.eventTitle);
+        if (event.venue) suggestions.add(event.venue);
+        if (event.city) suggestions.add(event.city);
+      });
+      
+      return Array.from(suggestions).slice(0, 8);
+    },
+    enabled: debouncedAutocompleteQuery.length >= 2,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
   // Initialize form based on URL params
   useEffect(() => {
@@ -364,6 +400,70 @@ export function SearchBar({
     performSearch();
   };
 
+  // Handle autocomplete selection
+  const handleAutocompleteSelect = (suggestion: string) => {
+    setQuery(suggestion);
+    setShowAutocomplete(false);
+    setAutocompleteIndex(-1);
+    searchInputRef.current?.focus();
+    performSearch();
+  };
+
+  // Handle keyboard navigation in autocomplete
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showAutocomplete || !autocompleteResults?.length) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setAutocompleteIndex(prev => 
+          prev < autocompleteResults.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setAutocompleteIndex(prev => 
+          prev > 0 ? prev - 1 : autocompleteResults.length - 1
+        );
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (autocompleteIndex >= 0) {
+          handleAutocompleteSelect(autocompleteResults[autocompleteIndex]);
+        } else {
+          handleSearch(e);
+        }
+        break;
+      case 'Escape':
+        setShowAutocomplete(false);
+        setAutocompleteIndex(-1);
+        break;
+    }
+  };
+
+  // Show/hide autocomplete based on input focus and results
+  useEffect(() => {
+    if (autocompleteResults && autocompleteResults.length > 0 && query.length >= 2) {
+      setShowAutocomplete(true);
+    } else {
+      setShowAutocomplete(false);
+    }
+    setAutocompleteIndex(-1);
+  }, [autocompleteResults, query]);
+
+  // Close autocomplete when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchInputRef.current && !searchInputRef.current.contains(event.target as Node)) {
+        setShowAutocomplete(false);
+        setAutocompleteIndex(-1);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   // Search context for AI hints
   const searchContext = {
     query,
@@ -393,6 +493,12 @@ export function SearchBar({
                   className={`w-full pl-10 pr-4 py-4 text-base rounded-lg touch-manipulation touch-target min-h-[48px] focus:ring-2 focus:ring-primary ${isSearching ? "opacity-60" : ""}`}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => {
+                    if (autocompleteResults && autocompleteResults.length > 0 && query.length >= 2) {
+                      setShowAutocomplete(true);
+                    }
+                  }}
                   disabled={isSearching}
                   inputMode="search"
                   autoCapitalize="none"
@@ -402,6 +508,28 @@ export function SearchBar({
                 {isSearching && (
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                     <span className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                  </div>
+                )}
+                
+                {/* Autocomplete Dropdown */}
+                {showAutocomplete && autocompleteResults && autocompleteResults.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                    {autocompleteResults.map((suggestion, index) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors ${
+                          index === autocompleteIndex ? 'bg-primary/5 text-primary' : 'text-gray-700'
+                        }`}
+                        onClick={() => handleAutocompleteSelect(suggestion)}
+                        onMouseEnter={() => setAutocompleteIndex(index)}
+                      >
+                        <div className="flex items-center">
+                          <Search className="h-4 w-4 mr-2 text-gray-400" />
+                          <span className="truncate">{suggestion}</span>
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
