@@ -463,10 +463,18 @@ export function SearchBar({
   // Close autocomplete when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchInputRef.current && !searchInputRef.current.contains(event.target as Node)) {
-        setShowAutocomplete(false);
-        setAutocompleteIndex(-1);
+      const target = event.target as Node;
+      const autocompleteElement = document.querySelector('.autocomplete-dropdown');
+      
+      // Don't close if clicking on the search input or autocomplete dropdown
+      if (searchInputRef.current && 
+          (searchInputRef.current.contains(target) || 
+           (autocompleteElement && autocompleteElement.contains(target)))) {
+        return;
       }
+      
+      setShowAutocomplete(false);
+      setAutocompleteIndex(-1);
     };
 
     document.addEventListener('mousedown', handleClickOutside);
