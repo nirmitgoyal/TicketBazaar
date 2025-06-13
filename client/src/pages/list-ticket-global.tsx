@@ -31,14 +31,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, Info, MapPin, Globe, DollarSign, Clock } from "lucide-react";
+import { AlertCircle, Info, MapPin, Globe, Clock } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { getAllCountries, getCountryInfo, detectUserCountry } from "@/lib/country-utils";
-import { getAllCurrencies, formatCurrency } from "@/lib/currency-utils";
+
 import { ticketListingSchema } from "@shared/schema";
 
 // Extended schema for the form with additional UI fields
