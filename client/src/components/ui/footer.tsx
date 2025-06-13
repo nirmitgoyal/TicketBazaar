@@ -49,12 +49,82 @@ export function Footer() {
 
 
           <div>
+            <h4 className="font-medium text-base mb-4">Sell Tickets</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/how-to-sell-tickets">
+                  <a className="text-textSecondary hover:text-primary">
+                    How to Sell Ticket Online
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/list-ticket">
+                  <a className="text-textSecondary hover:text-primary">
+                    Sell Your Tickets
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/resell-tickets">
+                  <a className="text-textSecondary hover:text-primary">
+                    Resell Tickets
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/seller-policy">
+                  <a className="text-textSecondary hover:text-primary">
+                    Seller Policy
+                  </a>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-medium text-base mb-4">Buy Tickets</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/buy-second-hand-tickets">
+                  <a className="text-textSecondary hover:text-primary">
+                    Buy Second Hand Tickets
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/?category=concerts">
+                  <a className="text-textSecondary hover:text-primary">
+                    Concert Tickets
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/?category=sports">
+                  <a className="text-textSecondary hover:text-primary">
+                    Sports Tickets
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq">
+                  <a className="text-textSecondary hover:text-primary">
+                    Safety Tips
+                  </a>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
             <h4 className="font-medium text-base mb-4">Support</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="/faq" className="text-textSecondary hover:text-primary">
-                  FAQs
-                </a>
+                <Link href="/faq">
+                  <a className="text-textSecondary hover:text-primary">
+                    FAQs
+                  </a>
+                </Link>
               </li>
               <li>
                 <a
@@ -67,9 +137,11 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/seller-policy" className="text-textSecondary hover:text-primary">
-                  Seller Policy
-                </a>
+                <Link href="/verification-demo">
+                  <a className="text-textSecondary hover:text-primary">
+                    Verify Tickets
+                  </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-textSecondary hover:text-primary">

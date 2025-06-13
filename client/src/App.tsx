@@ -36,6 +36,7 @@ import FAQPage from "@/pages/FAQPage";
 import SellerPolicy from "@/pages/SellerPolicy";
 import CityEvents from "@/pages/city-events";
 import GlobalCities from "@/pages/global-cities";
+import HowToSellTickets from "@/pages/how-to-sell-tickets";
 
 // Components
 import { Navigation } from "@/components/ui/navigation";
@@ -153,6 +154,12 @@ function Router() {
 
       {/* Profile */}
       <ProtectedRoute path="/profile" component={Profile} />
+
+      {/* SEO and Info pages */}
+      <Route path="/how-to-sell-tickets" component={HowToSellTickets} />
+      <Route path="/sell-ticket" component={HowToSellTickets} />
+      <Route path="/resell-tickets" component={HowToSellTickets} />
+      <Route path="/buy-second-hand-tickets" component={Home} />
 
       {/* Legal pages */}
       <Route path="/terms-of-service" component={TermsOfService} />

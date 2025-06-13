@@ -1,27 +1,43 @@
-
 User-agent: *
 Allow: /
+Allow: /sitemap.xml
+
+# Priority pages for ticket resale SEO
+Allow: /list-ticket
+Allow: /sell-ticket
+Allow: /resell-tickets
+Allow: /buy-second-hand-tickets
+
+# Category pages
+Allow: /concerts
+Allow: /sports
+Allow: /festivals
+Allow: /theatre
+Allow: /comedy
+
+# City pages
+Allow: /mumbai
+Allow: /delhi
+Allow: /bangalore
+Allow: /chennai
+Allow: /hyderabad
+Allow: /pune
+Allow: /kolkata
+Allow: /ahmedabad
+
+# Important pages
+Allow: /faq
+Allow: /how-to-sell-tickets
+Allow: /safety-tips
+
+# Disallow admin and private areas
+Disallow: /admin
 Disallow: /api/
-Disallow: /admin/
-Disallow: /checkout/processing
-Disallow: /complete-profile
-Disallow: /my-tickets
-Disallow: /profile
-Disallow: /ticket-verification
-Disallow: /*?*
-Allow: /events/category/
+Disallow: /private/
+Disallow: /*.json$
 
-# Allow specific search engines
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-# Crawl delay
-Crawl-delay: 1
-
+# XML Sitemap
 Sitemap: https://ticketbazaar.co.in/sitemap.xml
 
-# Host directive
-Host: ticketbazaar.co.in
+# Crawl delay for respectful crawling
+Crawl-delay: 1
