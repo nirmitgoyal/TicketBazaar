@@ -126,12 +126,28 @@ export default function Home() {
     queryKey: [
       searchQuery ? `/api/events/search` : `/api/events`,
       searchQuery,
-      selectedSearchFilters,
+      selectedSearchFilters.category,
+      selectedSearchFilters.location,
+      selectedSearchFilters.city,
+      selectedSearchFilters.date?.toISOString(),
+      selectedSearchFilters.dateRange,
+      selectedSearchFilters.trending,
+      selectedSearchFilters.sellingFast,
     ],
     queryFn: async ({ queryKey }) => {
       const endpoint = queryKey[0] as string;
       const query = queryKey[1] as string;
-      const filters = queryKey[2] as SearchFilters;
+      
+      // Reconstruct filters from individual queryKey values
+      const filters: SearchFilters = {
+        category: queryKey[2] as string,
+        location: queryKey[3] as string,
+        city: queryKey[4] as string,
+        date: queryKey[5] ? new Date(queryKey[5] as string) : undefined,
+        dateRange: queryKey[6] as string,
+        trending: queryKey[7] as boolean,
+        sellingFast: queryKey[8] as boolean,
+      };
 
       // Build URL with all filters
       const params = new URLSearchParams();
@@ -164,10 +180,13 @@ export default function Home() {
         return [];
       }
     },
-    staleTime: 60000, // Cache results for 1 minute
+    staleTime: 300000, // Cache results for 5 minutes
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnMount: false, // Don't refetch on component mount if data exists
+    refetchOnReconnect: false, // Don't refetch on reconnect
     retry: false,
-    throwOnError: false
+    throwOnError: false,
+    gcTime: 600000 // Keep in cache for 10 minutes
   });
 
   // Fetch all available tickets - optimized single batch request
@@ -196,10 +215,13 @@ export default function Home() {
       }
     },
     enabled: !!events && events.length > 0,
-    staleTime: 60000, // Cache results for 1 minute
+    staleTime: 300000, // Cache results for 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
     retry: false,
     throwOnError: false,
-    gcTime: 300000 // Keep in cache for 5 minutes
+    gcTime: 600000 // Keep in cache for 10 minutes
   });
 
   // Filter events based on category and other UI filters - search is handled by the backend API
@@ -1031,19 +1053,7 @@ export default function Home() {
                   ticket.title === event.title
                 ) || [];
                 
-                // Debug logging for first few events
-                if (index < 2) {
-                  console.log(`Event ${index}:`, {
-                    eventTitle: event.eventTitle,
-                    eventName: event.title,
-                    ticketsCount: tickets?.length || 0,
-                    matchedTickets: eventTickets.length,
-                    sampleTicket: tickets?.[0] ? {
-                      title: tickets[0].title,
-                      eventTitle: tickets[0].eventTitle
-                    } : null
-                  });
-                }
+
                 
                 return (
                   <EventCard
