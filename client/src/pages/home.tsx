@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -30,18 +31,22 @@ export default function Home() {
   // Get search query from URL if present
   const searchQuery = searchParams?.get("q") || "";
 
-  // Temporarily disable queries to fix resource exhaustion
-  const events: Ticket[] = [];
-  const eventsLoading = false;
-  const tickets: Ticket[] = [];
-  const ticketsLoading = false;
+  // Fetch events/tickets with controlled queries
+  const { data: events = [], isLoading: eventsLoading } = useQuery({
+    queryKey: ["/api/events"],
+    enabled: true,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const { data: tickets = [], isLoading: ticketsLoading } = useQuery({
+    queryKey: ["/api/tickets"],
+    enabled: true,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
   // Extract query parameters and URL path parameters
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["/api/tickets"] });
-    queryClient.removeQueries({ queryKey: ["/api/tickets"] });
-    queryClient.invalidateQueries({ queryKey: ["/api/events"] });
-    queryClient.invalidateQueries({ queryKey: ["/api/events/search"] });
+    // Removed query invalidations to prevent infinite loops
 
     const urlParams = new URLSearchParams(window.location.search);
     setSearchParams(urlParams);
