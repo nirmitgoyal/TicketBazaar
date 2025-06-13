@@ -68,6 +68,7 @@ export const tickets = pgTable("tickets", {
   section: text("section"),
   row: text("row"),
   seat: text("seat"),
+  price: doublePrecision("price").notNull(),
   quantity: integer("quantity").notNull(),
   status: text("status").notNull().default("available"),
   isTransferrable: boolean("is_transferrable").default(true),
