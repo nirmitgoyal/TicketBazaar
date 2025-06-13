@@ -393,10 +393,7 @@ export function Navigation() {
                   </>
                 )}
 
-                {/* Mobile Theme Status */}
-                <motion.div variants={listItem} className="px-2 py-3 border-t">
-                  <ThemeStatus />
-                </motion.div>
+
               </motion.nav>
             </motion.div>
           )}
