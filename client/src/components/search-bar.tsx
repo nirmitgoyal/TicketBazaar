@@ -180,15 +180,57 @@ export function SearchBar({
       
       const results = await response.json();
       
-      // Extract unique suggestions from the results
-      const suggestions = new Set<string>();
+      // Extract and prioritize suggestions from the results
+      const suggestions = new Map<string, { text: string; type: string; priority: number; category?: string }>();
+      
       results.forEach((event: any) => {
-        if (event.eventTitle) suggestions.add(event.eventTitle);
-        if (event.venue) suggestions.add(event.venue);
-        if (event.city) suggestions.add(event.city);
+        const query = debouncedAutocompleteQuery.toLowerCase();
+        
+        // Event titles (highest priority) - exact starts with match gets highest score
+        if (event.eventTitle && event.eventTitle.toLowerCase().includes(query)) {
+          const key = event.eventTitle.toLowerCase();
+          if (!suggestions.has(key)) {
+            const startsWithQuery = event.eventTitle.toLowerCase().startsWith(query);
+            suggestions.set(key, {
+              text: event.eventTitle,
+              type: 'event',
+              priority: startsWithQuery ? 5 : 3,
+              category: event.category
+            });
+          }
+        }
+        
+        // Venues (medium priority)
+        if (event.venue && event.venue.toLowerCase().includes(query)) {
+          const key = event.venue.toLowerCase();
+          if (!suggestions.has(key)) {
+            const startsWithQuery = event.venue.toLowerCase().startsWith(query);
+            suggestions.set(key, {
+              text: event.venue,
+              type: 'venue',
+              priority: startsWithQuery ? 4 : 2
+            });
+          }
+        }
+        
+        // Cities (lower priority)
+        if (event.city && event.city.toLowerCase().includes(query)) {
+          const key = event.city.toLowerCase();
+          if (!suggestions.has(key)) {
+            const startsWithQuery = event.city.toLowerCase().startsWith(query);
+            suggestions.set(key, {
+              text: event.city,
+              type: 'city',
+              priority: startsWithQuery ? 3 : 1
+            });
+          }
+        }
       });
       
-      return Array.from(suggestions).slice(0, 8);
+      // Sort by priority and return structured suggestions
+      return Array.from(suggestions.values())
+        .sort((a, b) => b.priority - a.priority)
+        .slice(0, 8);
     },
     enabled: debouncedAutocompleteQuery.length >= 2,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -401,19 +443,20 @@ export function SearchBar({
   };
 
   // Handle autocomplete selection
-  const handleAutocompleteSelect = (suggestion: string) => {
-    setQuery(suggestion);
+  const handleAutocompleteSelect = (suggestion: any) => {
+    const suggestionText = typeof suggestion === 'string' ? suggestion : suggestion.text;
+    setQuery(suggestionText);
     setShowAutocomplete(false);
     setAutocompleteIndex(-1);
     
     // Immediately navigate to search results for this suggestion
     if (onSearch) {
       // If there's a custom onSearch handler, use it
-      onSearch(suggestion.trim(), {});
+      onSearch(suggestionText.trim(), {});
     } else {
       // Otherwise navigate to the search results page
       const params = new URLSearchParams();
-      params.set("q", suggestion.trim());
+      params.set("q", suggestionText.trim());
       navigate(`/?${params.toString()}`);
     }
   };
@@ -531,25 +574,46 @@ export function SearchBar({
                 {/* Autocomplete Dropdown */}
                 {showAutocomplete && autocompleteResults && autocompleteResults.length > 0 && (
                   <div className="autocomplete-dropdown absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
-                    {autocompleteResults.map((suggestion, index) => (
-                      <button
-                        key={suggestion}
-                        type="button"
-                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors cursor-pointer ${
-                          index === autocompleteIndex ? 'bg-primary/5 text-primary' : 'text-gray-700'
-                        }`}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          handleAutocompleteSelect(suggestion);
-                        }}
-                        onMouseEnter={() => setAutocompleteIndex(index)}
-                      >
-                        <div className="flex items-center">
-                          <Search className="h-4 w-4 mr-2 text-gray-400" />
-                          <span className="truncate">{suggestion}</span>
-                        </div>
-                      </button>
-                    ))}
+                    {autocompleteResults.map((suggestion, index) => {
+                      const suggestionText = typeof suggestion === 'string' ? suggestion : suggestion.text;
+                      const suggestionType = typeof suggestion === 'string' ? 'event' : suggestion.type;
+                      const suggestionCategory = typeof suggestion === 'string' ? undefined : suggestion.category;
+                      
+                      // Choose appropriate icon based on type
+                      let icon = <Search className="h-4 w-4 mr-2 text-gray-400" />;
+                      if (suggestionType === 'event') {
+                        icon = categoryIcons[suggestionCategory?.toLowerCase()] || <Ticket className="h-4 w-4 mr-2 text-blue-500" />;
+                      } else if (suggestionType === 'venue') {
+                        icon = <MapPin className="h-4 w-4 mr-2 text-green-500" />;
+                      } else if (suggestionType === 'city') {
+                        icon = <MapPin className="h-4 w-4 mr-2 text-orange-500" />;
+                      }
+
+                      return (
+                        <button
+                          key={suggestionText}
+                          type="button"
+                          className={`w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors cursor-pointer ${
+                            index === autocompleteIndex ? 'bg-primary/5 text-primary' : 'text-gray-700'
+                          }`}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            handleAutocompleteSelect(suggestion);
+                          }}
+                          onMouseEnter={() => setAutocompleteIndex(index)}
+                        >
+                          <div className="flex items-center">
+                            {icon}
+                            <div className="flex-1 min-w-0">
+                              <span className="truncate block">{suggestionText}</span>
+                              {suggestionType !== 'event' && (
+                                <span className="text-xs text-gray-500 capitalize">{suggestionType}</span>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
