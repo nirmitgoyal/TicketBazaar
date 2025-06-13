@@ -389,7 +389,7 @@ export function SearchBar({
                 <Input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Search events..."
+                  placeholder="Search Tickets..."
                   className={`w-full pl-10 pr-4 py-4 text-base rounded-lg touch-manipulation touch-target min-h-[48px] focus:ring-2 focus:ring-primary ${isSearching ? "opacity-60" : ""}`}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}

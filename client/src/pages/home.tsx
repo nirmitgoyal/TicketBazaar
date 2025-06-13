@@ -688,10 +688,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-xl md:text-3xl font-bold font-poppins mb-3 md:mb-4">
-              Sell Ticket Online | Resell Tickets | Buy Second Hand Tickets
+              Global Ticket Discovery & Contact Platform
             </h1>
             <p className="text-base md:text-lg mb-4 md:mb-6">
-              India's trusted marketplace to sell ticket online safely or buy 2nd hand tickets. Resell tickets for concerts, sports events, festivals and connect with verified buyers and sellers.
+              Resell tickets for comedy shows, movies, bus, concerts, sports, events and connect with verified buyers and sellers.
             </p>
 
             <SearchBar
