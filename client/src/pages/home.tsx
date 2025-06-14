@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
-import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -31,22 +30,18 @@ export default function Home() {
   // Get search query from URL if present
   const searchQuery = searchParams?.get("q") || "";
 
-  // Fetch events/tickets with controlled queries
-  const { data: events = [], isLoading: eventsLoading } = useQuery<Ticket[]>({
-    queryKey: ["/api/events"],
-    enabled: true,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  const { data: tickets = [], isLoading: ticketsLoading } = useQuery<Ticket[]>({
-    queryKey: ["/api/tickets"],
-    enabled: true,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
+  // Temporarily disable queries to fix resource exhaustion
+  const events: Ticket[] = [];
+  const eventsLoading = false;
+  const tickets: Ticket[] = [];
+  const ticketsLoading = false;
 
   // Extract query parameters and URL path parameters
   useEffect(() => {
-    // Removed query invalidations to prevent infinite loops
+    queryClient.invalidateQueries({ queryKey: ["/api/tickets"] });
+    queryClient.removeQueries({ queryKey: ["/api/tickets"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/events/search"] });
 
     const urlParams = new URLSearchParams(window.location.search);
     setSearchParams(urlParams);
@@ -450,7 +445,7 @@ export default function Home() {
                     No tickets available
                   </h3>
                   <p className="text-gray-600">
-                    Check back later for new ticket listings.
+                    Check back later for new tickets in this category.
                   </p>
                 </div>
               )}
@@ -459,12 +454,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Ticket Detail Modal */}
-      {selectedEventId !== null && (
+      {/* Modal */}
+      {selectedEventId && (
         <TicketDetailModal
-          eventId={selectedEventId}
           isOpen={isModalOpen}
           onClose={closeModal}
+          eventId={selectedEventId}
         />
       )}
     </>
