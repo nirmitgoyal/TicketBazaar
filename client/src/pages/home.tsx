@@ -30,11 +30,25 @@ export default function Home() {
   // Get search query from URL if present
   const searchQuery = searchParams?.get("q") || "";
 
-  // Temporarily disable queries to prevent resource issues
-  const events: Ticket[] = [];
-  const eventsLoading = false;
-  const tickets: Ticket[] = [];
-  const ticketsLoading = false;
+  // Fetch events data
+  const {
+    data: events = [],
+    isLoading: eventsLoading,
+    error: eventsError,
+  } = useQuery<Ticket[]>({
+    queryKey: ["/api/events", activeCategory, selectedSearchFilters],
+    enabled: true,
+  });
+
+  // Fetch tickets data
+  const {
+    data: tickets = [],
+    isLoading: ticketsLoading,
+    error: ticketsError,
+  } = useQuery<Ticket[]>({
+    queryKey: ["/api/tickets", searchQuery, selectedSearchFilters],
+    enabled: true,
+  });
 
   // Extract query parameters and URL path parameters
   useEffect(() => {

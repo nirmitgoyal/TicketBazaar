@@ -69,6 +69,8 @@ export const tickets = pgTable("tickets", {
   row: text("row"),
   seat: text("seat"),
   price: doublePrecision("price").notNull(),
+  currency: text("currency").notNull().default("USD"), // Currency code (USD, EUR, INR, etc.)
+  originalPrice: doublePrecision("original_price"), // Original ticket price for discount calculation
   quantity: integer("quantity").notNull(),
   status: text("status").notNull().default("available"),
   isTransferrable: boolean("is_transferrable").default(true),
