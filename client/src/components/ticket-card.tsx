@@ -215,17 +215,17 @@ export function TicketCard({
             >
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-primary">
-                  {formatCurrency(event.price, event.currency || 'USD')}
+                  {formatCurrency(ticket.price, ticket.currency || 'USD')}
                 </span>
-                {event.originalPrice && event.originalPrice !== event.price && (
+                {ticket.originalPrice && ticket.originalPrice !== ticket.price && (
                   <span className="text-sm text-textSecondary line-through">
-                    {formatCurrency(event.originalPrice, event.currency || 'USD')}
+                    {formatCurrency(ticket.originalPrice, ticket.currency || 'USD')}
                   </span>
                 )}
               </div>
-              {event.quantity > 1 && (
+              {ticket.quantity > 1 && (
                 <Badge variant="secondary" className="text-xs">
-                  {event.quantity} available
+                  {ticket.quantity} available
                 </Badge>
               )}
             </motion.div>
@@ -320,7 +320,7 @@ export function TicketCard({
       <VerificationModal
         isOpen={showVerificationModal}
         onClose={() => setShowVerificationModal(false)}
-        ticket={event}
+        ticket={ticket}
       />
     </motion.div>
   );
