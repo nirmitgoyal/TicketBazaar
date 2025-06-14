@@ -8,6 +8,7 @@ import {
   addFraudAssessmentToResponse,
   verificationBasedRateLimit 
 } from "../middleware/fraud-protection.middleware";
+import { ticketCreationLimiter, uploadLimiter } from "../middleware/rate-limit.middleware";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -130,6 +131,7 @@ router.get("/seller/:sellerId", ticketController.getTicketsBySeller);
 router.post(
   "/upload",
   isAuthenticated,
+  uploadLimiter,
   upload.single("ticketFile"),
   async (req, res) => {
     try {

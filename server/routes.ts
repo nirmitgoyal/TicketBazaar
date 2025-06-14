@@ -3,6 +3,16 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
 import {
+  generalApiLimiter,
+  authLimiter,
+  ticketCreationLimiter,
+  contactRequestLimiter,
+  reviewLimiter,
+  searchLimiter,
+  uploadLimiter,
+  strictLimiter
+} from "./middleware/rate-limit.middleware";
+import {
   authRoutes,
   eventRoutes,
   ticketRoutes,
@@ -33,30 +43,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create API Router
   const apiRouter = Router();
 
-  // Register route modules
-  apiRouter.use("/auth", authRoutes);
+  // Apply general rate limiting to all API routes
+  apiRouter.use(generalApiLimiter);
+
+  // Register route modules with specific rate limiters
+  apiRouter.use("/auth", authLimiter, authRoutes);
   apiRouter.use("/events", eventRoutes);
   apiRouter.use("/tickets", ticketRoutes);
-  apiRouter.use("/reviews", reviewRoutes);
-  apiRouter.use("/contact-requests", contactRequestRoutes);
-  apiRouter.use("/search", searchHintsRoutes);
+  apiRouter.use("/reviews", reviewLimiter, reviewRoutes);
+  apiRouter.use("/contact-requests", contactRequestLimiter, contactRequestRoutes);
+  apiRouter.use("/search", searchLimiter, searchHintsRoutes);
   apiRouter.use("/data-privacy", dataPrivacyRoutes);
 
   // Import and register ticket views routes
   const ticketViewsRoutes = (await import("./routes/ticket-views")).default;
   apiRouter.use("/ticket-views", ticketViewsRoutes);
 
-  // Import and register health routes
+  // Import and register health routes (no rate limiting for health checks)
   const healthRoutes = (await import("./routes/health.routes")).default;
   apiRouter.use("/health", healthRoutes);
 
   // Import and register verification routes
   const verificationRoutes = (await import("./routes/verification.routes")).default;
-  apiRouter.use("/verification", verificationRoutes);
+  apiRouter.use("/verification", strictLimiter, verificationRoutes);
 
   // Import and register fraud detection routes
   const fraudDetectionRoutes = (await import("./routes/fraud-detection.routes")).default;
-  apiRouter.use("/fraud-detection", fraudDetectionRoutes);
+  apiRouter.use("/fraud-detection", strictLimiter, fraudDetectionRoutes);
 
   // Import and register user routes
   const userRoutes = (await import("./routes/user.routes")).default;
@@ -64,7 +77,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Import and register autocomplete routes
   const autocompleteRoutes = (await import("./routes/autocomplete")).default;
-  apiRouter.use("/autocomplete", autocompleteRoutes);
+  apiRouter.use("/autocomplete", searchLimiter, autocompleteRoutes);
 
   // Import and register sitemap routes
   const { generateSitemap, generateRobotsTxt } = await import("./routes/sitemap");
