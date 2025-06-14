@@ -43,12 +43,14 @@ import { getAllCountries, getCountryInfo, detectUserCountry } from "@/lib/countr
 
 import { ticketListingSchema } from "@shared/schema";
 
-// Use the global ticket listing schema with international support
-type TicketWithEventForm = z.infer<typeof ticketListingSchema> & {
-  eventDate: string;
-  eventTime: string;
-  eventVenueAddress: string;
-};
+// Custom form schema for ticket listing with string dates/times
+const ticketFormSchema = ticketListingSchema.omit({ eventDate: true }).extend({
+  eventDate: z.string().min(1, "Event date is required"),
+  eventTime: z.string().min(1, "Event time is required"),
+  eventVenueAddress: z.string().optional(),
+});
+
+type TicketWithEventForm = z.infer<typeof ticketFormSchema>;
 
 export default function ListTicket() {
   const { user, isAuthenticated } = useAuth();
@@ -60,11 +62,7 @@ export default function ListTicket() {
   const [venueInputValue, setVenueInputValue] = useState("");
 
   const form = useForm<TicketWithEventForm>({
-    resolver: zodResolver(ticketListingSchema.extend({
-      eventDate: z.string().min(1, "Event date is required"),
-      eventTime: z.string().min(1, "Event time is required"),
-      eventVenueAddress: z.string().optional(),
-    })),
+    resolver: zodResolver(ticketFormSchema),
     defaultValues: {
       title: "",
       eventTitle: "",
@@ -188,10 +186,10 @@ export default function ListTicket() {
     setVenueInputValue("");
     setSearchResults([]);
     setShowResults(false);
-    form.setValue("eventVenue", "");
+    form.setValue("venue", "");
     form.setValue("eventVenueAddress", "");
-    form.setValue("eventLatitude", undefined);
-    form.setValue("eventLongitude", undefined);
+    form.setValue("latitude", undefined);
+    form.setValue("longitude", undefined);
   }, [form]);
 
   const createTicketMutation = useMutation({
@@ -386,7 +384,7 @@ export default function ListTicket() {
 
                     <FormField
                       control={form.control}
-                      name="eventVenue"
+                      name="venue"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
