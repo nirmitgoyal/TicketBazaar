@@ -69,13 +69,20 @@ export function buildSortConditions(sortOptions?: SortOptions) {
   }
 
   const direction = sortOptions.direction === 'asc' ? asc : desc;
-  const field = tickets[sortOptions.field as keyof typeof tickets];
   
-  if (!field) {
-    return [desc(tickets.id)];
+  // Handle sorting by specific fields
+  switch (sortOptions.field) {
+    case 'eventDate':
+      return [direction(tickets.eventDate)];
+    case 'price':
+      return [direction(tickets.price)];
+    case 'createdAt':
+      return [direction(tickets.createdAt)];
+    case 'title':
+      return [direction(tickets.title)];
+    default:
+      return [desc(tickets.id)];
   }
-
-  return [direction(field)];
 }
 
 /**

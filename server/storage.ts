@@ -859,7 +859,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       const sellerTickets = await this.getTicketsBySeller(sellerId);
-      const sellerVerification = await verificationService.verifySeller(seller, sellerTickets);
+      const sellerVerification = await verificationService.verifySeller(seller);
 
       return {
         seller,
@@ -888,11 +888,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       const sellerHistory = await this.getTicketsBySeller(ticket.sellerId);
-      const comprehensiveVerification = await verificationService.performComprehensiveVerification(
-        ticket,
-        seller,
-        sellerHistory
-      );
+      const comprehensiveVerification = await verificationService.performComprehensiveVerification(ticket);
 
       return {
         ticket,

@@ -483,11 +483,11 @@ export default function ListTicket() {
 
                     <FormField
                       control={form.control}
-                      name="eventCategory"
+                      name="category"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Event Category</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select a category" />
