@@ -10,10 +10,10 @@ const rateLimitHandler = (req: Request, res: Response) => {
   });
 };
 
-// General API rate limiter - 120 requests per 15 minutes
+// General API rate limiter - 144 requests per 15 minutes
 export const generalApiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 120, // limit each IP to 120 requests per windowMs
+  max: 144, // limit each IP to 144 requests per windowMs
   message: rateLimitHandler,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -23,65 +23,65 @@ export const generalApiLimiter = rateLimit({
   }
 });
 
-// Strict rate limiter for authentication endpoints - 6 attempts per 15 minutes
+// Strict rate limiter for authentication endpoints - 7 attempts per 15 minutes
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 6, // limit each IP to 6 requests per windowMs
+  max: 7, // limit each IP to 7 requests per windowMs
   message: rateLimitHandler,
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true, // Don't count successful requests
 });
 
-// Moderate rate limiter for ticket creation - 12 tickets per hour
+// Moderate rate limiter for ticket creation - 14 tickets per hour
 export const ticketCreationLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 12, // limit each IP to 12 ticket creations per hour
+  max: 14, // limit each IP to 14 ticket creations per hour
   message: rateLimitHandler,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Contact request rate limiter - 24 requests per hour
+// Contact request rate limiter - 29 requests per hour
 export const contactRequestLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 24, // limit each IP to 24 contact requests per hour
+  max: 29, // limit each IP to 29 contact requests per hour
   message: rateLimitHandler,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Review submission rate limiter - 6 reviews per hour
+// Review submission rate limiter - 7 reviews per hour
 export const reviewLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 6, // limit each IP to 6 reviews per hour
+  max: 7, // limit each IP to 7 reviews per hour
   message: rateLimitHandler,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Search rate limiter - 72 searches per minute (generous for browsing)
+// Search rate limiter - 86 searches per minute (generous for browsing)
 export const searchLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 72, // limit each IP to 72 searches per minute
+  max: 86, // limit each IP to 86 searches per minute
   message: rateLimitHandler,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// File upload rate limiter - 6 uploads per 15 minutes
+// File upload rate limiter - 7 uploads per 15 minutes
 export const uploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 6, // limit each IP to 6 uploads per 15 minutes
+  max: 7, // limit each IP to 7 uploads per 15 minutes
   message: rateLimitHandler,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Very strict rate limiter for sensitive operations - 4 attempts per hour
+// Very strict rate limiter for sensitive operations - 5 attempts per hour
 export const strictLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 4, // limit each IP to 4 requests per hour
+  max: 5, // limit each IP to 5 requests per hour
   message: rateLimitHandler,
   standardHeaders: true,
   legacyHeaders: false,
