@@ -7,6 +7,7 @@ import { SearchBar, SearchFilters } from "@/components/search-bar";
 import { TicketCard } from "@/components/ticket-card";
 import { EventCard } from "@/components/event-card";
 import { TicketDetailModal } from "@/components/ticket-detail-modal";
+import { SellerDetailsModal } from "@/components/seller-details-modal";
 import { Loader2, AlertTriangle, MapPin, Search } from "lucide-react";
 import { Ticket } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,8 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [isSellerModalOpen, setIsSellerModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showNoResultsMessage, setShowNoResultsMessage] = useState<boolean>(false);
   const [selectedSearchFilters, setSelectedSearchFilters] = useState<SearchFilters>({});
@@ -148,6 +151,16 @@ export default function Home() {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedEventId(null);
+  };
+
+  const openSellerModal = (ticket: Ticket) => {
+    setSelectedTicket(ticket);
+    setIsSellerModalOpen(true);
+  };
+
+  const closeSellerModal = () => {
+    setIsSellerModalOpen(false);
+    setSelectedTicket(null);
   };
 
   const resetAllFilters = () => {
@@ -317,26 +330,73 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Sample Event Cards to match the original design */}
-              {Array.from({ length: 16 }, (_, i) => (
-                <div key={i} className="bg-white rounded-lg border p-4 space-y-3">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">
-                      {String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}
+              {Array.from({ length: 16 }, (_, i) => {
+                // Create sample ticket data for each card
+                const sampleTicket: Ticket = {
+                  id: i + 1000, // Unique ID for sample tickets
+                  sellerId: Math.floor(Math.random() * 5) + 1, // Random seller ID 1-5
+                  title: `Sample Event Ticket ${i + 1}`,
+                  eventTitle: `Sample Event Title ${i + 1}`,
+                  eventDescription: `Description for sample event ${i + 1}`,
+                  venue: `Sample Venue ${i + 1}`,
+                  venueAddress: `123 Sample St, City ${i + 1}`,
+                  eventDate: new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
+                  category: ['Concerts', 'Sports', 'Festivals', 'Theatre', 'Comedy'][Math.floor(Math.random() * 5)],
+                  eventImageUrl: null,
+                  trending: Math.random() > 0.7,
+                  sellingFast: Math.random() > 0.8,
+                  latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
+                  longitude: -74.0060 + (Math.random() - 0.5) * 0.1,
+                  city: `City ${i + 1}`,
+                  country: 'US',
+                  state: 'NY',
+                  postalCode: '10001',
+                  section: `Section ${String.fromCharCode(65 + Math.floor(Math.random() * 5))}`,
+                  row: Math.floor(Math.random() * 20) + 1 + '',
+                  seat: Math.floor(Math.random() * 30) + 1 + '',
+                  price: Math.floor(Math.random() * 200) + 50,
+                  quantity: Math.floor(Math.random() * 4) + 1,
+                  status: 'available',
+                  isTransferrable: true,
+                  transferMethod: 'mobile_transfer',
+                  additionalInfo: `Additional info for ticket ${i + 1}`,
+                  showContactInfo: false,
+                  eventTimezone: 'America/New_York',
+                  ageRestriction: '18+',
+                  createdAt: new Date(),
+                  expiresAt: new Date(2025, 11, 31)
+                };
+
+                const eventDate = sampleTicket.eventDate;
+                return (
+                  <div 
+                    key={i} 
+                    className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => openSellerModal(sampleTicket)}
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {String(eventDate.getDate()).padStart(2, '0')}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {eventDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {eventDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-600">
-                      {new Date(2025, Math.floor(Math.random() * 12), 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                    <div className="space-y-1">
+                      <h3 className="font-semibold text-sm leading-tight">
+                        {sampleTicket.eventTitle}
+                      </h3>
+                      <p className="text-xs text-gray-600">{sampleTicket.venue}</p>
+                      <p className="text-xs text-gray-500">
+                        {eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                      </p>
                     </div>
-                    <div className="text-xs text-gray-500">MON</div>
                   </div>
-                  <div className="space-y-1">
-                    <h3 className="font-semibold text-sm leading-tight">
-                      Sample Event Title {i + 1}
-                    </h3>
-                    <p className="text-xs text-gray-600">Sample Venue</p>
-                    <p className="text-xs text-gray-500">1:00 AM</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -348,12 +408,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Modal */}
+      {/* Modals */}
       {selectedEventId && (
         <TicketDetailModal
           isOpen={isModalOpen}
           onClose={closeModal}
           eventId={selectedEventId}
+        />
+      )}
+
+      {selectedTicket && (
+        <SellerDetailsModal
+          isOpen={isSellerModalOpen}
+          onClose={closeSellerModal}
+          ticket={selectedTicket}
         />
       )}
     </>
