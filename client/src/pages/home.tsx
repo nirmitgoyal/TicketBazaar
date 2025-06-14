@@ -446,65 +446,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ Section for GEO optimization */}
-      <section className="py-12 bg-gray-50" itemScope itemType="https://schema.org/FAQPage">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
-            Frequently Asked Questions About Second-Hand Tickets
-          </h2>
-          <div className="max-w-4xl mx-auto space-y-6">
-            
-            <div itemScope itemType="https://schema.org/Question" className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 itemProp="name" className="text-lg font-semibold text-gray-900 mb-3">
-                What is a second-hand ticket marketplace?
-              </h3>
-              <div itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
-                <p itemProp="text" className="text-gray-600">
-                  A second-hand ticket marketplace is a platform where people can buy and sell authentic resale event tickets. 
-                  It connects verified sellers with buyers looking for tickets to concerts, sports events, theatre shows, comedy performances, and festivals worldwide.
-                </p>
-              </div>
-            </div>
 
-            <div itemScope itemType="https://schema.org/Question" className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 itemProp="name" className="text-lg font-semibold text-gray-900 mb-3">
-                How do I know if second-hand tickets are authentic?
-              </h3>
-              <div itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
-                <p itemProp="text" className="text-gray-600">
-                  Our platform verifies sellers and provides authentication services for resale tickets. 
-                  We check seller credentials, ticket validity, and offer buyer protection across 50+ countries to ensure authentic ticket transactions.
-                </p>
-              </div>
-            </div>
-
-            <div itemScope itemType="https://schema.org/Question" className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 itemProp="name" className="text-lg font-semibold text-gray-900 mb-3">
-                Can I sell my event tickets on this platform?
-              </h3>
-              <div itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
-                <p itemProp="text" className="text-gray-600">
-                  Yes, you can list your event tickets for resale on our global marketplace. 
-                  Simply create an account, verify your identity, and list your tickets with details about the event, seating, and pricing.
-                </p>
-              </div>
-            </div>
-
-            <div itemScope itemType="https://schema.org/Question" className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 itemProp="name" className="text-lg font-semibold text-gray-900 mb-3">
-                What types of events can I find tickets for?
-              </h3>
-              <div itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
-                <p itemProp="text" className="text-gray-600">
-                  Our second-hand ticket marketplace covers concerts, sports events, theatre shows, comedy performances, festivals, 
-                  and other live entertainment events across multiple countries and currencies.
-                </p>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
 
       {/* Modals */}
       {selectedEventId && (

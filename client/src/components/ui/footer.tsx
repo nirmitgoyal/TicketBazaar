@@ -72,13 +72,7 @@ export function Footer() {
                   </a>
                 </Link>
               </li>
-              <li>
-                <Link href="/seller-policy">
-                  <a className="text-textSecondary hover:text-primary">
-                    Seller Policy
-                  </a>
-                </Link>
-              </li>
+
             </ul>
           </div>
 
@@ -147,6 +141,13 @@ export function Footer() {
                 <a href="#" className="text-textSecondary hover:text-primary">
                   Dispute Resolution
                 </a>
+              </li>
+              <li>
+                <Link href="/seller-policy">
+                  <a className="text-textSecondary hover:text-primary">
+                    Seller Policy
+                  </a>
+                </Link>
               </li>
             </ul>
           </div>
