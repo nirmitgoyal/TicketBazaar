@@ -155,6 +155,7 @@ router.post(
 // Create a new ticket listing with fraud detection
 router.post("/", 
   isAuthenticated, 
+  ticketCreationLimiter,
   verificationBasedRateLimit,
   assessTicketListingFraud,
   addFraudAssessmentToResponse,
@@ -164,6 +165,7 @@ router.post("/",
 // Create ticket with event details and fraud detection
 router.post("/with-event", 
   isAuthenticated, 
+  ticketCreationLimiter,
   verificationBasedRateLimit,
   assessTicketListingFraud,
   addFraudAssessmentToResponse,

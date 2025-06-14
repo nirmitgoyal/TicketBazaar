@@ -6,7 +6,7 @@ const rateLimitHandler = (req: Request, res: Response) => {
   res.status(429).json({
     error: 'Too many requests',
     message: 'Rate limit exceeded. Please try again later.',
-    retryAfter: Math.round(req.rateLimit?.resetTime ? (req.rateLimit.resetTime - Date.now()) / 1000 : 60)
+    retryAfter: 60 // 1 minute default retry time
   });
 };
 
