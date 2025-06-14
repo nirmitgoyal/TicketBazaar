@@ -93,10 +93,64 @@ export function Footer() {
                   </a>
                 </Link>
               </li>
+              <li>
+                <Link href="/?category=sports">
+                  <a className="text-textSecondary hover:text-primary">
+                    Sports Tickets
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq">
+                  <a className="text-textSecondary hover:text-primary">
+                    Safety Tips
+                  </a>
+                </Link>
+              </li>
             </ul>
           </div>
 
-
+          <div>
+            <h4 className="font-medium text-base mb-4">Support</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/faq">
+                  <a className="text-textSecondary hover:text-primary">
+                    FAQs
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="https://www.linkedin.com/company/ticket-bazaar-co-in/"
+                  className="text-textSecondary hover:text-primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Contact Us
+                </a>
+              </li>
+              <li>
+                <Link href="/verification-demo">
+                  <a className="text-textSecondary hover:text-primary">
+                    Verify Tickets
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <a href="#" className="text-textSecondary hover:text-primary">
+                  Dispute Resolution
+                </a>
+              </li>
+              <li>
+                <Link href="/seller-policy">
+                  <a className="text-textSecondary hover:text-primary">
+                    Seller Policy
+                  </a>
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div className="border-t mt-8 pt-6">
