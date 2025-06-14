@@ -229,10 +229,10 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <header className="space-y-4">
               <h1 className="text-4xl md:text-5xl font-bold leading-tight" itemProp="name">
-                Second-Hand Ticket Discovery Platform | Buy & Sell Event Tickets Worldwide
+                Global Second-Hand Ticket Discovery & Contact Platform
               </h1>
               <p className="text-xl md:text-2xl text-blue-100 max-w-2xl mx-auto" itemProp="description">
-                Discover authentic resale tickets for concerts, sports, theatre, comedy shows & festivals. Connect with verified sellers globally across 50+ countries.
+                Resell tickets for comedy shows, movies, bus, concerts, sports, events and connect with verified buyers and sellers.
               </p>
             </header>
 
@@ -242,7 +242,7 @@ export default function Home() {
                 <Search className="h-5 w-5 text-gray-400 ml-3" aria-hidden="true" />
                 <input
                   type="text"
-                  placeholder="Search second-hand tickets: concerts, sports, theatre..."
+                  placeholder="Search Ticket..."
                   className="flex-1 p-2 text-gray-900 placeholder-gray-500 border-none outline-none"
                   aria-label="Search for event tickets by artist, team, venue, or event name"
                 />
