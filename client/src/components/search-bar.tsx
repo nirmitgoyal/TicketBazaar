@@ -79,6 +79,7 @@ import { cn } from "@/lib/utils";
 interface SearchBarProps {
   className?: string;
   initialQuery?: string;
+  placeholder?: string;
   onSearch?: (query: string, filters: SearchFilters) => void;
 }
 
@@ -136,6 +137,7 @@ const dateRangeOptions = [
 export function SearchBar({
   className = "",
   initialQuery = "",
+  placeholder = "Search events, venues, or artists...",
   onSearch,
 }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery);
@@ -557,9 +559,9 @@ export function SearchBar({
                       const suggestionCategory = typeof suggestion === 'string' ? undefined : suggestion.category;
                       
                       // Choose appropriate icon based on type
-                      let icon = <Search className="h-4 w-4 mr-2 text-gray-400" />;
+                      let icon: React.ReactElement = <Search className="h-4 w-4 mr-2 text-gray-400" />;
                       if (suggestionType === 'event') {
-                        icon = categoryIcons[suggestionCategory?.toLowerCase()] || <Ticket className="h-4 w-4 mr-2 text-blue-500" />;
+                        icon = (categoryIcons[suggestionCategory?.toLowerCase()] as React.ReactElement) || <Ticket className="h-4 w-4 mr-2 text-blue-500" />;
                       } else if (suggestionType === 'venue') {
                         icon = <MapPin className="h-4 w-4 mr-2 text-green-500" />;
                       } else if (suggestionType === 'city') {

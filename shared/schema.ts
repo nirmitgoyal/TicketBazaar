@@ -32,6 +32,7 @@ export const users = pgTable("users", {
   governmentIdVerified: boolean("government_id_verified").default(false),
   phoneVerified: boolean("phone_verified").default(false),
   emailVerified: boolean("email_verified").default(false),
+  isAdmin: boolean("is_admin").default(false),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   ratingIdx: index("users_rating_idx").on(table.rating),
