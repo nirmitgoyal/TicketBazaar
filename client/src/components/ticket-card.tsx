@@ -22,8 +22,8 @@ import { formatCurrency } from "@/lib/currency-utils";
 import { getCountryInfo } from "@/lib/country-utils";
 
 interface TicketCardProps {
-  event: TicketType;
-  onClick: () => void;
+  ticket: TicketType;
+  onClick?: () => void;
   index?: number; // For staggered animations
 }
 
@@ -61,18 +61,18 @@ const generateTrustScore = (ticket: TicketType): { score: number; fraudRisk: 'lo
 };
 
 export function TicketCard({
-  event,
+  ticket,
   onClick,
   index = 0,
 }: TicketCardProps) {
-  const { id, eventTitle: title, venue, eventDate: date, eventImageUrl: imageUrl, trending, sellingFast } = event;
+  const { id, eventTitle: title, venue, eventDate: date, eventImageUrl: imageUrl, trending, sellingFast } = ticket;
   const { setActiveEvent } = useAtmosphereContext();
   const { playTicketHover, playButtonHover, playClick } = useSoundEffects();
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showTrustScore, setShowTrustScore] = useState(false);
   
   // Generate trust score for this ticket
-  const trustData = generateTrustScore(event);
+  const trustData = generateTrustScore(ticket);
 
   const formatDate = (date: Date | string) => {
     try {
@@ -83,8 +83,8 @@ export function TicketCard({
   };
 
   const handleMouseEnter = () => {
-    setActiveEvent(event);
-    playTicketHover(event.category, event.eventTitle);
+    setActiveEvent(ticket);
+    playTicketHover(ticket.category, ticket.eventTitle);
   };
 
   const handleMouseLeave = () => {
@@ -97,7 +97,7 @@ export function TicketCard({
 
   const handleButtonClick = () => {
     playClick();
-    onClick();
+    if (onClick) onClick();
   };
 
   return (
@@ -203,7 +203,7 @@ export function TicketCard({
               transition={{ delay: 0.25 + index * 0.05 }}
             >
               <Globe className="h-3 w-3" />
-              <span>{event.city}, {getCountryInfo(event.country)?.name || event.country}</span>
+              <span>{ticket.city}, {getCountryInfo(ticket.country)?.name || ticket.country}</span>
             </motion.div>
             
             {/* Price Display */}

@@ -19,6 +19,10 @@ export function EventCard({
   ticketCount = 0,
   hasAvailableTickets = false,
 }: EventCardProps) {
+  if (!event) {
+    return null;
+  }
+  
   const { id, eventTitle: title, venue, eventDate: date } = event;
 
   const formatDate = (date: Date | string) => {

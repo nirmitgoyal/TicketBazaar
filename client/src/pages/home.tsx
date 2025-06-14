@@ -32,13 +32,13 @@ export default function Home() {
   const searchQuery = searchParams?.get("q") || "";
 
   // Fetch events/tickets with controlled queries
-  const { data: events = [], isLoading: eventsLoading } = useQuery({
+  const { data: events = [], isLoading: eventsLoading } = useQuery<Ticket[]>({
     queryKey: ["/api/events"],
     enabled: true,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const { data: tickets = [], isLoading: ticketsLoading } = useQuery({
+  const { data: tickets = [], isLoading: ticketsLoading } = useQuery<Ticket[]>({
     queryKey: ["/api/tickets"],
     enabled: true,
     staleTime: 5 * 60 * 1000, // 5 minutes
