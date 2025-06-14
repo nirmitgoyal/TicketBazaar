@@ -859,7 +859,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       const sellerTickets = await this.getTicketsBySeller(sellerId);
-      const sellerVerification = await verificationService.verifySeller(seller);
+      const sellerVerification = await verificationService.verifySeller(sellerId);
 
       return {
         seller,
@@ -888,13 +888,17 @@ export class DatabaseStorage implements IStorage {
       }
 
       const sellerHistory = await this.getTicketsBySeller(ticket.sellerId);
-      const comprehensiveVerification = await verificationService.performComprehensiveVerification(ticket);
+      const comprehensiveVerification = await verificationService.performComprehensiveVerification({
+        ticketData: ticket,
+        sellerData: seller,
+        eventData: null
+      });
 
       return {
         ticket,
         seller,
         verification: comprehensiveVerification,
-        recommendations: this.generateSafetyRecommendations(comprehensiveVerification.overall)
+        recommendations: this.generateSafetyRecommendations(comprehensiveVerification)
       };
     } catch (error) {
       console.error("Error performing comprehensive verification:", error);
