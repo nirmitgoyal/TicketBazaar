@@ -174,6 +174,12 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
           <span className="text-xs text-textSecondary">
             {verificationResult.verification.overall.confidence}% confidence
           </span>
+          <button
+            onClick={() => window.open(`/verification-report/${ticket.id}`, '_blank')}
+            className="text-xs text-blue-600 hover:text-blue-800 underline ml-2"
+          >
+            View Report
+          </button>
         </div>
       )}
 

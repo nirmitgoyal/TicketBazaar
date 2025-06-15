@@ -38,6 +38,7 @@ import SellerPolicy from "@/pages/SellerPolicy";
 import CityEvents from "@/pages/city-events";
 import GlobalCities from "@/pages/global-cities";
 import HowToSellTickets from "@/pages/how-to-sell-tickets";
+import { VerificationReport } from "@/pages/verification-report";
 
 // Components
 import { Navigation } from "@/components/ui/navigation";
@@ -130,6 +131,7 @@ function Router() {
       <ProtectedRoute path="/my-tickets" component={MyTickets} />
       <Route path="/ticket-verification" component={TicketVerification} />
       <Route path="/verification-demo" component={VerificationDemo} />
+      <Route path="/verification-report/:ticketId" component={VerificationReport} />
       <ProtectedRoute path="/enhanced-verification" component={EnhancedVerificationPage} />
       <ProtectedRoute path="/ticket/verify/:ticketId" component={TicketVerification} />
       <ProtectedRoute path="/profile" component={Profile} />
