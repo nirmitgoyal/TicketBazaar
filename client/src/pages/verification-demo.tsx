@@ -208,7 +208,7 @@ export default function VerificationDemo() {
                 className="h-16 w-16 border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto mb-4"
               />
               <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                AI Analysis in Progress
+                System Analysis in Progress
               </h3>
               <p className="text-gray-500">
                 Scanning event data, verifying seller credentials, and analyzing pricing patterns...
@@ -294,7 +294,7 @@ export default function VerificationDemo() {
                   <div className="p-4 bg-gray-50 rounded-lg">
                     <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                       <Zap className="h-4 w-4 text-blue-600" />
-                      AI Analysis Summary
+                      System Analysis Summary
                     </h4>
                     <div className="space-y-2 text-sm text-gray-600">
                       {activeScenario.fraudRisk === 'low' ? (

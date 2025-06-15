@@ -176,7 +176,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
               </div>
             </motion.div>
             
-            {/* AI Analysis */}
+            {/* System Analysis */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -185,7 +185,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
             >
               <div className="text-xs font-medium text-gray-700 flex items-center gap-1">
                 <Eye className="h-3 w-3" />
-                AI Analysis
+                System Analysis
               </div>
               <div className="text-xs text-gray-600 space-y-1">
                 {verificationResult?.recommendations?.map((reason: string, index: number) => (
