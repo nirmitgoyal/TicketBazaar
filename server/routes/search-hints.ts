@@ -1,21 +1,12 @@
 import { Router } from "express";
-import { storage } from "../storage.js";
+import { searchSuggestionsService } from "../services/search-suggestions.service.js";
 
 const router = Router();
 
-// Get popular search terms (fallback when AI is unavailable)
+// Get popular search terms
 router.get("/popular", async (req, res) => {
   try {
-    const popularSearches = [
-      { term: "IPL matches", category: "Sports", count: 1250 },
-      { term: "Bollywood concerts", category: "Concert", count: 980 },
-      { term: "Comedy shows Mumbai", category: "Comedy", count: 756 },
-      { term: "Music festivals", category: "Festival", count: 634 },
-      { term: "Cricket World Cup", category: "Sports", count: 589 },
-      { term: "Stand up comedy Delhi", category: "Comedy", count: 445 },
-      { term: "Rock concerts Bangalore", category: "Concert", count: 398 },
-      { term: "Theater shows", category: "Theater", count: 321 },
-    ];
+    const popularSearches = searchSuggestionsService.getPopularSearches();
 
     res.json({
       success: true,
@@ -27,6 +18,31 @@ router.get("/popular", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch popular searches",
+    });
+  }
+});
+
+// Get search suggestions based on query
+router.post("/suggestions", async (req, res) => {
+  try {
+    const { userQuery, userLocation, userPreferences } = req.body;
+    
+    const suggestions = searchSuggestionsService.getSearchSuggestions({
+      userQuery: userQuery || "",
+      userLocation,
+      userPreferences,
+    });
+
+    res.json({
+      success: true,
+      suggestions,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Error generating search suggestions:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate search suggestions",
     });
   }
 });

@@ -2,7 +2,7 @@ export * from "./user.service";
 export * from "./event.service";
 export * from "./ticket.service";
 export * from "./review.service";
-export * from "./ai-search-hints.service";
+export * from "./search-suggestions.service";
 export * from "./cleanup.service";
 export * from "./error.service";
 export * from "./verification.service";

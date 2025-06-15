@@ -1,17 +1,14 @@
-import { useState, useEffect } from "react";
-import { apiRequest } from "@/lib/queryClient";
+import { useState } from "react";
 
-export interface SearchHint {
+export interface SearchSuggestion {
   suggestion: string;
   category: string;
-  confidence: number;
-  reasoning: string;
+  popularity: number;
 }
 
 export interface SearchContext {
   query: string;
   location?: string;
-  previousSearches?: string[];
   preferences?: {
     categories?: string[];
     priceRange?: [number, number];
@@ -19,50 +16,68 @@ export interface SearchContext {
   };
 }
 
-export function useSearchHints() {
-  const [hints, setHints] = useState<SearchHint[]>([]);
-  const [isLoadingHints, setIsLoadingHints] = useState(false);
+export function useSearchSuggestions() {
+  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
 
-  const generateHints = async (context: SearchContext) => {
+  const getSuggestions = async (context: SearchContext) => {
     if (!context.query.trim() || context.query.length < 2) {
-      setHints([]);
+      setSuggestions([]);
       return;
     }
 
-    setIsLoadingHints(true);
+    setIsLoadingSuggestions(true);
     try {
-      const response = await fetch("/api/search/hints", {
+      const response = await fetch("/api/search/suggestions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(context),
+        body: JSON.stringify({
+          userQuery: context.query,
+          userLocation: context.location,
+          userPreferences: context.preferences,
+        }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setHints(data.hints || []);
+        setSuggestions(data.suggestions || []);
       } else {
-        console.warn("Failed to generate hints:", data.message);
-        setHints([]);
+        console.warn("Failed to get suggestions:", data.message);
+        setSuggestions([]);
       }
     } catch (error) {
-      console.error("Error generating search hints:", error);
-      setHints([]);
+      console.error("Error getting search suggestions:", error);
+      setSuggestions([]);
     } finally {
-      setIsLoadingHints(false);
+      setIsLoadingSuggestions(false);
     }
   };
 
-  const clearHints = () => {
-    setHints([]);
+  const getPopularSearches = async () => {
+    try {
+      const response = await fetch("/api/search/popular");
+      const data = await response.json();
+
+      if (data.success) {
+        setSuggestions(data.popularSearches || []);
+      }
+    } catch (error) {
+      console.error("Error getting popular searches:", error);
+    }
+  };
+
+  const clearSuggestions = () => {
+    setSuggestions([]);
   };
 
   return {
-    hints,
-    isLoadingHints,
-    generateHints,
-    clearHints,
+    suggestions,
+    isLoadingSuggestions,
+    getSuggestions,
+    getPopularSearches,
+    clearSuggestions,
   };
 }
