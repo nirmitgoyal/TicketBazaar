@@ -171,50 +171,28 @@ export function TicketDetailModal({
                   key={ticket.id}
                   className="border rounded-lg p-4 mb-3 hover:border-primary cursor-pointer"
                 >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium">
+                  <div className="flex justify-between items-center">
+                    <div className="flex-1">
+                      <p className="font-semibold text-lg">
                         {ticket.section}
-                        {ticket.row ? ` - Row ${ticket.row}` : ""}
-                        {ticket.seat ? `, Seat ${ticket.seat}` : ""}
+                        {ticket.row ? ` • Row ${ticket.row}` : ""}
+                        {ticket.seat ? ` • Seat ${ticket.seat}` : ""}
                       </p>
-                      <p className="text-sm text-textSecondary mt-1">
-                        Seller:{" "}
-                        {seller
-                          ? `@${seller.instagram} (${seller.rating ? seller.rating.toFixed(1) : "0.0"}/5 ⭐)`
-                          : "Unknown"}
-                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <span className="text-sm text-textSecondary">
+                          @{seller?.instagram || "unknown"} • {seller?.rating ? seller.rating.toFixed(1) : "0.0"}/5 ⭐
+                        </span>
+                      </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-textSecondary">
-                        Quantity: {ticket.quantity}
-                      </p>
+                      <p className="text-xl font-bold text-primary">₹{ticket.price.toLocaleString()}</p>
+                      <p className="text-sm text-textSecondary">{ticket.quantity} available</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center mt-3 text-sm text-textSecondary">
-                    <div className="flex items-center mr-4">
-                      <CheckCircle className="h-4 w-4 mr-1 text-green-600" />
-                      <span>Verified User</span>
-                    </div>
-                    {ticket.transferMethod && (
-                      <div className="flex items-center">
-                        <ShieldCheck className="h-4 w-4 mr-1 text-secondary" />
-                        <span>Transfer: {ticket.transferMethod}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {ticket.additionalInfo && (
-                    <p className="mt-2 text-sm text-textSecondary">
-                      {ticket.additionalInfo}
-                    </p>
-                  )}
-
-                  {/* Perplexity AI Verification Section */}
-                  <TicketVerificationSection ticket={ticket} />
-
-                  <div className="mt-4 flex justify-end">
+                  <div className="mt-4 flex justify-between items-center">
+                    <TicketVerificationSection ticket={ticket} />
                     <Button
                       onClick={() => {
                         if (seller?.instagram) {
@@ -222,20 +200,14 @@ export function TicketDetailModal({
                           window.open(`https://www.instagram.com/${instagramHandle}/`, '_blank');
                         }
                       }}
-                      className="whitespace-nowrap bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
                     >
-                      Contact @{seller?.instagram}
+                      Contact Seller
                     </Button>
                   </div>
                 </div>
               );
             })}
-          </div>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <p className="text-sm text-blue-800">
-              💡 <strong>Quick Tip:</strong> Click "Contact @username" to visit the seller's Instagram profile and send them a direct message.
-            </p>
           </div>
         </div>
       </DialogContent>
