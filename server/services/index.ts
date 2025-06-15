@@ -3,6 +3,7 @@ export * from "./event.service";
 export * from "./ticket.service";
 export * from "./review.service";
 export * from "./search-suggestions.service";
+export * from "./ai-verification.service";
 export * from "./cleanup.service";
 export * from "./error.service";
 export * from "./verification.service";
