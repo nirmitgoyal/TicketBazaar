@@ -191,7 +191,7 @@ Node.js 22 + Express + TypeScript + TSX
 ├── File Upload: Multer for image handling
 ├── Validation: Zod schemas with drizzle-zod
 ├── Error Handling: Centralized error middleware
-├── AI Integration: OpenAI for search hints
+├── Search System: Intelligent search functionality
 ├── Payment Ready: Stripe + Razorpay integration
 └── Testing: Jest with TypeScript support
 ```
@@ -528,7 +528,7 @@ VITE_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
 HONEYBADGER_API_KEY=your-honeybadger-key
 
 # Optional: AI Features
-OPENAI_API_KEY=your-openai-api-key
+
 
 # Optional: Payment Integration
 STRIPE_SECRET_KEY=your-stripe-secret-key

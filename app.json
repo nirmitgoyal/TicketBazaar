@@ -34,10 +34,7 @@
       "description": "Google OAuth client secret (optional)",
       "required": false
     },
-    "OPENAI_API_KEY": {
-      "description": "OpenAI API key for event fetching (optional)",
-      "required": false
-    },
+
     "STRIPE_SECRET_KEY": {
       "description": "Stripe secret key for payments (optional)",
       "required": false
