@@ -539,14 +539,13 @@ export async function executeSchemaRefactoring(): Promise<void> {
   }
 }
 
-if (require.main === module) {
-  executeSchemaRefactoring()
-    .then(() => {
-      console.log("Schema refactoring completed successfully");
-      process.exit(0);
-    })
-    .catch((error) => {
-      console.error("Schema refactoring failed:", error);
-      process.exit(1);
-    });
-}
+// Auto-execute when run directly
+executeSchemaRefactoring()
+  .then(() => {
+    console.log("Schema refactoring completed successfully");
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error("Schema refactoring failed:", error);
+    process.exit(1);
+  });
