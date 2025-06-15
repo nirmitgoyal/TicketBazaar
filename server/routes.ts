@@ -67,6 +67,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const verificationRoutes = (await import("./routes/verification.routes")).default;
   apiRouter.use("/verification", strictLimiter, verificationRoutes);
 
+  // Import and register AI verification routes
+  const aiVerificationRoutes = (await import("./routes/ai-verification.routes")).default;
+  apiRouter.use("/ai-verification", strictLimiter, aiVerificationRoutes);
+
   // Import and register fraud detection routes
   const fraudDetectionRoutes = (await import("./routes/fraud-detection.routes")).default;
   apiRouter.use("/fraud-detection", strictLimiter, fraudDetectionRoutes);

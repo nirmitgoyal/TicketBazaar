@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Shield, ShieldCheck, ShieldAlert, AlertTriangle, Loader2, Eye, TrendingUp } from "lucide-react";
+import { Shield, ShieldCheck, ShieldAlert, AlertTriangle, Loader2, Eye, TrendingUp, FileText } from "lucide-react";
 import { Ticket } from "@shared/schema";
 import { TrustScoreMeter } from "./trust-score-meter";
+import { AIVerificationModal } from "./ai-verification-modal";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface TicketVerificationSectionProps {
@@ -14,36 +15,43 @@ interface TicketVerificationSectionProps {
 export function TicketVerificationSection({ ticket }: TicketVerificationSectionProps) {
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationResult, setVerificationResult] = useState<any>(null);
+  const [showDetailedModal, setShowDetailedModal] = useState(false);
 
   const handleVerify = async () => {
     setIsVerifying(true);
     try {
-      const response = await fetch('/api/verification/comprehensive/' + ticket.id);
+      const response = await fetch(`/api/ai-verification/verify/${ticket.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
           setVerificationResult(data.data);
         } else {
-          throw new Error(data.message || 'Verification failed');
+          throw new Error(data.message || 'AI verification failed');
         }
       } else {
-        throw new Error('API request failed');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'AI verification request failed');
       }
-    } catch (error) {
-      // Show user-friendly error without generating fake data
+    } catch (error: any) {
+      console.error('AI verification error:', error);
       setVerificationResult({
         error: true,
-        message: 'Verification service temporarily unavailable. Please try again later.',
+        message: error.message || 'AI verification service temporarily unavailable. Please try again later.',
         verification: {
           overall: {
             isVerified: false,
             confidence: 0,
             fraudRisk: 'unknown',
-            reasons: ['Service temporarily unavailable']
+            reasons: [error.message || 'Service temporarily unavailable']
           }
         },
-        recommendations: ['Please try again later']
+        recommendations: ['Please check your connection and try again', 'Contact support if the issue persists']
       });
     } finally {
       setIsVerifying(false);
@@ -114,7 +122,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
           ) : (
             <>
               <Shield className="h-4 w-4 mr-1" />
-              {verificationResult ? 'Re-analyze' : 'Verify with AI'}
+              {verificationResult ? 'Re-analyze with AI' : 'Verify with AI'}
             </>
           )}
         </Button>
@@ -240,6 +248,34 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* View Detailed Report Button */}
+      {verificationResult && !verificationResult.error && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 4, duration: 0.5 }}
+          className="mt-4 text-center"
+        >
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowDetailedModal(true)}
+            className="text-xs"
+          >
+            <FileText className="h-3 w-3 mr-1" />
+            View Detailed AI Report
+          </Button>
+        </motion.div>
+      )}
+
+      {/* AI Verification Modal */}
+      <AIVerificationModal
+        isOpen={showDetailedModal}
+        onClose={() => setShowDetailedModal(false)}
+        verificationData={verificationResult}
+        ticketData={ticket}
+      />
     </div>
   );
 }
