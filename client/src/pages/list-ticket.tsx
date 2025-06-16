@@ -46,7 +46,6 @@ import { ticketListingSchema } from "@shared/schema";
 // Custom form schema for ticket listing with string dates/times
 const ticketFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  eventTitle: z.string().min(1, "Event title is required"),
   eventDescription: z.string().optional(),
   venue: z.string().min(1, "Venue is required"),
   eventVenueAddress: z.string().optional(),
@@ -88,7 +87,6 @@ export default function ListTicket() {
     resolver: zodResolver(ticketFormSchema),
     defaultValues: {
       title: "",
-      eventTitle: "",
       eventDescription: "",
       eventDate: "",
       eventTime: "",
