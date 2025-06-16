@@ -240,7 +240,7 @@ export function PopularityDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {popularTickets?.data?.map((ticket: Ticket & { popularity?: any }, index: number) => (
+                {((popularTickets as any)?.data || []).map((ticket: Ticket & { popularity?: any }, index: number) => (
                   <div key={ticket.id} className="relative">
                     <Badge className="absolute top-2 left-2 z-10 bg-yellow-500 hover:bg-yellow-600">
                       #{index + 1}
@@ -281,7 +281,7 @@ export function PopularityDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {trendingTickets?.data?.map((ticket: Ticket & { popularity?: any }, index: number) => (
+                {((trendingTickets as any)?.data || []).map((ticket: Ticket & { popularity?: any }, index: number) => (
                   <div key={ticket.id} className="relative">
                     <Badge className="absolute top-2 left-2 z-10 bg-orange-500 hover:bg-orange-600">
                       🔥 #{index + 1}

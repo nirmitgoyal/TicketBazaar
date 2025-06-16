@@ -720,7 +720,11 @@ export class DatabaseStorage implements IStorage {
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    // Calculate view counts
+    // Calculate view counts using string dates to avoid buffer issues
+    const todayStr = today.toISOString();
+    const weekAgoStr = weekAgo.toISOString();
+    const monthAgoStr = monthAgo.toISOString();
+
     const totalViews = await db
       .select({ count: sql<number>`count(*)` })
       .from(ticketViews)
@@ -737,7 +741,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(ticketViews.ticketId, ticketId),
-          sql`viewed_at >= ${today}`
+          sql`viewed_at >= ${todayStr}`
         )
       );
 
@@ -747,7 +751,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(ticketViews.ticketId, ticketId),
-          sql`viewed_at >= ${weekAgo}`
+          sql`viewed_at >= ${weekAgoStr}`
         )
       );
 
@@ -757,7 +761,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(ticketViews.ticketId, ticketId),
-          sql`viewed_at >= ${monthAgo}`
+          sql`viewed_at >= ${monthAgoStr}`
         )
       );
 
@@ -790,8 +794,8 @@ export class DatabaseStorage implements IStorage {
           viewsThisMonth: month_views,
           popularityScore,
           trendingFactor,
-          lastViewedAt: now,
-          updatedAt: now,
+          lastViewedAt: now.toISOString(),
+          updatedAt: now.toISOString(),
         } as any)
         .where(eq(ticketPopularity.ticketId, ticketId))
         .returning();
@@ -809,8 +813,8 @@ export class DatabaseStorage implements IStorage {
           viewsThisMonth: month_views,
           popularityScore,
           trendingFactor,
-          lastViewedAt: now,
-          updatedAt: now,
+          lastViewedAt: now.toISOString(),
+          updatedAt: now.toISOString(),
         } as any)
         .returning();
       
