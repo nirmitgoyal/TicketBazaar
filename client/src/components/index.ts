@@ -30,11 +30,11 @@ export { VerificationModal } from './verification-modal';
 export { AIVerificationModal } from './ai-verification-modal';
 
 // SEO Components (consolidated)
-export { SEO } from './seo';
-export { HelmetManager } from './helmet-manager';
+export { default as SEO } from './seo';
+export { HelmetProvider } from './helmet-manager';
 export { CanonicalUrlManager } from './canonical-url-manager';
 export { InternationalSEO } from './international-seo';
-export { EnhancedSEO } from './enhanced-seo';
+export { default as EnhancedSEO } from './enhanced-seo';
 export { default as AdvancedStructuredData } from './advanced-structured-data';
 
 // UI Components
