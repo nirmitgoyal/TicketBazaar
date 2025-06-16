@@ -23,7 +23,7 @@ interface DummyTicketData {
   section: string;
   row?: string;
   seat?: string;
-  price: number;
+
   quantity: number;
   transferMethod: string;
   additionalInfo?: string;
@@ -106,7 +106,7 @@ async function loadDummyData() {
         section: "Premium",
         row: "A",
         seat: "15-16",
-        price: 3500,
+
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Amazing seats with clear view of the stage",
@@ -131,7 +131,7 @@ async function loadDummyData() {
         section: "VIP",
         row: "B",
         seat: "8-9",
-        price: 4200,
+
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "VIP section with complimentary refreshments",
@@ -157,7 +157,7 @@ async function loadDummyData() {
         section: "Premium",
         row: "C",
         seat: "12",
-        price: 1200,
+
         quantity: 1,
         transferMethod: "electronic",
         additionalInfo: "Center seats, perfect view",
@@ -182,7 +182,7 @@ async function loadDummyData() {
         section: "Balcony",
         row: "E",
         seat: "20-21",
-        price: 800,
+
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Good seats, bought extra by mistake",
@@ -208,7 +208,7 @@ async function loadDummyData() {
         section: "Pavilion",
         row: "Upper",
         seat: "45-46",
-        price: 8500,
+
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Premium pavilion seats, includes parking",
@@ -233,7 +233,7 @@ async function loadDummyData() {
         section: "East Stand",
         row: "Lower",
         seat: "88-89",
-        price: 2500,
+
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Great view of the action, covered seating",
@@ -259,7 +259,7 @@ async function loadDummyData() {
         section: "Orchestra",
         row: "J",
         seat: "15-16",
-        price: 3200,
+
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Amazing production, must-watch show",
