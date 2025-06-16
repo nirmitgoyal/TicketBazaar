@@ -47,6 +47,29 @@ export class TicketController {
   };
 
   /**
+   * Search tickets by title and city with partial matching
+   */
+  searchTickets = async (req: Request, res: Response) => {
+    try {
+      const query = req.query.q as string;
+
+      if (!query || query.trim().length === 0) {
+        return res.status(400).json({
+          message: "Search query is required"
+        });
+      }
+
+      const tickets = await storage.searchTickets(query);
+      res.status(200).json(tickets);
+    } catch (error) {
+      res.status(500).json({
+        message: "Error searching tickets",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  };
+
+  /**
    * Get ticket by ID
    */
   getTicketById = async (req: Request, res: Response) => {

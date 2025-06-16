@@ -65,6 +65,9 @@ const upload = multer({
 // Get all tickets
 router.get("/", ticketController.getAllTickets);
 
+// Search tickets by title and city
+router.get("/search", ticketController.searchTickets);
+
 // Simple in-memory cache for ticket batch requests
 const ticketBatchCache = new Map<string, { data: any[], timestamp: number }>();
 const CACHE_TTL = 30000; // 30 seconds cache

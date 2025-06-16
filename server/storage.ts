@@ -83,6 +83,7 @@ export interface IStorage {
   getTicket(id: number): Promise<Ticket | undefined>;
   getTicketsByEvent(eventTitle: string): Promise<Ticket[]>;
   getTicketsBySeller(sellerId: number): Promise<Ticket[]>;
+  searchTickets(query: string): Promise<Ticket[]>;
   createTicket(ticket: InsertTicket): Promise<Ticket>;
   updateTicketStatus(id: number, status: string): Promise<Ticket | undefined>;
   updateTicketVerification(
@@ -427,6 +428,30 @@ export class DatabaseStorage implements IStorage {
       .where(eq(tickets.sellerId, sellerId))
       .orderBy(desc(tickets.createdAt))
       .limit(30);
+  }
+
+  async searchTickets(query: string): Promise<Ticket[]> {
+    if (!query || query.trim().length === 0) {
+      return [];
+    }
+
+    const searchTerm = query.trim();
+    
+    // Use case-insensitive partial matching on title and city columns
+    const searchCondition = or(
+      ilike(tickets.title, `%${searchTerm}%`),
+      ilike(tickets.city, `%${searchTerm}%`)
+    );
+
+    return await db
+      .select()
+      .from(tickets)
+      .where(and(
+        eq(tickets.status, 'available'),
+        searchCondition
+      ))
+      .orderBy(desc(tickets.eventDate), desc(tickets.createdAt))
+      .limit(50);
   }
 
   async createTicket(ticket: InsertTicket): Promise<Ticket> {

@@ -26,9 +26,10 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showNoResultsMessage, setShowNoResultsMessage] = useState<boolean>(false);
   const [selectedSearchFilters, setSelectedSearchFilters] = useState<SearchFilters>({});
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Get search query from URL if present
-  const searchQuery = searchParams?.get("q") || "";
+  const urlSearchQuery = searchParams?.get("q") || "";
 
   // Fetch events data
   const {
@@ -46,8 +47,19 @@ export default function Home() {
     isLoading: ticketsLoading,
     error: ticketsError,
   } = useQuery<Ticket[]>({
-    queryKey: ["/api/tickets", searchQuery, selectedSearchFilters],
+    queryKey: ["/api/tickets", urlSearchQuery, selectedSearchFilters],
     enabled: true,
+  });
+
+  // Search tickets query - triggered by search input
+  const {
+    data: searchResults = [],
+    isLoading: searchLoading,
+    error: searchError,
+  } = useQuery<Ticket[]>({
+    queryKey: ["/api/tickets/search", { q: searchQuery }],
+    enabled: searchQuery.length >= 2, // Only search when user has typed at least 2 characters
+    staleTime: 30000, // Cache results for 30 seconds
   });
 
   // Extract query parameters and URL path parameters
