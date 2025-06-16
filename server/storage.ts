@@ -746,39 +746,37 @@ export class DatabaseStorage implements IStorage {
       const existingPopularity = await this.getTicketPopularityMetrics(ticketId);
       
       if (existingPopularity) {
-        // Update existing record
-        const [updatedPopularity] = await db
-          .update(ticketPopularity)
-          .set({
-            totalViews: total,
-            uniqueViews: unique,
-            viewsToday: today_views,
-            viewsThisWeek: week_views,
-            viewsThisMonth: month_views,
-            popularityScore: Math.round(popularityScore),
-            trendingFactor: Math.round(trendingFactor),
-          })
-          .where(eq(ticketPopularity.ticketId, ticketId))
-          .returning();
+        // Update existing record using raw SQL to avoid type issues
+        await db.execute(sql`
+          UPDATE ticket_popularity 
+          SET 
+            total_views = ${total},
+            unique_views = ${unique}, 
+            views_today = ${today_views},
+            views_this_week = ${week_views},
+            views_this_month = ${month_views},
+            popularity_score = ${popularityScore},
+            trending_factor = ${trendingFactor},
+            updated_at = NOW()
+          WHERE ticket_id = ${ticketId}
+        `);
         
-        return updatedPopularity;
+        return await this.getTicketPopularityMetrics(ticketId) as TicketPopularity;
       } else {
-        // Create new record
-        const [newPopularity] = await db
-          .insert(ticketPopularity)
-          .values({
-            ticketId,
-            totalViews: total,
-            uniqueViews: unique,
-            viewsToday: today_views,
-            viewsThisWeek: week_views,
-            viewsThisMonth: month_views,
-            popularityScore: Math.round(popularityScore),
-            trendingFactor: Math.round(trendingFactor),
-          })
-          .returning();
+        // Create new record using raw SQL to avoid type issues
+        await db.execute(sql`
+          INSERT INTO ticket_popularity (
+            ticket_id, total_views, unique_views, views_today,
+            views_this_week, views_this_month, popularity_score,
+            trending_factor, updated_at
+          ) VALUES (
+            ${ticketId}, ${total}, ${unique}, ${today_views},
+            ${week_views}, ${month_views}, ${popularityScore},
+            ${trendingFactor}, NOW()
+          )
+        `);
         
-        return newPopularity;
+        return await this.getTicketPopularityMetrics(ticketId) as TicketPopularity;
       }
     } catch (error) {
       console.error('Error updating ticket popularity:', error);
