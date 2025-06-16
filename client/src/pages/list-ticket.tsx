@@ -407,6 +407,23 @@ export default function ListTicket() {
 
                     <FormField
                       control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Listing Title</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="e.g., 2 VIP tickets for Arijit Singh concert"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
                       name="eventTitle"
                       render={({ field }) => (
                         <FormItem>
