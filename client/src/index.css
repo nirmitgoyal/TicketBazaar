@@ -203,4 +203,68 @@
   .pull-to-refresh {
     @apply flex items-center justify-center py-4 text-muted-foreground;
   }
+
+  /* Hide scrollbars for horizontal scroll areas */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Prevent horizontal overflow on mobile */
+  .prevent-horizontal-overflow {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Mobile-first responsive containers */
+  .mobile-responsive-container {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  /* Responsive grid that never breaks mobile layout */
+  .mobile-safe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .mobile-safe-grid {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+  }
+
+  /* Responsive flex that wraps properly */
+  .mobile-safe-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Text that truncates instead of overflowing */
+  .mobile-text-safe {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  /* Images that never overflow */
+  .mobile-image-safe {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
 }

@@ -271,35 +271,37 @@ export default function Home() {
             </header>
 
             {/* Search Bar */}
-            <div className="max-w-2xl mx-auto bg-white rounded-lg p-2 flex items-center space-x-2" role="search" aria-label="Search for second-hand event tickets">
+            <div className="max-w-2xl mx-auto bg-white rounded-lg p-2 space-y-2 sm:space-y-0 sm:flex sm:items-center sm:space-x-2" role="search" aria-label="Search for second-hand event tickets">
               <div className="flex-1 flex items-center space-x-2">
-                <Search className="h-5 w-5 text-gray-400 ml-3" aria-hidden="true" />
+                <Search className="h-5 w-5 text-gray-400 ml-3 flex-shrink-0" aria-hidden="true" />
                 <input
                   type="text"
                   placeholder="Search Ticket..."
-                  className="flex-1 p-2 text-gray-900 placeholder-gray-500 border-none outline-none"
+                  className="flex-1 p-2 text-gray-900 placeholder-gray-500 border-none outline-none min-w-0"
                   aria-label="Search for event tickets by artist, team, venue, or event name"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <div className="flex items-center space-x-2">
-                <MapPin className="h-4 w-4 text-gray-400" aria-hidden="true" />
-                <select className="p-2 text-gray-700 border-none outline-none bg-transparent" aria-label="Select location">
-                  <option>Any location</option>
-                  <option>United States</option>
-                  <option>United Kingdom</option>
-                  <option>Canada</option>
-                  <option>Australia</option>
-                  <option>Germany</option>
-                  <option>France</option>
-                  <option>India</option>
-                  <option>Japan</option>
-                </select>
+              <div className="flex items-center space-x-2 w-full sm:w-auto">
+                <div className="flex items-center space-x-2 flex-1 sm:flex-none">
+                  <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" aria-hidden="true" />
+                  <select className="p-2 text-gray-700 border-none outline-none bg-transparent flex-1 sm:flex-none min-w-0" aria-label="Select location">
+                    <option>Any location</option>
+                    <option>United States</option>
+                    <option>United Kingdom</option>
+                    <option>Canada</option>
+                    <option>Australia</option>
+                    <option>Germany</option>
+                    <option>France</option>
+                    <option>India</option>
+                    <option>Japan</option>
+                  </select>
+                </div>
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 flex-shrink-0 touch-target" aria-label="Search for tickets">
+                  Search
+                </Button>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6" aria-label="Search for tickets">
-                Search
-              </Button>
             </div>
           </div>
         </div>
@@ -307,12 +309,12 @@ export default function Home() {
 
       {/* Category Navigation */}
       <section className="bg-white border-b">
-        <div className="container mx-auto px-4">
-          <div className="flex overflow-x-auto space-x-8 py-4">
+        <div className="container mx-auto mobile-container">
+          <div className="flex overflow-x-auto scrollbar-hide space-x-4 sm:space-x-8 py-4 -mx-3 px-3 sm:mx-0 sm:px-0">
             {categories.map((category) => (
               <button
                 key={category}
-                className={`whitespace-nowrap py-2 text-sm font-medium transition-colors border-b-2 ${
+                className={`flex-shrink-0 whitespace-nowrap py-2 px-3 text-sm font-medium transition-colors border-b-2 touch-target ${
                   activeCategory === category.toLowerCase() ||
                   (category === "All" && activeCategory === "all")
                     ? "border-blue-600 text-blue-600"
@@ -392,7 +394,7 @@ export default function Home() {
                 className="grid-cols-2 lg:grid-cols-4" 
               />
             ) : searchResults.length > 0 ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {searchResults.map((ticket) => (
                   <div 
                     key={ticket.id} 
@@ -443,7 +445,7 @@ export default function Home() {
                 className="grid-cols-2 lg:grid-cols-4" 
               />
             ) : events && events.length > 0 ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {events.map((event) => (
                   <EventCard
                     key={event.id}
