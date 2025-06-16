@@ -42,11 +42,12 @@ export function EventPopularityMetrics({ eventId }: EventPopularityMetricsProps)
 
   return (
     <motion.div
-      className="text-xs text-textSecondary mt-1"
+      className="flex items-center gap-1 text-xs text-textSecondary mt-1"
       initial={{ opacity: 0, y: 2 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
+      <Eye className="h-3 w-3" />
       <span className="text-xs">{uniqueViews} unique views</span>
     </motion.div>
   );
