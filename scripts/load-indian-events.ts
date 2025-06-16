@@ -26,7 +26,7 @@ interface IndianTicketData {
   section: string;
   row?: string;
   seat?: string;
-  price: number;
+
   quantity: number;
   transferMethod: string;
   additionalInfo?: string;
@@ -54,7 +54,6 @@ const indianEvents: IndianTicketData[] = [
     section: "VIP",
     row: "A",
     seat: "15-16",
-    price: 4500,
     quantity: 2,
     transferMethod: "Digital transfer via BookMyShow",
     additionalInfo: "Meet and greet passes included",
@@ -80,7 +79,6 @@ const indianEvents: IndianTicketData[] = [
     section: "Club House",
     row: "Upper",
     seat: "Block J, Row 5, Seat 12",
-    price: 3200,
     quantity: 1,
     transferMethod: "Hard copy pickup or courier",
     additionalInfo: "Day 2 tickets, includes lunch voucher",
@@ -106,7 +104,6 @@ const indianEvents: IndianTicketData[] = [
     section: "VIP",
     row: "A",
     seat: "5-6",
-    price: 2800,
     quantity: 2,
     transferMethod: "E-ticket via email",
     additionalInfo: "Front row seats, complimentary snacks included",
@@ -131,7 +128,6 @@ const indianEvents: IndianTicketData[] = [
     city: "Goa",
     section: "General",
     row: "Standing",
-    price: 8500,
     quantity: 1,
     transferMethod: "Mobile app transfer",
     additionalInfo: "3-day festival pass, camping option available",
@@ -157,7 +153,6 @@ const indianEvents: IndianTicketData[] = [
     section: "Pavilion",
     row: "Lower Tier",
     seat: "Block L, Row 8, Seat 45",
-    price: 4200,
     quantity: 1,
     transferMethod: "IPL official app transfer",
     additionalInfo: "Premium seating with food court access",
@@ -183,7 +178,6 @@ const indianEvents: IndianTicketData[] = [
     section: "Orchestra",
     row: "C",
     seat: "12-13",
-    price: 3500,
     quantity: 2,
     transferMethod: "BookMyShow digital transfer",
     additionalInfo: "Valentine's Day special Qawwali night",
@@ -209,7 +203,6 @@ const indianEvents: IndianTicketData[] = [
     section: "Silver",
     row: "B",
     seat: "25-26",
-    price: 2200,
     quantity: 2,
     transferMethod: "Paytm Insider app",
     additionalInfo: "Republic Day special concert",
@@ -235,7 +228,6 @@ const indianEvents: IndianTicketData[] = [
     section: "Premium",
     row: "F",
     seat: "8-9",
-    price: 850,
     quantity: 2,
     transferMethod: "PVR app ticket transfer",
     additionalInfo: "Special screening with director's commentary",
@@ -261,7 +253,6 @@ const indianEvents: IndianTicketData[] = [
     section: "Main Stage",
     row: "Reserved",
     seat: "Row 3, Seat 15",
-    price: 0,
     quantity: 1,
     transferMethod: "Festival app registration",
     additionalInfo: "Free entry, advance registration required for main stage",
@@ -287,7 +278,6 @@ const indianEvents: IndianTicketData[] = [
     section: "Gold",
     row: "D",
     seat: "18-20",
-    price: 5200,
     quantity: 3,
     transferMethod: "BookMyShow transfer",
     additionalInfo: "Acoustic unplugged concert, limited seating",
@@ -320,7 +310,6 @@ async function loadIndianEvents() {
         section: eventData.section,
         row: eventData.row,
         seat: eventData.seat,
-        price: eventData.price,
         quantity: eventData.quantity,
         transferMethod: eventData.transferMethod,
         additionalInfo: eventData.additionalInfo,

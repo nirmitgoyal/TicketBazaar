@@ -59,7 +59,6 @@ async function loadGlobalData() {
           country: "US",
           timezone: "America/New_York",
           language: "en",
-          currency: "USD"
         },
         {
           fullName: "Emma Johnson",
@@ -71,7 +70,6 @@ async function loadGlobalData() {
           country: "GB",
           timezone: "Europe/London",
           language: "en",
-          currency: "GBP"
         },
         {
           fullName: "Pierre Dubois",
@@ -83,7 +81,6 @@ async function loadGlobalData() {
           country: "FR",
           timezone: "Europe/Paris",
           language: "fr",
-          currency: "EUR"
         },
         {
           fullName: "Yuki Tanaka",
@@ -95,7 +92,6 @@ async function loadGlobalData() {
           country: "JP",
           timezone: "Asia/Tokyo",
           language: "ja",
-          currency: "JPY"
         },
         {
           fullName: "Miguel Rodriguez",
@@ -107,7 +103,6 @@ async function loadGlobalData() {
           country: "ES",
           timezone: "Europe/Madrid",
           language: "es",
-          currency: "EUR"
         },
         {
           fullName: "Sofia Petrov",
@@ -119,7 +114,6 @@ async function loadGlobalData() {
           country: "DE",
           timezone: "Europe/Berlin",
           language: "de",
-          currency: "EUR"
         },
         {
           fullName: "Marco Rossi",
@@ -131,7 +125,6 @@ async function loadGlobalData() {
           country: "IT",
           timezone: "Europe/Rome",
           language: "it",
-          currency: "EUR"
         },
         {
           fullName: "Sarah Wilson",
@@ -143,7 +136,6 @@ async function loadGlobalData() {
           country: "AU",
           timezone: "Australia/Sydney",
           language: "en",
-          currency: "AUD"
         }
       ]).onConflictDoNothing();
     }
@@ -175,9 +167,6 @@ async function loadGlobalData() {
         section: "Floor",
         row: "A",
         seat: "15-16",
-        price: 850,
-        currency: "USD",
-        originalPrice: 750,
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "VIP package includes early entry and exclusive merchandise",
@@ -210,9 +199,6 @@ async function loadGlobalData() {
         section: "Block 134",
         row: "M",
         seat: "234-235",
-        price: 125,
-        currency: "GBP",
-        originalPrice: 115,
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Great view of the stage, electronic tickets via official app",
@@ -245,9 +231,6 @@ async function loadGlobalData() {
         section: "Parterre",
         row: "G",
         seat: "45-46",
-        price: 89,
-        currency: "EUR",
-        originalPrice: 79,
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Spectacle électronique immersif avec lasers et effets visuels",
@@ -280,9 +263,6 @@ async function loadGlobalData() {
         section: "アリーナ",
         row: "5列",
         seat: "12-13番",
-        price: 15000,
-        currency: "JPY",
-        originalPrice: 12500,
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "正規チケット、電子チケットでの受け渡し",
@@ -315,9 +295,6 @@ async function loadGlobalData() {
         section: "Tribuna Lateral",
         row: "15",
         seat: "234-235",
-        price: 350,
-        currency: "EUR",
-        originalPrice: 300,
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Entradas oficiales para el clásico más importante del año",
@@ -350,9 +327,6 @@ async function loadGlobalData() {
         section: "Parkett",
         row: "K",
         seat: "34-35",
-        price: 180,
-        currency: "EUR",
-        originalPrice: 165,
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Weltklasse-Aufführung mit dem renommierten Orchester",
@@ -385,9 +359,6 @@ async function loadGlobalData() {
         section: "Platea",
         row: "H",
         seat: "15-16",
-        price: 120,
-        currency: "EUR",
-        originalPrice: 100,
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Produzione di alta qualità con cast internazionale",
@@ -420,9 +391,6 @@ async function loadGlobalData() {
         section: "Premium Grass",
         row: undefined,
         seat: undefined,
-        price: 45,
-        currency: "AUD",
-        originalPrice: 35,
         quantity: 4,
         transferMethod: "electronic",
         additionalInfo: "BYO blanket and picnic, stunning harbour views",
@@ -455,9 +423,6 @@ async function loadGlobalData() {
         section: "Orchestra",
         row: "J",
         seat: "12-13",
-        price: 275,
-        currency: "CAD",
-        originalPrice: 250,
         quantity: 2,
         transferMethod: "electronic",
         additionalInfo: "Red carpet event with celebrity appearances",
@@ -490,9 +455,6 @@ async function loadGlobalData() {
         section: "Pista Premium",
         row: undefined,
         seat: undefined,
-        price: 180,
-        currency: "BRL",
-        originalPrice: 150,
         quantity: 3,
         transferMethod: "electronic",
         additionalInfo: "Ingresso para o palco principal com Foo Fighters",
@@ -530,11 +492,10 @@ async function loadGlobalData() {
       
       // Log some statistics
       const countries = [...new Set(ticketCount.map(t => t.country))];
-      const currencies = [...new Set(ticketCount.map(t => t.currency))];
+      // Global tickets loaded successfully
       const categories = [...new Set(ticketCount.map(t => t.category))];
       
       console.log(`Countries represented: ${countries.join(', ')}`);
-      console.log(`Currencies supported: ${currencies.join(', ')}`);
       console.log(`Event categories: ${categories.join(', ')}`);
     } else {
       throw new Error('Global database validation failed - insufficient sample data');
