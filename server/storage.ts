@@ -717,7 +717,7 @@ export class DatabaseStorage implements IStorage {
   async updateTicketPopularity(ticketId: number): Promise<TicketPopularity> {
     try {
       // Use raw SQL to avoid timestamp conversion issues
-      const metricsQuery = await db.execute(sql`
+      const metricsResult = await db.execute(sql`
         WITH view_counts AS (
           SELECT 
             COUNT(*) as total_views,
@@ -731,12 +731,30 @@ export class DatabaseStorage implements IStorage {
         SELECT * FROM view_counts
       `);
 
-      const metrics = metricsQuery.rows[0];
-      const total = Number(metrics?.total_views) || 0;
-      const unique = Number(metrics?.unique_views) || 0;
-      const today_views = Number(metrics?.views_today) || 0;
-      const week_views = Number(metrics?.views_week) || 0;
-      const month_views = Number(metrics?.views_month) || 0;
+      // Handle different result structures
+      const resultArray = Array.isArray(metricsResult) ? metricsResult : metricsResult.rows || [];
+      const metrics = resultArray[0];
+      if (!metrics) {
+        // No views yet, create default record and return it
+        await db.execute(sql`
+          INSERT INTO ticket_popularity (
+            ticket_id, total_views, unique_views, views_today, 
+            views_this_week, views_this_month, popularity_score, 
+            trending_factor, last_viewed_at, updated_at
+          ) VALUES (
+            ${ticketId}, 0, 0, 0, 0, 0, 0, 0, NOW(), NOW()
+          )
+          ON CONFLICT (ticket_id) DO NOTHING
+        `);
+        
+        return await this.getTicketPopularityMetrics(ticketId) as TicketPopularity;
+      }
+      
+      const total = Number(metrics.total_views) || 0;
+      const unique = Number(metrics.unique_views) || 0;
+      const today_views = Number(metrics.views_today) || 0;
+      const week_views = Number(metrics.views_week) || 0;
+      const month_views = Number(metrics.views_month) || 0;
 
       // Calculate popularity metrics
       const uniqueRatio = total > 0 ? unique / total : 0;
