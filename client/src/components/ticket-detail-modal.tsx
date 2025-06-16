@@ -156,7 +156,16 @@ export function TicketDetailModal({
           {popularityMetrics && (
             <div className="mb-4">
               <PopularityMetrics 
-                metrics={popularityMetrics.viewCount} 
+                metrics={{
+                  totalViews: popularityMetrics.viewCount.total,
+                  uniqueViews: popularityMetrics.viewCount.unique,
+                  viewsToday: popularityMetrics.viewCount.today,
+                  viewsThisWeek: popularityMetrics.viewCount.thisWeek,
+                  viewsThisMonth: popularityMetrics.viewCount.thisMonth,
+                  popularityScore: popularityMetrics.popularity?.popularityScore,
+                  trendingFactor: popularityMetrics.popularity?.trendingFactor,
+                  lastViewedAt: popularityMetrics.popularity?.lastViewedAt,
+                }} 
                 compact={true}
                 showTrending={true}
               />

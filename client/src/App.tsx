@@ -39,6 +39,7 @@ import CityEvents from "@/pages/city-events";
 import GlobalCities from "@/pages/global-cities";
 import HowToSellTickets from "@/pages/how-to-sell-tickets";
 import { VerificationReport } from "@/pages/verification-report";
+import { PopularityDashboard } from "@/pages/popularity-dashboard";
 
 // Components
 import { Navigation } from "@/components/ui/navigation";
@@ -144,6 +145,8 @@ function Router() {
       <Route path="/data-deletion" component={DataDeletion} />
       <Route path="/faq" component={FAQPage} />
       <Route path="/seller-policy" component={SellerPolicy} />
+      <Route path="/popularity" component={PopularityDashboard} />
+      <Route path="/analytics" component={PopularityDashboard} />
       <Route path="/map-to-home" component={RedirectFromMapToHome} />
       <Route component={NotFound} />
     </Switch>
