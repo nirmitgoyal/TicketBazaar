@@ -74,8 +74,6 @@ export const tickets = pgTable("tickets", {
   section: text("section"),
   row: text("row"),
   seat: text("seat"),
-  price: doublePrecision("price").notNull(),
-  currency: text("currency").notNull().default("USD"),
 
   quantity: integer("quantity").notNull(),
   status: text("status").notNull().default("available"),
