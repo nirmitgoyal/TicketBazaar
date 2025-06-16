@@ -1,5 +1,5 @@
 import { eq, or, and, like, desc, sql, ilike, gt, lt, gte, lte, inArray } from "drizzle-orm";
-import { tickets, users, contactRequests, userReviews, ticketViews, ticketPopularity } from "@shared/schema";
+import { tickets, users, contactRequests, ticketViews, ticketPopularity } from "@shared/schema";
 
 /**
  * Centralized query builders for common database operations
@@ -111,18 +111,7 @@ export class QueryBuilder {
     return conditions.length > 0 ? and(...conditions) : undefined;
   }
   
-  /**
-   * Build user rating update query with validation
-   */
-  static buildUserRatingUpdate(userId: number, newRating: number) {
-    return {
-      condition: eq(users.id, userId),
-      values: {
-        rating: newRating,
-        ratingsCount: sql`${users.ratingsCount} + 1`
-      }
-    };
-  }
+
   
   /**
    * Build contact request filters with status optimization
@@ -188,8 +177,7 @@ export class QueryBuilder {
       seller: {
         id: users.id,
         fullName: users.fullName,
-        rating: users.rating,
-        ratingsCount: users.ratingsCount,
+
         verificationStatus: users.verificationStatus,
         preferredContactMethod: users.preferredContactMethod,
       }
