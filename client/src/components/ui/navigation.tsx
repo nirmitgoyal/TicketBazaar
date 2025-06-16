@@ -299,125 +299,130 @@ export function Navigation() {
         {/* Mobile menu */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div
-              className="md:hidden mt-4 py-2 border-t"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <motion.nav
-                className="flex flex-col space-y-2"
-                variants={staggerContainer(0.05, 0.1)}
-                initial="hidden"
-                animate="visible"
+            <>
+              {/* Click outside overlay to close menu */}
+              <div
+                className="fixed inset-0 z-40 md:hidden"
+                onClick={() => setIsMenuOpen(false)}
+              />
+              <motion.div
+                className="md:hidden mt-4 py-2 border-t relative z-50"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
               >
-                <motion.div variants={listItem}>
-                  <button
-                    className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
-                    onClick={() =>
-                      handleNavigation(
-                        location === "/map" || location === "/events/map"
-                          ? "/map-to-home"
-                          : "/",
-                      )
-                    }
-                  >
-                    Home
-                  </button>
-                </motion.div>
+                <motion.nav
+                  className="flex flex-col space-y-2"
+                  variants={staggerContainer(0.05, 0.1)}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <motion.div variants={listItem}>
+                    <button
+                      className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
+                      onClick={() =>
+                        handleNavigation(
+                          location === "/map" || location === "/events/map"
+                            ? "/map-to-home"
+                            : "/",
+                        )
+                      }
+                    >
+                      Home
+                    </button>
+                  </motion.div>
 
-                <motion.div variants={listItem}>
-                  <button
-                    className={`flex items-center gap-2 py-3 px-2 text-left w-full touch-target rounded-md transition-colors ${location === "/events/map" || location === "/map" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
-                    onClick={() => handleNavigation("/map")}
-                  >
-                    <Map className="h-4 w-4" />
-                    Map View
-                  </button>
-                </motion.div>
+                  <motion.div variants={listItem}>
+                    <button
+                      className={`flex items-center gap-2 py-3 px-2 text-left w-full touch-target rounded-md transition-colors ${location === "/events/map" || location === "/map" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
+                      onClick={() => handleNavigation("/map")}
+                    >
+                      <Map className="h-4 w-4" />
+                      Map View
+                    </button>
+                  </motion.div>
 
-                <motion.div variants={listItem}>
-                  <button
-                    className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/popularity" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
-                    onClick={() => handleNavigation("/popularity")}
-                  >
-                    Popular Tickets
-                  </button>
-                </motion.div>
+                  <motion.div variants={listItem}>
+                    <button
+                      className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/popularity" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
+                      onClick={() => handleNavigation("/popularity")}
+                    >
+                      Popular Tickets
+                    </button>
+                  </motion.div>
 
-                {isAuthenticated && (
-                  <>
-                    <motion.div variants={listItem}>
-                      <button
-                        className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/my-tickets" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
-                        onClick={() => handleNavigation("/my-tickets")}
-                      >
-                        My Tickets
-                      </button>
-                    </motion.div>
+                  {isAuthenticated && (
+                    <>
+                      <motion.div variants={listItem}>
+                        <button
+                          className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/my-tickets" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
+                          onClick={() => handleNavigation("/my-tickets")}
+                        >
+                          My Tickets
+                        </button>
+                      </motion.div>
 
-                    <motion.div variants={listItem}>
-                      <button
-                        className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/list-ticket" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
-                        onClick={() => handleNavigation("/list-ticket")}
-                      >
-                        Sell Tickets
-                      </button>
-                    </motion.div>
+                      <motion.div variants={listItem}>
+                        <button
+                          className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/list-ticket" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
+                          onClick={() => handleNavigation("/list-ticket")}
+                        >
+                          Sell Tickets
+                        </button>
+                      </motion.div>
 
-                    <motion.div variants={listItem}>
-                      <button
-                        className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/profile" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
-                        onClick={() => handleNavigation("/profile")}
-                      >
-                        Profile
-                      </button>
-                    </motion.div>
+                      <motion.div variants={listItem}>
+                        <button
+                          className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/profile" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
+                          onClick={() => handleNavigation("/profile")}
+                        >
+                          Profile
+                        </button>
+                      </motion.div>
 
-                    <motion.div variants={listItem}>
-                      <button
-                        className="py-3 px-2 text-muted-foreground cursor-pointer block w-full text-left touch-target rounded-md transition-colors hover:bg-accent"
-                        onClick={() => {
-                          logoutMutation.mutate(undefined, {
-                            onSuccess: () => {
-                              setLocation("/");
-                              setIsMenuOpen(false);
-                            },
-                          });
-                        }}
-                      >
-                        Logout
-                      </button>
-                    </motion.div>
-                  </>
-                )}
+                      <motion.div variants={listItem}>
+                        <button
+                          className="py-3 px-2 text-muted-foreground cursor-pointer block w-full text-left touch-target rounded-md transition-colors hover:bg-accent"
+                          onClick={() => {
+                            logoutMutation.mutate(undefined, {
+                              onSuccess: () => {
+                                setLocation("/");
+                                setIsMenuOpen(false);
+                              },
+                            });
+                          }}
+                        >
+                          Logout
+                        </button>
+                      </motion.div>
+                    </>
+                  )}
 
-                {!isAuthenticated && (
-                  <>
-                    <motion.div variants={listItem}>
-                      <button
-                        className="py-3 px-2 block font-medium text-primary text-left w-full touch-target rounded-md transition-colors hover:bg-primary/5"
-                        onClick={() => handleNavigation("/list-ticket")}
-                      >
-                        Start Selling
-                      </button>
-                    </motion.div>
+                  {!isAuthenticated && (
+                    <>
+                      <motion.div variants={listItem}>
+                        <button
+                          className="py-3 px-2 block font-medium text-primary text-left w-full touch-target rounded-md transition-colors hover:bg-primary/5"
+                          onClick={() => handleNavigation("/list-ticket")}
+                        >
+                          Start Selling
+                        </button>
+                      </motion.div>
 
-                    <motion.div variants={listItem}>
-                      <button
-                        className="py-3 px-2 flex items-center gap-2 text-primary font-medium w-full text-left touch-target rounded-md transition-colors hover:bg-primary/5"
-                        onClick={() => handleNavigation("/login")}
-                      >
-                        Sign In
-                      </button>
-                    </motion.div>
-                  </>
-                )}
-
-
-              </motion.nav>
-            </motion.div>
+                      <motion.div variants={listItem}>
+                        <button
+                          className="py-3 px-2 flex items-center gap-2 text-primary font-medium w-full text-left touch-target rounded-md transition-colors hover:bg-primary/5"
+                          onClick={() => handleNavigation("/login")}
+                        >
+                          Sign In
+                        </button>
+                      </motion.div>
+                    </>
+                  )}
+                </motion.nav>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
         </div>
