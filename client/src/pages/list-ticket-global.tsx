@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, Info, MapPin, Globe, Clock } from "lucide-react";
+import { AlertCircle, Info, MapPin, Globe, Clock, Users } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
@@ -92,7 +92,7 @@ export default function ListTicketGlobal() {
 
     if (countryInfo) {
       form.setValue("country", detectedCountry);
-      form.setValue("currency", countryInfo.currency);
+
       form.setValue("eventTimezone", userTimezone);
     }
   }, [form]);
@@ -160,7 +160,7 @@ export default function ListTicketGlobal() {
   }
 
   const countries = getAllCountries();
-  const currencies = getAllCurrencies();
+
 
   return (
     <>

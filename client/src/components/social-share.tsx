@@ -31,7 +31,7 @@ export function SocialShare({
 
   const getShareMessage = () => {
     if (ticket && event) {
-      return `Check out this ticket for ${event.eventTitle} on Ticket Bazaar! Section: ${ticket.section}, Price: ₹${ticket.price}`;
+      return `Check out this ticket for ${event.eventTitle} on Ticket Bazaar! Section: ${ticket.section}, Available for transfer`;
     } else if (event) {
       return `Check out ${event.eventTitle} on Ticket Bazaar! Event in ${event.venue} on ${new Date(event.eventDate).toLocaleDateString()}`;
     }

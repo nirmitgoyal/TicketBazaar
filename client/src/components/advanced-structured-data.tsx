@@ -214,8 +214,6 @@ export const AdvancedStructuredData: React.FC<AdvancedStructuredDataProps> = ({
           },
           "offers": {
             "@type": "Offer",
-            "price": event.price || "0",
-            "priceCurrency": event.currency || "USD",
             "availability": "https://schema.org/InStock"
           }
         }
