@@ -104,21 +104,7 @@ export interface IStorage {
     status: string,
   ): Promise<ContactRequest | undefined>;
 
-  // Review operations (P2P model - based on contact requests)
-  createReview(review: InsertUserReview): Promise<UserReview>;
-  getUserReviews(userId: number): Promise<UserReview[]>;
-  getReviewsByReviewer(reviewerId: number): Promise<UserReview[]>;
-  getReview(id: number): Promise<UserReview | undefined>;
-  getUserReviewForContactRequest(
-    userId: number,
-    contactRequestId: number,
-  ): Promise<UserReview | undefined>;
-  updateReview(
-    id: number,
-    rating: number,
-    comment?: string,
-  ): Promise<UserReview | undefined>;
-  deleteReview(id: number): Promise<boolean>;
+
 
   // Ticket viewing operations
   recordTicketView(ticketView: InsertTicketView): Promise<TicketView>;
@@ -571,73 +557,9 @@ export class DatabaseStorage implements IStorage {
 
   // Pure P2P model - no transaction or dispute storage needed
 
-  async createReview(review: InsertUserReview): Promise<UserReview> {
-    const [newReview] = await db.insert(userReviews).values(review as any).returning();
-    return newReview;
-  }
 
-  async getUserReviews(userId: number): Promise<UserReview[]> {
-    return await db
-      .select()
-      .from(userReviews)
-      .where(eq(userReviews.userId, userId));
-  }
 
-  async getReviewsByReviewer(reviewerId: number): Promise<UserReview[]> {
-    return await db
-      .select()
-      .from(userReviews)
-      .where(eq(userReviews.reviewerId, reviewerId));
-  }
 
-  async getReview(id: number): Promise<UserReview | undefined> {
-    const [review] = await db
-      .select()
-      .from(userReviews)
-      .where(eq(userReviews.id, id));
-    return review || undefined;
-  }
-
-  async getUserReviewForContactRequest(
-    userId: number,
-    contactRequestId: number,
-  ): Promise<UserReview | undefined> {
-    const [review] = await db
-      .select()
-      .from(userReviews)
-      .where(
-        and(
-          eq(userReviews.userId, userId),
-          eq(userReviews.contactRequestId, contactRequestId),
-        ),
-      );
-    return review || undefined;
-  }
-
-  async updateReview(
-    id: number,
-    rating: number,
-    comment?: string,
-  ): Promise<UserReview | undefined> {
-    const updateData: Partial<UserReview> = {
-      rating,
-      ...(comment !== undefined && { comment }),
-    };
-
-    const [review] = await db
-      .update(userReviews)
-      .set(updateData)
-      .where(eq(userReviews.id, id))
-      .returning();
-
-    return review || undefined;
-  }
-
-  async deleteReview(id: number): Promise<boolean> {
-    const result = await db.delete(userReviews).where(eq(userReviews.id, id));
-
-    return !!result;
-  }
 
   async recordTicketView(ticketView: InsertTicketView): Promise<TicketView> {
     // Check if user has already viewed this ticket recently (within last hour)
@@ -1019,13 +941,7 @@ export class DatabaseStorage implements IStorage {
     try {
       // Start a transaction to ensure data consistency
       await db.transaction(async (tx) => {
-        // Delete user reviews (both given and received)
-        await tx.delete(userReviews).where(
-          or(
-            eq(userReviews.reviewerId, userId),
-            eq(userReviews.userId, userId)
-          )
-        );
+
 
         // Delete user feedback
         await tx.delete(userFeedback).where(eq(userFeedback.userId, userId));
@@ -1072,13 +988,9 @@ export class DatabaseStorage implements IStorage {
       const userFeedbackData = await db.select().from(userFeedback)
         .where(eq(userFeedback.userId, userId));
       
-      // Get reviews given by user
-      const reviewsGiven = await db.select().from(userReviews)
-        .where(eq(userReviews.reviewerId, userId));
-      
-      // Get reviews received by user
-      const reviewsReceived = await db.select().from(userReviews)
-        .where(eq(userReviews.userId, userId));
+      // Reviews system removed
+      const reviewsGiven: any[] = [];
+      const reviewsReceived: any[] = [];
 
       return {
         user: userData[0] || null,
