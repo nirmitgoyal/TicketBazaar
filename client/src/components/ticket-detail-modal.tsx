@@ -93,6 +93,8 @@ export function TicketDetailModal({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
+            <DialogTitle className="sr-only">Loading tickets...</DialogTitle>
+            <DialogDescription className="sr-only">Please wait while we fetch available tickets for this event.</DialogDescription>
             <Skeleton className="h-7 w-48 mb-2" />
             <Skeleton className="h-4 w-96" />
           </DialogHeader>
