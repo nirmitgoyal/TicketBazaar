@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
 import { MapPin, Calendar, Users, Search, Navigation, Filter, Locate } from "lucide-react";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
@@ -502,7 +503,13 @@ export default function MapPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {processedEvents.length > 0 ? (
+            {isLoading ? (
+              <SkeletonGrid 
+                type="events" 
+                count={6} 
+                className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
+              />
+            ) : processedEvents.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {processedEvents.map((event) => (
                   <Card key={event.id} className="hover:shadow-md transition-shadow">

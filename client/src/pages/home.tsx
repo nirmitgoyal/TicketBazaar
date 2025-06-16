@@ -386,13 +386,11 @@ export default function Home() {
           {searchQuery.length >= 2 ? (
             // Show search results
             searchLoading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="animate-pulse">
-                    <div className="bg-gray-200 rounded-lg h-48"></div>
-                  </div>
-                ))}
-              </div>
+              <SkeletonGrid 
+                type="events" 
+                count={8} 
+                className="grid-cols-2 lg:grid-cols-4" 
+              />
             ) : searchResults.length > 0 ? (
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {searchResults.map((ticket) => (
@@ -439,13 +437,11 @@ export default function Home() {
           ) : (
             // Show default events grid
             eventsLoading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="animate-pulse">
-                    <div className="bg-gray-200 rounded-lg h-48"></div>
-                  </div>
-                ))}
-              </div>
+              <SkeletonGrid 
+                type="events" 
+                count={8} 
+                className="grid-cols-2 lg:grid-cols-4" 
+              />
             ) : events && events.length > 0 ? (
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {events.map((event) => (
