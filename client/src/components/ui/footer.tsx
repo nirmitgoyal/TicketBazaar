@@ -102,13 +102,7 @@ export function Footer() {
                   Dispute Resolution
                 </a>
               </li>
-              <li>
-                <Link href="/seller-policy">
-                  <a className="text-textSecondary hover:text-primary">
-                    Seller Policy
-                  </a>
-                </Link>
-              </li>
+              
             </ul>
           </div>
         </div>
