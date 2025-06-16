@@ -1,0 +1,86 @@
+// Centralized component exports for better organization
+export { default as UnifiedPopularityMetrics } from './unified-popularity-metrics';
+export { default as EventCard } from './event-card';
+export { default as TicketCard } from './ticket-card';
+export { default as SearchBar } from './search-bar';
+export { default as FilterDropdown } from './filter-dropdown';
+export { default as VenueMap } from './venue-map';
+export { default as TicketVerification } from './ticket-verification';
+export { default as MobileNav } from './mobile-nav';
+export { default as PullToRefresh } from './pull-to-refresh';
+export { default as RealTimeNotifications } from './real-time-notifications';
+export { default as GlobalMarketplaceStats } from './global-marketplace-stats';
+export { default as TrustScoreMeter } from './trust-score-meter';
+export { default as VerificationBadge } from './verification-badge';
+export { default as SocialShare } from './social-share';
+export { default as ErrorBoundary } from './error-boundary';
+export { default as EventAtmosphere } from './event-atmosphere';
+export { default as TicketHeatmap } from './ticket-heatmap';
+export { default as EventRecommendations } from './event-recommendations';
+export { default as TicketComparison } from './ticket-comparison';
+export { default as SearchHints } from './search-hints';
+
+// Modal exports
+export { default as ContactRequestModal } from './contact-request-modal';
+export { default as SellerProfileModal } from './seller-profile-modal';
+export { default as SellerDetailsModal } from './seller-details-modal';
+export { default as TicketDetailModal } from './ticket-detail-modal';
+export { default as DisputeModal } from './dispute-modal';
+export { default as VerificationModal } from './verification-modal';
+export { default as AiVerificationModal } from './ai-verification-modal';
+
+// SEO Components (consolidated)
+export { default as SEOManager } from './seo';
+export { default as HelmetManager } from './helmet-manager';
+export { default as CanonicalUrlManager } from './canonical-url-manager';
+export { default as InternationalSEO } from './international-seo';
+export { default as EnhancedSEO } from './enhanced-seo';
+export { default as AdvancedStructuredData } from './advanced-structured-data';
+
+// UI Components
+export * from './ui/button';
+export * from './ui/card';
+export * from './ui/input';
+export * from './ui/label';
+export * from './ui/select';
+export * from './ui/textarea';
+export * from './ui/checkbox';
+export * from './ui/radio-group';
+export * from './ui/switch';
+export * from './ui/slider';
+export * from './ui/progress';
+export * from './ui/badge';
+export * from './ui/alert';
+export * from './ui/dialog';
+export * from './ui/popover';
+export * from './ui/dropdown-menu';
+export * from './ui/navigation-menu';
+export * from './ui/tabs';
+export * from './ui/accordion';
+export * from './ui/separator';
+export * from './ui/scroll-area';
+export * from './ui/toast';
+export * from './ui/toaster';
+export * from './ui/tooltip';
+export * from './ui/hover-card';
+export * from './ui/alert-dialog';
+export * from './ui/context-menu';
+export * from './ui/menubar';
+export * from './ui/avatar';
+export * from './ui/calendar';
+export * from './ui/form';
+export * from './ui/table';
+export * from './ui/collapsible';
+export * from './ui/aspect-ratio';
+export * from './ui/toggle';
+export * from './ui/toggle-group';
+export * from './ui/resizable';
+export * from './ui/drawer';
+export * from './ui/pagination';
+export * from './ui/breadcrumb';
+export * from './ui/command';
+export * from './ui/sheet';
+export * from './ui/skeleton';
+export * from './ui/navigation';
+export * from './ui/footer';
+export * from './ui/page-transition';

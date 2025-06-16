@@ -254,7 +254,7 @@ export class DatabaseStorage implements IStorage {
     try {
       const [user] = await db
         .update(users)
-        .set({ instagram: instagram })
+        .set({ instagram })
         .where(eq(users.id, userId))
         .returning();
       

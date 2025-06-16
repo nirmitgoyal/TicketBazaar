@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { Ticket } from "@shared/schema";
 import { motion } from "framer-motion";
 import { cardHover, buttonTap, fadeInUp } from "@/lib/animations";
-import EventPopularityMetrics from "./event-popularity-metrics";
+import UnifiedPopularityMetrics from "./unified-popularity-metrics";
 
 interface EventCardProps {
   event: Ticket;
@@ -144,7 +144,7 @@ export function EventCard({
             )}
             
             {/* Inline Popularity Metrics for Event */}
-            <EventPopularityMetrics eventId={id} />
+            <UnifiedPopularityMetrics eventId={id} variant="event" />
           </div>
         </div>
       </div>
