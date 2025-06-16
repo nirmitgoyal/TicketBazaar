@@ -23,8 +23,7 @@ export const users = pgTable("users", {
   whatsapp: text("whatsapp"), // WhatsApp number for direct contact
   instagram: text("instagram"), // Instagram handle for profile verification (optional globally)
   googleId: text("google_id"), // Google OAuth ID
-  rating: doublePrecision("rating").default(0),
-  ratingsCount: integer("ratings_count").default(0),
+
   preferredContactMethod: text("preferred_contact_method").default("email"), // email, whatsapp, phone
   country: text("country").notNull().default("US"), // ISO 3166-1 alpha-2 country code
   timezone: text("timezone").default("UTC"), // User's timezone
@@ -42,7 +41,6 @@ export const users = pgTable("users", {
   accountFlags: text("account_flags").default("{}"),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
-  ratingIdx: index("users_rating_idx").on(table.rating),
   countryIdx: index("users_country_idx").on(table.country),
   verificationIdx: index("users_verification_idx").on(table.verificationStatus),
 }));
@@ -145,23 +143,7 @@ export const userFeedback = pgTable("user_feedback", {
   createdAtIdx: index("user_feedback_created_at_idx").on(table.createdAt),
 }));
 
-export const userReviews = pgTable("user_reviews", {
-  id: serial("id").primaryKey(),
-  reviewerId: integer("reviewer_id").notNull(), // User giving the review
-  userId: integer("user_id").notNull(), // User being reviewed
-  contactRequestId: integer("contact_request_id"), // Related contact request instead of transaction
-  rating: integer("rating").notNull(), // 1-5 scale
-  comment: text("comment"),
-  reviewType: text("review_type").notNull(), // buyer_review_seller, seller_review_buyer
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at"),
-}, (table) => ({
-  reviewerIdx: index("user_reviews_reviewer_id_idx").on(table.reviewerId),
-  userIdx: index("user_reviews_user_id_idx").on(table.userId),
-  contactRequestIdx: index("user_reviews_contact_request_id_idx").on(table.contactRequestId),
-  ratingIdx: index("user_reviews_rating_idx").on(table.rating),
-  createdAtIdx: index("user_reviews_created_at_idx").on(table.createdAt),
-}));
+
 
 // Ticket viewing history table with IP tracking for anonymous users
 export const ticketViews = pgTable("ticket_views", {
@@ -210,8 +192,6 @@ export const usersRelations = relations(users, ({ many }) => ({
     relationName: "requester",
   }),
   feedback: many(userFeedback),
-  reviewsGiven: many(userReviews, { relationName: "reviewer" }),
-  reviewsReceived: many(userReviews, { relationName: "reviewee" }),
   ticketViews: many(ticketViews),
 }));
 
@@ -221,7 +201,6 @@ export const ticketsRelations = relations(tickets, ({ one, many }) => ({
     references: [users.id],
   }),
   contactRequests: many(contactRequests),
-  reviews: many(userReviews),
   views: many(ticketViews),
   popularity: one(ticketPopularity, {
     fields: [tickets.id],
@@ -260,22 +239,7 @@ export const userFeedbackRelations = relations(userFeedback, ({ one }) => ({
   }),
 }));
 
-export const userReviewsRelations = relations(userReviews, ({ one }) => ({
-  reviewer: one(users, {
-    fields: [userReviews.reviewerId],
-    references: [users.id],
-    relationName: "reviewer",
-  }),
-  reviewee: one(users, {
-    fields: [userReviews.userId],
-    references: [users.id],
-    relationName: "reviewee",
-  }),
-  contactRequest: one(contactRequests, {
-    fields: [userReviews.contactRequestId],
-    references: [contactRequests.id],
-  }),
-}));
+
 
 export const ticketViewsRelations = relations(ticketViews, ({ one }) => ({
   user: one(users, {
@@ -310,7 +274,7 @@ export const contactRequestSchema = insertContactRequestSchema.extend({
 
 export const insertUserFeedbackSchema = createInsertSchema(userFeedback);
 
-export const insertUserReviewSchema = createInsertSchema(userReviews);
+
 
 export const insertTicketViewSchema = createInsertSchema(ticketViews);
 
@@ -329,8 +293,7 @@ export type ContactRequest = typeof contactRequests.$inferSelect;
 export type InsertUserFeedback = z.infer<typeof insertUserFeedbackSchema>;
 export type UserFeedback = typeof userFeedback.$inferSelect;
 
-export type InsertUserReview = z.infer<typeof insertUserReviewSchema>;
-export type UserReview = typeof userReviews.$inferSelect;
+
 
 export type InsertTicketView = z.infer<typeof insertTicketViewSchema>;
 export type TicketView = typeof ticketViews.$inferSelect;
