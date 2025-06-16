@@ -1,4 +1,3 @@
-
 import { Express } from "express";
 import { createServer } from "http";
 import { setupAuth } from "../auth";
@@ -10,6 +9,8 @@ import contactRequestRoutes from "./contact-requests";
 import dataPrivacyRoutes from "./data-privacy";
 import recommendationRoutes from "./recommendations";
 import searchHintsRoutes from "./search-hints";
+import searchRoutes from "./search.routes";
+import autocompleteRoutes from "./autocomplete";
 import ticketViewRoutes from "./ticket-views";
 import healthRoutes from "./health.routes";
 import aiVerificationRoutes from "./ai-verification.routes";
@@ -23,10 +24,10 @@ export {
 
 export async function registerRoutes(app: Express) {
   const server = createServer(app);
-  
+
   // Setup authentication
   await setupAuth(app);
-  
+
   // Register API routes
   app.use("/api/auth", authRoutes);
   app.use("/api/events", eventRoutes);
@@ -36,9 +37,11 @@ export async function registerRoutes(app: Express) {
   app.use("/api/data-privacy", dataPrivacyRoutes);
   app.use("/api/recommendations", recommendationRoutes);
   app.use("/api/search-hints", searchHintsRoutes);
+  app.use("/api/search", searchRoutes);
+  app.use("/api/autocomplete", autocompleteRoutes);
   app.use("/api/ticket-views", ticketViewRoutes);
   app.use("/api/health", healthRoutes);
   app.use("/api/ai-verification", aiVerificationRoutes);
-  
+
   return server;
 }

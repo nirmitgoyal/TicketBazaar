@@ -131,16 +131,16 @@ export function SearchBar({
       if (!debouncedAutocompleteQuery || debouncedAutocompleteQuery.length < 2) {
         return [];
       }
-
+      
       try {
         const params = new URLSearchParams();
         params.set('q', debouncedAutocompleteQuery);
-
+        
         const response = await fetch(`/api/autocomplete/suggestions?${params}`);
         if (!response.ok) {
           return [];
         }
-
+        
         const results = await response.json();
         return results || [];
       } catch (error) {
@@ -246,7 +246,7 @@ export function SearchBar({
     console.log("🚀 performSearch called");
     console.log("🚀 Current query:", query);
     console.log("🚀 onSearch prop:", onSearch);
-
+    
     const filters: SearchFilters = {};
 
     // Add filters from state
@@ -373,12 +373,12 @@ export function SearchBar({
     setQuery(suggestionText);
     setShowAutocomplete(false);
     setAutocompleteIndex(-1);
-
+    
     // Immediately navigate to search results for this suggestion
     if (onSearch) {
       // If there's a custom onSearch handler, use it with appropriate filters
       const filters: SearchFilters = {};
-
+      
       // Apply filters based on suggestion type
       if (suggestion.type === 'city') {
         filters.city = suggestionText.trim();
@@ -388,20 +388,20 @@ export function SearchBar({
         // For events, search by the event title
         // Don't apply city filter, let the event title search naturally
       }
-
+      
       onSearch(suggestionText.trim(), filters);
     } else {
       // Otherwise navigate to the search results page
       const params = new URLSearchParams();
       params.set("q", suggestionText.trim());
-
+      
       // Add appropriate filters to URL based on suggestion type
       if (suggestion.type === 'city') {
         params.set("city", suggestionText.trim());
       } else if (suggestion.type === 'venue') {
         params.set("location", suggestionText.trim());
       }
-
+      
       navigate(`/?${params.toString()}`);
     }
   };
@@ -413,13 +413,13 @@ export function SearchBar({
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setAutocompleteIndex(prev =>
+        setAutocompleteIndex(prev => 
           prev < autocompleteResults.length - 1 ? prev + 1 : 0
         );
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setAutocompleteIndex(prev =>
+        setAutocompleteIndex(prev => 
           prev > 0 ? prev - 1 : autocompleteResults.length - 1
         );
         break;
@@ -453,14 +453,14 @@ export function SearchBar({
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
       const autocompleteElement = document.querySelector('.autocomplete-dropdown');
-
+      
       // Don't close if clicking on the search input or autocomplete dropdown
-      if (searchInputRef.current &&
-        (searchInputRef.current.contains(target) ||
-          (autocompleteElement && autocompleteElement.contains(target)))) {
+      if (searchInputRef.current && 
+          (searchInputRef.current.contains(target) || 
+           (autocompleteElement && autocompleteElement.contains(target)))) {
         return;
       }
-
+      
       setShowAutocomplete(false);
       setAutocompleteIndex(-1);
     };
@@ -515,7 +515,7 @@ export function SearchBar({
                     <span className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
                   </div>
                 )}
-
+                
                 {/* Autocomplete Dropdown */}
                 {showAutocomplete && autocompleteResults && autocompleteResults.length > 0 && (
                   <div className="autocomplete-dropdown absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
@@ -523,7 +523,7 @@ export function SearchBar({
                       const suggestionText = typeof suggestion === 'string' ? suggestion : suggestion.text;
                       const suggestionType = typeof suggestion === 'string' ? 'event' : suggestion.type;
                       const suggestionCategory = typeof suggestion === 'string' ? undefined : suggestion.category;
-
+                      
                       // Choose appropriate icon based on type
                       let icon: React.ReactElement = <Search className="h-4 w-4 mr-2 text-gray-400" />;
                       if (suggestionType === 'event') {
@@ -538,8 +538,9 @@ export function SearchBar({
                         <button
                           key={suggestionText}
                           type="button"
-                          className={`w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors cursor-pointer ${index === autocompleteIndex ? 'bg-primary/5 text-primary' : 'text-gray-700'
-                            }`}
+                          className={`w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors cursor-pointer ${
+                            index === autocompleteIndex ? 'bg-primary/5 text-primary' : 'text-gray-700'
+                          }`}
                           onMouseDown={(e) => {
                             e.preventDefault();
                             handleAutocompleteSelect(suggestion);

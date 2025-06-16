@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
-import { SearchBar } from "@/components/search-bar";
+import SearchBar from "@/components/search-bar-simple";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,22 +17,22 @@ export default function GlobalCities() {
   const filteredCities = Object.entries(GLOBAL_CITIES).filter(([slug, city]) => {
     if (!searchQuery) return true;
     return city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           city.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           city.keywords.some(keyword => keyword.toLowerCase().includes(searchQuery.toLowerCase()));
+      city.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      city.keywords.some(keyword => keyword.toLowerCase().includes(searchQuery.toLowerCase()));
   });
 
   // Group cities by continent/region
   const citiesByRegion = {
-    "North America": filteredCities.filter(([, city]) => 
+    "North America": filteredCities.filter(([, city]) =>
       ["United States", "Canada"].includes(city.country)
     ),
-    "Europe": filteredCities.filter(([, city]) => 
+    "Europe": filteredCities.filter(([, city]) =>
       ["United Kingdom", "Germany", "France", "Spain", "Italy"].includes(city.country)
     ),
-    "Asia Pacific": filteredCities.filter(([, city]) => 
+    "Asia Pacific": filteredCities.filter(([, city]) =>
       ["Japan", "Australia"].includes(city.country)
     ),
-    "South America": filteredCities.filter(([, city]) => 
+    "South America": filteredCities.filter(([, city]) =>
       ["Brazil"].includes(city.country)
     )
   };
@@ -77,7 +77,7 @@ export default function GlobalCities() {
         keywords="global cities, worldwide events, international tickets, city events, global marketplace, multi-city tickets, international entertainment, worldwide venues"
         canonicalUrl="https://ticketbazaar.global/cities"
       />
-      
+
       <UnifiedSchema
         faqs={citiesFAQs}
         includeOrganization={true}
@@ -99,13 +99,13 @@ export default function GlobalCities() {
               <Globe className="h-8 w-8" />
               <span className="text-xl font-medium">Global Coverage</span>
             </div>
-            
+
             <h1 className="text-3xl md:text-5xl font-bold mb-6">
               Event Tickets in Cities Worldwide
             </h1>
-            
+
             <p className="text-xl md:text-2xl mb-8 opacity-90">
-              Discover and connect with verified ticket sellers in major cities across 6 continents. 
+              Discover and connect with verified ticket sellers in major cities across 6 continents.
               From Broadway shows in New York to concerts in Tokyo.
             </p>
 
@@ -143,19 +143,19 @@ export default function GlobalCities() {
               <div className="text-3xl font-bold text-gray-900">{Object.keys(GLOBAL_CITIES).length}</div>
               <div className="text-gray-600">Global Cities</div>
             </div>
-            
+
             <div className="text-center p-6 bg-white rounded-lg shadow-sm">
               <Globe className="h-8 w-8 text-primary mx-auto mb-3" />
               <div className="text-3xl font-bold text-gray-900">10</div>
               <div className="text-gray-600">Countries</div>
             </div>
-            
+
             <div className="text-center p-6 bg-white rounded-lg shadow-sm">
               <Calendar className="h-8 w-8 text-primary mx-auto mb-3" />
               <div className="text-3xl font-bold text-gray-900">6</div>
               <div className="text-gray-600">Event Categories</div>
             </div>
-            
+
             <div className="text-center p-6 bg-white rounded-lg shadow-sm">
               <TrendingUp className="h-8 w-8 text-primary mx-auto mb-3" />
               <div className="text-3xl font-bold text-gray-900">24/7</div>
@@ -185,11 +185,11 @@ export default function GlobalCities() {
                     <Globe className="h-6 w-6 text-primary" />
                     {region}
                   </h3>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {cities.map(([slug, city]) => (
-                      <Card 
-                        key={slug} 
+                      <Card
+                        key={slug}
                         className="hover:shadow-lg transition-shadow cursor-pointer group"
                         onClick={() => navigateToCity(slug)}
                       >
@@ -205,7 +205,7 @@ export default function GlobalCities() {
                             {city.country}
                           </CardDescription>
                         </CardHeader>
-                        
+
                         <CardContent>
                           <div className="flex flex-wrap gap-2 mb-4">
                             {city.keywords.slice(0, 3).map((keyword, index) => (
@@ -214,9 +214,9 @@ export default function GlobalCities() {
                               </Badge>
                             ))}
                           </div>
-                          
-                          <Button 
-                            variant="outline" 
+
+                          <Button
+                            variant="outline"
                             className="w-full group-hover:bg-primary group-hover:text-white transition-colors"
                           >
                             Explore {city.name} Events
@@ -238,8 +238,8 @@ export default function GlobalCities() {
                 <p className="text-gray-600 mb-4">
                   No cities match your search "{searchQuery}"
                 </p>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setSearchQuery("")}
                 >
                   Clear Search
@@ -257,7 +257,7 @@ export default function GlobalCities() {
             <h2 className="text-3xl font-bold text-gray-900 mb-8">
               Popular Destinations
             </h2>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {Object.entries(GLOBAL_CITIES).slice(0, 10).map(([slug, city]) => (
                 <Button
@@ -283,7 +283,7 @@ export default function GlobalCities() {
             <h2 className="text-2xl font-bold text-center mb-8">
               Frequently Asked Questions
             </h2>
-            
+
             <div className="space-y-6">
               {citiesFAQs.map((faq, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-sm">

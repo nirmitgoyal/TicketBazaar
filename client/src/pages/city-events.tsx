@@ -3,18 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
-import { SearchBar } from "@/components/search-bar";
+import SearchBar from "@/components/search-bar-simple";
 import { EventCard } from "@/components/event-card";
 import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, Users, Star } from "lucide-react";
 import { Ticket } from "@shared/schema";
-import { 
-  generateCitySEO, 
+import {
+  generateCitySEO,
   GLOBAL_CITIES,
   generateBreadcrumbStructuredData,
-  generateFAQStructuredData 
+  generateFAQStructuredData
 } from "@/utils/global-seo-utils";
 
 export default function CityEvents() {
@@ -25,7 +25,7 @@ export default function CityEvents() {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const cityData = GLOBAL_CITIES[citySlug as keyof typeof GLOBAL_CITIES];
-  
+
   if (!cityData) {
     setLocation("/404");
     return null;
@@ -57,13 +57,13 @@ export default function CityEvents() {
   const filteredEvents = events?.filter((event: any) => {
     if (!searchQuery) return true;
     return event.eventTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           event.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           event.venue?.toLowerCase().includes(searchQuery.toLowerCase());
+      event.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.venue?.toLowerCase().includes(searchQuery.toLowerCase());
   }) || [];
 
   // Generate SEO data
   const seoData = generateCitySEO(citySlug);
-  
+
   // Generate breadcrumbs
   const breadcrumbs = [
     { name: "Home", url: "/" },
@@ -118,7 +118,7 @@ export default function CityEvents() {
         keywords={seoData.keywords.join(", ")}
         canonicalUrl={seoData.canonicalUrl}
       />
-      
+
       <UnifiedSchema
         faqs={cityFAQs}
         includeOrganization={true}
@@ -140,13 +140,13 @@ export default function CityEvents() {
               <MapPin className="h-6 w-6" />
               <span className="text-lg font-medium">{cityData.country}</span>
             </div>
-            
+
             <h1 className="text-2xl md:text-4xl font-bold mb-4">
               {cityData.name} Event Tickets
             </h1>
-            
+
             <p className="text-lg md:text-xl mb-6 opacity-90">
-              Discover and connect with verified ticket sellers for events in {cityData.name}. 
+              Discover and connect with verified ticket sellers for events in {cityData.name}.
               From concerts and comedy shows to sports and festivals.
             </p>
 
@@ -169,19 +169,19 @@ export default function CityEvents() {
               <div className="text-2xl font-bold text-gray-900">{totalEvents}</div>
               <div className="text-sm text-gray-600">Total Events</div>
             </div>
-            
+
             <div className="text-center p-4 bg-white rounded-lg shadow-sm">
               <Users className="h-6 w-6 text-primary mx-auto mb-2" />
               <div className="text-2xl font-bold text-gray-900">{upcomingEvents}</div>
               <div className="text-sm text-gray-600">Upcoming</div>
             </div>
-            
+
             <div className="text-center p-4 bg-white rounded-lg shadow-sm">
               <Star className="h-6 w-6 text-primary mx-auto mb-2" />
               <div className="text-2xl font-bold text-gray-900">{categoriesCount}</div>
               <div className="text-sm text-gray-600">Categories</div>
             </div>
-            
+
             <div className="text-center p-4 bg-white rounded-lg shadow-sm">
               <MapPin className="h-6 w-6 text-primary mx-auto mb-2" />
               <div className="text-2xl font-bold text-gray-900">{cityData.currency}</div>
@@ -205,7 +205,7 @@ export default function CityEvents() {
                 </p>
               )}
             </div>
-            
+
             <Badge variant="secondary" className="px-3 py-1">
               {filteredEvents.length} events found
             </Badge>
@@ -228,14 +228,14 @@ export default function CityEvents() {
                 No events found in {cityData.name}
               </h3>
               <p className="text-gray-600 mb-4">
-                {searchQuery ? 
-                  `No events match your search "${searchQuery}"` : 
+                {searchQuery ?
+                  `No events match your search "${searchQuery}"` :
                   `No events currently available in ${cityData.name}`
                 }
               </p>
               {searchQuery && (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setSearchQuery("")}
                 >
                   Clear Search
@@ -248,7 +248,7 @@ export default function CityEvents() {
                 <EventCard
                   key={event.id}
                   event={event}
-                  tickets={tickets?.filter((ticket: Ticket) => 
+                  tickets={tickets?.filter((ticket: Ticket) =>
                     ticket.eventTitle === event.eventTitle
                   ) || []}
                   onClick={() => openModal(event.id)}
@@ -266,7 +266,7 @@ export default function CityEvents() {
             <h2 className="text-2xl font-bold text-center mb-8">
               Frequently Asked Questions about {cityData.name} Events
             </h2>
-            
+
             <div className="space-y-6">
               {cityFAQs.map((faq, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-sm">

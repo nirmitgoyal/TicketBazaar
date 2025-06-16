@@ -1,14 +1,15 @@
+import TestButton from "@/components/test-button";
 import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { SearchBar, SearchFilters } from "@/components/search-bar";
+import { SearchBar as SimpleSearchBar, SearchFilters } from "@/components/search-bar-simple";
 import { TicketCard } from "@/components/ticket-card";
 import { EventCard } from "@/components/event-card";
 import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { SellerDetailsModal } from "@/components/seller-details-modal";
-import { Loader2, AlertTriangle, MapPin, Search } from "lucide-react";
+import { Loader2, AlertTriangle, MapPin } from "lucide-react";
 import { Ticket } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -39,14 +40,57 @@ export default function Home() {
     queryKey: ["/api/events", activeCategory, selectedSearchFilters],
     enabled: true,
   });
-
-  // Fetch tickets data
+  // Fetch tickets data with search functionality
   const {
     data: tickets = [],
     isLoading: ticketsLoading,
     error: ticketsError,
   } = useQuery<Ticket[]>({
-    queryKey: ["/api/tickets", searchQuery, selectedSearchFilters],
+    queryKey: searchQuery
+      ? ["/api/search/advanced", searchQuery, selectedSearchFilters]
+      : ["/api/tickets", selectedSearchFilters],
+    queryFn: async ({ queryKey }) => {
+      if (searchQuery) {
+        // Use the new search endpoint for search queries
+        const params = new URLSearchParams();
+        params.set("q", searchQuery);
+
+        // Add search filters to URL params
+        Object.entries(selectedSearchFilters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== "") {
+            if (typeof value === "boolean") {
+              params.set(key, value.toString());
+            } else if (value instanceof Date) {
+              params.set(key, value.toISOString().split('T')[0]); // Format as YYYY-MM-DD
+            } else {
+              params.set(key, value.toString());
+            }
+          }
+        });
+
+        const response = await fetch(`/api/search/advanced?${params}`, {
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Search failed: ${response.status}`);
+        }
+
+        const result = await response.json();
+        return result.tickets || [];
+      } else {
+        // Use default tickets endpoint when no search query
+        const response = await fetch("/api/tickets", {
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch tickets: ${response.status}`);
+        }
+
+        return await response.json();
+      }
+    },
     enabled: true,
   });
 
@@ -114,7 +158,7 @@ export default function Home() {
   const categories = [
     "All",
     "Concerts",
-    "Sports", 
+    "Sports",
     "Festivals",
     "Theatre",
     "Comedy"
@@ -122,39 +166,38 @@ export default function Home() {
 
   const selectedCategory = activeCategory === "all" ? "All" : activeCategory;
 
-  const handleSearch = (query: string, searchFilters: SearchFilters) => {
-    setIsLoading(true);
-    setSelectedSearchFilters(searchFilters);
-    
-    const params = new URLSearchParams();
-    if (query) params.set("q", query);
+  // Handle search functionality
+  const handleSearch = (query: string, filters: SearchFilters) => {
+    console.log("🏠 Home handleSearch called with:", { query, filters });
+    setSelectedSearchFilters(filters);
 
-    Object.entries(searchFilters).forEach(([key, value]) => {
+    // Navigate to search results with query and filters
+    const params = new URLSearchParams();
+    if (query.trim()) {
+      params.set("q", query.trim());
+    }
+
+    // Add filters to URL params
+    Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
         if (typeof value === "boolean") {
           params.set(key, value.toString());
         } else if (value instanceof Date) {
-          params.set(key, value.toISOString());
+          params.set(key, value.toISOString().split('T')[0]); // Format as YYYY-MM-DD
         } else {
           params.set(key, value.toString());
         }
       }
     });
 
-    window.history.replaceState(
-      {},
-      "",
-      params.toString() ? `?${params}` : window.location.pathname,
-    );
+    // Update URL without page reload
+    const newUrl = params.toString() ? `?${params}` : window.location.pathname;
+    console.log("🏠 Updating URL to:", newUrl);
+    window.history.pushState({}, "", newUrl);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      if (query && !events?.length) {
-        setShowNoResultsMessage(true);
-      } else {
-        setShowNoResultsMessage(false);
-      }
-    }, 1500);
+    // Update search params to trigger re-render
+    setSearchParams(new URLSearchParams(params.toString()));
+    console.log("🏠 Search params updated");
   };
 
   const openModal = (eventId: number) => {
@@ -187,11 +230,11 @@ export default function Home() {
     Object.keys(selectedSearchFilters).length > 0 ||
     searchQuery;
 
-  const dynamicTitle = searchQuery 
+  const dynamicTitle = searchQuery
     ? `${searchQuery} Second-Hand Tickets | Resale Marketplace | Ticket Bazaar`
     : selectedCategory === "All"
-    ? "Second-Hand Ticket Discovery Platform | Buy & Sell Event Tickets Worldwide | Ticket Bazaar"
-    : `${selectedCategory} Resale Tickets | Second-Hand ${selectedCategory} Events | Ticket Bazaar`;
+      ? "Second-Hand Ticket Discovery Platform | Buy & Sell Event Tickets Worldwide | Ticket Bazaar"
+      : `${selectedCategory} Resale Tickets | Second-Hand ${selectedCategory} Events | Ticket Bazaar`;
 
   const dynamicDescription = searchQuery
     ? `Find authentic ${searchQuery} resale tickets from verified sellers worldwide. Secure second-hand ticket marketplace with buyer protection across 50+ countries.`
@@ -203,8 +246,8 @@ export default function Home() {
         title={dynamicTitle}
         description={dynamicDescription}
         keywords="second hand tickets, resale tickets, ticket marketplace, buy sell tickets, concert tickets resale, sports tickets secondhand, theatre tickets resale, festival tickets marketplace, verified ticket sellers, authentic resale tickets, ticket exchange platform, global ticket marketplace, event tickets worldwide, secure ticket resale, ticket buyer protection"
-        canonicalUrl={selectedCategory === "All" ? 
-          "https://ticketbazaar.global" : 
+        canonicalUrl={selectedCategory === "All" ?
+          "https://ticketbazaar.global" :
           `https://ticketbazaar.global/category/${selectedCategory.toLowerCase()}`}
       />
 
@@ -248,36 +291,19 @@ export default function Home() {
               <p className="text-xl md:text-2xl text-blue-100 max-w-2xl mx-auto" itemProp="description">
                 Resell tickets for comedy shows, movies, bus, concerts, sports, events and connect with verified buyers and sellers.
               </p>
-            </header>
+            </header>            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto" role="search" aria-label="Search for second-hand event tickets">
+              <SimpleSearchBar
+                onSearch={(query) => {
+                  console.log("🏠 Home received search:", query);
+                  handleSearch(query, {});
+                }}
+              />
+            </div>
 
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto bg-white rounded-lg p-2 flex items-center space-x-2" role="search" aria-label="Search for second-hand event tickets">
-              <div className="flex-1 flex items-center space-x-2">
-                <Search className="h-5 w-5 text-gray-400 ml-3" aria-hidden="true" />
-                <input
-                  type="text"
-                  placeholder="Search Ticket..."
-                  className="flex-1 p-2 text-gray-900 placeholder-gray-500 border-none outline-none"
-                  aria-label="Search for event tickets by artist, team, venue, or event name"
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <MapPin className="h-4 w-4 text-gray-400" aria-hidden="true" />
-                <select className="p-2 text-gray-700 border-none outline-none bg-transparent" aria-label="Select location">
-                  <option>Any location</option>
-                  <option>United States</option>
-                  <option>United Kingdom</option>
-                  <option>Canada</option>
-                  <option>Australia</option>
-                  <option>Germany</option>
-                  <option>France</option>
-                  <option>India</option>
-                  <option>Japan</option>
-                </select>
-              </div>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6" aria-label="Search for tickets">
-                Search
-              </Button>
+            {/* Test Button */}
+            <div className="mt-4">
+              <TestButton />
             </div>
           </div>
         </div>
@@ -290,12 +316,11 @@ export default function Home() {
             {categories.map((category) => (
               <button
                 key={category}
-                className={`whitespace-nowrap py-2 text-sm font-medium transition-colors border-b-2 ${
-                  activeCategory === category.toLowerCase() ||
-                  (category === "All" && activeCategory === "all")
+                className={`whitespace-nowrap py-2 text-sm font-medium transition-colors border-b-2 ${activeCategory === category.toLowerCase() ||
+                    (category === "All" && activeCategory === "all")
                     ? "border-blue-600 text-blue-600"
                     : "border-transparent text-gray-600 hover:text-blue-600"
-                }`}
+                  }`}
                 onClick={() => {
                   setActiveCategory(category.toLowerCase());
                   const params = new URLSearchParams(window.location.search);
@@ -384,29 +409,26 @@ export default function Home() {
               {/* Sample Event Cards to match the original design */}
               {Array.from({ length: 16 }, (_, i) => {
                 // Create sample ticket data for each card
-                const sampleTicket: Ticket = {
-                  id: i + 1000, // Unique ID for sample tickets
-                  sellerId: Math.floor(Math.random() * 5) + 1, // Random seller ID 1-5
-                  title: `Sample Event Ticket ${i + 1}`,
-                  eventTitle: `Sample Event Title ${i + 1}`,
-                  eventDescription: `Description for sample event ${i + 1}`,
+                const sampleTicket: any = {
+                  id: i + 1,
+                  sellerId: 1,
+                  title: `Sample Ticket ${i + 1}`,
+                  eventTitle: `Sample Event ${i + 1}`,
+                  eventDescription: `Description for event ${i + 1}`,
                   venue: `Sample Venue ${i + 1}`,
-                  venueAddress: `123 Sample St, City ${i + 1}`,
+                  venueAddress: `Address ${i + 1}`,
                   eventDate: new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
-                  category: ['Concerts', 'Sports', 'Festivals', 'Theatre', 'Comedy'][Math.floor(Math.random() * 5)],
+                  category: 'concert',
                   eventImageUrl: null,
                   trending: Math.random() > 0.7,
-                  sellingFast: Math.random() > 0.8,
-                  latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
-                  longitude: -74.0060 + (Math.random() - 0.5) * 0.1,
-                  city: `City ${i + 1}`,
-                  country: 'US',
-                  state: 'NY',
-                  postalCode: '10001',
-                  section: `Section ${String.fromCharCode(65 + Math.floor(Math.random() * 5))}`,
+                  city: 'Mumbai',
+                  country: 'India',
+                  section: 'A',
                   row: Math.floor(Math.random() * 20) + 1 + '',
                   seat: Math.floor(Math.random() * 30) + 1 + '',
                   price: Math.floor(Math.random() * 200) + 50,
+                  currency: 'USD',
+                  originalPrice: Math.floor(Math.random() * 250) + 75,
                   quantity: Math.floor(Math.random() * 4) + 1,
                   status: 'available',
                   isTransferrable: true,
@@ -421,8 +443,8 @@ export default function Home() {
 
                 const eventDate = sampleTicket.eventDate;
                 return (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
                     onClick={() => openSellerModal(sampleTicket)}
                   >
