@@ -262,10 +262,10 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <header className="space-y-4">
               <h1 className="text-4xl md:text-5xl font-bold leading-tight" itemProp="name">
-                Global Second-Hand Ticket Discovery & Contact Platform
+                Second-Hand Ticket Discovery & Contact Platform
               </h1>
               <p className="text-xl md:text-2xl text-blue-100 max-w-2xl mx-auto" itemProp="description">
-                Resell tickets for comedy shows, movies, bus, concerts, sports, events and connect with verified buyers and sellers.
+                Resell or Buy tickets for comedy shows, movies, bus, concerts, sports, etc
               </p>
             </header>
 
@@ -371,7 +371,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-gray-900" itemProp="name">
-              {searchQuery.length >= 2 ? `Search Results for "${searchQuery}"` : "Second-Hand Tickets Available"}
+              {searchQuery.length >= 2 ? `Search Results for "${searchQuery}"` : "Tickets Available"}
             </h2>
             <Button variant="outline" size="sm" className="flex items-center space-x-2" aria-label="Filter ticket results">
               <span>Filter</span>
