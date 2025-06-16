@@ -33,9 +33,9 @@ export class EventService {
    */
   async getEventById(id: number): Promise<Event | undefined> {
     // In P2P model, events are embedded in tickets
-    // Get all events and find the one with matching ID
-    const allEvents = await storage.getAllEvents();
-    return allEvents.find(event => event.id === id);
+    // Get the specific ticket by ID which contains event data
+    const ticket = await storage.getTicket(id);
+    return ticket;
   }
 
   /**

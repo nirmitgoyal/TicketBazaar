@@ -103,17 +103,16 @@ export class TicketController {
         return res.status(400).json({ message: "Invalid event ID" });
       }
 
-      // First get all events to find the one with matching ID
-      const allEvents = await storage.getAllEvents();
-      const event = allEvents.find(e => e.id === eventId);
+      // Get the specific ticket (which contains event data) by ID
+      const ticket = await storage.getTicket(eventId);
       
-      if (!event) {
+      if (!ticket) {
         return res.status(404).json({ message: "Event not found" });
       }
 
-      // Now get tickets by event title
-      const tickets = await storage.getTicketsByEvent(event.eventTitle);
-      res.status(200).json(tickets);
+      // Since we're treating each ticket as an event, return the ticket in an array
+      // for consistency with the expected response format
+      res.status(200).json([ticket]);
     } catch (error) {
       res.status(500).json({
         message: "Error retrieving tickets",
