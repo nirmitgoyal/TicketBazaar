@@ -155,7 +155,7 @@ export function TicketDetailModal({
         <DialogContent className="max-w-3xl" data-testid="event-modal">
           <DialogHeader>
             <DialogTitle className="text-xl">
-              {event?.title || "No Tickets Available"}
+              {firstTicket?.eventTitle || "No Tickets Available"}
             </DialogTitle>
             <DialogDescription>No tickets are currently listed for sale for this event.</DialogDescription>
           </DialogHeader>
@@ -174,18 +174,18 @@ export function TicketDetailModal({
       <DialogContent className="max-w-3xl" data-testid="event-modal">
         <DialogHeader>
           <DialogTitle className="text-xl">
-            {event?.title || "Available Tickets"}
+            {firstTicket?.eventTitle || "Available Tickets"}
           </DialogTitle>
           <DialogDescription>Browse and contact sellers for available tickets to this event.</DialogDescription>
         </DialogHeader>
 
         <div className="py-2">
-          {event && (
+          {firstTicket && (
             <div className="mb-6">
-              <p className="text-textSecondary mb-1">{event.venue}</p>
+              <p className="text-textSecondary mb-1">{firstTicket.venue}</p>
               <p className="text-textSecondary text-sm">
-                {event.eventDate
-                  ? new Date(event.eventDate).toLocaleString("en-US", {
+                {firstTicket.eventDate
+                  ? new Date(firstTicket.eventDate).toLocaleString("en-US", {
                       weekday: "short",
                       year: "numeric",
                       month: "short",
