@@ -34,6 +34,12 @@ export const users = pgTable("users", {
   phoneVerified: boolean("phone_verified").default(false),
   emailVerified: boolean("email_verified").default(false),
   isAdmin: boolean("is_admin").default(false),
+  trustScore: doublePrecision("trust_score").default(0),
+  verificationLevel: integer("verification_level").default(0),
+  responseRate: doublePrecision("response_rate").default(0),
+  avgResponseTime: integer("avg_response_time").default(0),
+  lastLogin: timestamp("last_login"),
+  accountFlags: text("account_flags").default("{}"),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   ratingIdx: index("users_rating_idx").on(table.rating),
@@ -83,6 +89,12 @@ export const tickets = pgTable("tickets", {
   ageRestriction: text("age_restriction"), // 18+, 21+, All Ages, etc.
   createdAt: timestamp("created_at").notNull().defaultNow(),
   expiresAt: timestamp("expires_at"),
+  viewCount: integer("view_count").default(0),
+  contactCount: integer("contact_count").default(0),
+  isFeatured: boolean("is_featured").default(false),
+  boostScore: integer("boost_score").default(0),
+  lastPriceUpdate: timestamp("last_price_update"),
+  availabilityStatus: text("availability_status").default("available"),
 }, (table) => ({
   sellerIdx: index("tickets_seller_id_idx").on(table.sellerId),
   titleIdx: index("tickets_title_idx").on(table.title),
