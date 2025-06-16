@@ -402,13 +402,13 @@ export default function Home() {
                   >
                     <div className="text-center">
                       <div className="text-2xl font-bold text-blue-600">
-                        {String(ticket.eventDate.getDate()).padStart(2, '0')}
+                        {String(new Date(ticket.eventDate).getDate()).padStart(2, '0')}
                       </div>
                       <div className="text-sm text-gray-600">
-                        {ticket.eventDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                        {new Date(ticket.eventDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                       </div>
                       <div className="text-xs text-gray-500">
-                        {ticket.eventDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}
+                        {new Date(ticket.eventDate).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}
                       </div>
                     </div>
                     <div className="space-y-1">
@@ -418,7 +418,7 @@ export default function Home() {
                       <p className="text-xs text-gray-600">{ticket.venue}</p>
                       <p className="text-xs text-gray-500">{ticket.city}</p>
                       <p className="text-xs text-gray-500">
-                        {ticket.eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                        {new Date(ticket.eventDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                       </p>
                     </div>
                   </div>
