@@ -93,27 +93,13 @@ export function Footer() {
                   </a>
                 </Link>
               </li>
-
-              <li>
-                <Link href="/faq">
-                  <a className="text-textSecondary hover:text-primary">
-                    Safety Tips
-                  </a>
-                </Link>
-              </li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-medium text-base mb-4">Support</h4>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/faq">
-                  <a className="text-textSecondary hover:text-primary">
-                    FAQs
-                  </a>
-                </Link>
-              </li>
+
               <li>
                 <a
                   href="https://www.linkedin.com/company/ticket-bazaar-co-in/"
