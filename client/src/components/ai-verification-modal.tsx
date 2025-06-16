@@ -157,7 +157,7 @@ export function AIVerificationModal({
                     <div className="text-2xl font-bold text-gray-900">
                       {verificationData.verificationResults.pricing.confidence}%
                     </div>
-                    <div className="text-sm text-gray-600">Price Fairness</div>
+                    <div className="text-sm text-gray-600">Availability Status</div>
                   </div>
                 </div>
 

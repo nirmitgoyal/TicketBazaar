@@ -222,8 +222,8 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                     </Card>
                     <Card className="p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <DollarSign className="h-4 w-4" />
-                        <span className="font-medium">Pricing</span>
+                        <CheckCircle className="h-4 w-4" />
+                        <span className="font-medium">Availability</span>
                       </div>                      <VerificationBadge 
                         isVerified={verification.verification.pricing.fraudRisk === 'low'}
                         confidence={verification.verification.pricing.confidence}
@@ -275,9 +275,9 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                     <div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <DollarSign className="h-4 w-4" />
-                        Price
+                        Status
                       </div>
-                      <div className="font-medium">₹{ticket.price.toLocaleString()}</div>
+                      <div className="font-medium">Available</div>
                     </div>
                     <div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -435,16 +435,16 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
                     <div className="text-center">
-                      <div className="text-2xl font-bold">₹{ticket.price.toLocaleString()}</div>
-                      <div className="text-sm text-muted-foreground">Listed Price</div>
+                      <div className="text-lg font-semibold">Available</div>
+                      <div className="text-sm text-muted-foreground">Transfer Ready</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold">{ticket.quantity}</div>
                       <div className="text-sm text-muted-foreground">Quantity</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold">₹{(ticket.price * ticket.quantity).toLocaleString()}</div>
-                      <div className="text-sm text-muted-foreground">Total Value</div>
+                      <div className="text-2xl font-bold">{ticket.quantity}</div>
+                      <div className="text-sm text-muted-foreground">Total Tickets</div>
                     </div>
                   </div>
 
@@ -462,7 +462,7 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
 
                   {verification.verification.pricing.sources.length > 0 && (
                     <div>
-                      <h4 className="font-medium mb-2">Price Comparison Sources</h4>
+                      <h4 className="font-medium mb-2">Verification Sources</h4>
                       <div className="space-y-2">
                         {verification.verification.pricing.sources.map((source, index) => (
                           <div key={index} className="flex items-center gap-2 p-2 bg-muted rounded">

@@ -482,7 +482,7 @@ export default function Home() {
                   section: `Section ${String.fromCharCode(65 + Math.floor(Math.random() * 5))}`,
                   row: Math.floor(Math.random() * 20) + 1 + '',
                   seat: Math.floor(Math.random() * 30) + 1 + '',
-                  price: Math.floor(Math.random() * 200) + 50,
+
                   quantity: Math.floor(Math.random() * 4) + 1,
                   status: 'available',
                   isTransferrable: true,
