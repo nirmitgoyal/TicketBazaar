@@ -267,7 +267,7 @@ export default function ListTicket() {
       };
 
       const response = await apiRequest("POST", "/api/tickets", ticketData);
-      return response;
+      return await response.json();
     },
     onSuccess: (data) => {
       console.log("Ticket created successfully:", data);
