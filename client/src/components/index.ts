@@ -15,7 +15,7 @@ export { VerificationBadge } from './verification-badge';
 export { SocialShare } from './social-share';
 export { ErrorBoundary } from './error-boundary';
 export { EventAtmosphere } from './event-atmosphere';
-export { TicketHeatmap } from './ticket-heatmap';
+export { TicketHeatMap } from './ticket-heatmap';
 export { EventRecommendations } from './event-recommendations';
 export { TicketComparison } from './ticket-comparison';
 export { SearchHints } from './search-hints';
@@ -27,7 +27,7 @@ export { SellerDetailsModal } from './seller-details-modal';
 export { TicketDetailModal } from './ticket-detail-modal';
 export { DisputeModal } from './dispute-modal';
 export { VerificationModal } from './verification-modal';
-export { AiVerificationModal } from './ai-verification-modal';
+export { AIVerificationModal } from './ai-verification-modal';
 
 // SEO Components (consolidated)
 export { SEO } from './seo';

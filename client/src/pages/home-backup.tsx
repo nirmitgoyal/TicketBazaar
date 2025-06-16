@@ -357,9 +357,11 @@ export default function Home() {
                     Search: {searchQuery}
                   </Badge>
                 )}
-                <Badge variant="outline" className="px-3 py-1 text-sm">
-                  Category: {selectedCategory}
-                </Badge>
+                {selectedCategory && (
+                  <Badge variant="outline" className="px-3 py-1 text-sm">
+                    Category: {selectedCategory}
+                  </Badge>
+                )}
               </div>
               <Button
                 variant="ghost"
