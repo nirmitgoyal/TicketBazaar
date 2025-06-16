@@ -93,13 +93,7 @@ export function Footer() {
                   </a>
                 </Link>
               </li>
-              <li>
-                <Link href="/?category=sports">
-                  <a className="text-textSecondary hover:text-primary">
-                    Sports Tickets
-                  </a>
-                </Link>
-              </li>
+
               <li>
                 <Link href="/faq">
                   <a className="text-textSecondary hover:text-primary">
