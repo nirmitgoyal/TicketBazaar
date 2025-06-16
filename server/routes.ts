@@ -14,7 +14,6 @@ import {
 } from "./middleware/rate-limit.middleware";
 import {
   authRoutes,
-  eventRoutes,
   ticketRoutes,
 } from "./routes/index";
 import contactRequestRoutes from "./routes/contact-requests";
@@ -47,7 +46,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register route modules with specific rate limiters
   apiRouter.use("/auth", authLimiter, authRoutes);
-  apiRouter.use("/events", eventRoutes);
   apiRouter.use("/tickets", ticketRoutes);
 
   apiRouter.use("/contact-requests", contactRequestLimiter, contactRequestRoutes);
