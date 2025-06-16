@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -102,6 +102,9 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
             <User className="h-5 w-5" />
             Seller Information
           </DialogTitle>
+          <DialogDescription>
+            View detailed information about the ticket seller, including verification status and contact details.
+          </DialogDescription>
         </DialogHeader>
 
         {isLoading ? (
@@ -253,7 +256,7 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
                   <span className="font-medium">Venue:</span> {ticket.venue}
                 </div>
                 <div className="text-sm">
-                  <span className="font-medium">Price:</span> ${ticket.price}
+                  <span className="font-medium">Transfer Method:</span> {ticket.transferMethod}
                 </div>
                 <div className="text-sm">
                   <span className="font-medium">Quantity:</span> {ticket.quantity}

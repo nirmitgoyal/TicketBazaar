@@ -399,7 +399,7 @@ export default function Home() {
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => openSellerModal(ticket)}
+                    onClick={() => openModal(ticket.id)}
                   >
                     <div className="text-center">
                       <div className="text-2xl font-bold text-blue-600">
