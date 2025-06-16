@@ -301,8 +301,7 @@ export type TicketView = typeof ticketViews.$inferSelect;
 export type InsertTicketPopularity = z.infer<typeof insertTicketPopularitySchema>;
 export type TicketPopularity = typeof ticketPopularity.$inferSelect;
 
-// Event type alias for compatibility (events are embedded in tickets)
-export type Event = Ticket;
+// Events are now fully embedded in tickets - no separate events table needed
 
 // Pure P2P model - transactions and disputes removed
 
@@ -400,4 +399,4 @@ export type Dispute = {
 };
 
 export type InsertDispute = Omit<Dispute, 'id' | 'createdAt'>;
-export type InsertEvent = Omit<Event, 'id' | 'createdAt'>;
+// Removed InsertEvent type - using tickets only
