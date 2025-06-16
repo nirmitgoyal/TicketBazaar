@@ -159,6 +159,8 @@ export class TicketController {
       const ticket = await this.ticketService.createTicket(ticketData);
       res.status(201).json(ticket);
     } catch (error) {
+      console.error("Ticket creation error details:", error);
+      
       if (
         error instanceof Error &&
         error.message.includes("Selling price cannot exceed original price")
@@ -169,6 +171,7 @@ export class TicketController {
       res.status(400).json({
         message: "Validation error",
         error: error instanceof Error ? error.message : "Unknown error",
+        details: error
       });
     }
   };

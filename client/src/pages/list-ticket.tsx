@@ -48,7 +48,7 @@ const ticketFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   eventDescription: z.string().optional(),
   venue: z.string().min(1, "Venue is required"),
-  eventVenueAddress: z.string().optional(),
+  venueAddress: z.string().optional(),
   eventDate: z.string().min(1, "Event date is required"),
   eventTime: z.string().min(1, "Event time is required"),
   category: z.string().min(1, "Category is required"),
@@ -91,7 +91,7 @@ export default function ListTicket() {
       eventDate: "",
       eventTime: "",
       venue: "",
-      eventVenueAddress: "",
+      venueAddress: "",
       latitude: undefined,
       longitude: undefined,
       category: "concerts",
@@ -234,36 +234,33 @@ export default function ListTicket() {
       const eventDateTime = new Date(`${data.eventDate}T${data.eventTime}`);
       
       const ticketData = {
-        sellerId: user?.id,
         title: data.title,
         eventTitle: data.title, // Use title as eventTitle since we removed the separate field
         eventDescription: data.eventDescription || `${data.title} at ${data.venue}`,
         venue: data.venue,
-        venueAddress: data.eventVenueAddress || '',
+        venueAddress: data.venueAddress || '',
         eventDate: eventDateTime,
         category: data.category,
         latitude: data.latitude,
         longitude: data.longitude,
         city: data.city,
         country: data.country,
-        state: data.state,
-        postalCode: data.postalCode,
+        state: data.state || '',
+        postalCode: data.postalCode || '',
         eventTimezone: data.eventTimezone,
-        ageRestriction: data.ageRestriction,
+        ageRestriction: data.ageRestriction || '',
         section: data.section || '',
-        row: data.row,
-        seat: data.seat,
-
+        row: data.row || '',
+        seat: data.seat || '',
         quantity: data.quantity,
         transferMethod: data.transferMethod,
-        additionalInfo: data.additionalInfo,
+        additionalInfo: data.additionalInfo || '',
         trending: false,
         sellingFast: false,
-        eventImageUrl: null,
+        eventImageUrl: '',
         isTransferrable: data.isTransferrable,
         showContactInfo: data.showContactInfo,
-        status: data.status,
-        availabilityStatus: 'available'
+        status: data.status
       };
 
       const response = await apiRequest("POST", "/api/tickets", ticketData);
