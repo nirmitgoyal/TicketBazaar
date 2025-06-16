@@ -41,9 +41,7 @@ const generateTrustScore = (ticket: TicketType): { score: number; fraudRisk: 'lo
     baseScore += 20;
   }
   
-  // Price reasonableness
-  if (ticket.price > 10000) baseScore -= 15;
-  else if (ticket.price < 1000) baseScore += 10;
+  // Remove price-based scoring for P2P marketplace
   
   // Venue credibility
   if (ticket.venue.toLowerCase().includes('stadium') || 
@@ -220,14 +218,12 @@ export function TicketCard({
               transition={{ delay: 0.3 + index * 0.05 }}
             >
               <div className="flex flex-col">
-                <span className="text-2xl font-bold text-primary">
-                  {formatCurrency(ticket.price, ticket.currency || 'USD')}
+                <span className="text-lg font-semibold text-primary">
+                  Available for Transfer
                 </span>
-                {ticket.originalPrice && ticket.originalPrice !== ticket.price && (
-                  <span className="text-sm text-textSecondary line-through">
-                    {formatCurrency(ticket.originalPrice, ticket.currency || 'USD')}
-                  </span>
-                )}
+                <span className="text-sm text-textSecondary">
+                  Contact seller for details
+                </span>
               </div>
               {ticket.quantity > 1 && (
                 <Badge variant="secondary" className="text-xs">
