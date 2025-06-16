@@ -71,8 +71,11 @@ export class OptimizedStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     try {
       const [user] = await db.insert(users).values(insertUser).returning();
-      CacheManager.setCacheWithTTL("users", user.id, user, 300000);
-      return user;
+      if (user) {
+        CacheManager.setCacheWithTTL("users", user.id, user, 300000);
+        return user;
+      }
+      throw new Error('Failed to create user');
     } catch (error) {
       logger.error('STORAGE', 'Error creating user:', error);
       throw error;
@@ -81,8 +84,14 @@ export class OptimizedStorage {
   
   async updateUserRating(userId: number, newRating: number): Promise<User | undefined> {
     try {
-      const { condition, values } = QueryBuilder.buildUserRatingUpdate(userId, newRating);
-      const [user] = await db.update(users).set(values).where(condition).returning();
+      const [user] = await db
+        .update(users)
+        .set({ 
+          rating: newRating,
+          ratingsCount: sql`${users.ratingsCount} + 1`
+        } as any)
+        .where(eq(users.id, userId))
+        .returning();
       
       if (user) {
         CacheManager.invalidateCache("users", userId);
@@ -99,7 +108,7 @@ export class OptimizedStorage {
     try {
       const [user] = await db
         .update(users)
-        .set({ phone })
+        .set({ phone } as any)
         .where(eq(users.id, userId))
         .returning();
       
@@ -118,7 +127,7 @@ export class OptimizedStorage {
     try {
       const [user] = await db
         .update(users)
-        .set({ instagram })
+        .set({ instagram } as any)
         .where(eq(users.id, userId))
         .returning();
       
@@ -197,9 +206,12 @@ export class OptimizedStorage {
   async createTicket(insertTicket: InsertTicket): Promise<Ticket> {
     try {
       const [ticket] = await db.insert(tickets).values(insertTicket).returning();
-      CacheManager.setCacheWithTTL("tickets", ticket.id, ticket, 180000);
-      CacheManager.invalidateCache("events"); // Clear events cache
-      return ticket;
+      if (ticket) {
+        CacheManager.setCacheWithTTL("tickets", ticket.id, ticket, 180000);
+        CacheManager.invalidateCache("events"); // Clear events cache
+        return ticket;
+      }
+      throw new Error('Failed to create ticket');
     } catch (error) {
       logger.error('STORAGE', 'Error creating ticket:', error);
       throw error;
