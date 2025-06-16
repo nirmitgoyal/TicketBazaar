@@ -339,13 +339,13 @@ export function AIVerificationModal({
                           <XCircle className="h-4 w-4 text-red-600" />
                         )}
                         <span className="text-sm">
-                          {verificationData.verificationResults.pricing.isFair ? 'Fair Price' : 'Overpriced'}
+                          {verificationData.verificationResults.pricing.isFair ? 'Available' : 'Limited'}
                         </span>
                       </div>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <div className="text-sm font-medium text-gray-700">Pricing Findings</div>
+                    <div className="text-sm font-medium text-gray-700">Availability Findings</div>
                     <div className="space-y-1">
                       {verificationData.verificationResults.pricing.findings?.map((finding: string, index: number) => (
                         <div key={index} className="text-sm text-gray-600 flex items-start gap-2">

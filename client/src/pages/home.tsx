@@ -492,7 +492,12 @@ export default function Home() {
                   eventTimezone: 'America/New_York',
                   ageRestriction: '18+',
                   createdAt: new Date(),
-                  expiresAt: new Date(2025, 11, 31)
+                  expiresAt: new Date(2025, 11, 31),
+                  viewCount: Math.floor(Math.random() * 100),
+                  contactCount: Math.floor(Math.random() * 20),
+                  isFeatured: false,
+                  boostScore: Math.floor(Math.random() * 10),
+                  availabilityStatus: 'available'
                 };
 
                 const eventDate = sampleTicket.eventDate;
