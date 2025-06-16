@@ -24,7 +24,7 @@ export function EventCard({
     return null;
   }
   
-  const { id, eventTitle: title, venue, eventDate: date } = event;
+  const { id, eventTitle: title, city, eventDate: date } = event;
 
   const formatDate = (date: Date | string) => {
     try {
@@ -119,7 +119,7 @@ export function EventCard({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.16 + index * 0.03 }}
             >
-              {venue}
+              {city}
             </motion.p>
             <motion.p
               className="text-xs text-textSecondary mb-1"
