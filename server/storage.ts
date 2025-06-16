@@ -241,7 +241,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ phone } as any)
+      .set({ phone })
       .where(eq(users.id, userId))
       .returning();
     return user || undefined;

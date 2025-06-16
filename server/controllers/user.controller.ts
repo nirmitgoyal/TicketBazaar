@@ -30,7 +30,7 @@ export class UserController {
   /**
    * Register a new user
    */
-  registerUser = async (req: Request, res: Response) => {
+  register = async (req: Request, res: Response) => {
     try {
       // Validate request body
       const validatedData = userRegisterSchema.parse(req.body);
@@ -67,7 +67,7 @@ export class UserController {
   /**
    * Login with username and password
    */
-  loginUser = (req: Request, res: Response, next: Function) => {
+  login = (req: Request, res: Response, next: Function) => {
     try {
       // Validate request body
       userLoginSchema.parse(req.body);
@@ -103,7 +103,7 @@ export class UserController {
   /**
    * Logout the current user
    */
-  logoutUser = (req: Request, res: Response, next: Function) => {
+  logout = (req: Request, res: Response, next: Function) => {
     req.logout((err) => {
       if (err) {
         return next(err);
@@ -218,6 +218,38 @@ export class UserController {
 
       res.status(500).json({
         message: "Error updating Instagram profile",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  };
+
+  /**
+   * Update user phone number
+   */
+  updatePhone = async (req: Request, res: Response) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { phone } = req.body;
+
+      // Update user's phone number
+      const { storage } = await import("../storage");
+      const updatedUser = await storage.updateUserPhone(
+        req.user!.id,
+        phone,
+      );
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.status(200).json(userWithoutPassword);
+    } catch (error) {
+      res.status(500).json({
+        message: "Error updating phone number",
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
