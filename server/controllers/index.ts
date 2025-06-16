@@ -4,8 +4,10 @@ import { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import QRCode from "qrcode";
-import { userRegisterSchema, userLoginSchema } from "@shared/schema";
+import { userRegisterSchema, userLoginSchema, tickets } from "@shared/schema";
 import { z } from "zod";
+import { db } from "../db";
+import { eq, desc } from "drizzle-orm";
 
 // Base controller with common functionality
 export class BaseController {
@@ -149,8 +151,12 @@ export class EventController extends BaseController {
   // Get all events
   public getAllEvents = async (req: Request, res: Response) => {
     try {
-      const events = await storage.getAllEvents();
-      this.sendSuccess(res, events);
+      // Get all available tickets (which contain embedded event data)
+      const tickets = await db.select().from(tickets)
+        .where(eq(tickets.status, 'available'))
+        .orderBy(desc(tickets.eventDate), desc(tickets.createdAt))
+        .limit(100);
+      this.sendSuccess(res, tickets);
     } catch (error) {
       this.handleError(error, res);
     }

@@ -50,30 +50,7 @@ export interface IStorage {
     instagram: string,
   ): Promise<User | undefined>;
 
-  // Event operations (now based on tickets with embedded event data)
-  getEventTickets(eventTitle: string): Promise<Ticket[]>;
-  getAllEvents(): Promise<Ticket[]>;
-  getEventsByCategory(category: string): Promise<Ticket[]>;
-  searchEvents(
-    query: string,
-    filters?: {
-      category?: string;
-      location?: string;
-      date?: Date;
-      trending?: boolean;
-      sellingFast?: boolean;
-      dateRange?: string;
-      city?: string;
-      bounds?: {
-        north: number;
-        south: number;
-        east: number;
-        west: number;
-      };
-    },
-  ): Promise<Ticket[]>;
-
-  // Ticket operations
+  // Ticket operations (events are embedded in tickets)
   getTicket(id: number): Promise<Ticket | undefined>;
   getTicketsByEvent(eventTitle: string): Promise<Ticket[]>;
   getTicketsBySeller(sellerId: number): Promise<Ticket[]>;
@@ -243,141 +220,9 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async getEventTickets(eventTitle: string): Promise<Ticket[]> {
-    return await db.select().from(tickets)
-      .where(eq(tickets.eventTitle, eventTitle))
-      .orderBy(desc(tickets.eventDate))
-      .limit(20);
-  }
-
-  async getAllEvents(): Promise<Ticket[]> {
-    // Return all tickets (which contain embedded event data) with pagination limit
-    // Optimized query with selective fields and better indexing
-    return await db.select().from(tickets)
-      .where(eq(tickets.status, 'available'))
-      .orderBy(desc(tickets.eventDate), desc(tickets.createdAt))
-      .limit(100);
-  }
-
-  async getEventsByCategory(category: string): Promise<Ticket[]> {
-    return await db.select().from(tickets)
-      .where(eq(tickets.category, category))
-      .orderBy(desc(tickets.eventDate))
-      .limit(50);
-  }
-
-  async searchEvents(
-    query: string,
-    filters?: {
-      category?: string;
-      location?: string;
-      date?: Date;
-      minPrice?: number;
-      maxPrice?: number;
-      trending?: boolean;
-      sellingFast?: boolean;
-      dateRange?: string;
-      city?: string;
-      country?: string;
-      currency?: string;
-      bounds?: {
-        north: number;
-        south: number;
-        east: number;
-        west: number;
-      };
-    },
-  ): Promise<Ticket[]> {
-    let conditions = [eq(tickets.status, 'available')]; // Only show available tickets
-
-    // Search by query (look in eventTitle, eventDescription, venue, city)
-    if (query) {
-      const searchCondition = or(
-        ilike(tickets.eventTitle, `%${query}%`),
-        ilike(tickets.eventDescription, `%${query}%`),
-        ilike(tickets.venue, `%${query}%`),
-        ilike(tickets.city, `%${query}%`),
-      );
-      if (searchCondition) {
-        conditions.push(searchCondition);
-      }
-    }
-
-    // Filter by category
-    if (filters?.category && filters.category !== "all") {
-      conditions.push(eq(tickets.category, filters.category));
-    }
-
-    // Filter by city
-    if (filters?.city && filters.city !== "all") {
-      conditions.push(eq(tickets.city, filters.city));
-    }
-
-    // Filter by country
-    if (filters?.country && filters.country !== "all") {
-      conditions.push(eq(tickets.country, filters.country));
-    }
 
 
 
-    // Filter by location/venue
-    if (filters?.location) {
-      conditions.push(ilike(tickets.venue, `%${filters.location}%`));
-    }
-
-    // Filter by date
-    if (filters?.date) {
-      const startOfDay = new Date(filters.date);
-      startOfDay.setHours(0, 0, 0, 0);
-
-      const endOfDay = new Date(filters.date);
-      endOfDay.setHours(23, 59, 59, 999);
-
-      const dateCondition = and(
-        sql`${tickets.eventDate} >= ${startOfDay}`,
-        sql`${tickets.eventDate} <= ${endOfDay}`,
-      );
-      if (dateCondition) {
-        conditions.push(dateCondition);
-      }
-    }
-
-
-
-    // Filter by trending
-    if (filters?.trending) {
-      conditions.push(eq(tickets.trending, true));
-    }
-
-    // Filter by selling fast
-    if (filters?.sellingFast) {
-      conditions.push(eq(tickets.sellingFast, true));
-    }
-
-    // Conditionally add conditions for bounds search
-    if (filters?.bounds) {
-      const { north, south, east, west } = filters.bounds;
-      const boundsCondition = and(
-        sql`${tickets.latitude} <= ${north}`,
-        sql`${tickets.latitude} >= ${south}`,
-        sql`${tickets.longitude} <= ${east}`,
-        sql`${tickets.longitude} >= ${west}`,
-      );
-      if (boundsCondition) {
-        conditions.push(boundsCondition);
-      }
-    }
-
-    // Execute search with all conditions and pagination
-    const searchResults = await db
-      .select()
-      .from(tickets)
-      .where(conditions.length ? and(...conditions) : undefined)
-      .orderBy(desc(tickets.eventDate))
-      .limit(50);
-
-    return searchResults;
-  }
 
   async getTicket(id: number): Promise<Ticket | undefined> {
     const [ticket] = await db.select().from(tickets).where(eq(tickets.id, id));
