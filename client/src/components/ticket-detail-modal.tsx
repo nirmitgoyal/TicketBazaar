@@ -30,13 +30,7 @@ export function TicketDetailModal({
   // Auto-track view when modal opens (for the first ticket in the event)
   useAutoTrackView(eventId, { enabled: isOpen });
 
-  // Fetch event details
-  const { data: event } = useQuery<Event>({
-    queryKey: [`/api/events/${eventId}`],
-    enabled: !!eventId && isOpen,
-  });
-
-  // Fetch popularity metrics for the event
+  // Fetch availability metrics for the event
   const { data: popularityMetrics } = usePopularityMetrics(eventId);
 
   // Fetch available tickets for this event
@@ -44,6 +38,9 @@ export function TicketDetailModal({
     queryKey: [`/api/tickets/event/${eventId}`],
     enabled: !!eventId && isOpen,
   });
+
+  // Get event details from the first ticket (since events are embedded in tickets)
+  const firstTicket = tickets?.[0];
 
   // Fetch seller info for each ticket
   const sellers = useQuery<Record<number, User>>({

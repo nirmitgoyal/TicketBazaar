@@ -28,15 +28,8 @@ export class TicketController {
         return res.status(200).json(tickets);
       }
 
-      // Get all tickets from all events
-      const events = await storage.getAllEvents();
-      let allTickets: any[] = [];
-
-      for (const event of events) {
-        const tickets = await this.ticketService.getTicketsByEvent(event.eventTitle);
-        allTickets = [...allTickets, ...tickets];
-      }
-
+      // Get all available tickets directly
+      const allTickets = await storage.searchTickets('');
       res.status(200).json(allTickets);
     } catch (error) {
       res.status(500).json({

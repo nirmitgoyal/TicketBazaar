@@ -54,6 +54,7 @@ export interface IStorage {
   getTicket(id: number): Promise<Ticket | undefined>;
   getTicketsByEvent(eventTitle: string): Promise<Ticket[]>;
   getTicketsBySeller(sellerId: number): Promise<Ticket[]>;
+  getAllAvailableTickets(): Promise<Ticket[]>;
   searchTickets(query: string): Promise<Ticket[]>;
   createTicket(ticket: InsertTicket): Promise<Ticket>;
   updateTicketStatus(id: number, status: string): Promise<Ticket | undefined>;
@@ -245,9 +246,16 @@ export class DatabaseStorage implements IStorage {
       .limit(30);
   }
 
+  async getAllAvailableTickets(): Promise<Ticket[]> {
+    return await db.select().from(tickets)
+      .where(eq(tickets.status, 'available'))
+      .orderBy(desc(tickets.eventDate), desc(tickets.createdAt))
+      .limit(100);
+  }
+
   async searchTickets(query: string): Promise<Ticket[]> {
     if (!query || query.trim().length === 0) {
-      return [];
+      return this.getAllAvailableTickets();
     }
 
     const searchTerm = query.trim();

@@ -93,9 +93,9 @@ router.get("/batch", async (req, res) => {
       return res.json([]);
     }
     
-    // Get all tickets for the specified events in one query
+    // Get all tickets for the specified IDs in one query
     const { storage } = await import("../storage");
-    const allTickets = await storage.getAllEvents();
+    const allTickets = await storage.getAllAvailableTickets();
     
     // Filter tickets by the requested event IDs
     const filteredTickets = allTickets.filter(ticket => ids.includes(ticket.id));

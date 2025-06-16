@@ -331,12 +331,11 @@ export class TicketController extends BaseController {
         return this.sendSuccess(res, tickets);
       }
 
-      // Get all tickets from all events
-      const events = await storage.getAllEvents();
-      let allTickets: any[] = [];
-
-      // Events are now tickets with embedded event data
-      allTickets = events;
+      // Get all available tickets (which contain embedded event data)
+      const allTickets = await db.select().from(ticketsTable)
+        .where(eq(ticketsTable.status, 'available'))
+        .orderBy(desc(ticketsTable.eventDate), desc(ticketsTable.createdAt))
+        .limit(100);
 
       this.sendSuccess(res, allTickets);
     } catch (error) {
