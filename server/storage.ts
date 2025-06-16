@@ -43,10 +43,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  updateUserRating(
-    userId: number,
-    newRating: number,
-  ): Promise<User | undefined>;
+
   updateUserPhone(userId: number, phone: string): Promise<User | undefined>;
   updateUserInstagram(
     userId: number,
@@ -207,17 +204,7 @@ export class DatabaseStorage implements IStorage {
 
 
 
-  async updateUserRating(
-    userId: number,
-    newRating: number,
-  ): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set({ rating: newRating } as any)
-      .where(eq(users.id, userId))
-      .returning();
-    return user || undefined;
-  }
+
 
   async updateUserPhone(
     userId: number,

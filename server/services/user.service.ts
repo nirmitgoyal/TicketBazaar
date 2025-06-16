@@ -32,18 +32,7 @@ export class UserService {
     return storage.createUser(userData);
   }
 
-  /**
-   * Update a user's rating
-   * @param userId User ID
-   * @param newRating New rating value
-   * @returns Updated user or undefined if not found
-   */
-  async updateUserRating(
-    userId: number,
-    newRating: number,
-  ): Promise<User | undefined> {
-    return storage.updateUserRating(userId, newRating);
-  }
+
 
   /**
    * Update a user's phone number
