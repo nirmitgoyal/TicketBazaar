@@ -371,12 +371,8 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                       <div className="font-medium">{verification.seller.fullName}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground">Rating</div>
-                      <div className="font-medium">{verification.seller.rating?.toFixed(1) || 'N/A'}/5.0</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Total Reviews</div>
-                      <div className="font-medium">{verification.seller.ratingsCount || 0}</div>
+                      <div className="text-sm text-muted-foreground">Verification Status</div>
+                      <div className="font-medium">Verified Seller</div>
                     </div>
                     <div>
                       <div className="text-sm text-muted-foreground">Contact Method</div>
