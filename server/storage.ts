@@ -7,18 +7,21 @@ import {
   userFeedback,
   userReviews,
   ticketViews,
+  ticketPopularity,
   type User,
   type Ticket,
   type ContactRequest,
   type UserFeedback,
   type UserReview,
   type TicketView,
+  type TicketPopularity,
   type InsertUser,
   type InsertTicket,
   type InsertContactRequest,
   type InsertUserFeedback,
   type InsertUserReview,
   type InsertTicketView,
+  type InsertTicketPopularity,
 } from "@shared/schema";
 import { db } from "./db";
 import { logger } from "./utils/logger";
@@ -123,6 +126,22 @@ export interface IStorage {
   recordTicketView(ticketView: InsertTicketView): Promise<TicketView>;
   getUserTicketViews(userId: number): Promise<TicketView[]>;
   getTicketViewsWithDetails(userId: number): Promise<any[]>;
+  
+  // Enhanced popularity tracking operations
+  recordTicketViewWithTracking(viewData: {
+    ticketId: number;
+    userId?: number;
+    ipAddress?: string;
+    userAgent?: string;
+    sessionId?: string;
+    referrer?: string;
+  }): Promise<TicketView>;
+  getTicketPopularityMetrics(ticketId: number): Promise<TicketPopularity | undefined>;
+  updateTicketPopularity(ticketId: number): Promise<TicketPopularity>;
+  getPopularTickets(limit?: number): Promise<(Ticket & { popularity?: TicketPopularity })[]>;
+  getTrendingTickets(limit?: number): Promise<(Ticket & { popularity?: TicketPopularity })[]>;
+  getTicketViewCount(ticketId: number): Promise<{ total: number; unique: number; today: number; thisWeek: number; thisMonth: number }>;
+  refreshPopularityScores(): Promise<void>;
 
   // Data deletion operations
   deleteAllUserData(userId: number): Promise<boolean>;
@@ -620,6 +639,263 @@ export class DatabaseStorage implements IStorage {
     }
 
     return recentView[0];
+  }
+
+  async recordTicketViewWithTracking(viewData: {
+    ticketId: number;
+    userId?: number;
+    ipAddress?: string;
+    userAgent?: string;
+    sessionId?: string;
+    referrer?: string;
+  }): Promise<TicketView> {
+    const { ticketId, userId, ipAddress, userAgent, sessionId, referrer } = viewData;
+
+    // Check for recent duplicate view based on user ID or IP address
+    let uniqueViewCondition;
+    if (userId) {
+      uniqueViewCondition = and(
+        eq(ticketViews.ticketId, ticketId),
+        eq(ticketViews.userId, userId),
+        sql`viewed_at > NOW() - INTERVAL '1 hour'`
+      );
+    } else if (ipAddress) {
+      uniqueViewCondition = and(
+        eq(ticketViews.ticketId, ticketId),
+        eq(ticketViews.ipAddress, ipAddress),
+        sql`viewed_at > NOW() - INTERVAL '1 hour'`
+      );
+    } else {
+      // Fallback to session ID if available
+      uniqueViewCondition = and(
+        eq(ticketViews.ticketId, ticketId),
+        eq(ticketViews.sessionId, sessionId || ''),
+        sql`viewed_at > NOW() - INTERVAL '1 hour'`
+      );
+    }
+
+    const recentView = await db
+      .select()
+      .from(ticketViews)
+      .where(uniqueViewCondition);
+
+    // Only record new view if no recent duplicate exists
+    if (recentView.length === 0) {
+      const [newView] = await db
+        .insert(ticketViews)
+        .values({
+          ticketId,
+          userId: userId || null,
+          ipAddress,
+          userAgent,
+          sessionId,
+          referrer,
+        } as any)
+        .returning();
+
+      // Update popularity metrics asynchronously
+      this.updateTicketPopularity(ticketId).catch(error => 
+        logger.error('POPULARITY', 'Failed to update popularity metrics', error)
+      );
+
+      return newView;
+    }
+
+    return recentView[0];
+  }
+
+  async getTicketPopularityMetrics(ticketId: number): Promise<TicketPopularity | undefined> {
+    const [popularity] = await db
+      .select()
+      .from(ticketPopularity)
+      .where(eq(ticketPopularity.ticketId, ticketId))
+      .limit(1);
+    
+    return popularity || undefined;
+  }
+
+  async updateTicketPopularity(ticketId: number): Promise<TicketPopularity> {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    // Calculate view counts
+    const totalViews = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(ticketViews)
+      .where(eq(ticketViews.ticketId, ticketId));
+
+    const uniqueViews = await db
+      .select({ count: sql<number>`count(DISTINCT COALESCE(user_id::text, ip_address))` })
+      .from(ticketViews)
+      .where(eq(ticketViews.ticketId, ticketId));
+
+    const viewsToday = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(ticketViews)
+      .where(
+        and(
+          eq(ticketViews.ticketId, ticketId),
+          sql`viewed_at >= ${today}`
+        )
+      );
+
+    const viewsThisWeek = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(ticketViews)
+      .where(
+        and(
+          eq(ticketViews.ticketId, ticketId),
+          sql`viewed_at >= ${weekAgo}`
+        )
+      );
+
+    const viewsThisMonth = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(ticketViews)
+      .where(
+        and(
+          eq(ticketViews.ticketId, ticketId),
+          sql`viewed_at >= ${monthAgo}`
+        )
+      );
+
+    // Calculate popularity score (weighted combination of metrics)
+    const total = totalViews[0]?.count || 0;
+    const unique = uniqueViews[0]?.count || 0;
+    const today_views = viewsToday[0]?.count || 0;
+    const week_views = viewsThisWeek[0]?.count || 0;
+    const month_views = viewsThisMonth[0]?.count || 0;
+
+    // Popularity scoring algorithm
+    const uniqueRatio = total > 0 ? unique / total : 0;
+    const recentActivity = (today_views * 5) + (week_views * 2) + month_views;
+    const popularityScore = (unique * 10) + (recentActivity * uniqueRatio);
+
+    // Calculate trending factor (recent view velocity)
+    const trendingFactor = today_views + (week_views * 0.5);
+
+    // Upsert popularity record
+    const existingPopularity = await this.getTicketPopularityMetrics(ticketId);
+    
+    if (existingPopularity) {
+      const [updatedPopularity] = await db
+        .update(ticketPopularity)
+        .set({
+          totalViews: total,
+          uniqueViews: unique,
+          viewsToday: today_views,
+          viewsThisWeek: week_views,
+          viewsThisMonth: month_views,
+          popularityScore,
+          trendingFactor,
+          lastViewedAt: now,
+          updatedAt: now,
+        } as any)
+        .where(eq(ticketPopularity.ticketId, ticketId))
+        .returning();
+      
+      return updatedPopularity;
+    } else {
+      const [newPopularity] = await db
+        .insert(ticketPopularity)
+        .values({
+          ticketId,
+          totalViews: total,
+          uniqueViews: unique,
+          viewsToday: today_views,
+          viewsThisWeek: week_views,
+          viewsThisMonth: month_views,
+          popularityScore,
+          trendingFactor,
+          lastViewedAt: now,
+          updatedAt: now,
+        } as any)
+        .returning();
+      
+      return newPopularity;
+    }
+  }
+
+  async getPopularTickets(limit = 20): Promise<(Ticket & { popularity?: TicketPopularity })[]> {
+    const popularTickets = await db
+      .select({
+        ticket: tickets,
+        popularity: ticketPopularity,
+      })
+      .from(tickets)
+      .leftJoin(ticketPopularity, eq(tickets.id, ticketPopularity.ticketId))
+      .where(eq(tickets.status, 'available'))
+      .orderBy(desc(ticketPopularity.popularityScore), desc(tickets.eventDate))
+      .limit(limit);
+
+    return popularTickets.map(row => ({
+      ...row.ticket,
+      popularity: row.popularity || undefined,
+    }));
+  }
+
+  async getTrendingTickets(limit = 20): Promise<(Ticket & { popularity?: TicketPopularity })[]> {
+    const trendingTickets = await db
+      .select({
+        ticket: tickets,
+        popularity: ticketPopularity,
+      })
+      .from(tickets)
+      .leftJoin(ticketPopularity, eq(tickets.id, ticketPopularity.ticketId))
+      .where(eq(tickets.status, 'available'))
+      .orderBy(desc(ticketPopularity.trendingFactor), desc(ticketPopularity.popularityScore))
+      .limit(limit);
+
+    return trendingTickets.map(row => ({
+      ...row.ticket,
+      popularity: row.popularity || undefined,
+    }));
+  }
+
+  async getTicketViewCount(ticketId: number): Promise<{ total: number; unique: number; today: number; thisWeek: number; thisMonth: number }> {
+    const popularity = await this.getTicketPopularityMetrics(ticketId);
+    
+    if (popularity) {
+      return {
+        total: popularity.totalViews,
+        unique: popularity.uniqueViews,
+        today: popularity.viewsToday,
+        thisWeek: popularity.viewsThisWeek,
+        thisMonth: popularity.viewsThisMonth,
+      };
+    }
+
+    // Fallback to real-time calculation if no popularity record exists
+    await this.updateTicketPopularity(ticketId);
+    const updatedPopularity = await this.getTicketPopularityMetrics(ticketId);
+    
+    return {
+      total: updatedPopularity?.totalViews || 0,
+      unique: updatedPopularity?.uniqueViews || 0,
+      today: updatedPopularity?.viewsToday || 0,
+      thisWeek: updatedPopularity?.viewsThisWeek || 0,
+      thisMonth: updatedPopularity?.viewsThisMonth || 0,
+    };
+  }
+
+  async refreshPopularityScores(): Promise<void> {
+    // Get all tickets with views to refresh their popularity scores
+    const ticketsWithViews = await db
+      .select({ ticketId: ticketViews.ticketId })
+      .from(ticketViews)
+      .groupBy(ticketViews.ticketId);
+
+    // Update popularity for each ticket
+    const updatePromises = ticketsWithViews.map(({ ticketId }) =>
+      this.updateTicketPopularity(ticketId).catch(error =>
+        logger.error('POPULARITY', `Failed to refresh popularity for ticket ${ticketId}`, error)
+      )
+    );
+
+    await Promise.all(updatePromises);
+    logger.info('POPULARITY', `Refreshed popularity scores for ${ticketsWithViews.length} tickets`);
   }
 
   async getUserTicketViews(userId: number): Promise<TicketView[]> {

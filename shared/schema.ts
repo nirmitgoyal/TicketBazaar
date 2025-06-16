@@ -153,16 +153,43 @@ export const userReviews = pgTable("user_reviews", {
   createdAtIdx: index("user_reviews_created_at_idx").on(table.createdAt),
 }));
 
-// Ticket viewing history table
+// Ticket viewing history table with IP tracking for anonymous users
 export const ticketViews = pgTable("ticket_views", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  userId: integer("user_id"), // Made nullable for anonymous views
   ticketId: integer("ticket_id").notNull(),
   viewedAt: timestamp("viewed_at").notNull().defaultNow(),
+  ipAddress: text("ip_address"), // For tracking anonymous users
+  userAgent: text("user_agent"), // Browser/device info
+  sessionId: text("session_id"), // Session identifier
+  referrer: text("referrer"), // Where the user came from
 }, (table) => ({
   userIdx: index("ticket_views_user_id_idx").on(table.userId),
   ticketIdx: index("ticket_views_ticket_id_idx").on(table.ticketId),
   viewedAtIdx: index("ticket_views_viewed_at_idx").on(table.viewedAt),
+  ipIdx: index("ticket_views_ip_idx").on(table.ipAddress),
+  sessionIdx: index("ticket_views_session_idx").on(table.sessionId),
+  uniqueViewIdx: index("ticket_views_unique_idx").on(table.ticketId, table.userId, table.ipAddress),
+}));
+
+// Ticket popularity metrics table
+export const ticketPopularity = pgTable("ticket_popularity", {
+  id: serial("id").primaryKey(),
+  ticketId: integer("ticket_id").notNull().unique(),
+  totalViews: integer("total_views").notNull().default(0),
+  uniqueViews: integer("unique_views").notNull().default(0),
+  viewsToday: integer("views_today").notNull().default(0),
+  viewsThisWeek: integer("views_this_week").notNull().default(0),
+  viewsThisMonth: integer("views_this_month").notNull().default(0),
+  lastViewedAt: timestamp("last_viewed_at"),
+  popularityScore: doublePrecision("popularity_score").notNull().default(0), // Calculated score
+  trendingFactor: doublePrecision("trending_factor").notNull().default(0), // Recent view velocity
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  ticketIdx: index("ticket_popularity_ticket_id_idx").on(table.ticketId),
+  popularityIdx: index("ticket_popularity_score_idx").on(table.popularityScore),
+  trendingIdx: index("ticket_popularity_trending_idx").on(table.trendingFactor),
+  updatedAtIdx: index("ticket_popularity_updated_at_idx").on(table.updatedAt),
 }));
 
 // Relations
@@ -186,6 +213,10 @@ export const ticketsRelations = relations(tickets, ({ one, many }) => ({
   contactRequests: many(contactRequests),
   reviews: many(userReviews),
   views: many(ticketViews),
+  popularity: one(ticketPopularity, {
+    fields: [tickets.id],
+    references: [ticketPopularity.ticketId],
+  }),
 }));
 
 export const contactRequestsRelations = relations(
@@ -247,6 +278,13 @@ export const ticketViewsRelations = relations(ticketViews, ({ one }) => ({
   }),
 }));
 
+export const ticketPopularityRelations = relations(ticketPopularity, ({ one }) => ({
+  ticket: one(tickets, {
+    fields: [ticketPopularity.ticketId],
+    references: [tickets.id],
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users);
 
@@ -266,6 +304,8 @@ export const insertUserReviewSchema = createInsertSchema(userReviews);
 
 export const insertTicketViewSchema = createInsertSchema(ticketViews);
 
+export const insertTicketPopularitySchema = createInsertSchema(ticketPopularity);
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -284,6 +324,9 @@ export type UserReview = typeof userReviews.$inferSelect;
 
 export type InsertTicketView = z.infer<typeof insertTicketViewSchema>;
 export type TicketView = typeof ticketViews.$inferSelect;
+
+export type InsertTicketPopularity = z.infer<typeof insertTicketPopularitySchema>;
+export type TicketPopularity = typeof ticketPopularity.$inferSelect;
 
 // Event type alias for compatibility (events are embedded in tickets)
 export type Event = Ticket;
