@@ -269,19 +269,37 @@ export default function ListTicket() {
       const response = await apiRequest("POST", "/api/tickets", ticketData);
       return response;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Ticket created successfully:", data);
       toast({
-        title: "Success!",
-        description: "Your ticket has been listed successfully",
+        title: "Ticket Listed Successfully!",
+        description: "Your ticket is now available for buyers to view and contact you.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/tickets"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/tickets/seller/${user?.id}`] });
+      
+      // Clear the form
+      form.reset();
+      setSelectedPlace(null);
+      setVenueInputValue("");
+      
       navigate("/my-tickets");
     },
     onError: (error: any) => {
+      console.error("Ticket creation error:", error);
+      let errorMessage = "Failed to list ticket";
+      
+      // Parse detailed error message if available
+      if (error.message && error.message.includes("Validation error")) {
+        errorMessage = "Please check all required fields and try again";
+      } else if (error.message) {
+        errorMessage = error.message.replace(/^\d+:\s*/, ''); // Remove status code prefix
+      }
+      
       toast({
         variant: "destructive",
-        title: "Error",
-        description: error.message || "Failed to list ticket",
+        title: "Unable to List Ticket",
+        description: errorMessage,
       });
     },
   });
