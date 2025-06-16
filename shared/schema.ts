@@ -76,9 +76,7 @@ export const tickets = pgTable("tickets", {
   section: text("section"),
   row: text("row"),
   seat: text("seat"),
-  price: doublePrecision("price").notNull(),
-  currency: text("currency").notNull().default("USD"), // Currency code (USD, EUR, INR, etc.)
-  originalPrice: doublePrecision("original_price"), // Original ticket price for discount calculation
+
   quantity: integer("quantity").notNull(),
   status: text("status").notNull().default("available"),
   isTransferrable: boolean("is_transferrable").default(true),
@@ -93,7 +91,7 @@ export const tickets = pgTable("tickets", {
   contactCount: integer("contact_count").default(0),
   isFeatured: boolean("is_featured").default(false),
   boostScore: integer("boost_score").default(0),
-  lastPriceUpdate: timestamp("last_price_update"),
+
   availabilityStatus: text("availability_status").default("available"),
 }, (table) => ({
   sellerIdx: index("tickets_seller_id_idx").on(table.sellerId),
@@ -370,9 +368,7 @@ export const ticketListingSchema = z.object({
   section: z.string().optional(),
   row: z.string().optional(),
   seat: z.string().optional(),
-  price: z.number().positive("Price must be greater than 0"),
-  currency: z.string().length(3, "Currency must be 3-letter code").default("USD"),
-  originalPrice: z.number().optional(),
+
   quantity: z.number().int().positive(),
   status: z.string().default("available"),
   isTransferrable: z.boolean().default(true),
