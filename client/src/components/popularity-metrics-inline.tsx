@@ -20,31 +20,12 @@ export function PopularityMetricsInline({ ticketId }: PopularityMetricsInlinePro
 
   return (
     <motion.div
-      className="flex items-center gap-3 text-xs text-textSecondary mb-2"
-      initial={{ opacity: 0, y: 3 }}
+      className="text-xs text-textSecondary mb-1"
+      initial={{ opacity: 0, y: 2 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* View Count */}
-      <div className="flex items-center gap-1">
-        <Eye className="h-3 w-3" />
-        <span>{totalViews} view{totalViews !== 1 ? 's' : ''}</span>
-      </div>
-
-      {/* Trending Indicator */}
-      {isTrending && (
-        <div className="flex items-center gap-1 text-green-600">
-          <TrendingUp className="h-3 w-3" />
-          <span>Trending</span>
-        </div>
-      )}
-
-      {/* Unique Views Indicator */}
-      {uniqueViews > 1 && (
-        <div className="text-primary">
-          <span>{uniqueViews} unique</span>
-        </div>
-      )}
+      <span className="text-xs">{uniqueViews} unique views</span>
     </motion.div>
   );
 }

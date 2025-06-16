@@ -42,34 +42,12 @@ export function EventPopularityMetrics({ eventId }: EventPopularityMetricsProps)
 
   return (
     <motion.div
-      className="flex items-center gap-2 text-xs text-textSecondary mt-1"
+      className="text-xs text-textSecondary mt-1"
       initial={{ opacity: 0, y: 2 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* View Count */}
-      {totalViews > 0 && (
-        <div className="flex items-center gap-1">
-          <Eye className="h-3 w-3" />
-          <span>{totalViews}</span>
-        </div>
-      )}
-
-      {/* Unique Viewers */}
-      {uniqueViews > 1 && (
-        <div className="flex items-center gap-1 text-primary">
-          <Users className="h-3 w-3" />
-          <span>{uniqueViews}</span>
-        </div>
-      )}
-
-      {/* Trending Indicator */}
-      {isTrending && (
-        <div className="flex items-center gap-1 text-green-600">
-          <TrendingUp className="h-3 w-3" />
-          <span>Hot</span>
-        </div>
-      )}
+      <span className="text-xs">{uniqueViews} unique views</span>
     </motion.div>
   );
 }
