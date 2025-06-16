@@ -16,7 +16,6 @@ import {
   authRoutes,
   eventRoutes,
   ticketRoutes,
-  reviewRoutes,
 } from "./routes/index";
 import contactRequestRoutes from "./routes/contact-requests";
 import searchHintsRoutes from "./routes/search-hints";
@@ -50,7 +49,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.use("/auth", authLimiter, authRoutes);
   apiRouter.use("/events", eventRoutes);
   apiRouter.use("/tickets", ticketRoutes);
-  apiRouter.use("/reviews", reviewLimiter, reviewRoutes);
+
   apiRouter.use("/contact-requests", contactRequestLimiter, contactRequestRoutes);
   apiRouter.use("/search", searchLimiter, searchHintsRoutes);
   apiRouter.use("/data-privacy", dataPrivacyRoutes);
