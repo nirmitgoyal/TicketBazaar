@@ -19,6 +19,7 @@ import { VerificationBadge } from "./verification-badge";
 import { VerificationModal } from "./verification-modal";
 import { TrustScoreMeter } from "./trust-score-meter";
 import { PopularityBadge } from "./popularity-metrics";
+import { PopularityMetricsInline } from "./popularity-metrics-inline";
 import { formatCurrency } from "@/lib/currency-utils";
 import { getCountryInfo } from "@/lib/country-utils";
 import { usePopularityMetrics, useAutoTrackView } from "@/hooks/use-popularity-tracking";
@@ -207,6 +208,9 @@ export function TicketCard({
               <Globe className="h-3 w-3" />
               <span>{ticket.city}, {getCountryInfo(ticket.country)?.name || ticket.country}</span>
             </motion.div>
+
+            {/* Inline Popularity Metrics */}
+            <PopularityMetricsInline ticketId={ticket.id} />
             
             {/* Price Display */}
             <motion.div
