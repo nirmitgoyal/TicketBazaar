@@ -94,7 +94,7 @@ export default function ListTicket() {
       eventVenueAddress: "",
       latitude: undefined,
       longitude: undefined,
-      category: "music",
+      category: "concerts",
 
       transferMethod: "electronic",
       quantity: 1,
@@ -193,8 +193,20 @@ export default function ListTicket() {
     const lat = place.geometry?.location?.lat();
     const lng = place.geometry?.location?.lng();
 
+    // Extract city from address
+    let city = "";
+    if (address) {
+      // Try to extract city from formatted address
+      const addressParts = address.split(', ');
+      if (addressParts.length >= 2) {
+        // Usually city is the second-to-last part before country
+        city = addressParts[addressParts.length - 3] || addressParts[0];
+      }
+    }
+
     form.setValue("venue", venue);
     form.setValue("eventVenueAddress", address);
+    form.setValue("city", city);
     if (lat && lng) {
       form.setValue("latitude", lat);
       form.setValue("longitude", lng);
@@ -564,13 +576,21 @@ export default function ListTicket() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="music">Music & Concerts</SelectItem>
+                              <SelectItem value="concerts">Music & Concerts</SelectItem>
                               <SelectItem value="sports">Sports</SelectItem>
                               <SelectItem value="theater">Theater & Arts</SelectItem>
                               <SelectItem value="comedy">Comedy</SelectItem>
                               <SelectItem value="festivals">Festivals</SelectItem>
                               <SelectItem value="conferences">Conferences & Events</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
+                              <SelectItem value="exhibitions">Exhibitions</SelectItem>
+                              <SelectItem value="movies">Movies</SelectItem>
+                              <SelectItem value="dance">Dance</SelectItem>
+                              <SelectItem value="opera">Opera</SelectItem>
+                              <SelectItem value="classical">Classical</SelectItem>
+                              <SelectItem value="family">Family</SelectItem>
+                              <SelectItem value="nightlife">Nightlife</SelectItem>
+                              <SelectItem value="education">Education</SelectItem>
+                              <SelectItem value="networking">Networking</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
