@@ -516,7 +516,7 @@ export function SearchBar({
 
   return (
     <div
-      className={`bg-white rounded-lg mobile-container p-3 sm:p-4 shadow-lg ${className}`}
+      className={`bg-white rounded-lg mobile-container p-3 sm:p-4 shadow-lg prevent-horizontal-overflow ${className}`}
     >
       <form onSubmit={handleSearch}>
         <div className="flex flex-col space-y-3">

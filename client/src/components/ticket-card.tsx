@@ -103,7 +103,7 @@ export function TicketCard({
 
   return (
     <motion.div
-      className="bg-white rounded-xl overflow-hidden shadow-md touch-manipulation cursor-pointer"
+      className="bg-white rounded-xl overflow-hidden shadow-md touch-manipulation cursor-pointer mobile-card w-full max-w-full"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
@@ -168,11 +168,11 @@ export function TicketCard({
           </motion.div>
         )}
       </motion.div>
-      <div className="p-5">
+      <div className="p-3 sm:p-5">
         <div className="flex justify-between items-start">
-          <div>
+          <div className="flex-1 min-w-0 pr-2">
             <motion.h3
-              className="font-poppins font-semibold text-lg mb-1"
+              className="font-poppins font-semibold text-base sm:text-lg mb-1 mobile-text-safe"
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + index * 0.05 }}
@@ -180,12 +180,13 @@ export function TicketCard({
               {title}
             </motion.h3>
             <motion.p
-              className="text-textSecondary mb-2 flex items-center"
+              className="text-textSecondary mb-2 flex items-center mobile-text-safe"
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 + index * 0.05 }}
             >
-              <MapPin className="h-4 w-4 mr-1" /> {venue}
+              <MapPin className="h-4 w-4 mr-1 flex-shrink-0" /> 
+              <span className="mobile-text-safe">{venue}</span>
             </motion.p>
             <motion.p
               className="text-sm text-textSecondary flex items-center mb-2"
@@ -193,7 +194,7 @@ export function TicketCard({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.05 }}
             >
-              <Calendar className="h-4 w-4 mr-1" /> {formatDate(date)}
+              <Calendar className="h-4 w-4 mr-1 flex-shrink-0" /> {formatDate(date)}
             </motion.p>
             
             {/* Location and Currency Info */}
@@ -203,8 +204,8 @@ export function TicketCard({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 + index * 0.05 }}
             >
-              <Globe className="h-3 w-3" />
-              <span>{ticket.city}, {getCountryInfo(ticket.country)?.name || ticket.country}</span>
+              <Globe className="h-3 w-3 flex-shrink-0" />
+              <span className="mobile-text-safe">{ticket.city}, {getCountryInfo(ticket.country)?.name || ticket.country}</span>
             </motion.div>
 
             {/* Inline Popularity Metrics */}

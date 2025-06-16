@@ -77,7 +77,7 @@ function App() {
                   <HelmetProvider>
                     <SEOConsolidated />
                     <CanonicalUrlManager />
-                    <div className="min-h-screen flex flex-col safe-area-top">
+                    <div className="min-h-screen flex flex-col safe-area-top prevent-horizontal-overflow">
                       <ErrorBoundary fallback={
                         <div className="bg-red-50 border border-red-200 p-4 m-4 rounded">
                           <p className="text-red-800">Navigation temporarily unavailable</p>

@@ -455,7 +455,7 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {/* Sample Event Cards to match the original design */}
                 {Array.from({ length: 16 }, (_, i) => {
                 // Create sample ticket data for each card
