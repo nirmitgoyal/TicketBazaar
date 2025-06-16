@@ -455,80 +455,14 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {/* Sample Event Cards to match the original design */}
-                {Array.from({ length: 16 }, (_, i) => {
-                // Create sample ticket data for each card
-                const sampleTicket: Ticket = {
-                  id: i + 1000, // Unique ID for sample tickets
-                  sellerId: Math.floor(Math.random() * 5) + 1, // Random seller ID 1-5
-                  title: `Sample Event Ticket ${i + 1}`,
-                  eventTitle: `Sample Event Title ${i + 1}`,
-                  eventDescription: `Description for sample event ${i + 1}`,
-                  venue: `Sample Venue ${i + 1}`,
-                  venueAddress: `123 Sample St, City ${i + 1}`,
-                  eventDate: new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
-                  category: ['Concerts', 'Sports', 'Festivals', 'Theatre', 'Comedy'][Math.floor(Math.random() * 5)],
-                  eventImageUrl: null,
-                  trending: Math.random() > 0.7,
-                  sellingFast: Math.random() > 0.8,
-                  latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
-                  longitude: -74.0060 + (Math.random() - 0.5) * 0.1,
-                  city: `City ${i + 1}`,
-                  country: 'US',
-                  state: 'NY',
-                  postalCode: '10001',
-                  section: `Section ${String.fromCharCode(65 + Math.floor(Math.random() * 5))}`,
-                  row: Math.floor(Math.random() * 20) + 1 + '',
-                  seat: Math.floor(Math.random() * 30) + 1 + '',
-
-                  quantity: Math.floor(Math.random() * 4) + 1,
-                  status: 'available',
-                  isTransferrable: true,
-                  transferMethod: 'mobile_transfer',
-                  additionalInfo: `Additional info for ticket ${i + 1}`,
-                  showContactInfo: false,
-                  eventTimezone: 'America/New_York',
-                  ageRestriction: '18+',
-                  createdAt: new Date(),
-                  expiresAt: new Date(2025, 11, 31),
-                  viewCount: Math.floor(Math.random() * 100),
-                  contactCount: Math.floor(Math.random() * 20),
-                  isFeatured: false,
-                  boostScore: Math.floor(Math.random() * 10),
-                  availabilityStatus: 'available'
-                };
-
-                const eventDate = sampleTicket.eventDate;
-                return (
-                  <div 
-                    key={i} 
-                    className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => openSellerModal(sampleTicket)}
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {String(eventDate.getDate()).padStart(2, '0')}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {eventDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {eventDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="font-semibold text-sm leading-tight">
-                        {sampleTicket.eventTitle}
-                      </h3>
-                      <p className="text-xs text-gray-600">{sampleTicket.venue}</p>
-                      <p className="text-xs text-gray-500">
-                        {eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
-                      </p>
-                    </div>
-                  </div>
-                );
-                })}
+              <div className="text-center py-12">
+                <AlertTriangle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No events available
+                </h3>
+                <p className="text-gray-600">
+                  No events are currently listed. Check back later for new listings.
+                </p>
               </div>
             )
           )}
