@@ -1,40 +1,40 @@
 // Centralized component exports for better organization
 export { default as UnifiedPopularityMetrics } from './unified-popularity-metrics';
-export { default as EventCard } from './event-card';
-export { default as TicketCard } from './ticket-card';
-export { default as SearchBar } from './search-bar';
-export { default as FilterDropdown } from './filter-dropdown';
-export { default as VenueMap } from './venue-map';
-export { default as TicketVerification } from './ticket-verification';
-export { default as MobileNav } from './mobile-nav';
-export { default as PullToRefresh } from './pull-to-refresh';
-export { default as RealTimeNotifications } from './real-time-notifications';
-export { default as GlobalMarketplaceStats } from './global-marketplace-stats';
-export { default as TrustScoreMeter } from './trust-score-meter';
-export { default as VerificationBadge } from './verification-badge';
-export { default as SocialShare } from './social-share';
-export { default as ErrorBoundary } from './error-boundary';
-export { default as EventAtmosphere } from './event-atmosphere';
-export { default as TicketHeatmap } from './ticket-heatmap';
-export { default as EventRecommendations } from './event-recommendations';
-export { default as TicketComparison } from './ticket-comparison';
-export { default as SearchHints } from './search-hints';
+export { EventCard } from './event-card';
+export { TicketCard } from './ticket-card';
+export { SearchBar } from './search-bar';
+export { FilterDropdown } from './filter-dropdown';
+export { VenueMap } from './venue-map';
+export { TicketVerification } from './ticket-verification';
+export { MobileNav } from './mobile-nav';
+export { PullToRefresh } from './pull-to-refresh';
+export { RealTimeNotifications } from './real-time-notifications';
+export { GlobalMarketplaceStats } from './global-marketplace-stats';
+export { TrustScoreMeter } from './trust-score-meter';
+export { VerificationBadge } from './verification-badge';
+export { SocialShare } from './social-share';
+export { ErrorBoundary } from './error-boundary';
+export { EventAtmosphere } from './event-atmosphere';
+export { TicketHeatmap } from './ticket-heatmap';
+export { EventRecommendations } from './event-recommendations';
+export { TicketComparison } from './ticket-comparison';
+export { SearchHints } from './search-hints';
 
 // Modal exports
-export { default as ContactRequestModal } from './contact-request-modal';
-export { default as SellerProfileModal } from './seller-profile-modal';
-export { default as SellerDetailsModal } from './seller-details-modal';
-export { default as TicketDetailModal } from './ticket-detail-modal';
-export { default as DisputeModal } from './dispute-modal';
-export { default as VerificationModal } from './verification-modal';
-export { default as AiVerificationModal } from './ai-verification-modal';
+export { ContactRequestModal } from './contact-request-modal';
+export { SellerProfileModal } from './seller-profile-modal';
+export { SellerDetailsModal } from './seller-details-modal';
+export { TicketDetailModal } from './ticket-detail-modal';
+export { DisputeModal } from './dispute-modal';
+export { VerificationModal } from './verification-modal';
+export { AiVerificationModal } from './ai-verification-modal';
 
 // SEO Components (consolidated)
-export { default as SEOManager } from './seo';
-export { default as HelmetManager } from './helmet-manager';
-export { default as CanonicalUrlManager } from './canonical-url-manager';
-export { default as InternationalSEO } from './international-seo';
-export { default as EnhancedSEO } from './enhanced-seo';
+export { SEO } from './seo';
+export { HelmetManager } from './helmet-manager';
+export { CanonicalUrlManager } from './canonical-url-manager';
+export { InternationalSEO } from './international-seo';
+export { EnhancedSEO } from './enhanced-seo';
 export { default as AdvancedStructuredData } from './advanced-structured-data';
 
 // UI Components
