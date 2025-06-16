@@ -57,7 +57,14 @@ export default function Home() {
     isLoading: searchLoading,
     error: searchError,
   } = useQuery<Ticket[]>({
-    queryKey: ["/api/tickets/search", { q: searchQuery }],
+    queryKey: ["/api/tickets/search", searchQuery],
+    queryFn: async () => {
+      const response = await fetch(`/api/tickets/search?q=${encodeURIComponent(searchQuery)}`);
+      if (!response.ok) {
+        throw new Error('Search failed');
+      }
+      return response.json();
+    },
     enabled: searchQuery.length >= 2, // Only search when user has typed at least 2 characters
     staleTime: 30000, // Cache results for 30 seconds
   });
