@@ -437,10 +437,11 @@ export class DatabaseStorage implements IStorage {
 
     const searchTerm = query.trim();
     
-    // Use case-insensitive partial matching on title and city columns
+    // Use case-insensitive partial matching on title, city, and eventTitle columns
     const searchCondition = or(
       ilike(tickets.title, `%${searchTerm}%`),
-      ilike(tickets.city, `%${searchTerm}%`)
+      ilike(tickets.city, `%${searchTerm}%`),
+      ilike(tickets.eventTitle, `%${searchTerm}%`)
     );
 
     return await db
