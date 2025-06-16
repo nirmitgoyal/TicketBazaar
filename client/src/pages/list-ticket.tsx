@@ -136,7 +136,7 @@ export default function ListTicket() {
       const lng = place.geometry?.location?.lng();
 
       form.setValue("venue", venue);
-      form.setValue("eventVenueAddress", address);
+      form.setValue("venueAddress", address);
       if (lat && lng) {
         form.setValue("latitude", lat);
         form.setValue("longitude", lng);
@@ -155,7 +155,7 @@ export default function ListTicket() {
     // Clear previous selection when user starts typing again
     if (selectedPlace && query !== selectedPlace.name) {
       setSelectedPlace(null);
-      form.setValue("eventVenueAddress", "");
+      form.setValue("venueAddress", "");
       form.setValue("latitude", undefined);
       form.setValue("longitude", undefined);
     }
@@ -205,7 +205,7 @@ export default function ListTicket() {
     }
 
     form.setValue("venue", venue);
-    form.setValue("eventVenueAddress", address);
+    form.setValue("venueAddress", address);
     form.setValue("city", city);
     if (lat && lng) {
       form.setValue("latitude", lat);
@@ -223,7 +223,7 @@ export default function ListTicket() {
     setSearchResults([]);
     setShowResults(false);
     form.setValue("venue", "");
-    form.setValue("eventVenueAddress", "");
+    form.setValue("venueAddress", "");
     form.setValue("latitude", undefined);
     form.setValue("longitude", undefined);
   }, [form]);
