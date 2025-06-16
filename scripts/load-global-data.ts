@@ -26,9 +26,7 @@ interface GlobalTicketData {
   section: string;
   row?: string;
   seat?: string;
-  price: number;
-  currency: string;
-  originalPrice?: number;
+
   quantity: number;
   transferMethod: string;
   additionalInfo?: string;
