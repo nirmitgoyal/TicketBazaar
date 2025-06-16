@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { Ticket } from "@shared/schema";
 import { motion } from "framer-motion";
 import { cardHover, buttonTap, fadeInUp } from "@/lib/animations";
-import { EventPopularityMetrics } from "./event-popularity-metrics";
+import EventPopularityMetrics from "./event-popularity-metrics";
 
 interface EventCardProps {
   event: Ticket;

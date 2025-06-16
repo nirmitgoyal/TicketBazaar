@@ -6,7 +6,7 @@ interface EventPopularityMetricsProps {
   eventId: number;
 }
 
-export function EventPopularityMetrics({ eventId }: EventPopularityMetricsProps) {
+export default function EventPopularityMetrics({ eventId }: EventPopularityMetricsProps) {
   // Fetch tickets for this event to calculate aggregate popularity
   const { data: eventTickets, isLoading } = useQuery({
     queryKey: ["/api/tickets/event", eventId],
