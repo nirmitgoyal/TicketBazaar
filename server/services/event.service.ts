@@ -1,10 +1,10 @@
 import { storage } from "../storage";
-import { Event, InsertTicket } from "@shared/schema";
+import { Ticket, InsertTicket } from "@shared/schema";
 
 /**
- * Type definition for search filters
+ * Type definition for ticket search filters
  */
-export interface EventSearchFilters {
+export interface TicketSearchFilters {
   category?: string;
   location?: string;
   date?: Date;

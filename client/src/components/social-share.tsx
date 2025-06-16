@@ -1,11 +1,10 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Event, Ticket } from "@shared/schema";
+import { Ticket } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { CopyLinkIcon } from "@/components/ui/copy-link-icon";
 
 interface SocialShareProps {
-  event?: Event;
   ticket?: Ticket;
   variant?:
     | "default"
@@ -18,7 +17,6 @@ interface SocialShareProps {
 }
 
 export function SocialShare({
-  event,
   ticket,
   variant = "outline",
   fullWidth = false,
@@ -30,19 +28,15 @@ export function SocialShare({
       : "https://ticketbazaar.co.in";
 
   const getShareMessage = () => {
-    if (ticket && event) {
-      return `Check out this ticket for ${event.eventTitle} on Ticket Bazaar! Section: ${ticket.section}, Available for transfer`;
-    } else if (event) {
-      return `Check out ${event.eventTitle} on Ticket Bazaar! Event in ${event.venue} on ${new Date(event.eventDate).toLocaleDateString()}`;
+    if (ticket) {
+      return `Check out this ticket for ${ticket.eventTitle} on Ticket Bazaar! Section: ${ticket.section}, Available for transfer`;
     }
-    return "Check out Ticket Bazaar - India's trusted ticket reselling platform!";
+    return "Check out Ticket Bazaar - Global trusted ticket reselling platform!";
   };
 
   const getShareUrl = () => {
-    if (ticket && event) {
+    if (ticket) {
       return `${baseUrl}/tickets/${ticket.id}`;
-    } else if (event) {
-      return `${baseUrl}/events/${event.id}`;
     }
     return baseUrl;
   };
