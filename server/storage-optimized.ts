@@ -222,7 +222,7 @@ export class OptimizedStorage {
     try {
       const [ticket] = await db
         .update(tickets)
-        .set({ status })
+        .set({ status } as any)
         .where(eq(tickets.id, id))
         .returning();
       
