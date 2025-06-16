@@ -82,27 +82,7 @@ export class OptimizedStorage {
     }
   }
   
-  async updateUserRating(userId: number, newRating: number): Promise<User | undefined> {
-    try {
-      const [user] = await db
-        .update(users)
-        .set({ 
-          rating: newRating,
-          ratingsCount: sql`${users.ratingsCount} + 1`
-        } as any)
-        .where(eq(users.id, userId))
-        .returning();
-      
-      if (user) {
-        CacheManager.invalidateCache("users", userId);
-        CacheManager.setCacheWithTTL("users", userId, user, 300000);
-      }
-      return user;
-    } catch (error) {
-      logger.error('STORAGE', `Error updating user rating ${userId}:`, error);
-      return undefined;
-    }
-  }
+
   
   async updateUserPhone(userId: number, phone: string): Promise<User | undefined> {
     try {

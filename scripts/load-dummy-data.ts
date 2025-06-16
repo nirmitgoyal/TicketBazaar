@@ -47,36 +47,36 @@ async function loadDummyData() {
         {
           fullName: "Arjun Sharma",
           email: "arjun.sharma@example.com",
+          password: "hashedpassword123",
           instagram: "arjun_music_lover",
-          rating: 4.8,
           phone: "+91 9876543210"
         },
         {
           fullName: "Priya Patel",
           email: "priya.patel@example.com",
+          password: "hashedpassword123",
           instagram: "priya_eventgoer",
-          rating: 4.9,
           phone: "+91 9876543211"
         },
         {
           fullName: "Vikram Singh",
           email: "vikram.singh@example.com",
+          password: "hashedpassword123",
           instagram: "vikram_tickets",
-          rating: 4.7,
           phone: "+91 9876543212"
         },
         {
           fullName: "Sneha Reddy",
           email: "sneha.reddy@example.com",
+          password: "hashedpassword123",
           instagram: "sneha_concerts",
-          rating: 4.6,
           phone: "+91 9876543213"
         },
         {
           fullName: "Rohit Gupta",
           email: "rohit.gupta@example.com",
+          password: "hashedpassword123",
           instagram: "rohit_sports_fan",
-          rating: 4.5,
           phone: "+91 9876543214"
         }
       ]).onConflictDoNothing();
