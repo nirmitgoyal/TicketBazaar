@@ -8,6 +8,7 @@ import { TicketCard } from "@/components/ticket-card";
 import { EventCard } from "@/components/event-card";
 import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { SellerDetailsModal } from "@/components/seller-details-modal";
+import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
 import { Loader2, AlertTriangle, MapPin, Search } from "lucide-react";
 import { Ticket } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
