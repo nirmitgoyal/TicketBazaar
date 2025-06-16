@@ -1,10 +1,10 @@
-import { lazy, Suspense } from "react";
-import { Route } from "wouter";
+import { lazy, Suspense, ReactNode } from "react";
+import { Switch, Route } from "wouter";
 import { ProtectedRoute } from "@/lib/protected-route";
-import { PageTransition } from "@/components/ui/page-transition";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
-// Lazy-loaded components for better performance
+// Lazy loaded pages for optimal bundle splitting
 const Home = lazy(() => import("@/pages/home"));
 const EventDetails = lazy(() => import("@/pages/event-details"));
 const EventMap = lazy(() => import("@/pages/event-map"));
@@ -28,93 +28,153 @@ const SellerPolicy = lazy(() => import("@/pages/SellerPolicy"));
 const CityEvents = lazy(() => import("@/pages/city-events"));
 const GlobalCities = lazy(() => import("@/pages/global-cities"));
 const HowToSellTickets = lazy(() => import("@/pages/how-to-sell-tickets"));
-const VerificationReport = lazy(() => import("@/pages/verification-report"));
-const PopularityDashboard = lazy(() => import("@/pages/popularity-dashboard"));
 
-// Loading fallback component
-const LoadingFallback = () => (
-  <div className="container mx-auto p-4 space-y-4">
-    <Skeleton className="h-8 w-3/4" />
-    <Skeleton className="h-4 w-1/2" />
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {[...Array(6)].map((_, i) => (
-        <Skeleton key={i} className="h-48 w-full" />
-      ))}
-    </div>
-  </div>
-);
+// Lazy load dashboard components that might have default exports
+const VerificationReport = lazy(() => import("@/pages/verification-report").then(module => ({ default: module.VerificationReport || module.default })));
+const PopularityDashboard = lazy(() => import("@/pages/popularity-dashboard").then(module => ({ default: module.PopularityDashboard || module.default })));
 
-// Route wrapper with suspense and transitions
-const LazyRoute = ({ 
-  component: Component, 
-  protected: isProtected = false,
-  ...props 
-}: { 
-  component: React.ComponentType; 
-  protected?: boolean;
-  [key: string]: any;
-}) => {
-  const WrappedComponent = () => (
-    <Suspense fallback={<LoadingFallback />}>
-      <PageTransition>
-        <Component />
-      </PageTransition>
-    </Suspense>
-  );
-
-  if (isProtected) {
-    return <ProtectedRoute {...props} component={WrappedComponent} />;
-  }
-
-  return <Route {...props} component={WrappedComponent} />;
-};
-
-// Centralized route definitions
-export const routes = [
-  // Public routes
-  { path: "/", component: Home },
-  { path: "/event/:id", component: EventDetails },
-  { path: "/events/map", component: EventMap },
-  { path: "/map", component: MapPage },
-  { path: "/events/category/:category", component: Home },
-  { path: "/cities", component: GlobalCities },
-  { path: "/city/:citySlug", component: CityEvents },
-  { path: "/auth", component: Login },
-  { path: "/login", component: Login },
-  { path: "/register", component: Register },
-  { path: "/complete-profile", component: CompleteProfile },
-  { path: "/list-ticket", component: ListTicket },
-  { path: "/list-ticket-global", component: ListTicketGlobal },
-  { path: "/ticket-verification", component: TicketVerification },
-  { path: "/verification-demo", component: VerificationDemo },
-  { path: "/verification-report/:ticketId", component: VerificationReport },
-  { path: "/how-to-sell-tickets", component: HowToSellTickets },
-  { path: "/sell-ticket", component: HowToSellTickets },
-  { path: "/resell-tickets", component: HowToSellTickets },
-  { path: "/buy-second-hand-tickets", component: Home },
-  { path: "/terms-of-service", component: TermsOfService },
-  { path: "/privacy-policy", component: PrivacyPolicy },
-  { path: "/data-deletion", component: DataDeletion },
-  { path: "/faq", component: FAQPage },
-  { path: "/seller-policy", component: SellerPolicy },
-  { path: "/popularity", component: PopularityDashboard },
-  { path: "/analytics", component: PopularityDashboard },
-  
-  // Protected routes
-  { path: "/my-tickets", component: MyTickets, protected: true },
-  { path: "/enhanced-verification", component: EnhancedVerificationPage, protected: true },
-  { path: "/ticket/verify/:ticketId", component: TicketVerification, protected: true },
-  { path: "/profile", component: Profile, protected: true },
-];
-
-// Route components renderer
-export const AppRoutes = () => {
+/**
+ * Enhanced loading component with error boundary
+ */
+function PageLoader({ children }: { children: ReactNode }) {
   return (
-    <>
-      {routes.map((route) => (
-        <LazyRoute key={route.path} {...route} />
-      ))}
-      <LazyRoute component={NotFound} />
-    </>
+    <ErrorBoundary
+      fallback={
+        <div className="min-h-[50vh] flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-red-600 mb-4">Failed to load page</div>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="text-blue-600 underline"
+            >
+              Refresh page
+            </button>
+          </div>
+        </div>
+      }
+    >
+      <Suspense
+        fallback={
+          <div className="min-h-[50vh] flex items-center justify-center">
+            <LoadingSpinner size="lg" text="Loading page..." />
+          </div>
+        }
+      >
+        {children}
+      </Suspense>
+    </ErrorBoundary>
   );
-};
+}
+
+/**
+ * Protected route wrapper with lazy loading
+ */
+function LazyProtectedRoute({ 
+  path, 
+  component: Component 
+}: { 
+  path: string; 
+  component: React.LazyExoticComponent<React.ComponentType<any>> 
+}) {
+  return (
+    <ProtectedRoute
+      path={path}
+      component={() => (
+        <PageLoader>
+          <Component />
+        </PageLoader>
+      )}
+    />
+  );
+}
+
+/**
+ * Regular route wrapper with lazy loading
+ */
+function LazyRoute({ 
+  path, 
+  component: Component 
+}: { 
+  path: string; 
+  component: React.LazyExoticComponent<React.ComponentType<any>> 
+}) {
+  return (
+    <Route
+      path={path}
+      component={() => (
+        <PageLoader>
+          <Component />
+        </PageLoader>
+      )}
+    />
+  );
+}
+
+/**
+ * Main routing component with optimized lazy loading
+ */
+export function AppRoutes() {
+  return (
+    <Switch>
+      {/* Public routes */}
+      <LazyRoute path="/" component={Home} />
+      <LazyRoute path="/event/:id" component={EventDetails} />
+      <LazyRoute path="/events/map" component={EventMap} />
+      <LazyRoute path="/map" component={MapPage} />
+      <LazyRoute path="/events/category/:category" component={Home} />
+      <LazyRoute path="/cities" component={GlobalCities} />
+      <LazyRoute path="/city/:citySlug" component={CityEvents} />
+      
+      {/* Authentication routes */}
+      <LazyRoute path="/auth" component={Login} />
+      <LazyRoute path="/login" component={Login} />
+      <LazyRoute path="/register" component={Register} />
+      <LazyRoute path="/complete-profile" component={CompleteProfile} />
+      
+      {/* Ticket management */}
+      <LazyRoute path="/list-ticket" component={ListTicket} />
+      <LazyRoute path="/list-ticket-global" component={ListTicketGlobal} />
+      <LazyProtectedRoute path="/my-tickets" component={MyTickets} />
+      
+      {/* Verification */}
+      <LazyRoute path="/ticket-verification" component={TicketVerification} />
+      <LazyRoute path="/verification-demo" component={VerificationDemo} />
+      <LazyRoute path="/verification-report/:ticketId" component={VerificationReport} />
+      <LazyProtectedRoute path="/enhanced-verification" component={EnhancedVerificationPage} />
+      <LazyProtectedRoute path="/ticket/verify/:ticketId" component={TicketVerification} />
+      
+      {/* User profile */}
+      <LazyProtectedRoute path="/profile" component={Profile} />
+      
+      {/* Information pages */}
+      <LazyRoute path="/how-to-sell-tickets" component={HowToSellTickets} />
+      <LazyRoute path="/sell-ticket" component={HowToSellTickets} />
+      <LazyRoute path="/resell-tickets" component={HowToSellTickets} />
+      <LazyRoute path="/buy-second-hand-tickets" component={Home} />
+      
+      {/* Legal pages */}
+      <LazyRoute path="/terms-of-service" component={TermsOfService} />
+      <LazyRoute path="/privacy-policy" component={PrivacyPolicy} />
+      <LazyRoute path="/data-deletion" component={DataDeletion} />
+      <LazyRoute path="/faq" component={FAQPage} />
+      <LazyRoute path="/seller-policy" component={SellerPolicy} />
+      
+      {/* Analytics */}
+      <LazyRoute path="/popularity" component={PopularityDashboard} />
+      <LazyRoute path="/analytics" component={PopularityDashboard} />
+      
+      {/* Redirect route */}
+      <Route path="/map-to-home" component={() => {
+        window.location.href = '/';
+        return <PageLoader><div>Redirecting...</div></PageLoader>;
+      }} />
+      
+      {/* 404 fallback */}
+      <Route path="*" component={() => (
+        <PageLoader>
+          <NotFound />
+        </PageLoader>
+      )} />
+    </Switch>
+  );
+}

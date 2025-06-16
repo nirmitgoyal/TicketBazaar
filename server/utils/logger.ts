@@ -1,91 +1,120 @@
 /**
- * Simple logging utility for the fraud detection system
- * Provides structured logging with categories and error handling
+ * Enhanced logging utility with different levels and formatting
  */
 
+export enum LogLevel {
+  ERROR = 0,
+  WARN = 1,
+  INFO = 2,
+  DEBUG = 3,
+}
+
 interface LogEntry {
-  timestamp: string;
-  level: 'info' | 'warn' | 'error';
-  category: string;
+  level: LogLevel;
+  module: string;
   message: string;
   data?: any;
+  timestamp: Date;
+  requestId?: string;
 }
 
 class Logger {
+  private currentLevel: LogLevel;
   private logs: LogEntry[] = [];
-  private maxLogs = 1000; // Keep last 1000 logs in memory
+  private maxLogs = 1000;
 
-  private formatMessage(level: 'info' | 'warn' | 'error', category: string, message: string, data?: any): LogEntry {
-    return {
-      timestamp: new Date().toISOString(),
-      level,
-      category,
-      message,
-      data
-    };
+  constructor(level: LogLevel = LogLevel.INFO) {
+    this.currentLevel = level;
   }
 
-  private addLog(entry: LogEntry) {
+  private shouldLog(level: LogLevel): boolean {
+    return level <= this.currentLevel;
+  }
+
+  private formatMessage(entry: LogEntry): string {
+    const timestamp = entry.timestamp.toISOString();
+    const levelName = LogLevel[entry.level];
+    const requestId = entry.requestId ? ` [${entry.requestId}]` : '';
+    
+    return `[${timestamp}] [${levelName}] [${entry.module}]${requestId} ${entry.message}`;
+  }
+
+  private log(level: LogLevel, module: string, message: string, data?: any, requestId?: string) {
+    if (!this.shouldLog(level)) return;
+
+    const entry: LogEntry = {
+      level,
+      module,
+      message,
+      data,
+      timestamp: new Date(),
+      requestId,
+    };
+
     this.logs.push(entry);
     
-    // Keep only recent logs in memory
+    // Keep only recent logs to prevent memory leaks
     if (this.logs.length > this.maxLogs) {
-      this.logs = this.logs.slice(-this.maxLogs);
+      this.logs.shift();
     }
 
-    // Console output for development
-    const prefix = `[${entry.level.toUpperCase()}] [${entry.category}]`;
-    const output = entry.data ? 
-      `${prefix} ${entry.message}` : 
-      `${prefix} ${entry.message}`;
-
-    switch (entry.level) {
-      case 'error':
-        console.error(output, entry.data || '');
+    const formattedMessage = this.formatMessage(entry);
+    
+    switch (level) {
+      case LogLevel.ERROR:
+        console.error(formattedMessage, data);
         break;
-      case 'warn':
-        console.warn(output, entry.data || '');
+      case LogLevel.WARN:
+        console.warn(formattedMessage, data);
         break;
-      default:
-        console.log(output, entry.data || '');
+      case LogLevel.INFO:
+        console.info(formattedMessage, data);
+        break;
+      case LogLevel.DEBUG:
+        console.debug(formattedMessage, data);
+        break;
     }
   }
 
-  info(category: string, message: string, data?: any) {
-    const entry = this.formatMessage('info', category, message, data);
-    this.addLog(entry);
+  error(module: string, message: string, data?: any, requestId?: string) {
+    this.log(LogLevel.ERROR, module, message, data, requestId);
   }
 
-  warn(category: string, message: string, data?: any) {
-    const entry = this.formatMessage('warn', category, message, data);
-    this.addLog(entry);
+  warn(module: string, message: string, data?: any, requestId?: string) {
+    this.log(LogLevel.WARN, module, message, data, requestId);
   }
 
-  error(category: string, message: string, data?: any) {
-    const entry = this.formatMessage('error', category, message, data);
-    this.addLog(entry);
+  info(module: string, message: string, data?: any, requestId?: string) {
+    this.log(LogLevel.INFO, module, message, data, requestId);
   }
 
-  // Get recent logs for debugging
-  getRecentLogs(limit: number = 100): LogEntry[] {
-    return this.logs.slice(-limit);
+  debug(module: string, message: string, data?: any, requestId?: string) {
+    this.log(LogLevel.DEBUG, module, message, data, requestId);
   }
 
-  // Get logs by category
-  getLogsByCategory(category: string, limit: number = 100): LogEntry[] {
-    return this.logs
-      .filter(log => log.category === category)
-      .slice(-limit);
+  getLogs(level?: LogLevel, module?: string): LogEntry[] {
+    let filteredLogs = this.logs;
+
+    if (level !== undefined) {
+      filteredLogs = filteredLogs.filter(log => log.level === level);
+    }
+
+    if (module) {
+      filteredLogs = filteredLogs.filter(log => log.module === module);
+    }
+
+    return filteredLogs;
   }
 
-  // Clear old logs
   clearLogs() {
     this.logs = [];
   }
+
+  setLevel(level: LogLevel) {
+    this.currentLevel = level;
+  }
 }
 
-// Export singleton instance
-export const logger = new Logger();
-
-// Export types for use in other modules
-export type { LogEntry };
+export const logger = new Logger(
+  process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.INFO
+);

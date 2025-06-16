@@ -43,7 +43,7 @@ export function useOptimizedTickets(filters?: any) {
       return response.json();
     },
     staleTime: 30000, // 30 seconds
-    cacheTime: 300000, // 5 minutes
+    gcTime: 300000, // 5 minutes (cacheTime renamed to gcTime in v5)
   });
 }
 

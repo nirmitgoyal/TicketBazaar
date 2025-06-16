@@ -1,36 +1,50 @@
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
+interface Props {
+  children: ReactNode;
+  fallback?: ReactNode;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+}
 
-interface ErrorBoundaryState {
+interface State {
   hasError: boolean;
   error?: Error;
   errorInfo?: ErrorInfo;
 }
 
-interface ErrorBoundaryProps {
-  children: ReactNode;
-  fallback?: ReactNode;
-}
-
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
+/**
+ * Enhanced Error Boundary with user-friendly error handling
+ * Provides graceful fallbacks and recovery options
+ */
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error Boundary caught an error:', error, errorInfo);
     this.setState({ error, errorInfo });
+    
+    // Log error to monitoring service
+    console.error('Error Boundary caught an error:', error, errorInfo);
+    
+    // Call custom error handler if provided
+    this.props.onError?.(error, errorInfo);
   }
 
-  handleReset = () => {
+  handleRetry = () => {
     this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+  };
+
+  handleGoHome = () => {
+    window.location.href = '/';
   };
 
   render() {
@@ -40,29 +54,41 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
           <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle className="text-red-600">Something went wrong</CardTitle>
+            <CardHeader className="text-center">
+              <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <CardTitle className="text-xl">Something went wrong</CardTitle>
               <CardDescription>
-                An unexpected error occurred. Please try refreshing the page.
+                We're sorry, but something unexpected happened. Please try again.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               {process.env.NODE_ENV === 'development' && this.state.error && (
-                <div className="mt-4 p-4 bg-gray-100 rounded text-sm font-mono text-gray-800 overflow-auto max-h-32">
-                  {this.state.error.toString()}
-                </div>
+                <details className="text-xs bg-gray-100 p-3 rounded border">
+                  <summary className="cursor-pointer font-medium mb-2">
+                    Error Details (Development Only)
+                  </summary>
+                  <pre className="whitespace-pre-wrap text-red-700">
+                    {this.state.error.toString()}
+                    {this.state.errorInfo?.componentStack}
+                  </pre>
+                </details>
               )}
+              
+              <div className="flex gap-2">
+                <Button onClick={this.handleRetry} className="flex-1">
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Try Again
+                </Button>
+                <Button onClick={this.handleGoHome} variant="outline" className="flex-1">
+                  <Home className="w-4 h-4 mr-2" />
+                  Go Home
+                </Button>
+              </div>
             </CardContent>
-            <CardFooter className="flex gap-2">
-              <Button onClick={this.handleReset} variant="outline">
-                Try Again
-              </Button>
-              <Button onClick={() => window.location.reload()}>
-                Refresh Page
-              </Button>
-            </CardFooter>
           </Card>
         </div>
       );
@@ -72,4 +98,19 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 }
 
-export default ErrorBoundary;
+/**
+ * HOC for wrapping components with error boundary
+ */
+export function withErrorBoundary<P extends object>(
+  Component: React.ComponentType<P>,
+  fallback?: ReactNode
+) {
+  const WrappedComponent = (props: P) => (
+    <ErrorBoundary fallback={fallback}>
+      <Component {...props} />
+    </ErrorBoundary>
+  );
+  
+  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
+  return WrappedComponent;
+}
