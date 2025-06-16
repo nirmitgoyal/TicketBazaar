@@ -18,12 +18,14 @@ interface TicketDetailModalProps {
   eventId: number;
   isOpen: boolean;
   onClose: () => void;
+  onOpenSellerModal?: (ticket: Ticket) => void;
 }
 
 export function TicketDetailModal({
   eventId,
   isOpen,
   onClose,
+  onOpenSellerModal,
 }: TicketDetailModalProps) {
   // Auto-track view when modal opens (for the first ticket in the event)
   useAutoTrackView(eventId, { enabled: isOpen });
@@ -245,6 +247,7 @@ export function TicketDetailModal({
                 <div
                   key={ticket.id}
                   className="border rounded-lg p-4 mb-3 hover:border-primary cursor-pointer"
+                  onClick={() => onOpenSellerModal?.(ticket)}
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex-1">
@@ -269,15 +272,13 @@ export function TicketDetailModal({
                   <div className="mt-4 flex justify-between items-center">
                     <TicketVerificationSection ticket={ticket} />
                     <Button
-                      onClick={() => {
-                        if (seller?.instagram) {
-                          const instagramHandle = seller.instagram.replace('@', '');
-                          window.open(`https://www.instagram.com/${instagramHandle}/`, '_blank');
-                        }
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click
+                        onOpenSellerModal?.(ticket);
                       }}
                       className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
                     >
-                      Contact Seller
+                      View Seller Details
                     </Button>
                   </div>
                 </div>

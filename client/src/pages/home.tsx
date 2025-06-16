@@ -549,6 +549,7 @@ export default function Home() {
           isOpen={isModalOpen}
           onClose={closeModal}
           eventId={selectedEventId}
+          onOpenSellerModal={openSellerModal}
         />
       )}
 
