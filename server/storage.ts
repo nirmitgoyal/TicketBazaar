@@ -715,110 +715,63 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateTicketPopularity(ticketId: number): Promise<TicketPopularity> {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-    // Calculate view counts using string dates to avoid buffer issues
-    const todayStr = today.toISOString();
-    const weekAgoStr = weekAgo.toISOString();
-    const monthAgoStr = monthAgo.toISOString();
-
-    const totalViews = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(ticketViews)
-      .where(eq(ticketViews.ticketId, ticketId));
-
-    const uniqueViews = await db
-      .select({ count: sql<number>`count(DISTINCT COALESCE(user_id::text, ip_address))` })
-      .from(ticketViews)
-      .where(eq(ticketViews.ticketId, ticketId));
-
-    const viewsToday = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(ticketViews)
-      .where(
-        and(
-          eq(ticketViews.ticketId, ticketId),
-          sql`viewed_at >= ${today.toISOString()}`
+    try {
+      // Use raw SQL to avoid timestamp conversion issues
+      const metricsQuery = await db.execute(sql`
+        WITH view_counts AS (
+          SELECT 
+            COUNT(*) as total_views,
+            COUNT(DISTINCT COALESCE(user_id::text, ip_address)) as unique_views,
+            COUNT(*) FILTER (WHERE viewed_at >= CURRENT_DATE) as views_today,
+            COUNT(*) FILTER (WHERE viewed_at >= CURRENT_DATE - INTERVAL '7 days') as views_week,
+            COUNT(*) FILTER (WHERE viewed_at >= CURRENT_DATE - INTERVAL '30 days') as views_month
+          FROM ticket_views 
+          WHERE ticket_id = ${ticketId}
         )
-      );
+        SELECT * FROM view_counts
+      `);
 
-    const viewsThisWeek = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(ticketViews)
-      .where(
-        and(
-          eq(ticketViews.ticketId, ticketId),
-          sql`viewed_at >= ${weekAgo.toISOString()}`
+      const metrics = metricsQuery.rows[0];
+      const total = Number(metrics?.total_views) || 0;
+      const unique = Number(metrics?.unique_views) || 0;
+      const today_views = Number(metrics?.views_today) || 0;
+      const week_views = Number(metrics?.views_week) || 0;
+      const month_views = Number(metrics?.views_month) || 0;
+
+      // Calculate popularity metrics
+      const uniqueRatio = total > 0 ? unique / total : 0;
+      const recentActivity = (today_views * 5) + (week_views * 2) + month_views;
+      const popularityScore = (unique * 10) + (recentActivity * uniqueRatio);
+      const trendingFactor = today_views + (week_views * 0.5);
+
+      // Upsert popularity record using raw SQL
+      await db.execute(sql`
+        INSERT INTO ticket_popularity (
+          ticket_id, total_views, unique_views, views_today, 
+          views_this_week, views_this_month, popularity_score, 
+          trending_factor, last_viewed_at, updated_at
+        ) VALUES (
+          ${ticketId}, ${total}, ${unique}, ${today_views}, 
+          ${week_views}, ${month_views}, ${popularityScore}, 
+          ${trendingFactor}, NOW(), NOW()
         )
-      );
+        ON CONFLICT (ticket_id) DO UPDATE SET
+          total_views = EXCLUDED.total_views,
+          unique_views = EXCLUDED.unique_views,
+          views_today = EXCLUDED.views_today,
+          views_this_week = EXCLUDED.views_this_week,
+          views_this_month = EXCLUDED.views_this_month,
+          popularity_score = EXCLUDED.popularity_score,
+          trending_factor = EXCLUDED.trending_factor,
+          last_viewed_at = NOW(),
+          updated_at = NOW()
+      `);
 
-    const viewsThisMonth = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(ticketViews)
-      .where(
-        and(
-          eq(ticketViews.ticketId, ticketId),
-          sql`viewed_at >= ${monthAgo.toISOString()}`
-        )
-      );
-
-    // Calculate popularity score (weighted combination of metrics)
-    const total = totalViews[0]?.count || 0;
-    const unique = uniqueViews[0]?.count || 0;
-    const today_views = viewsToday[0]?.count || 0;
-    const week_views = viewsThisWeek[0]?.count || 0;
-    const month_views = viewsThisMonth[0]?.count || 0;
-
-    // Popularity scoring algorithm
-    const uniqueRatio = total > 0 ? unique / total : 0;
-    const recentActivity = (today_views * 5) + (week_views * 2) + month_views;
-    const popularityScore = (unique * 10) + (recentActivity * uniqueRatio);
-
-    // Calculate trending factor (recent view velocity)
-    const trendingFactor = today_views + (week_views * 0.5);
-
-    // Upsert popularity record
-    const existingPopularity = await this.getTicketPopularityMetrics(ticketId);
-    
-    if (existingPopularity) {
-      const [updatedPopularity] = await db
-        .update(ticketPopularity)
-        .set({
-          totalViews: total,
-          uniqueViews: unique,
-          viewsToday: today_views,
-          viewsThisWeek: week_views,
-          viewsThisMonth: month_views,
-          popularityScore,
-          trendingFactor,
-          lastViewedAt: now,
-          updatedAt: now,
-        } as any)
-        .where(eq(ticketPopularity.ticketId, ticketId))
-        .returning();
-      
-      return updatedPopularity;
-    } else {
-      const [newPopularity] = await db
-        .insert(ticketPopularity)
-        .values({
-          ticketId,
-          totalViews: total,
-          uniqueViews: unique,
-          viewsToday: today_views,
-          viewsThisWeek: week_views,
-          viewsThisMonth: month_views,
-          popularityScore,
-          trendingFactor,
-          lastViewedAt: now,
-          updatedAt: now,
-        } as any)
-        .returning();
-      
-      return newPopularity;
+      // Return the updated record
+      return await this.getTicketPopularityMetrics(ticketId) as TicketPopularity;
+    } catch (error) {
+      console.error('Error updating ticket popularity:', error);
+      throw error;
     }
   }
 
