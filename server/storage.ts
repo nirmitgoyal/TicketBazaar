@@ -741,7 +741,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(ticketViews.ticketId, ticketId),
-          sql`viewed_at >= ${todayStr}`
+          sql`viewed_at >= ${today.toISOString()}`
         )
       );
 
@@ -751,7 +751,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(ticketViews.ticketId, ticketId),
-          sql`viewed_at >= ${weekAgoStr}`
+          sql`viewed_at >= ${weekAgo.toISOString()}`
         )
       );
 
@@ -761,7 +761,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(ticketViews.ticketId, ticketId),
-          sql`viewed_at >= ${monthAgoStr}`
+          sql`viewed_at >= ${monthAgo.toISOString()}`
         )
       );
 
@@ -794,8 +794,8 @@ export class DatabaseStorage implements IStorage {
           viewsThisMonth: month_views,
           popularityScore,
           trendingFactor,
-          lastViewedAt: now.toISOString(),
-          updatedAt: now.toISOString(),
+          lastViewedAt: now,
+          updatedAt: now,
         } as any)
         .where(eq(ticketPopularity.ticketId, ticketId))
         .returning();
@@ -813,8 +813,8 @@ export class DatabaseStorage implements IStorage {
           viewsThisMonth: month_views,
           popularityScore,
           trendingFactor,
-          lastViewedAt: now.toISOString(),
-          updatedAt: now.toISOString(),
+          lastViewedAt: now,
+          updatedAt: now,
         } as any)
         .returning();
       
