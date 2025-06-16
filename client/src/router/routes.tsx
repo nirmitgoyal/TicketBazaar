@@ -2,7 +2,7 @@ import { lazy, Suspense, ReactNode } from "react";
 import { Switch, Route } from "wouter";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { ErrorBoundary } from "@/components/error-boundary";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Loader2 } from "lucide-react";
 
 // Lazy loaded pages for optimal bundle splitting
 const Home = lazy(() => import("@/pages/home"));
@@ -29,9 +29,13 @@ const CityEvents = lazy(() => import("@/pages/city-events"));
 const GlobalCities = lazy(() => import("@/pages/global-cities"));
 const HowToSellTickets = lazy(() => import("@/pages/how-to-sell-tickets"));
 
-// Lazy load dashboard components that might have default exports
-const VerificationReport = lazy(() => import("@/pages/verification-report").then(module => ({ default: module.VerificationReport || module.default })));
-const PopularityDashboard = lazy(() => import("@/pages/popularity-dashboard").then(module => ({ default: module.PopularityDashboard || module.default })));
+// Lazy load dashboard components with fallback handling
+const VerificationReport = lazy(() => import("@/pages/verification-report").then(module => ({ 
+  default: (module as any).VerificationReport || (module as any).default || (() => <div>Page not found</div>)
+})));
+const PopularityDashboard = lazy(() => import("@/pages/popularity-dashboard").then(module => ({ 
+  default: (module as any).PopularityDashboard || (module as any).default || (() => <div>Page not found</div>)
+})));
 
 /**
  * Enhanced loading component with error boundary
@@ -56,7 +60,10 @@ function PageLoader({ children }: { children: ReactNode }) {
       <Suspense
         fallback={
           <div className="min-h-[50vh] flex items-center justify-center">
-            <LoadingSpinner size="lg" text="Loading page..." />
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-8 h-8 animate-spin" />
+              <span className="text-lg">Loading page...</span>
+            </div>
           </div>
         }
       >
