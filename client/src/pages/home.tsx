@@ -271,6 +271,8 @@ export default function Home() {
                   placeholder="Search Ticket..."
                   className="flex-1 p-2 text-gray-900 placeholder-gray-500 border-none outline-none"
                   aria-label="Search for event tickets by artist, team, venue, or event name"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <div className="flex items-center space-x-2">
@@ -362,7 +364,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-gray-900" itemProp="name">
-              Second-Hand Tickets Available
+              {searchQuery.length >= 2 ? `Search Results for "${searchQuery}"` : "Second-Hand Tickets Available"}
             </h2>
             <Button variant="outline" size="sm" className="flex items-center space-x-2" aria-label="Filter ticket results">
               <span>Filter</span>
@@ -372,29 +374,84 @@ export default function Home() {
             </Button>
           </div>
 
-          {/* Events Grid */}
-          {eventsLoading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="bg-gray-200 rounded-lg h-48"></div>
-                </div>
-              ))}
-            </div>
-          ) : events && events.length > 0 ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              {events.map((event) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  onClick={() => openModal(event.id)}
-                />
-              ))}
-            </div>
+          {/* Search Results or Events Grid */}
+          {searchQuery.length >= 2 ? (
+            // Show search results
+            searchLoading ? (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="bg-gray-200 rounded-lg h-48"></div>
+                  </div>
+                ))}
+              </div>
+            ) : searchResults.length > 0 ? (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {searchResults.map((ticket) => (
+                  <div 
+                    key={ticket.id} 
+                    className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => openSellerModal(ticket)}
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {String(ticket.eventDate.getDate()).padStart(2, '0')}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {ticket.eventDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {ticket.eventDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="font-semibold text-sm leading-tight">
+                        {ticket.eventTitle}
+                      </h3>
+                      <p className="text-xs text-gray-600">{ticket.venue}</p>
+                      <p className="text-xs text-gray-500">{ticket.city}</p>
+                      <p className="text-xs text-gray-500">
+                        {ticket.eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <AlertTriangle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No tickets found
+                </h3>
+                <p className="text-gray-600">
+                  No tickets match your search for "{searchQuery}". Try different keywords.
+                </p>
+              </div>
+            )
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Sample Event Cards to match the original design */}
-              {Array.from({ length: 16 }, (_, i) => {
+            // Show default events grid
+            eventsLoading ? (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="bg-gray-200 rounded-lg h-48"></div>
+                  </div>
+                ))}
+              </div>
+            ) : events && events.length > 0 ? (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {events.map((event) => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    onClick={() => openModal(event.id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Sample Event Cards to match the original design */}
+                {Array.from({ length: 16 }, (_, i) => {
                 // Create sample ticket data for each card
                 const sampleTicket: Ticket = {
                   id: i + 1000, // Unique ID for sample tickets
@@ -460,8 +517,9 @@ export default function Home() {
                     </div>
                   </div>
                 );
-              })}
-            </div>
+                })}
+              </div>
+            )
           )}
 
           <div className="text-center mt-8">
