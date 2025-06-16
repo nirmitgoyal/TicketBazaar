@@ -308,7 +308,7 @@ export type TicketPopularity = typeof ticketPopularity.$inferSelect;
 // Extended schemas with validations for forms
 export const ticketListingSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  eventTitle: z.string().min(1, "Event title is required"),
+  eventTitle: z.string().optional(),
   eventDescription: z.string().optional(),
   venue: z.string().min(1, "Venue is required"),
   venueAddress: z.string().optional(),

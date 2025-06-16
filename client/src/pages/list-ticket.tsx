@@ -226,8 +226,8 @@ export default function ListTicket() {
       const ticketData = {
         sellerId: user?.id,
         title: data.title,
-        eventTitle: data.eventTitle,
-        eventDescription: data.eventDescription || `${data.eventTitle} at ${data.venue}`,
+        eventTitle: data.title, // Use title as eventTitle since we removed the separate field
+        eventDescription: data.eventDescription || `${data.title} at ${data.venue}`,
         venue: data.venue,
         venueAddress: data.eventVenueAddress || '',
         eventDate: eventDateTime,
@@ -422,23 +422,7 @@ export default function ListTicket() {
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="eventTitle"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Event Title</FormLabel>
-                          <FormControl>
-                            <Input
-                              data-testid="ticket-title"
-                              placeholder="e.g., Arijit Singh Live Concert"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
