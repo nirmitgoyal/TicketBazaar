@@ -18,7 +18,10 @@ export function Footer() {
               </h3>
             </div>
             <p className="text-sm text-textSecondary mb-4">
-              Discovery and contact platform for event tickets. We are not a reseller or broker - we don't handle payments, hold inventory, or facilitate transactions. We ensure legal compliance in peer-to-peer transfers.
+              Discovery and contact platform for event tickets. We are not a
+              reseller or broker - we don't handle payments, hold inventory, or
+              facilitate transactions. We ensure legal compliance in
+              peer-to-peer transfers.
             </p>
             <div className="flex space-x-3">
               <a
@@ -46,11 +49,24 @@ export function Footer() {
             </div>
           </div>
 
-
-
           <div>
-            <h4 className="font-medium text-base mb-4">Sell Tickets</h4>
+            <h4 className="font-medium text-base mb-4">Support</h4>
             <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/faq">
+                  <a className="text-textSecondary hover:text-primary">FAQs</a>
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="https://www.linkedin.com/company/ticket-bazaar-co-in/"
+                  className="text-textSecondary hover:text-primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Contact Us (DM on LinkedIn)
+                </a>
+              </li>
               <li>
                 <Link href="/how-to-sell-tickets">
                   <a className="text-textSecondary hover:text-primary">
@@ -59,50 +75,10 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/list-ticket">
-                  <a className="text-textSecondary hover:text-primary">
-                    Sell Your Tickets
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href="/resell-tickets">
-                  <a className="text-textSecondary hover:text-primary">
-                    Resell Tickets
-                  </a>
-                </Link>
-              </li>
-
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-medium text-base mb-4">Support</h4>
-            <ul className="space-y-2 text-sm">
-
-              <li>
-                <a
-                  href="https://www.linkedin.com/company/ticket-bazaar-co-in/"
-                  className="text-textSecondary hover:text-primary"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Contact Us
-                </a>
-              </li>
-              <li>
-                <Link href="/verification-demo">
-                  <a className="text-textSecondary hover:text-primary">
-                    Verify Tickets
-                  </a>
-                </Link>
-              </li>
-              <li>
                 <a href="#" className="text-textSecondary hover:text-primary">
                   Dispute Resolution
                 </a>
               </li>
-              
             </ul>
           </div>
         </div>
