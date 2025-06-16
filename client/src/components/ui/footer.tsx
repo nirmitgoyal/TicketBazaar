@@ -96,7 +96,7 @@ export function Footer() {
             </ul>
           </div>
 
-          
+
         </div>
 
         <div className="border-t mt-8 pt-6">
