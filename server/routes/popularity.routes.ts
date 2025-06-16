@@ -116,20 +116,22 @@ router.get("/trending", async (req, res) => {
   }
 });
 
+// Store last refresh time in memory
+let lastRefreshTime = 0;
+
 // Refresh popularity scores for all tickets (admin endpoint)
 router.post("/refresh", async (req, res) => {
   try {
     // Basic rate limiting - only allow refresh once per minute
-    const lastRefresh = router.get('lastRefresh') || 0;
     const now = Date.now();
     
-    if (now - lastRefresh < 60000) {
+    if (now - lastRefreshTime < 60000) {
       return res.status(429).json({ 
         message: "Refresh can only be called once per minute" 
       });
     }
 
-    router.set('lastRefresh', now);
+    lastRefreshTime = now;
     
     // Start the refresh process asynchronously
     storage.refreshPopularityScores().catch(error => 

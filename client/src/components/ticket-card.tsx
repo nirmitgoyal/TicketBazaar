@@ -18,8 +18,10 @@ import { useSoundEffects } from "@/lib/sound-effects";
 import { VerificationBadge } from "./verification-badge";
 import { VerificationModal } from "./verification-modal";
 import { TrustScoreMeter } from "./trust-score-meter";
+import { PopularityBadge } from "./popularity-metrics";
 import { formatCurrency } from "@/lib/currency-utils";
 import { getCountryInfo } from "@/lib/country-utils";
+import { usePopularityMetrics, useAutoTrackView } from "@/hooks/use-popularity-tracking";
 
 interface TicketCardProps {
   ticket: TicketType;

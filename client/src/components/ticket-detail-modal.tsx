@@ -10,6 +10,8 @@ import {
 import { Ticket, User, Event } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
 import { TicketVerificationSection } from "./ticket-verification-section";
+import { PopularityMetrics } from "./popularity-metrics";
+import { useAutoTrackView, usePopularityMetrics } from "@/hooks/use-popularity-tracking";
 
 interface TicketDetailModalProps {
   eventId: number;
@@ -22,11 +24,17 @@ export function TicketDetailModal({
   isOpen,
   onClose,
 }: TicketDetailModalProps) {
+  // Auto-track view when modal opens (for the first ticket in the event)
+  useAutoTrackView(eventId, { enabled: isOpen });
+
   // Fetch event details
   const { data: event } = useQuery<Event>({
     queryKey: [`/api/events/${eventId}`],
     enabled: !!eventId && isOpen,
   });
+
+  // Fetch popularity metrics for the event
+  const { data: popularityMetrics } = usePopularityMetrics(eventId);
 
   // Fetch available tickets for this event
   const { data: tickets, isLoading: ticketsLoading } = useQuery<Ticket[]>({
@@ -141,6 +149,17 @@ export function TicketDetailModal({
                     })
                   : "Date TBD"}
               </p>
+            </div>
+          )}
+
+          {/* Popularity Metrics */}
+          {popularityMetrics && (
+            <div className="mb-4">
+              <PopularityMetrics 
+                metrics={popularityMetrics.viewCount} 
+                compact={true}
+                showTrending={true}
+              />
             </div>
           )}
 
