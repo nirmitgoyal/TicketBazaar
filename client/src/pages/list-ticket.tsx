@@ -44,10 +44,34 @@ import { getAllCountries, getCountryInfo, detectUserCountry } from "@/lib/countr
 import { ticketListingSchema } from "@shared/schema";
 
 // Custom form schema for ticket listing with string dates/times
-const ticketFormSchema = ticketListingSchema.omit({ eventDate: true }).extend({
+const ticketFormSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  eventTitle: z.string().min(1, "Event title is required"),
+  eventDescription: z.string().optional(),
+  venue: z.string().min(1, "Venue is required"),
+  eventVenueAddress: z.string().optional(),
   eventDate: z.string().min(1, "Event date is required"),
   eventTime: z.string().min(1, "Event time is required"),
-  eventVenueAddress: z.string().optional(),
+  category: z.string().min(1, "Category is required"),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  city: z.string().optional(),
+  country: z.string().min(1, "Country is required"),
+  state: z.string().optional(),
+  postalCode: z.string().optional(),
+  eventTimezone: z.string().default("UTC"),
+  ageRestriction: z.string().optional(),
+  section: z.string().optional(),
+  row: z.string().optional(),
+  seat: z.string().optional(),
+  price: z.number().min(0, "Price must be 0 or greater").optional(),
+  currency: z.string().default("USD"),
+  quantity: z.number().min(1, "Quantity must be at least 1"),
+  transferMethod: z.string().min(1, "Transfer method is required"),
+  additionalInfo: z.string().optional(),
+  isTransferrable: z.boolean().default(true),
+  showContactInfo: z.boolean().default(false),
+  status: z.string().default("available"),
 });
 
 type TicketWithEventForm = z.infer<typeof ticketFormSchema>;
@@ -66,13 +90,14 @@ export default function ListTicket() {
     defaultValues: {
       title: "",
       eventTitle: "",
+      eventDescription: "",
       eventDate: "",
       eventTime: "",
       venue: "",
       eventVenueAddress: "",
       latitude: undefined,
       longitude: undefined,
-      category: "concerts",
+      category: "music",
       price: 0,
       currency: "USD",
       transferMethod: "electronic",
@@ -84,6 +109,9 @@ export default function ListTicket() {
       postalCode: "",
       eventTimezone: "UTC",
       ageRestriction: "",
+      section: "",
+      row: "",
+      seat: "",
       additionalInfo: "",
       isTransferrable: true,
       showContactInfo: false,
@@ -194,11 +222,45 @@ export default function ListTicket() {
 
   const createTicketMutation = useMutation({
     mutationFn: async (data: TicketWithEventForm) => {
-      const response = await apiRequest("POST", "/api/tickets/with-event", {
-        ...data,
+      // Convert form data to match the ticket schema
+      const eventDateTime = new Date(`${data.eventDate}T${data.eventTime}`);
+      
+      const ticketData = {
         sellerId: user?.id,
-      });
-      return response.json();
+        title: data.title,
+        eventTitle: data.eventTitle,
+        eventDescription: data.eventDescription || `${data.eventTitle} at ${data.venue}`,
+        venue: data.venue,
+        venueAddress: data.eventVenueAddress || '',
+        eventDate: eventDateTime,
+        category: data.category,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        city: data.city,
+        country: data.country,
+        state: data.state,
+        postalCode: data.postalCode,
+        eventTimezone: data.eventTimezone,
+        ageRestriction: data.ageRestriction,
+        section: data.section || '',
+        row: data.row,
+        seat: data.seat,
+        price: data.price,
+        currency: data.currency,
+        quantity: data.quantity,
+        transferMethod: data.transferMethod,
+        additionalInfo: data.additionalInfo,
+        trending: false,
+        sellingFast: false,
+        eventImageUrl: null,
+        isTransferrable: data.isTransferrable,
+        showContactInfo: data.showContactInfo,
+        status: data.status,
+        availabilityStatus: 'available'
+      };
+
+      const response = await apiRequest("POST", "/api/tickets", ticketData);
+      return response;
     },
     onSuccess: () => {
       toast({
