@@ -77,26 +77,6 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-medium text-base mb-4">Buy Tickets</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/buy-second-hand-tickets">
-                  <a className="text-textSecondary hover:text-primary">
-                    Buy Second Hand Tickets
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href="/?category=concerts">
-                  <a className="text-textSecondary hover:text-primary">
-                    Concert Tickets
-                  </a>
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
             <h4 className="font-medium text-base mb-4">Support</h4>
             <ul className="space-y-2 text-sm">
 
