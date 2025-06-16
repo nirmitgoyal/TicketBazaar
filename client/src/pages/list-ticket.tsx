@@ -317,6 +317,8 @@ export default function ListTicket() {
       return;
     }
     
+    // Clear any previous error states
+    createTicketMutation.reset();
     createTicketMutation.mutate(data);
   };
 
@@ -677,9 +679,21 @@ export default function ListTicket() {
                     }}
                   >
                     {createTicketMutation.isPending
-                      ? "Listing..."
+                      ? "Creating your listing..."
                       : "List Ticket"}
                   </Button>
+                  
+                  {createTicketMutation.isSuccess && (
+                    <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md text-green-800 text-sm">
+                      ✓ Ticket listed successfully! Redirecting to your tickets...
+                    </div>
+                  )}
+                  
+                  {createTicketMutation.isError && (
+                    <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
+                      Failed to create listing. Please check your information and try again.
+                    </div>
+                  )}
                 </form>
               </Form>
             </CardContent>
