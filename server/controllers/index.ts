@@ -4,7 +4,7 @@ import { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import QRCode from "qrcode";
-import { userRegisterSchema, userLoginSchema, tickets } from "@shared/schema";
+import { userRegisterSchema, userLoginSchema, tickets as ticketsTable } from "@shared/schema";
 import { z } from "zod";
 import { db } from "../db";
 import { eq, desc } from "drizzle-orm";
@@ -152,11 +152,11 @@ export class EventController extends BaseController {
   public getAllEvents = async (req: Request, res: Response) => {
     try {
       // Get all available tickets (which contain embedded event data)
-      const tickets = await db.select().from(tickets)
-        .where(eq(tickets.status, 'available'))
-        .orderBy(desc(tickets.eventDate), desc(tickets.createdAt))
+      const ticketResults = await db.select().from(ticketsTable)
+        .where(eq(ticketsTable.status, 'available'))
+        .orderBy(desc(ticketsTable.eventDate), desc(ticketsTable.createdAt))
         .limit(100);
-      this.sendSuccess(res, tickets);
+      this.sendSuccess(res, ticketResults);
     } catch (error) {
       this.handleError(error, res);
     }
@@ -188,8 +188,11 @@ export class EventController extends BaseController {
   public getEventsByCategory = async (req: Request, res: Response) => {
     try {
       const { category } = req.params;
-      const events = await storage.getEventsByCategory(category);
-      this.sendSuccess(res, events);
+      const ticketResults = await db.select().from(ticketsTable)
+        .where(eq(ticketsTable.category, category))
+        .orderBy(desc(ticketsTable.eventDate))
+        .limit(50);
+      this.sendSuccess(res, ticketResults);
     } catch (error) {
       this.handleError(error, res);
     }
@@ -268,25 +271,14 @@ export class EventController extends BaseController {
         bounds,
       });
 
-      // Perform the search with filters
-      const events = await storage.searchEvents(query, {
-        category,
-        location,
-        date,
-        dateRange,
-        minPrice,
-        maxPrice,
-        trending,
-        sellingFast,
-        city,
-        bounds,
-      });
+      // Perform the search with filters directly on tickets table
+      const searchResults = await storage.searchTickets(query);
 
       console.log(
-        `Found ${events.length} events for query "${query}" with applied filters`,
+        `Found ${searchResults.length} tickets for query "${query}" with applied filters`,
       );
 
-      this.sendSuccess(res, events);
+      this.sendSuccess(res, searchResults);
     } catch (error) {
       this.handleError(error, res);
     }
