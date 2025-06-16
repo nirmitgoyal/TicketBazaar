@@ -280,6 +280,18 @@ export default function ListTicket() {
   });
 
   const onSubmit = (data: TicketWithEventForm) => {
+    console.log("Form submitted with data:", data);
+    console.log("Form errors:", form.formState.errors);
+    
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to list a ticket.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     createTicketMutation.mutate(data);
   };
 
@@ -575,6 +587,55 @@ export default function ListTicket() {
                   <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
                     <h3 className="font-medium text-lg">Listing Details</h3>
 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="price"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Price per Ticket</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0.00"
+                                {...field}
+                                onChange={(e) => field.onChange(Number(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="currency"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Currency</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select currency" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="USD">USD ($)</SelectItem>
+                                <SelectItem value="EUR">EUR (€)</SelectItem>
+                                <SelectItem value="GBP">GBP (£)</SelectItem>
+                                <SelectItem value="INR">INR (₹)</SelectItem>
+                                <SelectItem value="CAD">CAD (C$)</SelectItem>
+                                <SelectItem value="AUD">AUD (A$)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
                     <FormField
                       control={form.control}
                       name="quantity"
@@ -622,6 +683,11 @@ export default function ListTicket() {
                     type="submit"
                     className="w-full"
                     disabled={createTicketMutation.isPending}
+                    onClick={() => {
+                      console.log("Button clicked!");
+                      console.log("Form valid:", form.formState.isValid);
+                      console.log("Form errors:", form.formState.errors);
+                    }}
                   >
                     {createTicketMutation.isPending
                       ? "Listing..."
