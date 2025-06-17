@@ -57,7 +57,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
         // Construct WebSocket URL with the /ws path
         const wsUrl = `${protocol}//${host}/ws`;
 
-        console.log("Connecting to WebSocket:", wsUrl);
+
 
         // Create a new connection with backoff retry logic
         const socket = new WebSocket(wsUrl);
@@ -65,7 +65,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
         return socket;
       } catch (error) {
-        console.error("Failed to create WebSocket connection:", error);
         return null;
       }
     };
@@ -84,9 +83,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
         reconnectAttempts++;
 
-        console.log(
-          `WebSocket reconnecting in ${delay}ms (attempt ${reconnectAttempts}/${maxReconnectAttempts})`,
-        );
+
 
         setTimeout(() => {
           if (user) {

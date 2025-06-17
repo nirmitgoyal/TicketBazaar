@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import EventMap from "@/components/ui/google-map";
-import { Event } from "@shared/schema";
+import { Ticket } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ const EventMapPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [city, setCity] = useState("all");
-  const [visibleEvents, setVisibleEvents] = useState<Event[]>([]);
+  const [visibleEvents, setVisibleEvents] = useState<Ticket[]>([]);
   const [initialLoad, setInitialLoad] = useState(true);
   const [mapBounds, setMapBounds] = useState<google.maps.LatLngBounds | null>(
     null,
