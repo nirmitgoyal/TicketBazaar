@@ -776,7 +776,6 @@ export default function Home() {
                           <h3 className="font-semibold text-sm leading-tight">
                             {sampleTicket.eventTitle}
                           </h3>
-                          <p className="text-xs text-gray-600">{sampleTicket.venue}</p>
                         </div>
                       </div>
                     );
