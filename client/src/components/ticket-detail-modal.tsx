@@ -1,7 +1,7 @@
-import { 
-  CheckCircle, 
-  ShieldCheck, 
-  MapPin, 
+import {
+  CheckCircle,
+  ShieldCheck,
+  MapPin,
   Calendar,
   Clock,
   Users,
@@ -16,7 +16,7 @@ import {
   Globe,
   Eye,
   TrendingUp,
-  Zap
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +34,10 @@ import { Ticket, User } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
 import { TicketVerificationSection } from "./ticket-verification-section";
 import { PopularityMetrics } from "./popularity-metrics";
-import { useAutoTrackView, usePopularityMetrics } from "@/hooks/use-popularity-tracking";
+import {
+  useAutoTrackView,
+  usePopularityMetrics,
+} from "@/hooks/use-popularity-tracking";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface TicketDetailModalProps {
@@ -68,31 +71,33 @@ export function TicketDetailModal({
   // Function to handle venue click with device-specific behavior
   const handleVenueClick = () => {
     if (!firstTicket?.venue) return;
-    
-    const query = firstTicket.venueAddress 
+
+    const query = firstTicket.venueAddress
       ? `${firstTicket.venue}, ${firstTicket.venueAddress}`
       : firstTicket.venue;
-    
+
     // Detect if device is mobile/tablet
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
-      || window.innerWidth <= 768;
-    
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent,
+      ) || window.innerWidth <= 768;
+
     if (isMobile) {
       // Try to open Google Maps app first, fallback to web version
       const mapsAppUrl = `comgooglemaps://?q=${encodeURIComponent(query)}`;
       const mapsWebUrl = `https://maps.google.com/maps?q=${encodeURIComponent(query)}`;
-      
+
       // Try to open Maps app
       window.location.href = mapsAppUrl;
-      
+
       // Fallback to web version after a short delay if app doesn't open
       setTimeout(() => {
-        window.open(mapsWebUrl, '_blank');
+        window.open(mapsWebUrl, "_blank");
       }, 500);
     } else {
       // Desktop: Open Google Maps in new tab
       const mapsWebUrl = `https://maps.google.com/maps?q=${encodeURIComponent(query)}`;
-      window.open(mapsWebUrl, '_blank');
+      window.open(mapsWebUrl, "_blank");
     }
   };
 
@@ -128,7 +133,7 @@ export function TicketDetailModal({
       // Convert to Record<sellerId, User>
       return sellerResults.reduce(
         (acc, result) => {
-          if (result.status === 'fulfilled' && result.value) {
+          if (result.status === "fulfilled" && result.value) {
             const sellerData = result.value;
             if (sellerData && sellerData.data) {
               acc[sellerData.id] = sellerData.data;
@@ -148,7 +153,7 @@ export function TicketDetailModal({
           {/* Hero Section Skeleton */}
           <div className="relative">
             <Skeleton className="h-48 md:h-64 w-full rounded-t-lg" />
-            
+
             {/* Header Content Skeleton */}
             <div className="p-6 pb-4 space-y-4">
               <Skeleton className="h-8 w-3/4" />
@@ -201,7 +206,7 @@ export function TicketDetailModal({
                 ))}
               </div>
             </div>
-            
+
             {/* Tickets List Skeleton */}
             <div className="border rounded-lg p-4 space-y-4">
               <div className="flex items-center justify-between">
@@ -211,7 +216,7 @@ export function TicketDetailModal({
                 </div>
                 <Skeleton className="h-6 w-20 rounded-full" />
               </div>
-              
+
               {Array.from({ length: 2 }).map((_, i) => (
                 <div key={i} className="border rounded-xl p-5 space-y-4">
                   {/* Ticket Header */}
@@ -262,50 +267,59 @@ export function TicketDetailModal({
   if (!tickets || tickets.length === 0) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0" data-testid="event-modal">
+        <DialogContent
+          className="max-w-4xl max-h-[90vh] overflow-y-auto p-0"
+          data-testid="event-modal"
+        >
           {/* Hero Section */}
           <div className="relative">
             {firstTicket?.eventImageUrl && (
               <div className="h-48 md:h-64 overflow-hidden rounded-t-lg">
-                <img 
-                  src={firstTicket.eventImageUrl} 
+                <img
+                  src={firstTicket.eventImageUrl}
                   alt={firstTicket.eventTitle}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>
             )}
-            
+
             {/* Header Content */}
             <div className="p-6 pb-4">
               <DialogHeader className="space-y-3">
                 <DialogTitle className="text-2xl md:text-3xl font-bold leading-tight">
                   {firstTicket?.eventTitle || "Event Details"}
                 </DialogTitle>
-                
+
                 {/* Event Meta Info */}
                 <div className="space-y-2">
                   {firstTicket?.eventDate && (
                     <div className="flex items-center gap-2 text-textSecondary">
                       <Calendar className="h-4 w-4" />
                       <span className="font-medium">
-                        {new Date(firstTicket.eventDate).toLocaleDateString("en-US", {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        {new Date(firstTicket.eventDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          },
+                        )}
                       </span>
                       <Clock className="h-4 w-4 ml-2" />
                       <span>
-                        {new Date(firstTicket.eventDate).toLocaleTimeString("en-US", {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        })}
+                        {new Date(firstTicket.eventDate).toLocaleTimeString(
+                          "en-US",
+                          {
+                            hour: "numeric",
+                            minute: "2-digit",
+                          },
+                        )}
                       </span>
                     </div>
                   )}
-                  
+
                   {firstTicket?.venue && (
                     <button
                       onClick={handleVenueClick}
@@ -317,7 +331,9 @@ export function TicketDetailModal({
                         {firstTicket.venue}
                       </span>
                       {firstTicket.venueAddress && (
-                        <span className="text-textSecondary">• {firstTicket.venueAddress}</span>
+                        <span className="text-textSecondary">
+                          • {firstTicket.venueAddress}
+                        </span>
                       )}
                       <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100" />
                     </button>
@@ -334,9 +350,13 @@ export function TicketDetailModal({
                 <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-6">
                   <CreditCard className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">No Tickets Available</h3>
+                <h3 className="text-xl font-semibold mb-2">
+                  No Tickets Available
+                </h3>
                 <p className="text-textSecondary mb-6 max-w-md mx-auto">
-                  No tickets are currently listed for sale for this event. Check back later or create an alert to be notified when tickets become available.
+                  No tickets are currently listed for sale for this event. Check
+                  back later or create an alert to be notified when tickets
+                  become available.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Button variant="outline" onClick={onClose}>
@@ -357,20 +377,23 @@ export function TicketDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0" data-testid="event-modal">
+      <DialogContent
+        className="max-w-4xl max-h-[90vh] overflow-y-auto p-0"
+        data-testid="event-modal"
+      >
         {/* Hero Section */}
         <div className="relative">
           {firstTicket?.eventImageUrl && (
             <div className="h-48 md:h-64 overflow-hidden rounded-t-lg">
-              <img 
-                src={firstTicket.eventImageUrl} 
+              <img
+                src={firstTicket.eventImageUrl}
                 alt={firstTicket.eventTitle}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
           )}
-          
+
           {/* Event Status Badges */}
           <div className="absolute top-4 left-4 flex gap-2">
             {firstTicket?.trending && (
@@ -382,7 +405,11 @@ export function TicketDetailModal({
               </motion.div>
             )}
             {firstTicket?.sellingFast && (
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1 }}>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.1 }}
+              >
                 <Badge className="bg-orange-500 text-white">
                   <Zap className="h-3 w-3 mr-1" />
                   Selling Fast
@@ -397,30 +424,36 @@ export function TicketDetailModal({
               <DialogTitle className="text-2xl md:text-3xl font-bold leading-tight">
                 {firstTicket?.eventTitle || "Available Tickets"}
               </DialogTitle>
-              
+
               {/* Event Meta Info */}
               <div className="space-y-2">
                 {firstTicket?.eventDate && (
                   <div className="flex items-center gap-2 text-textSecondary">
                     <Calendar className="h-4 w-4" />
                     <span className="font-medium">
-                      {new Date(firstTicket.eventDate).toLocaleDateString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
+                      {new Date(firstTicket.eventDate).toLocaleDateString(
+                        "en-US",
+                        {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        },
+                      )}
                     </span>
                     <Clock className="h-4 w-4 ml-2" />
                     <span>
-                      {new Date(firstTicket.eventDate).toLocaleTimeString("en-US", {
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
+                      {new Date(firstTicket.eventDate).toLocaleTimeString(
+                        "en-US",
+                        {
+                          hour: "numeric",
+                          minute: "2-digit",
+                        },
+                      )}
                     </span>
                   </div>
                 )}
-                
+
                 {firstTicket?.venue && (
                   <button
                     onClick={handleVenueClick}
@@ -432,7 +465,9 @@ export function TicketDetailModal({
                       {firstTicket.venue}
                     </span>
                     {firstTicket.venueAddress && (
-                      <span className="text-textSecondary">• {firstTicket.venueAddress}</span>
+                      <span className="text-textSecondary">
+                        • {firstTicket.venueAddress}
+                      </span>
                     )}
                     <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100" />
                   </button>
@@ -456,7 +491,9 @@ export function TicketDetailModal({
                     <Badge variant="outline">
                       <Globe className="h-3 w-3 mr-1" />
                       {firstTicket.city}
-                      {firstTicket.country && firstTicket.country !== 'US' && `, ${firstTicket.country}`}
+                      {firstTicket.country &&
+                        firstTicket.country !== "US" &&
+                        `, ${firstTicket.country}`}
                     </Badge>
                   )}
                 </div>
@@ -466,23 +503,6 @@ export function TicketDetailModal({
         </div>
 
         <div className="px-6 pb-6 space-y-6">
-          {/* Event Description */}
-          {firstTicket?.eventDescription && (
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Info className="h-5 w-5" />
-                  About This Event
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-textSecondary leading-relaxed">
-                  {firstTicket.eventDescription}
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
           {/* Available Tickets Section */}
           <Card>
             <CardHeader className="pb-3">
@@ -492,7 +512,7 @@ export function TicketDetailModal({
                   Available Tickets
                 </div>
                 <Badge variant="secondary" className="text-sm">
-                  {tickets.length} listing{tickets.length !== 1 ? 's' : ''}
+                  {tickets.length} listing{tickets.length !== 1 ? "s" : ""}
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -515,7 +535,7 @@ export function TicketDetailModal({
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <h3 className="font-bold text-lg">
-                              {ticket.section || 'General Admission'}
+                              {ticket.section || "General Admission"}
                               {ticket.row && ` • Row ${ticket.row}`}
                               {ticket.seat && ` • Seat ${ticket.seat}`}
                             </h3>
@@ -526,11 +546,12 @@ export function TicketDetailModal({
                               </Badge>
                             )}
                           </div>
-                          
+
                           <div className="flex items-center gap-2">
                             <CheckCircle className="h-4 w-4 text-green-600" />
                             <span className="text-sm text-textSecondary">
-                              @{seller?.instagram || "unknown"} • Verified Seller
+                              @{seller?.instagram || "unknown"} • Verified
+                              Seller
                             </span>
                           </div>
                         </div>
@@ -540,7 +561,8 @@ export function TicketDetailModal({
                             Available for Transfer
                           </div>
                           <div className="text-sm text-textSecondary">
-                            {ticket.quantity} ticket{ticket.quantity !== 1 ? 's' : ''} available
+                            {ticket.quantity} ticket
+                            {ticket.quantity !== 1 ? "s" : ""} available
                           </div>
                         </div>
                       </div>
@@ -555,7 +577,7 @@ export function TicketDetailModal({
                             {ticket.transferMethod}
                           </div>
                         </div>
-                        
+
                         {ticket.createdAt && (
                           <div className="space-y-1">
                             <div className="text-xs font-medium text-textSecondary uppercase tracking-wide">
@@ -571,11 +593,11 @@ export function TicketDetailModal({
                           <div className="text-xs font-medium text-textSecondary uppercase tracking-wide">
                             Status
                           </div>
-                          <Badge 
+                          <Badge
                             className={`capitalize ${
-                              ticket.status === 'available' 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-yellow-100 text-yellow-800'
+                              ticket.status === "available"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
                             }`}
                           >
                             {ticket.status}
@@ -600,7 +622,7 @@ export function TicketDetailModal({
                       {/* Action Area */}
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <TicketVerificationSection ticket={ticket} />
-                        
+
                         <div className="flex gap-2 w-full md:w-auto">
                           <Button
                             variant="outline"
@@ -614,7 +636,7 @@ export function TicketDetailModal({
                             <Share2 className="h-4 w-4 md:mr-2" />
                             <span className="hidden md:inline">Share</span>
                           </Button>
-                          
+
                           <Button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -623,7 +645,9 @@ export function TicketDetailModal({
                             className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white flex-1 md:flex-none"
                           >
                             <MessageCircle className="h-4 w-4 md:mr-2" />
-                            <span className="hidden md:inline">Contact Seller</span>
+                            <span className="hidden md:inline">
+                              Contact Seller
+                            </span>
                             <span className="md:hidden">Contact</span>
                           </Button>
                         </div>
