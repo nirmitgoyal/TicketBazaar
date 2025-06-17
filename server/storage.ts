@@ -298,7 +298,7 @@ export class DatabaseStorage implements IStorage {
         eq(tickets.status, 'available'),
         searchCondition
       ))
-      .orderBy(desc(tickets.eventDate), desc(tickets.createdAt))
+      .orderBy(tickets.eventDate, tickets.createdAt)
       .limit(100); // Get more results to account for filtering
 
     // Filter search results to show only future events based on venue timezone

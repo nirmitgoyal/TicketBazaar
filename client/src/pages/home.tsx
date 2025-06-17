@@ -167,8 +167,6 @@ export default function Home() {
       return sortedData;
     },
     enabled: true,
-    staleTime: 0,
-    gcTime: 0,
   });
 
   // Search tickets query - triggered by search input
