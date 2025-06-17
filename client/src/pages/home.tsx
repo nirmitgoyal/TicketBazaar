@@ -51,6 +51,20 @@ export default function Home() {
     error: eventsError,
   } = useQuery<Ticket[]>({
     queryKey: ["/api/events", activeCategory, selectedSearchFilters],
+    queryFn: async () => {
+      const response = await fetch(`/api/events`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+      const data = await response.json();
+      
+      // Sort events by event date and time in ascending order
+      return data.sort((a: Ticket, b: Ticket) => {
+        const dateA = new Date(a.eventDate).getTime();
+        const dateB = new Date(b.eventDate).getTime();
+        return dateA - dateB;
+      });
+    },
     enabled: true,
   });
 
@@ -85,12 +99,19 @@ export default function Home() {
       }
       const data = await response.json();
       
+      // Sort tickets by event date and time in ascending order
+      const sortedData = data.sort((a: Ticket, b: Ticket) => {
+        const dateA = new Date(a.eventDate).getTime();
+        const dateB = new Date(b.eventDate).getTime();
+        return dateA - dateB;
+      });
+      
       // Reset state for new search/filter
       setCurrentPage(1);
-      setAllTickets(data);
-      setHasMoreTickets(data.length === TICKETS_PER_PAGE);
+      setAllTickets(sortedData);
+      setHasMoreTickets(sortedData.length === TICKETS_PER_PAGE);
       
-      return data;
+      return sortedData;
     },
     enabled: true,
   });
@@ -107,7 +128,14 @@ export default function Home() {
       if (!response.ok) {
         throw new Error('Search failed');
       }
-      return response.json();
+      const data = await response.json();
+      
+      // Sort search results by event date and time in ascending order
+      return data.sort((a: Ticket, b: Ticket) => {
+        const dateA = new Date(a.eventDate).getTime();
+        const dateB = new Date(b.eventDate).getTime();
+        return dateA - dateB;
+      });
     },
     enabled: searchQuery.length >= 2, // Only search when user has typed at least 2 characters
     staleTime: 30000, // Cache results for 30 seconds
@@ -170,8 +198,22 @@ export default function Home() {
       }
       const newTickets = await response.json();
       
-      // Append new tickets to existing ones
-      setAllTickets(prev => [...prev, ...newTickets]);
+      // Sort new tickets by date and append to existing ones, then sort the combined array
+      const sortedNewTickets = newTickets.sort((a: Ticket, b: Ticket) => {
+        const dateA = new Date(a.eventDate).getTime();
+        const dateB = new Date(b.eventDate).getTime();
+        return dateA - dateB;
+      });
+      
+      setAllTickets(prev => {
+        const combined = [...prev, ...sortedNewTickets];
+        // Sort the entire combined array to maintain chronological order
+        return combined.sort((a: Ticket, b: Ticket) => {
+          const dateA = new Date(a.eventDate).getTime();
+          const dateB = new Date(b.eventDate).getTime();
+          return dateA - dateB;
+        });
+      });
       setCurrentPage(nextPage);
       setHasMoreTickets(newTickets.length === TICKETS_PER_PAGE);
       
@@ -639,71 +681,82 @@ export default function Home() {
             ) : (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {/* Sample Event Cards to match the original design */}
-                {Array.from({ length: 12 }, (_, i) => {
-                // Create sample ticket data for each card
-                const sampleTicket: Ticket = {
-                  id: i + 1000, // Unique ID for sample tickets
-                  sellerId: Math.floor(Math.random() * 5) + 1, // Random seller ID 1-5
-                  title: `Sample Event Ticket ${i + 1}`,
-                  eventTitle: `Sample Event Title ${i + 1}`,
-                  eventDescription: `Description for sample event ${i + 1}`,
-                  venue: `Sample Venue ${i + 1}`,
-                  venueAddress: `123 Sample St, City ${i + 1}`,
-                  eventDate: new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
-                  category: ['Concerts', 'Sports', 'Festivals', 'Theatre', 'Comedy'][Math.floor(Math.random() * 5)],
-                  eventImageUrl: null,
-                  trending: Math.random() > 0.7,
-                  sellingFast: Math.random() > 0.8,
-                  latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
-                  longitude: -74.0060 + (Math.random() - 0.5) * 0.1,
-                  city: `City ${i + 1}`,
-                  country: 'US',
-                  state: 'NY',
-                  postalCode: '10001',
-                  section: `Section ${String.fromCharCode(65 + Math.floor(Math.random() * 5))}`,
-                  row: Math.floor(Math.random() * 20) + 1 + '',
-                  seat: Math.floor(Math.random() * 30) + 1 + '',
+                {(() => {
+                  // Create sample tickets array first, then sort by date
+                  const sampleTickets = Array.from({ length: 12 }, (_, i) => {
+                    // Create sample ticket data for each card
+                    return {
+                      id: i + 1000, // Unique ID for sample tickets
+                      sellerId: Math.floor(Math.random() * 5) + 1, // Random seller ID 1-5
+                      title: `Sample Event Ticket ${i + 1}`,
+                      eventTitle: `Sample Event Title ${i + 1}`,
+                      eventDescription: `Description for sample event ${i + 1}`,
+                      venue: `Sample Venue ${i + 1}`,
+                      venueAddress: `123 Sample St, City ${i + 1}`,
+                      eventDate: new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
+                      category: ['Concerts', 'Sports', 'Festivals', 'Theatre', 'Comedy'][Math.floor(Math.random() * 5)],
+                      eventImageUrl: null,
+                      trending: Math.random() > 0.7,
+                      sellingFast: Math.random() > 0.8,
+                      latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
+                      longitude: -74.0060 + (Math.random() - 0.5) * 0.1,
+                      city: `City ${i + 1}`,
+                      country: 'US',
+                      state: 'NY',
+                      postalCode: '10001',
+                      section: `Section ${String.fromCharCode(65 + Math.floor(Math.random() * 5))}`,
+                      row: Math.floor(Math.random() * 20) + 1 + '',
+                      seat: Math.floor(Math.random() * 30) + 1 + '',
+                      price: Math.floor(Math.random() * 500) + 50,
+                      quantity: Math.floor(Math.random() * 4) + 1,
+                      status: 'available',
+                      isTransferrable: true,
+                      transferMethod: 'mobile_transfer',
+                      additionalInfo: `Additional info for ticket ${i + 1}`,
+                      showContactInfo: false,
+                      eventTimezone: 'America/New_York',
+                      ageRestriction: '18+',
+                      createdAt: new Date(),
+                      expiresAt: new Date(2025, 11, 31),
+                      viewCount: Math.floor(Math.random() * 100),
+                      contactCount: Math.floor(Math.random() * 20),
+                      isFeatured: false,
+                      boostScore: Math.floor(Math.random() * 10),
+                      availabilityStatus: 'available'
+                    } as Ticket;
+                  });
 
-                  quantity: Math.floor(Math.random() * 4) + 1,
-                  status: 'available',
-                  isTransferrable: true,
-                  transferMethod: 'mobile_transfer',
-                  additionalInfo: `Additional info for ticket ${i + 1}`,
-                  showContactInfo: false,
-                  eventTimezone: 'America/New_York',
-                  ageRestriction: '18+',
-                  createdAt: new Date(),
-                  expiresAt: new Date(2025, 11, 31),
-                  viewCount: Math.floor(Math.random() * 100),
-                  contactCount: Math.floor(Math.random() * 20),
-                  isFeatured: false,
-                  boostScore: Math.floor(Math.random() * 10),
-                  availabilityStatus: 'available'
-                };
+                  // Sort sample tickets by event date in ascending order
+                  const sortedSampleTickets = sampleTickets.sort((a, b) => {
+                    const dateA = new Date(a.eventDate).getTime();
+                    const dateB = new Date(b.eventDate).getTime();
+                    return dateA - dateB;
+                  });
 
-                const eventDate = sampleTicket.eventDate;
-                return (
-                  <div 
-                    key={i} 
-                    className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => openSellerModal(sampleTicket)}
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {String(eventDate.getDate()).padStart(2, '0')}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {eventDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {eventDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="font-semibold text-sm leading-tight">
-                        {sampleTicket.eventTitle}
-                      </h3>
-                      <p className="text-xs text-gray-600">{sampleTicket.venue}</p>
+                  return sortedSampleTickets.map((sampleTicket, i) => {
+                    const eventDate = sampleTicket.eventDate;
+                    return (
+                      <div 
+                        key={sampleTicket.id} 
+                        className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                        onClick={() => openSellerModal(sampleTicket)}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-blue-600">
+                            {String(eventDate.getDate()).padStart(2, '0')}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {eventDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {eventDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-sm leading-tight">
+                            {sampleTicket.eventTitle}
+                          </h3>
+                          <p className="text-xs text-gray-600">{sampleTicket.venue}</p>
                       <p className="text-xs text-gray-500">
                         {eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                       </p>
