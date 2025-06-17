@@ -512,9 +512,16 @@ export default function Home() {
       <section className="py-8" itemScope itemType="https://schema.org/ItemList" role="main" aria-label="Available second-hand tickets">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900" itemProp="name">
-              {searchQuery.length >= 2 ? `Search Results for "${searchQuery}"` : "Tickets Available"}
-            </h2>
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-900" itemProp="name">
+                {searchQuery.length >= 2 ? `Search Results for "${searchQuery}"` : "Tickets Available"}
+              </h2>
+              {allTickets.length > 0 && (
+                <p className="text-sm text-gray-600 mt-1">
+                  Showing {allTickets.length} ticket{allTickets.length !== 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
             <Button variant="outline" size="sm" className="flex items-center space-x-2" aria-label="Filter ticket results">
               <span>Filter</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -758,13 +765,20 @@ export default function Home() {
             <div className="relative group">
               <Button
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow-lg"
+                className="bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-white rounded-full p-2 shadow-lg transition-all duration-200"
                 onClick={scrollToTop}
-                aria-label="Scroll to top"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    scrollToTop();
+                  }
+                }}
+                aria-label="Scroll to top of page"
+                tabIndex={0}
               >
                 <ArrowUp className="h-4 w-4" />
               </Button>
-              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                 Back to Top
               </div>
             </div>
@@ -775,13 +789,20 @@ export default function Home() {
             <div className="relative group">
               <Button
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow-lg"
+                className="bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-white rounded-full p-2 shadow-lg transition-all duration-200"
                 onClick={scrollToBottom}
-                aria-label="Scroll to bottom"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    scrollToBottom();
+                  }
+                }}
+                aria-label="Scroll to bottom of page"
+                tabIndex={0}
               >
                 <ArrowDown className="h-4 w-4" />
               </Button>
-              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                 Go to Bottom
               </div>
             </div>
@@ -793,13 +814,20 @@ export default function Home() {
               <Button
                 size="sm"
                 variant="outline"
-                className="bg-white hover:bg-gray-50 border-gray-300 rounded-full p-2 shadow-lg"
+                className="bg-white hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 border-gray-300 rounded-full p-2 shadow-lg transition-all duration-200"
                 onClick={dismissScrollTooltips}
-                aria-label="Hide scroll buttons"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    dismissScrollTooltips();
+                  }
+                }}
+                aria-label="Hide scroll navigation buttons"
+                tabIndex={0}
               >
                 <X className="h-3 w-3" />
               </Button>
-              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                 Hide
               </div>
             </div>
