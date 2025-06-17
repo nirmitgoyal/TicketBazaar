@@ -122,9 +122,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
 
   return (
     <div className="mt-3 pt-3 border-t border-gray-200" onClick={(e) => e.stopPropagation()}>
-      <div className="flex items-center justify-between mb-3">
-        <div></div>
-        
+      <div className="flex items-center justify-start mb-3">
         <Button
           variant="ghost"
           size="sm"
