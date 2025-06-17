@@ -10,7 +10,6 @@ import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { SellerDetailsModal } from "@/components/seller-details-modal";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
 import { Loader2, AlertTriangle, MapPin, Search, ArrowUp, ArrowDown, X } from "lucide-react";
-import { Ticket } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
@@ -379,11 +378,7 @@ export default function Home() {
       }
     });
 
-    window.history.replaceState(
-      {},
-      "",
-      params.toString() ? `?${params}` : window.location.pathname,
-    );
+    
 
     setTimeout(() => {
       setIsLoading(false);
@@ -525,41 +520,6 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Category Navigation */}
-      <section className="bg-white border-b">
-        <div className="container mx-auto mobile-container">
-          <div className="flex overflow-x-auto scrollbar-hide space-x-4 sm:space-x-8 py-4 -mx-3 px-3 sm:mx-0 sm:px-0">
-            {categories.map((category) => (
-              <button
-                key={category}
-                className={`flex-shrink-0 whitespace-nowrap py-2 px-3 text-sm font-medium transition-colors border-b-2 touch-target ${
-                  activeCategory === category.toLowerCase() ||
-                  (category === "All" && activeCategory === "all")
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-600 hover:text-blue-600"
-                }`}
-                onClick={() => {
-                  setActiveCategory(category.toLowerCase());
-                  const params = new URLSearchParams(window.location.search);
-                  if (category.toLowerCase() !== "all") {
-                    params.set("category", category);
-                  } else {
-                    params.delete("category");
-                  }
-                  window.history.replaceState(
-                    {},
-                    "",
-                    params.toString() ? `?${params}` : window.location.pathname,
-                  );
-                }}
-              >
-                {category}
-              </button>
-            ))}
           </div>
         </div>
       </section>
