@@ -496,7 +496,7 @@ export function TicketDetailModal({
                 </Badge>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <div className="p-6 pt-0 space-y-4">
               <AnimatePresence>
                 {tickets.map((ticket, index) => {
                   const seller = sellers.data && sellers.data[ticket.sellerId];
@@ -632,7 +632,7 @@ export function TicketDetailModal({
                   );
                 })}
               </AnimatePresence>
-            </CardContent>
+            </div>
           </Card>
         </div>
       </DialogContent>
