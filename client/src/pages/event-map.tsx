@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import EventMap from "@/components/ui/google-map";
 import { Ticket } from "@shared/schema";
@@ -73,11 +73,7 @@ const EventMapPage: React.FC = () => {
   useEffect(() => {
     if (!events) return;
 
-    console.log("Filtering events with params:", {
-      searchQuery,
-      category,
-      city,
-    });
+
     let filtered = [...events];
 
     // Filter by search query
@@ -120,7 +116,7 @@ const EventMapPage: React.FC = () => {
       });
     }
 
-    console.log(`Filtered to ${filtered.length} events`);
+
     setVisibleEvents(filtered);
   }, [events, searchQuery, category, city, mapBounds]);
 

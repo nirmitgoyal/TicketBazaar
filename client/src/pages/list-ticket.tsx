@@ -267,7 +267,7 @@ export default function ListTicket() {
       return await response.json();
     },
     onSuccess: (data) => {
-      console.log("Ticket created successfully:", data);
+
       toast({
         title: "Ticket Listed Successfully!",
         description: "Your ticket is now available for buyers to view and contact you.",
@@ -302,8 +302,7 @@ export default function ListTicket() {
   });
 
   const onSubmit = (data: TicketWithEventForm) => {
-    console.log("Form submitted with data:", data);
-    console.log("Form errors:", form.formState.errors);
+
     
     if (!isAuthenticated) {
       toast({
@@ -670,9 +669,7 @@ export default function ListTicket() {
                     className="w-full"
                     disabled={createTicketMutation.isPending}
                     onClick={() => {
-                      console.log("Button clicked!");
-                      console.log("Form valid:", form.formState.isValid);
-                      console.log("Form errors:", form.formState.errors);
+
                     }}
                   >
                     {createTicketMutation.isPending

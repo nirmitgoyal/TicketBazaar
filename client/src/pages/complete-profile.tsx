@@ -105,10 +105,7 @@ export default function CompleteProfile() {
 
   // Only show this page for users who need to update their Instagram
   if (!user || (user.instagram && user.instagram.trim() !== "")) {
-    console.log(
-      "CompleteProfile - redirecting to home because:",
-      !user ? "no user" : "has instagram",
-    );
+
     navigate("/");
     return null;
   }
