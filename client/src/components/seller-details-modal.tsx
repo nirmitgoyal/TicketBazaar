@@ -210,32 +210,6 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
               </CardContent>
             </Card>
 
-            {/* Ticket Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>About This Ticket</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="text-sm">
-                  <span className="font-medium">Event:</span> {ticket.eventTitle}
-                </div>
-
-                <div className="text-sm">
-                  <span className="font-medium">Transfer Method:</span> {ticket.transferMethod}
-                </div>
-                <div className="text-sm">
-                  <span className="font-medium">Quantity:</span> {ticket.quantity}
-                </div>
-                {ticket.section && (
-                  <div className="text-sm">
-                    <span className="font-medium">Section:</span> {ticket.section}
-                    {ticket.row && `, Row ${ticket.row}`}
-                    {ticket.seat && `, Seat ${ticket.seat}`}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
             <div className="flex gap-3 pt-4">
               <Button onClick={onClose} variant="outline" className="flex-1">
                 Close
