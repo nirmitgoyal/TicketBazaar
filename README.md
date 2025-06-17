@@ -25,6 +25,255 @@ In India's bustling event scene, tickets often sell out quickly through official
 - **🎨 Mobile-First Design**: Optimized for Indian mobile usage patterns and data constraints
 - **🚌 Multi-Modal Support**: Events, movies, sports, buses, trains, and flight tickets 
 
+## 🏗️ Architecture Diagrams
+
+### 1. High-Level Architecture Diagram
+
+```mermaid
+graph TB
+    %% Client Layer
+    subgraph "Client Layer"
+        WEB[Web Browser]
+        PWA[Progressive Web App]
+        MOB[Mobile Devices]
+    end
+
+    %% Frontend Application
+    subgraph "Frontend Application (React/TypeScript)"
+        UI[User Interface Layer]
+        ROUTER[Router - Wouter]
+        STATE[State Management - TanStack Query]
+        AUTH_CLIENT[Auth Context]
+        WS_CLIENT[WebSocket Client]
+    end
+
+    %% Backend Services
+    subgraph "Backend Services (Node.js/Express)"
+        API[API Gateway]
+        AUTH_SERVER[Authentication Service]
+        TICKET_SVC[Ticket Service]
+        USER_SVC[User Service]
+        AI_SVC[AI Verification Service]
+        FRAUD_SVC[Fraud Detection Service]
+        WS_SERVER[WebSocket Server]
+    end
+
+    %% Database Layer
+    subgraph "Data Layer"
+        POSTGRES[(PostgreSQL Database)]
+        CACHE[Redis Cache]
+        SESSION[Session Store]
+    end
+
+    %% External Services
+    subgraph "External Services"
+        GOOGLE[Google OAuth & Maps]
+        STRIPE[Stripe Payments]
+        WHATSAPP[WhatsApp Business]
+        INSTAGRAM[Instagram API]
+        HONEYBADGER[Honeybadger Monitoring]
+    end
+
+    %% Infrastructure
+    subgraph "Infrastructure"
+        REPLIT[Replit Hosting]
+        CDN[Content Delivery Network]
+        MONITORING[Performance Monitoring]
+    end
+
+    %% Connections
+    WEB --> UI
+    PWA --> UI
+    MOB --> UI
+    
+    UI --> ROUTER
+    ROUTER --> STATE
+    STATE --> API
+    AUTH_CLIENT --> AUTH_SERVER
+    WS_CLIENT --> WS_SERVER
+    
+    API --> AUTH_SERVER
+    API --> TICKET_SVC
+    API --> USER_SVC
+    API --> AI_SVC
+    API --> FRAUD_SVC
+    
+    AUTH_SERVER --> POSTGRES
+    TICKET_SVC --> POSTGRES
+    USER_SVC --> POSTGRES
+    AI_SVC --> POSTGRES
+    FRAUD_SVC --> POSTGRES
+    
+    AUTH_SERVER --> SESSION
+    API --> CACHE
+    
+    AUTH_SERVER --> GOOGLE
+    TICKET_SVC --> STRIPE
+    USER_SVC --> WHATSAPP
+    USER_SVC --> INSTAGRAM
+    API --> HONEYBADGER
+    
+    REPLIT --> API
+    CDN --> UI
+    MONITORING --> API
+```
+
+### 2. Low-Level Architecture Diagram
+
+```mermaid
+graph TB
+    %% Frontend Modules
+    subgraph "Frontend Architecture"
+        subgraph "Pages Layer"
+            HOME[Home Page]
+            TICKET_DETAIL[Ticket Detail]
+            LIST_TICKET[List Ticket]
+            PROFILE[User Profile]
+            LOGIN[Login/Register]
+        end
+        
+        subgraph "Components Layer"
+            TICKET_CARD[Ticket Card]
+            SEARCH_BAR[Search Bar]
+            MAP_COMP[Venue Map]
+            VERIFICATION[Verification Modal]
+            PAYMENT[Payment Components]
+        end
+        
+        subgraph "Hooks & Context"
+            USE_AUTH[useAuth Hook]
+            USE_WS[useWebSocket Hook]
+            USE_ANALYTICS[useAnalytics Hook]
+            ATMOSPHERE_CTX[Atmosphere Context]
+        end
+        
+        subgraph "Utils & Libraries"
+            API_CLIENT[API Client]
+            QUERY_CLIENT[Query Client]
+            UTILS[Utility Functions]
+            ANIMATIONS[Animation Library]
+        end
+    end
+
+    %% Backend Modules
+    subgraph "Backend Architecture"
+        subgraph "Route Layer"
+            AUTH_ROUTES[Auth Routes]
+            TICKET_ROUTES[Ticket Routes]
+            USER_ROUTES[User Routes]
+            AI_ROUTES[AI Verification Routes]
+            POPULARITY_ROUTES[Popularity Routes]
+        end
+        
+        subgraph "Controller Layer"
+            TICKET_CTRL[Ticket Controller]
+            USER_CTRL[User Controller]
+            BASE_CTRL[Base Controller]
+        end
+        
+        subgraph "Service Layer"
+            TICKET_SERVICE[Ticket Service]
+            USER_SERVICE[User Service]
+            AI_SERVICE[AI Verification Service]
+            FRAUD_SERVICE[Fraud Detection Service]
+            WS_SERVICE[WebSocket Service]
+            CLEANUP_SERVICE[Cleanup Service]
+        end
+        
+        subgraph "Middleware Layer"
+            AUTH_MW[Auth Middleware]
+            RATE_LIMIT[Rate Limiting]
+            ERROR_MW[Error Middleware]
+            FRAUD_MW[Fraud Protection]
+            VALIDATION[Validation Middleware]
+        end
+        
+        subgraph "Data Access Layer"
+            STORAGE[Storage Interface]
+            OPTIMIZED_STORAGE[Optimized Storage]
+            QUERY_BUILDER[Query Builder]
+            CACHE_MANAGER[Cache Manager]
+        end
+    end
+
+    %% Database Schema
+    subgraph "Database Schema"
+        USERS_TBL[(Users Table)]
+        TICKETS_TBL[(Tickets Table)]
+        CONTACT_REQ[(Contact Requests)]
+        FEEDBACK_TBL[(User Feedback)]
+        TICKET_VIEWS[(Ticket Views)]
+        POPULARITY[(Ticket Popularity)]
+    end
+
+    %% Key Data Flows
+    HOME --> TICKET_CARD
+    TICKET_CARD --> TICKET_DETAIL
+    LIST_TICKET --> TICKET_ROUTES
+    LOGIN --> AUTH_ROUTES
+    
+    TICKET_ROUTES --> TICKET_CTRL
+    AUTH_ROUTES --> USER_CTRL
+    TICKET_CTRL --> TICKET_SERVICE
+    USER_CTRL --> USER_SERVICE
+    
+    TICKET_SERVICE --> STORAGE
+    USER_SERVICE --> STORAGE
+    AI_SERVICE --> STORAGE
+    STORAGE --> TICKETS_TBL
+    STORAGE --> USERS_TBL
+    
+    AUTH_MW --> USER_SERVICE
+    RATE_LIMIT --> ALL_ROUTES[All Routes]
+    ERROR_MW --> ALL_ROUTES
+    
+    WS_SERVICE --> WS_CLIENT
+    FRAUD_SERVICE --> FRAUD_MW
+    CLEANUP_SERVICE --> POPULARITY
+```
+
+### 3. Data Flow Architecture
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant FE as Frontend
+    participant API as API Gateway
+    participant AUTH as Auth Service
+    participant TS as Ticket Service
+    participant DB as Database
+    participant EXT as External Services
+
+    Note over U, EXT: User Registration & Authentication Flow
+    U->>FE: Register/Login
+    FE->>API: POST /auth/login
+    API->>AUTH: Validate credentials
+    AUTH->>DB: Query user data
+    AUTH->>EXT: Google OAuth (optional)
+    AUTH-->>API: User session
+    API-->>FE: Authentication token
+    FE-->>U: Dashboard
+
+    Note over U, EXT: Ticket Listing Flow
+    U->>FE: Create ticket listing
+    FE->>API: POST /tickets
+    API->>TS: Validate ticket data
+    TS->>DB: Store ticket
+    TS->>EXT: AI verification
+    TS-->>API: Ticket created
+    API-->>FE: Success response
+    FE-->>U: Listing confirmation
+
+    Note over U, EXT: Search & Discovery Flow
+    U->>FE: Search tickets
+    FE->>API: GET /tickets/search
+    API->>TS: Query with filters
+    TS->>DB: Optimized search
+    TS-->>API: Results
+    API-->>FE: Ticket listings
+    FE-->>U: Search results
+```
+
 ## 🏗️ System Architecture
 
 ```
