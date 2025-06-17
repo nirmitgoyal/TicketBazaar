@@ -41,6 +41,27 @@ export default function Home() {
   const [showScrollToBottom, setShowScrollToBottom] = useState<boolean>(false);
   const [showScrollTooltips, setShowScrollTooltips] = useState<boolean>(true);
 
+  // Helper function to filter tickets based on venue timezone
+  const isFutureTicket = (ticket: Ticket): boolean => {
+    try {
+      const eventTimezone = ticket.eventTimezone || 'UTC';
+      const now = new Date();
+      
+      // Get current time in the venue's timezone
+      const venueCurrentTime = new Date(now.toLocaleString("en-US", {timeZone: eventTimezone}));
+      
+      // Get event time
+      const eventDateTime = new Date(ticket.eventDate);
+      
+      // Only show tickets with events strictly after current time
+      return eventDateTime.getTime() > venueCurrentTime.getTime();
+    } catch (error) {
+      console.error('Error filtering ticket by timezone:', error);
+      // Fallback to basic UTC comparison if timezone parsing fails
+      return new Date(ticket.eventDate).getTime() > Date.now();
+    }
+  };
+
   // Get search query from URL if present
   const urlSearchQuery = searchParams?.get("q") || "";
 
@@ -587,7 +608,7 @@ export default function Home() {
               />
             ) : searchResults.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {searchResults.map((ticket) => (
+                {searchResults.filter(isFutureTicket).map((ticket) => (
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
@@ -638,7 +659,7 @@ export default function Home() {
               />
             ) : allTickets && allTickets.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {allTickets.map((ticket) => (
+                {allTickets.filter(isFutureTicket).map((ticket) => (
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
@@ -670,7 +691,7 @@ export default function Home() {
               </div>
             ) : events && events.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {events.map((event) => (
+                {events.filter(isFutureTicket).map((event) => (
                   <EventCard
                     key={event.id}
                     event={event}
@@ -691,7 +712,7 @@ export default function Home() {
                     eventDescription: `Description for sample event ${i + 1}`,
                     venue: `Sample Venue ${i + 1}`,
                     venueAddress: `123 Sample St, City ${i + 1}`,
-                    eventDate: new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
+                    eventDate: new Date(Date.now() + Math.random() * 365 * 24 * 60 * 60 * 1000), // Future dates within next year
                     category: ['Concerts', 'Sports', 'Festivals', 'Theatre', 'Comedy'][Math.floor(Math.random() * 5)],
                     eventImageUrl: null,
                     trending: Math.random() > 0.7,
@@ -723,8 +744,9 @@ export default function Home() {
                     availabilityStatus: 'available'
                   } as Ticket));
 
-                  // Sort by event date in ascending order
-                  const sortedSampleTickets = sampleTickets.sort((a, b) => {
+                  // Filter to show only future tickets, then sort by event date in ascending order
+                  const futureSampleTickets = sampleTickets.filter(isFutureTicket);
+                  const sortedSampleTickets = futureSampleTickets.sort((a, b) => {
                     const dateA = new Date(a.eventDate).getTime();
                     const dateB = new Date(b.eventDate).getTime();
                     return dateA - dateB;
