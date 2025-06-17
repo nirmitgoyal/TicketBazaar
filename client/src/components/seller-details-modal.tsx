@@ -47,8 +47,8 @@ interface SellerData {
 }
 
 export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsModalProps) {
-  const { data: seller, isLoading } = useQuery<SellerData>({
-    queryKey: ['/api/users', ticket.sellerId],
+  const { data: seller, isLoading, error } = useQuery<SellerData>({
+    queryKey: [`/api/users/${ticket.sellerId}`],
     enabled: isOpen && !!ticket.sellerId,
   });
 
