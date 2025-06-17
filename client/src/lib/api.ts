@@ -1,5 +1,5 @@
 import { apiRequest } from "@/lib/queryClient";
-import { User, Event, Ticket, Transaction, Dispute } from "@shared/schema";
+import { User, Ticket } from "@shared/schema";
 
 export const api = {
   // Auth
@@ -80,60 +80,5 @@ export const api = {
     return response.json();
   },
 
-  // Transactions
-  createTransaction: async (
-    transactionData: Omit<Transaction, "id" | "createdAt" | "updatedAt">,
-  ): Promise<Transaction> => {
-    const response = await apiRequest(
-      "POST",
-      "/api/transactions",
-      transactionData,
-    );
-    return response.json();
-  },
 
-  getUserTransactions: async (userId: number): Promise<Transaction[]> => {
-    const response = await apiRequest(
-      "GET",
-      `/api/transactions/user/${userId}`,
-      undefined,
-    );
-    return response.json();
-  },
-
-  updateTransactionStatus: async (
-    id: number,
-    status: string,
-  ): Promise<Transaction> => {
-    const response = await apiRequest(
-      "PATCH",
-      `/api/transactions/${id}/status`,
-      { status },
-    );
-    return response.json();
-  },
-
-  // Disputes
-  createDispute: async (
-    disputeData: Omit<Dispute, "id" | "createdAt" | "resolvedAt">,
-  ): Promise<Dispute> => {
-    const response = await apiRequest("POST", "/api/disputes", disputeData);
-    return response.json();
-  },
-
-  getUserDisputes: async (userId: number): Promise<Dispute[]> => {
-    const response = await apiRequest(
-      "GET",
-      `/api/disputes/user/${userId}`,
-      undefined,
-    );
-    return response.json();
-  },
-
-  updateDisputeStatus: async (id: number, status: string): Promise<Dispute> => {
-    const response = await apiRequest("PATCH", `/api/disputes/${id}/status`, {
-      status,
-    });
-    return response.json();
-  },
 };

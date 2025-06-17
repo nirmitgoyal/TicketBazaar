@@ -26,10 +26,8 @@ import {
 } from "lucide-react";
 import { Ticket } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { DisputeModal } from "@/components/dispute-modal";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
-import { SocialShare } from "@/components/social-share";
 
 // ViewedTicketsSection component
 function ViewedTicketsSection() {
@@ -435,12 +433,6 @@ export default function MyTickets() {
 
                           <div className="flex items-center justify-between">
                             <div className="flex gap-2">
-                              <SocialShare
-                                ticket={ticket}
-                                event={event}
-                                variant="outline"
-                              />
-
                               {ticket.status === "available" && (
                                 <Button
                                   variant="outline"

@@ -378,25 +378,3 @@ export const userReviewSchema = z.object({
   contactRequestId: z.number().optional(),
   reviewType: z.enum(["buyer_review_seller", "seller_review_buyer"]),
 });
-
-// Legacy types for backward compatibility (now removed from P2P model)
-export type Transaction = {
-  id: number;
-  buyerId: number;
-  sellerId: number;
-  ticketId: number;
-  status: string;
-  createdAt: Date;
-};
-
-export type Dispute = {
-  id: number;
-  transactionId: number;
-  initiatorId: number;
-  reason: string;
-  status: string;
-  createdAt: Date;
-};
-
-export type InsertDispute = Omit<Dispute, 'id' | 'createdAt'>;
-// Removed InsertEvent type - using tickets only
