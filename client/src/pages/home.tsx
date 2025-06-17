@@ -777,10 +777,6 @@ export default function Home() {
                             {sampleTicket.eventTitle}
                           </h3>
                           <p className="text-xs text-gray-600">{sampleTicket.venue}</p>
-                          <p className="text-xs text-gray-500">{sampleTicket.city}</p>
-                          <p className="text-xs text-gray-500">
-                            {eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
-                          </p>
                         </div>
                       </div>
                     );
