@@ -103,14 +103,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
       );
     }
     
-    if (overall.fraudRisk === 'low' && overall.confidence >= 70) {
-      return (
-        <Badge className="bg-green-100 text-green-800 border-green-200">
-          <ShieldCheck className="h-3 w-3 mr-1" />
-          Verified ({overall.confidence}%)
-        </Badge>
-      );
-    } else if (overall.fraudRisk === 'medium') {
+    if (overall.fraudRisk === 'medium') {
       return (
         <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
           <ShieldAlert className="h-3 w-3 mr-1" />
