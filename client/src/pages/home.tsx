@@ -665,9 +665,9 @@ export default function Home() {
                 count={8} 
                 className="grid-cols-2 lg:grid-cols-4" 
               />
-            ) : initialTickets && initialTickets.length > 0 ? (
+            ) : defaultTickets && defaultTickets.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {initialTickets.filter(isFutureTicket).map((ticket) => (
+                {defaultTickets.filter(isFutureTicket).map((ticket) => (
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
@@ -793,7 +793,7 @@ export default function Home() {
           )}
 
           {/* Load More Button - Only show for real ticket data */}
-          {!searchQuery.length && initialTickets.length > 0 && (
+          {!searchQuery.length && defaultTickets.length > 0 && (
             <div className="text-center mt-8">
               <Button 
                 variant="outline" 
