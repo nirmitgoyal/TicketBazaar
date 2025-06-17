@@ -13,6 +13,7 @@ import { Loader2, AlertTriangle, MapPin, Search, ArrowUp, ArrowDown, X } from "l
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
+import { Ticket } from "@shared/schema";
 
 export default function Home() {
   const [location] = useLocation();

@@ -150,6 +150,12 @@ export function TicketDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogTitle className="sr-only">
+            Loading Event Details
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            Loading event information and available tickets
+          </DialogDescription>
           {/* Hero Section Skeleton */}
           <div className="relative">
             <Skeleton className="h-48 md:h-64 w-full rounded-t-lg" />
