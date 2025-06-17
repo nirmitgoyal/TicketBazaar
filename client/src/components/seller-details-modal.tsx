@@ -187,43 +187,10 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
                 <CardTitle>Contact Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm">{seller.email}</span>
-                </div>
-                
-                {seller.phone && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm">{seller.phone}</span>
-                  </div>
-                )}
-                
-                {seller.whatsapp && (
-                  <div className="flex items-center gap-2">
-                    <MessageCircle className="h-4 w-4 text-green-600" />
-                    <span className="text-sm">{seller.whatsapp}</span>
-                  </div>
-                )}
-                
-                <div className="text-xs text-gray-500 mt-2">
-                  Preferred contact: {seller.preferredContactMethod}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Instagram Profile */}
-            {seller.instagram && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Instagram className="h-5 w-5 text-pink-600" />
-                    Instagram Profile
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+                {seller.instagram && (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
+                      <Instagram className="h-4 w-4 text-pink-600" />
                       <span className="text-sm">@{formatInstagramHandle(seller.instagram)}</span>
                     </div>
                     <Button
@@ -239,9 +206,9 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
                       View Profile
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                )}
+              </CardContent>
+            </Card>
 
             {/* Ticket Information */}
             <Card>
