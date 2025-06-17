@@ -182,7 +182,6 @@ export function TicketDetailModal({
         <div className="py-2">
           {firstTicket && (
             <div className="mb-6">
-              <p className="text-textSecondary mb-1">{firstTicket.venue}</p>
               <p className="text-textSecondary text-sm">
                 {firstTicket.eventDate
                   ? new Date(firstTicket.eventDate).toLocaleString("en-US", {

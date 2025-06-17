@@ -179,15 +179,7 @@ export function TicketCard({
             >
               {title}
             </motion.h3>
-            <motion.p
-              className="text-textSecondary mb-2 flex items-center mobile-text-safe"
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 + index * 0.05 }}
-            >
-              <MapPin className="h-4 w-4 mr-1 flex-shrink-0" /> 
-              <span className="mobile-text-safe">{venue}</span>
-            </motion.p>
+
             <motion.p
               className="text-sm text-textSecondary flex items-center mb-2"
               initial={{ opacity: 0, y: 5 }}
