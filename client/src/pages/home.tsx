@@ -34,6 +34,7 @@ export default function Home() {
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const [hasMoreTickets, setHasMoreTickets] = useState<boolean>(true);
   const [allTickets, setAllTickets] = useState<Ticket[]>([]);
+  const [defaultTickets, setDefaultTickets] = useState<Ticket[]>([]);
   const TICKETS_PER_PAGE = 12;
   
   // Scroll navigation state
@@ -129,7 +130,7 @@ export default function Home() {
       
       // Reset state for new search/filter
       setCurrentPage(1);
-      setAllTickets(sortedData);
+      setDefaultTickets(sortedData);
       setHasMoreTickets(sortedData.length === TICKETS_PER_PAGE);
       
       return sortedData;
@@ -226,7 +227,7 @@ export default function Home() {
         return dateA - dateB;
       });
       
-      setAllTickets(prev => {
+      setDefaultTickets(prev => {
         const combined = [...prev, ...sortedNewTickets];
         // Sort the entire combined array to maintain chronological order
         return combined.sort((a: Ticket, b: Ticket) => {
@@ -583,10 +584,18 @@ export default function Home() {
               <h2 className="text-2xl font-semibold text-gray-900" itemProp="name">
                 {searchQuery.length >= 2 ? `Search Results for "${searchQuery}"` : "Tickets Available"}
               </h2>
-              {allTickets.length > 0 && (
-                <p className="text-sm text-gray-600 mt-1">
-                  Showing {allTickets.length} ticket{allTickets.length !== 1 ? 's' : ''}
-                </p>
+              {searchQuery.length >= 2 ? (
+                searchResults.length > 0 && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Showing {searchResults.length} ticket{searchResults.length !== 1 ? 's' : ''}
+                  </p>
+                )
+              ) : (
+                defaultTickets.length > 0 && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Showing {defaultTickets.length} ticket{defaultTickets.length !== 1 ? 's' : ''}
+                  </p>
+                )
               )}
             </div>
             <Button variant="outline" size="sm" className="flex items-center space-x-2" aria-label="Filter ticket results">
@@ -649,16 +658,16 @@ export default function Home() {
               </div>
             )
           ) : (
-            // Show default events grid
-            eventsLoading ? (
+            // Show default tickets grid - prioritize initialTickets over allTickets for clean state
+            ticketsLoading ? (
               <SkeletonGrid 
                 type="events" 
                 count={8} 
                 className="grid-cols-2 lg:grid-cols-4" 
               />
-            ) : allTickets && allTickets.length > 0 ? (
+            ) : initialTickets && initialTickets.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {allTickets.filter(isFutureTicket).map((ticket) => (
+                {initialTickets.filter(isFutureTicket).map((ticket) => (
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
@@ -784,7 +793,7 @@ export default function Home() {
           )}
 
           {/* Load More Button - Only show for real ticket data */}
-          {!searchQuery.length && allTickets.length > 0 && (
+          {!searchQuery.length && initialTickets.length > 0 && (
             <div className="text-center mt-8">
               <Button 
                 variant="outline" 
