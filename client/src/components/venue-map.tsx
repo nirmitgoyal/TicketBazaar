@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
-import { GoogleMap, InfoWindow, Marker } from "@react-google-maps/api";
+import { GoogleMap, InfoWindow, Marker, useLoadScript } from "@react-google-maps/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin } from "lucide-react";
-import { GOOGLE_MAPS_OPTIONS, DEFAULT_CENTER } from "@/lib/google-maps-config";
+import { MapPin, Loader2, AlertTriangle } from "lucide-react";
+import { GOOGLE_MAPS_OPTIONS, DEFAULT_CENTER, GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 
 interface VenueMapProps {
   venues: Array<{
@@ -25,6 +25,12 @@ const mapContainerStyle = {
 export function VenueMap({ venues, className = "" }: VenueMapProps) {
   const [selectedVenue, setSelectedVenue] = useState<number | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
+
+  // Load Google Maps script
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
+    libraries: GOOGLE_MAPS_LIBRARIES,
+  });
 
   // Filter venues that have coordinates
   const venuesWithCoordinates = venues.filter(
@@ -49,6 +55,50 @@ export function VenueMap({ venues, className = "" }: VenueMapProps) {
   const onUnmount = useCallback(() => {
     setMap(null);
   }, []);
+
+  // Handle loading error
+  if (loadError) {
+    return (
+      <Card className={className}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+            Map Unavailable
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <p className="text-muted-foreground mb-4">
+              Unable to load venue locations. The map service is temporarily unavailable.
+            </p>
+            <p className="text-sm text-red-600">
+              Error: {loadError.message}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Handle loading state
+  if (!isLoaded) {
+    return (
+      <Card className={className}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MapPin className="h-5 w-5" />
+            Venue Locations
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading map...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (venuesWithCoordinates.length === 0) {
     return (

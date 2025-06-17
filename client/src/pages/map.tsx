@@ -1,6 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { LoadScript } from "@react-google-maps/api";
 import { VenueMap } from "@/components/venue-map";
 import { MapFallback } from "@/components/map-fallback";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +13,6 @@ import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
 import { MapPin, Calendar, Users, Search, Navigation, Filter, Locate, AlertTriangle } from "lucide-react";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
-import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 import { useToast } from "@/hooks/use-toast";
 
 interface TicketEvent {
@@ -65,10 +63,7 @@ export default function MapPage() {
     queryKey: ["/api/events"],
   });
 
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
-  // Check if we have a valid Google Maps API key
-  const hasValidApiKey = googleMapsApiKey && googleMapsApiKey !== "demo" && googleMapsApiKey.length > 10;
+  // Remove API key validation since VenueMap handles it internally
 
   // Calculate distance between two coordinates using Haversine formula
   const calculateDistance = useCallback((lat1: number, lon1: number, lat2: number, lon2: number): number => {
