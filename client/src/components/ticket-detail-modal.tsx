@@ -262,7 +262,7 @@ export function TicketDetailModal({
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-semibold text-primary">Available for Transfer</p>
-                      
+                      <p className="text-sm text-textSecondary">{ticket.quantity} available</p>
                     </div>
                   </div>
 

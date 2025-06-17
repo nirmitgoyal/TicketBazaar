@@ -130,6 +130,8 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
   return (
     <div className="mt-3 pt-3 border-t border-gray-200">
       <div className="flex items-center justify-between mb-3">
+        {!verificationResult && getVerificationBadge()}
+        
         <Button
           variant="ghost"
           size="sm"
