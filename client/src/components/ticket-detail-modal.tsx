@@ -176,7 +176,9 @@ export function TicketDetailModal({
           <DialogTitle className="text-xl">
             {firstTicket?.eventTitle || "Available Tickets"}
           </DialogTitle>
-          <DialogDescription>Browse and contact sellers for available tickets to this event.</DialogDescription>
+          <DialogDescription>
+            {firstTicket?.venue ? `${firstTicket.venue}${firstTicket.venueAddress ? ` • ${firstTicket.venueAddress}` : ''}` : 'Venue details not available'}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="py-2">
