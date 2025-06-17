@@ -46,16 +46,49 @@ export default function Home() {
   const isFutureTicket = (ticket: Ticket): boolean => {
     try {
       const eventTimezone = ticket.eventTimezone || 'UTC';
-      const now = new Date();
       
-      // Get current time in the venue's timezone
-      const venueCurrentTime = new Date(now.toLocaleString("en-US", {timeZone: eventTimezone}));
+      // Get current time in milliseconds
+      const nowMs = Date.now();
       
-      // Get event time
-      const eventDateTime = new Date(ticket.eventDate);
+      // Parse event datetime (assumed to be in UTC in database)
+      const eventDateTimeMs = new Date(ticket.eventDate).getTime();
       
-      // Only show tickets with events strictly after current time
-      return eventDateTime.getTime() > venueCurrentTime.getTime();
+      // Create a reference date to determine timezone offset
+      const referenceDate = new Date();
+      
+      // Get current time formatted in venue timezone
+      const nowInVenueTimezoneString = referenceDate.toLocaleString("en-CA", { 
+        timeZone: eventTimezone,
+        year: 'numeric',
+        month: '2-digit', 
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+      
+      // Get event time formatted in venue timezone
+      const eventInVenueTimezoneString = new Date(eventDateTimeMs).toLocaleString("en-CA", {
+        timeZone: eventTimezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit', 
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+      
+      // Convert strings back to Date objects for comparison
+      // Format: "YYYY-MM-DD, HH:mm:ss"
+      const nowInVenueMs = new Date(nowInVenueTimezoneString.replace(', ', 'T')).getTime();
+      const eventInVenueMs = new Date(eventInVenueTimezoneString.replace(', ', 'T')).getTime();
+      
+
+      
+      // Only show tickets with events strictly after current venue time (no equality)
+      return eventInVenueMs > nowInVenueMs;
     } catch (error) {
       console.error('Error filtering ticket by timezone:', error);
       // Fallback to basic UTC comparison if timezone parsing fails
