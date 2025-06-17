@@ -719,7 +719,7 @@ export default function Home() {
                     sellingFast: Math.random() > 0.8,
                     latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
                     longitude: -74.0060 + (Math.random() - 0.5) * 0.1,
-                    city: `City ${i + 1}`,
+                    city: ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville'][i % 12],
                     country: 'US',
                     state: 'NY',
                     postalCode: '10001',
