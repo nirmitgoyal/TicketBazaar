@@ -125,6 +125,9 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
               <AlertTriangle className="h-5 w-5" />
               Verification Failed
             </DialogTitle>
+            <DialogDescription>
+              Unable to verify ticket authenticity. Please try again or contact support.
+            </DialogDescription>
           </DialogHeader>
           <div className="py-6 text-center">
             <p className="text-muted-foreground mb-4">

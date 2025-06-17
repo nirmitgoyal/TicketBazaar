@@ -290,6 +290,9 @@ export function TicketDetailModal({
                 <DialogTitle className="text-2xl md:text-3xl font-bold leading-tight">
                   {firstTicket?.eventTitle || "Event Details"}
                 </DialogTitle>
+                <DialogDescription className="sr-only">
+                  No tickets are currently available for this event. View event details and create alerts for when tickets become available.
+                </DialogDescription>
 
                 {/* Event Meta Info */}
                 <div className="space-y-2">
@@ -381,6 +384,12 @@ export function TicketDetailModal({
         className="max-w-4xl max-h-[90vh] overflow-y-auto p-0"
         data-testid="event-modal"
       >
+        <DialogTitle className="sr-only">
+          {firstTicket?.eventTitle || "Event Details"}
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          Event details and available tickets for {firstTicket?.eventTitle || "this event"}
+        </DialogDescription>
         {/* Hero Section */}
         <div className="relative">
           {firstTicket?.eventImageUrl && (
