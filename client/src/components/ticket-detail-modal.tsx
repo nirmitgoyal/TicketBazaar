@@ -1,4 +1,4 @@
-import { CheckCircle, ShieldCheck } from "lucide-react";
+import { CheckCircle, ShieldCheck, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -41,6 +41,37 @@ export function TicketDetailModal({
 
   // Get event details from the first ticket (since events are embedded in tickets)
   const firstTicket = tickets?.[0];
+
+  // Function to handle venue click with device-specific behavior
+  const handleVenueClick = () => {
+    if (!firstTicket?.venue) return;
+    
+    const query = firstTicket.venueAddress 
+      ? `${firstTicket.venue}, ${firstTicket.venueAddress}`
+      : firstTicket.venue;
+    
+    // Detect if device is mobile/tablet
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+      || window.innerWidth <= 768;
+    
+    if (isMobile) {
+      // Try to open Google Maps app first, fallback to web version
+      const mapsAppUrl = `comgooglemaps://?q=${encodeURIComponent(query)}`;
+      const mapsWebUrl = `https://maps.google.com/maps?q=${encodeURIComponent(query)}`;
+      
+      // Try to open Maps app
+      window.location.href = mapsAppUrl;
+      
+      // Fallback to web version after a short delay if app doesn't open
+      setTimeout(() => {
+        window.open(mapsWebUrl, '_blank');
+      }, 500);
+    } else {
+      // Desktop: Open Google Maps in new tab
+      const mapsWebUrl = `https://maps.google.com/maps?q=${encodeURIComponent(query)}`;
+      window.open(mapsWebUrl, '_blank');
+    }
+  };
 
   // Fetch seller info for each ticket
   const sellers = useQuery<Record<number, User>>({
@@ -177,7 +208,18 @@ export function TicketDetailModal({
             {firstTicket?.eventTitle || "Available Tickets"}
           </DialogTitle>
           <DialogDescription>
-            {firstTicket?.venue ? `${firstTicket.venue}${firstTicket.venueAddress ? ` • ${firstTicket.venueAddress}` : ''}` : 'Venue details not available'}
+            {firstTicket?.venue ? (
+              <button
+                onClick={handleVenueClick}
+                className="flex items-center gap-1 text-left hover:text-primary transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
+                title="Open in maps"
+              >
+                <MapPin className="h-3 w-3 flex-shrink-0" />
+                {firstTicket.venue}{firstTicket.venueAddress ? ` • ${firstTicket.venueAddress}` : ''}
+              </button>
+            ) : (
+              'Venue details not available'
+            )}
           </DialogDescription>
         </DialogHeader>
 
