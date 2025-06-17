@@ -1,5 +1,27 @@
-import { CheckCircle, ShieldCheck, MapPin } from "lucide-react";
+import { 
+  CheckCircle, 
+  ShieldCheck, 
+  MapPin, 
+  Calendar,
+  Clock,
+  Users,
+  CreditCard,
+  Share2,
+  Heart,
+  MessageCircle,
+  ExternalLink,
+  Info,
+  Star,
+  Badge as BadgeIcon,
+  Globe,
+  Eye,
+  TrendingUp,
+  Zap
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +35,7 @@ import { useQuery } from "@tanstack/react-query";
 import { TicketVerificationSection } from "./ticket-verification-section";
 import { PopularityMetrics } from "./popularity-metrics";
 import { useAutoTrackView, usePopularityMetrics } from "@/hooks/use-popularity-tracking";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TicketDetailModalProps {
   eventId: number;
@@ -121,55 +144,111 @@ export function TicketDetailModal({
   if (ticketsLoading) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle className="sr-only">Loading tickets...</DialogTitle>
-            <DialogDescription className="sr-only">Please wait while we fetch available tickets for this event.</DialogDescription>
-            <Skeleton className="h-7 w-48 mb-2" />
-            <Skeleton className="h-4 w-96" />
-          </DialogHeader>
-          <div className="py-6 space-y-4">
-            {/* Event details skeleton */}
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-64" />
-              <Skeleton className="h-4 w-48" />
-            </div>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+          {/* Hero Section Skeleton */}
+          <div className="relative">
+            <Skeleton className="h-48 md:h-64 w-full rounded-t-lg" />
             
-            {/* Popularity metrics skeleton */}
-            <div className="p-3 border rounded-lg space-y-2">
-              <Skeleton className="h-4 w-32" />
-              <div className="flex space-x-4">
-                <Skeleton className="h-3 w-16" />
-                <Skeleton className="h-3 w-20" />
-                <Skeleton className="h-3 w-18" />
+            {/* Header Content Skeleton */}
+            <div className="p-6 pb-4 space-y-4">
+              <Skeleton className="h-8 w-3/4" />
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4 rounded" />
+                  <Skeleton className="h-4 w-48" />
+                  <Skeleton className="h-4 w-4 rounded" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4 rounded" />
+                  <Skeleton className="h-4 w-64" />
+                </div>
+                <div className="flex gap-2">
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                  <Skeleton className="h-6 w-16 rounded-full" />
+                  <Skeleton className="h-6 w-24 rounded-full" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-6 pb-6 space-y-6">
+            {/* Event Description Skeleton */}
+            <div className="border rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-5 w-5 rounded" />
+                <Skeleton className="h-5 w-32" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-4/5" />
+                <Skeleton className="h-4 w-3/5" />
+              </div>
+            </div>
+
+            {/* Popularity Metrics Skeleton */}
+            <div className="border rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-5 w-5 rounded" />
+                <Skeleton className="h-5 w-28" />
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-6 w-12" />
+                  </div>
+                ))}
               </div>
             </div>
             
-            {/* Tickets list skeleton */}
-            <div className="space-y-3">
-              <Skeleton className="h-5 w-36" />
-              {Array.from({ length: 3 }, (_, i) => (
-                <div key={i} className="p-4 border rounded-lg space-y-3">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2 flex-1">
-                      <Skeleton className="h-5 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
+            {/* Tickets List Skeleton */}
+            <div className="border rounded-lg p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-5 w-5 rounded" />
+                  <Skeleton className="h-6 w-32" />
+                </div>
+                <Skeleton className="h-6 w-20 rounded-full" />
+              </div>
+              
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="border rounded-xl p-5 space-y-4">
+                  {/* Ticket Header */}
+                  <div className="flex flex-col md:flex-row justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-6 w-48" />
+                        <Skeleton className="h-5 w-20 rounded-full" />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-4 rounded" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
                     </div>
-                    <Skeleton className="h-6 w-20 rounded-full" />
+                    <div className="text-right space-y-1">
+                      <Skeleton className="h-6 w-40" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <Skeleton className="h-3 w-16" />
-                      <Skeleton className="h-4 w-20" />
-                    </div>
-                    <div className="space-y-1">
-                      <Skeleton className="h-3 w-12" />
-                      <Skeleton className="h-4 w-16" />
-                    </div>
+
+                  {/* Details Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {Array.from({ length: 3 }).map((_, j) => (
+                      <div key={j} className="space-y-1">
+                        <Skeleton className="h-3 w-20" />
+                        <Skeleton className="h-4 w-16" />
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between items-center pt-2">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-9 w-24 rounded-md" />
+
+                  {/* Action Area */}
+                  <div className="flex justify-between items-center pt-4">
+                    <Skeleton className="h-8 w-32" />
+                    <div className="flex gap-2">
+                      <Skeleton className="h-9 w-20 rounded-md" />
+                      <Skeleton className="h-9 w-32 rounded-md" />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -183,17 +262,93 @@ export function TicketDetailModal({
   if (!tickets || tickets.length === 0) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-3xl" data-testid="event-modal">
-          <DialogHeader>
-            <DialogTitle className="text-xl">
-              {firstTicket?.eventTitle || "No Tickets Available"}
-            </DialogTitle>
-            <DialogDescription>No tickets are currently listed for sale for this event.</DialogDescription>
-          </DialogHeader>
-          <div className="py-8 text-center">
-            <p className="text-textSecondary">
-              No tickets are currently available for this event.
-            </p>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0" data-testid="event-modal">
+          {/* Hero Section */}
+          <div className="relative">
+            {firstTicket?.eventImageUrl && (
+              <div className="h-48 md:h-64 overflow-hidden rounded-t-lg">
+                <img 
+                  src={firstTicket.eventImageUrl} 
+                  alt={firstTicket.eventTitle}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              </div>
+            )}
+            
+            {/* Header Content */}
+            <div className="p-6 pb-4">
+              <DialogHeader className="space-y-3">
+                <DialogTitle className="text-2xl md:text-3xl font-bold leading-tight">
+                  {firstTicket?.eventTitle || "Event Details"}
+                </DialogTitle>
+                
+                {/* Event Meta Info */}
+                <div className="space-y-2">
+                  {firstTicket?.eventDate && (
+                    <div className="flex items-center gap-2 text-textSecondary">
+                      <Calendar className="h-4 w-4" />
+                      <span className="font-medium">
+                        {new Date(firstTicket.eventDate).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </span>
+                      <Clock className="h-4 w-4 ml-2" />
+                      <span>
+                        {new Date(firstTicket.eventDate).toLocaleTimeString("en-US", {
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {firstTicket?.venue && (
+                    <button
+                      onClick={handleVenueClick}
+                      className="flex items-center gap-2 text-left hover:text-primary transition-colors cursor-pointer group"
+                      title="Open in maps"
+                    >
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span className="font-medium group-hover:underline">
+                        {firstTicket.venue}
+                      </span>
+                      {firstTicket.venueAddress && (
+                        <span className="text-textSecondary">• {firstTicket.venueAddress}</span>
+                      )}
+                      <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100" />
+                    </button>
+                  )}
+                </div>
+              </DialogHeader>
+            </div>
+          </div>
+
+          <div className="px-6 pb-6">
+            {/* Empty State Card */}
+            <Card className="text-center py-12">
+              <CardContent>
+                <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-6">
+                  <CreditCard className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">No Tickets Available</h3>
+                <p className="text-textSecondary mb-6 max-w-md mx-auto">
+                  No tickets are currently listed for sale for this event. Check back later or create an alert to be notified when tickets become available.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button variant="outline" onClick={onClose}>
+                    Browse Other Events
+                  </Button>
+                  <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
+                    <Heart className="h-4 w-4 mr-2" />
+                    Create Alert
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </DialogContent>
       </Dialog>
@@ -202,115 +357,311 @@ export function TicketDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl" data-testid="event-modal">
-        <DialogHeader>
-          <DialogTitle className="text-xl">
-            {firstTicket?.eventTitle || "Available Tickets"}
-          </DialogTitle>
-          <DialogDescription>
-            {firstTicket?.venue ? (
-              <button
-                onClick={handleVenueClick}
-                className="flex items-center gap-1 text-left hover:text-primary transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
-                title="Open in maps"
-              >
-                <MapPin className="h-3 w-3 flex-shrink-0" />
-                {firstTicket.venue}{firstTicket.venueAddress ? ` • ${firstTicket.venueAddress}` : ''}
-              </button>
-            ) : (
-              'Venue details not available'
-            )}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="py-2">
-          {firstTicket && (
-            <div className="mb-6">
-              <p className="text-textSecondary text-sm">
-                {firstTicket.eventDate
-                  ? new Date(firstTicket.eventDate).toLocaleString("en-US", {
-                      weekday: "short",
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })
-                  : "Date TBD"}
-              </p>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0" data-testid="event-modal">
+        {/* Hero Section */}
+        <div className="relative">
+          {firstTicket?.eventImageUrl && (
+            <div className="h-48 md:h-64 overflow-hidden rounded-t-lg">
+              <img 
+                src={firstTicket.eventImageUrl} 
+                alt={firstTicket.eventTitle}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
+          )}
+          
+          {/* Event Status Badges */}
+          <div className="absolute top-4 left-4 flex gap-2">
+            {firstTicket?.trending && (
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                <Badge className="bg-red-500 text-white">
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  Trending
+                </Badge>
+              </motion.div>
+            )}
+            {firstTicket?.sellingFast && (
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1 }}>
+                <Badge className="bg-orange-500 text-white">
+                  <Zap className="h-3 w-3 mr-1" />
+                  Selling Fast
+                </Badge>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Header Content */}
+          <div className="p-6 pb-4">
+            <DialogHeader className="space-y-3">
+              <DialogTitle className="text-2xl md:text-3xl font-bold leading-tight">
+                {firstTicket?.eventTitle || "Available Tickets"}
+              </DialogTitle>
+              
+              {/* Event Meta Info */}
+              <div className="space-y-2">
+                {firstTicket?.eventDate && (
+                  <div className="flex items-center gap-2 text-textSecondary">
+                    <Calendar className="h-4 w-4" />
+                    <span className="font-medium">
+                      {new Date(firstTicket.eventDate).toLocaleDateString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </span>
+                    <Clock className="h-4 w-4 ml-2" />
+                    <span>
+                      {new Date(firstTicket.eventDate).toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                )}
+                
+                {firstTicket?.venue && (
+                  <button
+                    onClick={handleVenueClick}
+                    className="flex items-center gap-2 text-left hover:text-primary transition-colors cursor-pointer group"
+                    title="Open in maps"
+                  >
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span className="font-medium group-hover:underline">
+                      {firstTicket.venue}
+                    </span>
+                    {firstTicket.venueAddress && (
+                      <span className="text-textSecondary">• {firstTicket.venueAddress}</span>
+                    )}
+                    <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100" />
+                  </button>
+                )}
+
+                {/* Additional Event Details */}
+                <div className="flex flex-wrap gap-3 pt-2">
+                  {firstTicket?.category && (
+                    <Badge variant="secondary" className="capitalize">
+                      <BadgeIcon className="h-3 w-3 mr-1" />
+                      {firstTicket.category}
+                    </Badge>
+                  )}
+                  {firstTicket?.ageRestriction && (
+                    <Badge variant="outline">
+                      <Users className="h-3 w-3 mr-1" />
+                      {firstTicket.ageRestriction}
+                    </Badge>
+                  )}
+                  {firstTicket?.city && (
+                    <Badge variant="outline">
+                      <Globe className="h-3 w-3 mr-1" />
+                      {firstTicket.city}
+                      {firstTicket.country && firstTicket.country !== 'US' && `, ${firstTicket.country}`}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </DialogHeader>
+          </div>
+        </div>
+
+        <div className="px-6 pb-6 space-y-6">
+          {/* Event Description */}
+          {firstTicket?.eventDescription && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Info className="h-5 w-5" />
+                  About This Event
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-textSecondary leading-relaxed">
+                  {firstTicket.eventDescription}
+                </p>
+              </CardContent>
+            </Card>
           )}
 
           {/* Popularity Metrics */}
           {popularityMetrics && popularityMetrics.viewCount && (
-            <div className="mb-4">
-              <PopularityMetrics 
-                metrics={{
-                  totalViews: popularityMetrics.viewCount?.total || 0,
-                  uniqueViews: popularityMetrics.viewCount?.unique || 0,
-                  viewsToday: popularityMetrics.viewCount?.today || 0,
-                  viewsThisWeek: popularityMetrics.viewCount?.thisWeek || 0,
-                  viewsThisMonth: popularityMetrics.viewCount?.thisMonth || 0,
-                  popularityScore: popularityMetrics.popularity?.popularityScore || 0,
-                  trendingFactor: popularityMetrics.popularity?.trendingFactor || 0,
-                  lastViewedAt: popularityMetrics.popularity?.lastViewedAt,
-                }} 
-                compact={true}
-                showTrending={true}
-              />
-            </div>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Eye className="h-5 w-5" />
+                  Event Interest
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PopularityMetrics 
+                  metrics={{
+                    totalViews: popularityMetrics.viewCount?.total || 0,
+                    uniqueViews: popularityMetrics.viewCount?.unique || 0,
+                    viewsToday: popularityMetrics.viewCount?.today || 0,
+                    viewsThisWeek: popularityMetrics.viewCount?.thisWeek || 0,
+                    viewsThisMonth: popularityMetrics.viewCount?.thisMonth || 0,
+                    popularityScore: popularityMetrics.popularity?.popularityScore || 0,
+                    trendingFactor: popularityMetrics.popularity?.trendingFactor || 0,
+                    lastViewedAt: popularityMetrics.popularity?.lastViewedAt,
+                  }} 
+                  compact={false}
+                  showTrending={true}
+                />
+              </CardContent>
+            </Card>
           )}
 
-          
-
-          <div className="mb-6">
-            <h4 className="font-medium text-lg mb-3">Available Tickets</h4>
-
-            {tickets.map((ticket) => {
-              const seller = sellers.data && sellers.data[ticket.sellerId];
-
-              return (
-                <div
-                  key={ticket.id}
-                  className="border rounded-lg p-4 mb-3 hover:border-primary cursor-pointer"
-                  onClick={() => onOpenSellerModal?.(ticket)}
-                >
-                  <div className="flex justify-between items-center">
-                    <div className="flex-1">
-                      <p className="font-semibold text-lg">
-                        {ticket.section}
-                        {ticket.row ? ` • Row ${ticket.row}` : ""}
-                        {ticket.seat ? ` • Seat ${ticket.seat}` : ""}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span className="text-sm text-textSecondary">
-                          @{seller?.instagram || "unknown"} • Verified Seller
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-semibold text-primary">Available for Transfer</p>
-                      <p className="text-sm text-textSecondary">{ticket.quantity} available</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex justify-between items-center">
-                    <TicketVerificationSection ticket={ticket} />
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent card click
-                        onOpenSellerModal?.(ticket);
-                      }}
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-                    >
-                      View Seller Details
-                    </Button>
-                  </div>
+          {/* Available Tickets Section */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-xl flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CreditCard className="h-5 w-5" />
+                  Available Tickets
                 </div>
-              );
-            })}
-          </div>
+                <Badge variant="secondary" className="text-sm">
+                  {tickets.length} listing{tickets.length !== 1 ? 's' : ''}
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <AnimatePresence>
+                {tickets.map((ticket, index) => {
+                  const seller = sellers.data && sellers.data[ticket.sellerId];
+
+                  return (
+                    <motion.div
+                      key={ticket.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="border rounded-xl p-5 hover:border-primary hover:shadow-lg transition-all duration-200 cursor-pointer bg-gradient-to-r from-background to-muted/20"
+                      onClick={() => onOpenSellerModal?.(ticket)}
+                    >
+                      {/* Ticket Header */}
+                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-bold text-lg">
+                              {ticket.section || 'General Admission'}
+                              {ticket.row && ` • Row ${ticket.row}`}
+                              {ticket.seat && ` • Seat ${ticket.seat}`}
+                            </h3>
+                            {ticket.isTransferrable && (
+                              <Badge className="bg-green-100 text-green-800">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Transferrable
+                              </Badge>
+                            )}
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <span className="text-sm text-textSecondary">
+                              @{seller?.instagram || "unknown"} • Verified Seller
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-primary">
+                            Available for Transfer
+                          </div>
+                          <div className="text-sm text-textSecondary">
+                            {ticket.quantity} ticket{ticket.quantity !== 1 ? 's' : ''} available
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Ticket Details Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div className="space-y-1">
+                          <div className="text-xs font-medium text-textSecondary uppercase tracking-wide">
+                            Transfer Method
+                          </div>
+                          <div className="font-medium capitalize">
+                            {ticket.transferMethod}
+                          </div>
+                        </div>
+                        
+                        {ticket.createdAt && (
+                          <div className="space-y-1">
+                            <div className="text-xs font-medium text-textSecondary uppercase tracking-wide">
+                              Listed
+                            </div>
+                            <div className="font-medium">
+                              {new Date(ticket.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="space-y-1">
+                          <div className="text-xs font-medium text-textSecondary uppercase tracking-wide">
+                            Status
+                          </div>
+                          <Badge 
+                            className={`capitalize ${
+                              ticket.status === 'available' 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}
+                          >
+                            {ticket.status}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      {/* Additional Information */}
+                      {ticket.additionalInfo && (
+                        <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+                          <div className="text-xs font-medium text-textSecondary uppercase tracking-wide mb-1">
+                            Additional Information
+                          </div>
+                          <p className="text-sm whitespace-pre-wrap">
+                            {ticket.additionalInfo}
+                          </p>
+                        </div>
+                      )}
+
+                      <Separator className="my-4" />
+
+                      {/* Action Area */}
+                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <TicketVerificationSection ticket={ticket} />
+                        
+                        <div className="flex gap-2 w-full md:w-auto">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Share functionality placeholder
+                            }}
+                            className="flex-1 md:flex-none"
+                          >
+                            <Share2 className="h-4 w-4 md:mr-2" />
+                            <span className="hidden md:inline">Share</span>
+                          </Button>
+                          
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onOpenSellerModal?.(ticket);
+                            }}
+                            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white flex-1 md:flex-none"
+                          >
+                            <MessageCircle className="h-4 w-4 md:mr-2" />
+                            <span className="hidden md:inline">Contact Seller</span>
+                            <span className="md:hidden">Contact</span>
+                          </Button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </CardContent>
+          </Card>
         </div>
       </DialogContent>
     </Dialog>
