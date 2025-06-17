@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LoadScript } from "@react-google-maps/api";
 import { VenueMap } from "@/components/venue-map";
+import { MapFallback } from "@/components/map-fallback";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
-import { MapPin, Calendar, Users, Search, Navigation, Filter, Locate } from "lucide-react";
+import { MapPin, Calendar, Users, Search, Navigation, Filter, Locate, AlertTriangle } from "lucide-react";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
@@ -51,6 +52,7 @@ export default function MapPage() {
   const { toast } = useToast();
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [mapLoadError, setMapLoadError] = useState<string | null>(null);
   const [filters, setFilters] = useState<LocationFilters>({
     searchQuery: "",
     category: "all",
@@ -63,7 +65,10 @@ export default function MapPage() {
     queryKey: ["/api/events"],
   });
 
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "demo";
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+  // Check if we have a valid Google Maps API key
+  const hasValidApiKey = googleMapsApiKey && googleMapsApiKey !== "demo" && googleMapsApiKey.length > 10;
 
   // Calculate distance between two coordinates using Haversine formula
   const calculateDistance = useCallback((lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -245,12 +250,15 @@ export default function MapPage() {
   const eventsWithLocation = processedEvents.length;
   const categories = Array.from(new Set(events?.map(e => e.category) || []));
 
-  return (
-    <LoadScript
-      googleMapsApiKey={googleMapsApiKey}
-      libraries={GOOGLE_MAPS_LIBRARIES}
-      loadingElement={<div>Loading Maps...</div>}
-    >
+  // Handle LoadScript error
+  const handleLoadScriptError = useCallback((error: Error) => {
+    console.error('Google Maps LoadScript error:', error);
+    setMapLoadError(error.message);
+  }, []);
+
+  // If no valid API key, render without LoadScript
+  if (!hasValidApiKey) {
+    return (
       <div className="container mx-auto px-4 py-8">
         <SEOManager
           title="Event Map - Find Second Hand Tickets Near You | Interactive Event Map | Ticket Bazaar"
@@ -486,7 +494,21 @@ export default function MapPage() {
         </div>
 
         {/* Map Component */}
-        <VenueMap venues={venuesForMap} className="mb-6" />
+        {!hasValidApiKey ? (
+          <MapFallback 
+            venues={venuesForMap} 
+            className="mb-6"
+            error="Google Maps API key not configured"
+          />
+        ) : mapLoadError ? (
+          <MapFallback 
+            venues={venuesForMap} 
+            className="mb-6"
+            error={mapLoadError}
+          />
+        ) : (
+          <VenueMap venues={venuesForMap} className="mb-6" />
+        )}
 
         {/* Event List */}
         <Card>
