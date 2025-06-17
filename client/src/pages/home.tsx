@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,7 +9,7 @@ import { EventCard } from "@/components/event-card";
 import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { SellerDetailsModal } from "@/components/seller-details-modal";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
-import { Loader2, AlertTriangle, MapPin, Search } from "lucide-react";
+import { Loader2, AlertTriangle, MapPin, Search, ArrowUp, ArrowDown, X } from "lucide-react";
 import { Ticket } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -28,6 +28,17 @@ export default function Home() {
   const [showNoResultsMessage, setShowNoResultsMessage] = useState<boolean>(false);
   const [selectedSearchFilters, setSelectedSearchFilters] = useState<SearchFilters>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const [hasMoreTickets, setHasMoreTickets] = useState<boolean>(true);
+  const TICKETS_PER_PAGE = 12;
+  
+  // Scroll navigation state
+  const [showScrollToTop, setShowScrollToTop] = useState<boolean>(false);
+  const [showScrollToBottom, setShowScrollToBottom] = useState<boolean>(false);
+  const [showScrollTooltips, setShowScrollTooltips] = useState<boolean>(true);
 
   // Get search query from URL if present
   const urlSearchQuery = searchParams?.get("q") || "";
@@ -42,13 +53,42 @@ export default function Home() {
     enabled: true,
   });
 
-  // Fetch tickets data
+  // Fetch tickets data with pagination
   const {
     data: tickets = [],
     isLoading: ticketsLoading,
     error: ticketsError,
   } = useQuery<Ticket[]>({
-    queryKey: ["/api/tickets", urlSearchQuery, selectedSearchFilters],
+    queryKey: ["/api/tickets", urlSearchQuery, selectedSearchFilters, currentPage],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (urlSearchQuery) params.set("q", urlSearchQuery);
+      params.set("page", currentPage.toString());
+      params.set("limit", TICKETS_PER_PAGE.toString());
+      
+      Object.entries(selectedSearchFilters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          if (typeof value === "boolean") {
+            params.set(key, value.toString());
+          } else if (value instanceof Date) {
+            params.set(key, value.toISOString());
+          } else {
+            params.set(key, value.toString());
+          }
+        }
+      });
+
+      const response = await fetch(`/api/tickets?${params}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch tickets');
+      }
+      const data = await response.json();
+      
+      // Update hasMoreTickets based on response
+      setHasMoreTickets(data.length === TICKETS_PER_PAGE);
+      
+      return data;
+    },
     enabled: true,
   });
 
@@ -69,6 +109,72 @@ export default function Home() {
     enabled: searchQuery.length >= 2, // Only search when user has typed at least 2 characters
     staleTime: 30000, // Cache results for 30 seconds
   });
+
+  // Scroll navigation functionality
+  const handleScroll = useCallback(() => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = window.innerHeight;
+    
+    // Show/hide scroll to top button
+    setShowScrollToTop(scrollTop > 0);
+    
+    // Show/hide scroll to bottom button (hide when near bottom)
+    const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100;
+    setShowScrollToBottom(!isNearBottom && scrollTop > 0);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+  };
+
+  const dismissScrollTooltips = () => {
+    setShowScrollTooltips(false);
+  };
+
+  // Load more tickets functionality
+  const handleLoadMore = async () => {
+    if (!hasMoreTickets || isLoadingMore) return;
+    
+    setIsLoadingMore(true);
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    
+    // The query will automatically refetch with the new page
+    setTimeout(() => {
+      setIsLoadingMore(false);
+    }, 1000);
+  };
+
+  // Set up scroll listener
+  useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout;
+    
+    const throttledHandleScroll = () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(handleScroll, 10);
+    };
+
+    window.addEventListener('scroll', throttledHandleScroll, { passive: true });
+    
+    // Initial check
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', throttledHandleScroll);
+      clearTimeout(scrollTimeout);
+    };
+  }, [handleScroll]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+    setHasMoreTickets(true);
+  }, [selectedSearchFilters, activeCategory, searchQuery]);
 
   // Extract query parameters and URL path parameters
   useEffect(() => {
@@ -533,9 +639,25 @@ export default function Home() {
             )
           )}
 
+          {/* Load More Button */}
           <div className="text-center mt-8">
-            <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50" aria-label="Load more second-hand tickets">
-              Load More Tickets
+            <Button 
+              variant="outline" 
+              className="text-blue-600 border-blue-600 hover:bg-blue-50" 
+              aria-label="Load more second-hand tickets"
+              onClick={handleLoadMore}
+              disabled={!hasMoreTickets || isLoadingMore}
+            >
+              {isLoadingMore ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Loading...
+                </>
+              ) : hasMoreTickets ? (
+                "Load More Tickets"
+              ) : (
+                "No More Tickets"
+              )}
             </Button>
           </div>
         </div>
@@ -559,6 +681,63 @@ export default function Home() {
           onClose={closeSellerModal}
           ticket={selectedTicket}
         />
+      )}
+
+      {/* Scroll Navigation Tooltips */}
+      {showScrollTooltips && (
+        <div className="fixed bottom-4 right-4 flex flex-col space-y-2 z-50">
+          {/* Scroll to Top Button */}
+          {showScrollToTop && (
+            <div className="relative group">
+              <Button
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow-lg"
+                onClick={scrollToTop}
+                aria-label="Scroll to top"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                Back to Top
+              </div>
+            </div>
+          )}
+
+          {/* Scroll to Bottom Button */}
+          {showScrollToBottom && (
+            <div className="relative group">
+              <Button
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow-lg"
+                onClick={scrollToBottom}
+                aria-label="Scroll to bottom"
+              >
+                <ArrowDown className="h-4 w-4" />
+              </Button>
+              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                Go to Bottom
+              </div>
+            </div>
+          )}
+
+          {/* Dismiss Button */}
+          {(showScrollToTop || showScrollToBottom) && (
+            <div className="relative group">
+              <Button
+                size="sm"
+                variant="outline"
+                className="bg-white hover:bg-gray-50 border-gray-300 rounded-full p-2 shadow-lg"
+                onClick={dismissScrollTooltips}
+                aria-label="Hide scroll buttons"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                Hide
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </>
   );
