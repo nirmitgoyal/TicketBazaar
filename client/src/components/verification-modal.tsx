@@ -265,13 +265,7 @@ export function VerificationModal({ isOpen, onClose, ticket, seller }: Verificat
                       </div>
                       <div className="font-medium">{formatDate(ticket.eventDate)}</div>
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        Venue
-                      </div>
-                      <div className="font-medium">{ticket.venue}</div>
-                    </div>
+
                     <div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <DollarSign className="h-4 w-4" />
