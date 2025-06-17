@@ -682,57 +682,55 @@ export default function Home() {
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {/* Sample Event Cards to match the original design */}
                 {(() => {
-                  // Create sample tickets array first, then sort by date
-                  const sampleTickets = Array.from({ length: 12 }, (_, i) => {
-                    // Create sample ticket data for each card
-                    return {
-                      id: i + 1000, // Unique ID for sample tickets
-                      sellerId: Math.floor(Math.random() * 5) + 1, // Random seller ID 1-5
-                      title: `Sample Event Ticket ${i + 1}`,
-                      eventTitle: `Sample Event Title ${i + 1}`,
-                      eventDescription: `Description for sample event ${i + 1}`,
-                      venue: `Sample Venue ${i + 1}`,
-                      venueAddress: `123 Sample St, City ${i + 1}`,
-                      eventDate: new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
-                      category: ['Concerts', 'Sports', 'Festivals', 'Theatre', 'Comedy'][Math.floor(Math.random() * 5)],
-                      eventImageUrl: null,
-                      trending: Math.random() > 0.7,
-                      sellingFast: Math.random() > 0.8,
-                      latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
-                      longitude: -74.0060 + (Math.random() - 0.5) * 0.1,
-                      city: `City ${i + 1}`,
-                      country: 'US',
-                      state: 'NY',
-                      postalCode: '10001',
-                      section: `Section ${String.fromCharCode(65 + Math.floor(Math.random() * 5))}`,
-                      row: Math.floor(Math.random() * 20) + 1 + '',
-                      seat: Math.floor(Math.random() * 30) + 1 + '',
-                      price: Math.floor(Math.random() * 500) + 50,
-                      quantity: Math.floor(Math.random() * 4) + 1,
-                      status: 'available',
-                      isTransferrable: true,
-                      transferMethod: 'mobile_transfer',
-                      additionalInfo: `Additional info for ticket ${i + 1}`,
-                      showContactInfo: false,
-                      eventTimezone: 'America/New_York',
-                      ageRestriction: '18+',
-                      createdAt: new Date(),
-                      expiresAt: new Date(2025, 11, 31),
-                      viewCount: Math.floor(Math.random() * 100),
-                      contactCount: Math.floor(Math.random() * 20),
-                      isFeatured: false,
-                      boostScore: Math.floor(Math.random() * 10),
-                      availabilityStatus: 'available'
-                    } as Ticket;
-                  });
+                  // Create sample tickets array first
+                  const sampleTickets = Array.from({ length: 12 }, (_, i) => ({
+                    id: i + 1000,
+                    sellerId: Math.floor(Math.random() * 5) + 1,
+                    title: `Sample Event Ticket ${i + 1}`,
+                    eventTitle: `Sample Event Title ${i + 1}`,
+                    eventDescription: `Description for sample event ${i + 1}`,
+                    venue: `Sample Venue ${i + 1}`,
+                    venueAddress: `123 Sample St, City ${i + 1}`,
+                    eventDate: new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
+                    category: ['Concerts', 'Sports', 'Festivals', 'Theatre', 'Comedy'][Math.floor(Math.random() * 5)],
+                    eventImageUrl: null,
+                    trending: Math.random() > 0.7,
+                    sellingFast: Math.random() > 0.8,
+                    latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
+                    longitude: -74.0060 + (Math.random() - 0.5) * 0.1,
+                    city: `City ${i + 1}`,
+                    country: 'US',
+                    state: 'NY',
+                    postalCode: '10001',
+                    section: `Section ${String.fromCharCode(65 + Math.floor(Math.random() * 5))}`,
+                    row: Math.floor(Math.random() * 20) + 1 + '',
+                    seat: Math.floor(Math.random() * 30) + 1 + '',
 
-                  // Sort sample tickets by event date in ascending order
+                    quantity: Math.floor(Math.random() * 4) + 1,
+                    status: 'available',
+                    isTransferrable: true,
+                    transferMethod: 'mobile_transfer',
+                    additionalInfo: `Additional info for ticket ${i + 1}`,
+                    showContactInfo: false,
+                    eventTimezone: 'America/New_York',
+                    ageRestriction: '18+',
+                    createdAt: new Date(),
+                    expiresAt: new Date(2025, 11, 31),
+                    viewCount: Math.floor(Math.random() * 100),
+                    contactCount: Math.floor(Math.random() * 20),
+                    isFeatured: false,
+                    boostScore: Math.floor(Math.random() * 10),
+                    availabilityStatus: 'available'
+                  } as Ticket));
+
+                  // Sort by event date in ascending order
                   const sortedSampleTickets = sampleTickets.sort((a, b) => {
                     const dateA = new Date(a.eventDate).getTime();
                     const dateB = new Date(b.eventDate).getTime();
                     return dateA - dateB;
                   });
 
+                  // Return JSX elements
                   return sortedSampleTickets.map((sampleTicket, i) => {
                     const eventDate = sampleTicket.eventDate;
                     return (
@@ -757,13 +755,15 @@ export default function Home() {
                             {sampleTicket.eventTitle}
                           </h3>
                           <p className="text-xs text-gray-600">{sampleTicket.venue}</p>
-                      <p className="text-xs text-gray-500">
-                        {eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
-                      </p>
-                    </div>
-                  </div>
-                );
-                })}
+                          <p className="text-xs text-gray-500">{sampleTicket.city}</p>
+                          <p className="text-xs text-gray-500">
+                            {eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  });
+                })()}
               </div>
             )
           )}
