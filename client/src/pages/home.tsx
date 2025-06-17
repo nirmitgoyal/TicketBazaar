@@ -112,11 +112,9 @@ export default function Home() {
       const data = await response.json();
       
       // Sort events by event date and time in ascending order
-      return data.sort((a: Ticket, b: Ticket) => {
-        const dateA = new Date(a.eventDate).getTime();
-        const dateB = new Date(b.eventDate).getTime();
-        return dateA - dateB;
-      });
+      return data.sort((a: Ticket, b: Ticket) => 
+        new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
+      );
     },
     enabled: true,
   });
@@ -251,22 +249,12 @@ export default function Home() {
       }
       const newTickets = await response.json();
       
-      // Sort new tickets by date and append to existing ones, then sort the combined array
+      // Sort new tickets by date and append to existing ones
       const sortedNewTickets = newTickets.sort((a: Ticket, b: Ticket) => {
-        const dateA = new Date(a.eventDate).getTime();
-        const dateB = new Date(b.eventDate).getTime();
-        return dateA - dateB;
+        return new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime();
       });
       
-      setDefaultTickets(prev => {
-        const combined = [...prev, ...sortedNewTickets];
-        // Sort the entire combined array to maintain chronological order
-        return combined.sort((a: Ticket, b: Ticket) => {
-          const dateA = new Date(a.eventDate).getTime();
-          const dateB = new Date(b.eventDate).getTime();
-          return dateA - dateB;
-        });
-      });
+      setDefaultTickets(prev => [...prev, ...sortedNewTickets]);
       setCurrentPage(nextPage);
       setHasMoreTickets(newTickets.length === TICKETS_PER_PAGE);
       
