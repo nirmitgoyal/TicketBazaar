@@ -104,12 +104,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
     }
     
     if (overall.fraudRisk === 'medium') {
-      return (
-        <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
-          <ShieldAlert className="h-3 w-3 mr-1" />
-          Medium Risk ({overall.confidence}%)
-        </Badge>
-      );
+      return null;
     } else {
       return (
         <Badge className="bg-red-100 text-red-800 border-red-200">
