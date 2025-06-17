@@ -121,14 +121,17 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
   };
 
   return (
-    <div className="mt-3 pt-3 border-t border-gray-200">
+    <div className="mt-3 pt-3 border-t border-gray-200" onClick={(e) => e.stopPropagation()}>
       <div className="flex items-center justify-between mb-3">
         <div></div>
         
         <Button
           variant="ghost"
           size="sm"
-          onClick={handleVerify}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleVerify();
+          }}
           disabled={isVerifying}
           className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
         >
@@ -168,7 +171,10 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
             {verificationResult.verification.overall.confidence}% confidence
           </span>
           <button
-            onClick={() => window.open(`/verification-report/${ticket.id}`, '_blank')}
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(`/verification-report/${ticket.id}`, '_blank');
+            }}
             className="text-xs text-blue-600 hover:text-blue-800 underline ml-2"
           >
             View Report
