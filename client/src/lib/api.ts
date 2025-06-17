@@ -20,34 +20,7 @@ export const api = {
     return response.json();
   },
 
-  // Events
-  getAllEvents: async (): Promise<Event[]> => {
-    const response = await apiRequest("GET", "/api/events", undefined);
-    return response.json();
-  },
 
-  getEventsByCategory: async (category: string): Promise<Event[]> => {
-    const response = await apiRequest(
-      "GET",
-      `/api/events/category/${category}`,
-      undefined,
-    );
-    return response.json();
-  },
-
-  getEventById: async (id: number): Promise<Event> => {
-    const response = await apiRequest("GET", `/api/events/${id}`, undefined);
-    return response.json();
-  },
-
-  searchEvents: async (query: string): Promise<Event[]> => {
-    const response = await apiRequest(
-      "GET",
-      `/api/events/search?q=${encodeURIComponent(query)}`,
-      undefined,
-    );
-    return response.json();
-  },
 
   // Tickets
   createTicket: async (

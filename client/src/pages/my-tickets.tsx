@@ -9,13 +9,12 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+
 import {
   AlertTriangle,
   CheckCircle,
@@ -316,9 +315,6 @@ export default function MyTickets() {
   const listedTicketsByEvent: Record<number, Ticket[]> = {};
 
   if (myListings) {
-    // Log for debugging
-    console.log("My listings:", myListings);
-
     myListings.forEach((ticket) => {
       // Use ticket ID as the key since we don't have eventId
       const eventId = ticket.id;
@@ -328,8 +324,6 @@ export default function MyTickets() {
       }
       listedTicketsByEvent[eventId].push(ticket);
     });
-
-    console.log("Listed tickets by event:", listedTicketsByEvent);
   }
 
   if (!isAuthenticated) {

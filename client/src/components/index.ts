@@ -25,7 +25,6 @@ export { ContactRequestModal } from './contact-request-modal';
 export { SellerProfileModal } from './seller-profile-modal';
 export { SellerDetailsModal } from './seller-details-modal';
 export { TicketDetailModal } from './ticket-detail-modal';
-export { DisputeModal } from './dispute-modal';
 export { VerificationModal } from './verification-modal';
 export { AIVerificationModal } from './ai-verification-modal';
 
