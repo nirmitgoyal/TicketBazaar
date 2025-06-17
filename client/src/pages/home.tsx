@@ -412,7 +412,7 @@ export default function Home() {
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto bg-white rounded-lg p-2 space-y-2 sm:space-y-0 sm:flex sm:items-center sm:space-x-2" role="search" aria-label="Search for second-hand event tickets">
               <div className="flex-1 flex items-center space-x-2 py-1">
-                <div className="pl-3">
+                <div className="pl-1">
                   <Search className="h-5 w-5 text-gray-400 flex-shrink-0" aria-hidden="true" />
                 </div>
                 <input
