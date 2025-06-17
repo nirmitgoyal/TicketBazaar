@@ -483,34 +483,6 @@ export function TicketDetailModal({
             </Card>
           )}
 
-          {/* Popularity Metrics */}
-          {popularityMetrics && popularityMetrics.viewCount && (
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Eye className="h-5 w-5" />
-                  Event Interest
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <PopularityMetrics 
-                  metrics={{
-                    totalViews: popularityMetrics.viewCount?.total || 0,
-                    uniqueViews: popularityMetrics.viewCount?.unique || 0,
-                    viewsToday: popularityMetrics.viewCount?.today || 0,
-                    viewsThisWeek: popularityMetrics.viewCount?.thisWeek || 0,
-                    viewsThisMonth: popularityMetrics.viewCount?.thisMonth || 0,
-                    popularityScore: popularityMetrics.popularity?.popularityScore || 0,
-                    trendingFactor: popularityMetrics.popularity?.trendingFactor || 0,
-                    lastViewedAt: popularityMetrics.popularity?.lastViewedAt,
-                  }} 
-                  compact={false}
-                  showTrending={true}
-                />
-              </CardContent>
-            </Card>
-          )}
-
           {/* Available Tickets Section */}
           <Card>
             <CardHeader className="pb-3">
