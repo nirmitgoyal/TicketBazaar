@@ -85,8 +85,6 @@ export default function Home() {
       const nowInVenueMs = new Date(nowInVenueTimezoneString.replace(', ', 'T')).getTime();
       const eventInVenueMs = new Date(eventInVenueTimezoneString.replace(', ', 'T')).getTime();
       
-
-      
       // Only show tickets with events strictly after current venue time (no equality)
       return eventInVenueMs > nowInVenueMs;
     } catch (error) {
