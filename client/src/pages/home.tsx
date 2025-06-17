@@ -424,7 +424,7 @@ export default function Home() {
               </div>
               <div className="flex items-center space-x-2 w-full sm:w-auto">
                 <div className="flex items-center space-x-2 flex-1 sm:flex-none">
-                  <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" aria-hidden="true" />
+                  <MapPin className="h-5 w-5 text-gray-400 flex-shrink-0" aria-hidden="true" />
                   <select className="p-2 text-gray-700 border-none outline-none bg-transparent flex-1 sm:flex-none min-w-0" aria-label="Select location">
                     <option>Any location</option>
                     <option>United States</option>
