@@ -151,11 +151,9 @@ export default function Home() {
       const data = await response.json();
       
       // Sort tickets by event date and time in ascending order
-      const sortedData = data.sort((a: Ticket, b: Ticket) => {
-        const dateA = new Date(a.eventDate).getTime();
-        const dateB = new Date(b.eventDate).getTime();
-        return dateA - dateB;
-      });
+      const sortedData = data.sort((a: Ticket, b: Ticket) => 
+        new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
+      );
       
       // Reset state for new search/filter
       setCurrentPage(1);
@@ -182,11 +180,9 @@ export default function Home() {
       const data = await response.json();
       
       // Sort search results by event date and time in ascending order
-      return data.sort((a: Ticket, b: Ticket) => {
-        const dateA = new Date(a.eventDate).getTime();
-        const dateB = new Date(b.eventDate).getTime();
-        return dateA - dateB;
-      });
+      return data.sort((a: Ticket, b: Ticket) => 
+        new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
+      );
     },
     enabled: searchQuery.length >= 2, // Only search when user has typed at least 2 characters
     staleTime: 30000, // Cache results for 30 seconds
@@ -636,11 +632,7 @@ export default function Home() {
               />
             ) : searchResults.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {searchResults.filter(isFutureTicket).sort((a, b) => {
-                  const dateA = new Date(a.eventDate).getTime();
-                  const dateB = new Date(b.eventDate).getTime();
-                  return dateA - dateB;
-                }).map((ticket) => (
+                {searchResults.filter(isFutureTicket).map((ticket) => (
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
@@ -690,11 +682,7 @@ export default function Home() {
               />
             ) : defaultTickets && defaultTickets.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {defaultTickets.filter(isFutureTicket).sort((a, b) => {
-                  const dateA = new Date(a.eventDate).getTime();
-                  const dateB = new Date(b.eventDate).getTime();
-                  return dateA - dateB;
-                }).map((ticket) => (
+                {defaultTickets.filter(isFutureTicket).map((ticket) => (
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
