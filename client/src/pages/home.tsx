@@ -33,6 +33,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const [hasMoreTickets, setHasMoreTickets] = useState<boolean>(true);
+  const [allTickets, setAllTickets] = useState<Ticket[]>([]);
   const TICKETS_PER_PAGE = 12;
   
   // Scroll navigation state
@@ -53,17 +54,17 @@ export default function Home() {
     enabled: true,
   });
 
-  // Fetch tickets data with pagination
+  // Fetch initial tickets data
   const {
-    data: tickets = [],
+    data: initialTickets = [],
     isLoading: ticketsLoading,
     error: ticketsError,
   } = useQuery<Ticket[]>({
-    queryKey: ["/api/tickets", urlSearchQuery, selectedSearchFilters, currentPage],
+    queryKey: ["/api/tickets", urlSearchQuery, selectedSearchFilters],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (urlSearchQuery) params.set("q", urlSearchQuery);
-      params.set("page", currentPage.toString());
+      params.set("page", "1");
       params.set("limit", TICKETS_PER_PAGE.toString());
       
       Object.entries(selectedSearchFilters).forEach(([key, value]) => {
@@ -84,7 +85,9 @@ export default function Home() {
       }
       const data = await response.json();
       
-      // Update hasMoreTickets based on response
+      // Reset state for new search/filter
+      setCurrentPage(1);
+      setAllTickets(data);
       setHasMoreTickets(data.length === TICKETS_PER_PAGE);
       
       return data;
@@ -142,12 +145,41 @@ export default function Home() {
     
     setIsLoadingMore(true);
     const nextPage = currentPage + 1;
-    setCurrentPage(nextPage);
     
-    // The query will automatically refetch with the new page
-    setTimeout(() => {
+    try {
+      const params = new URLSearchParams();
+      if (urlSearchQuery) params.set("q", urlSearchQuery);
+      params.set("page", nextPage.toString());
+      params.set("limit", TICKETS_PER_PAGE.toString());
+      
+      Object.entries(selectedSearchFilters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          if (typeof value === "boolean") {
+            params.set(key, value.toString());
+          } else if (value instanceof Date) {
+            params.set(key, value.toISOString());
+          } else {
+            params.set(key, value.toString());
+          }
+        }
+      });
+
+      const response = await fetch(`/api/tickets?${params}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch more tickets');
+      }
+      const newTickets = await response.json();
+      
+      // Append new tickets to existing ones
+      setAllTickets(prev => [...prev, ...newTickets]);
+      setCurrentPage(nextPage);
+      setHasMoreTickets(newTickets.length === TICKETS_PER_PAGE);
+      
+    } catch (error) {
+      console.error('Error loading more tickets:', error);
+    } finally {
       setIsLoadingMore(false);
-    }, 1000);
+    }
   };
 
   // Set up scroll listener
@@ -174,6 +206,7 @@ export default function Home() {
   useEffect(() => {
     setCurrentPage(1);
     setHasMoreTickets(true);
+    setAllTickets([]);
   }, [selectedSearchFilters, activeCategory, searchQuery]);
 
   // Extract query parameters and URL path parameters
@@ -550,6 +583,38 @@ export default function Home() {
                 count={8} 
                 className="grid-cols-2 lg:grid-cols-4" 
               />
+            ) : allTickets && allTickets.length > 0 ? (
+              <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
+                {allTickets.map((ticket) => (
+                  <div 
+                    key={ticket.id} 
+                    className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => openModal(ticket.id)}
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {String(new Date(ticket.eventDate).getDate()).padStart(2, '0')}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {new Date(ticket.eventDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {new Date(ticket.eventDate).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="font-semibold text-sm leading-tight">
+                        {ticket.eventTitle}
+                      </h3>
+                      <p className="text-xs text-gray-600">{ticket.venue}</p>
+                      <p className="text-xs text-gray-500">{ticket.city}</p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(ticket.eventDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : events && events.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {events.map((event) => (
@@ -563,7 +628,7 @@ export default function Home() {
             ) : (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {/* Sample Event Cards to match the original design */}
-                {Array.from({ length: 16 }, (_, i) => {
+                {Array.from({ length: 12 }, (_, i) => {
                 // Create sample ticket data for each card
                 const sampleTicket: Ticket = {
                   id: i + 1000, // Unique ID for sample tickets
@@ -639,27 +704,29 @@ export default function Home() {
             )
           )}
 
-          {/* Load More Button */}
-          <div className="text-center mt-8">
-            <Button 
-              variant="outline" 
-              className="text-blue-600 border-blue-600 hover:bg-blue-50" 
-              aria-label="Load more second-hand tickets"
-              onClick={handleLoadMore}
-              disabled={!hasMoreTickets || isLoadingMore}
-            >
-              {isLoadingMore ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Loading...
-                </>
-              ) : hasMoreTickets ? (
-                "Load More Tickets"
-              ) : (
-                "No More Tickets"
-              )}
-            </Button>
-          </div>
+          {/* Load More Button - Only show for real ticket data */}
+          {!searchQuery.length && allTickets.length > 0 && (
+            <div className="text-center mt-8">
+              <Button 
+                variant="outline" 
+                className="text-blue-600 border-blue-600 hover:bg-blue-50" 
+                aria-label="Load more second-hand tickets"
+                onClick={handleLoadMore}
+                disabled={!hasMoreTickets || isLoadingMore}
+              >
+                {isLoadingMore ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    Loading...
+                  </>
+                ) : hasMoreTickets ? (
+                  "Load More Tickets"
+                ) : (
+                  "No More Tickets"
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 

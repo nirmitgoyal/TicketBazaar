@@ -15,7 +15,7 @@ export class TicketController {
   }
 
   /**
-   * Get all tickets
+   * Get all tickets with pagination support
    */
   getAllTickets = async (req: Request, res: Response) => {
     try {
@@ -23,14 +23,23 @@ export class TicketController {
         ? parseInt(req.query.eventId as string)
         : undefined;
 
+      // Parse pagination parameters
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 12;
+      const offset = (page - 1) * limit;
+
       if (eventId && !isNaN(eventId)) {
         const tickets = await this.ticketService.getTicketsByEvent(eventId.toString());
         return res.status(200).json(tickets);
       }
 
-      // Get all available tickets directly
+      // Get all available tickets with pagination
       const allTickets = await storage.searchTickets('');
-      res.status(200).json(allTickets);
+      
+      // Apply pagination
+      const paginatedTickets = allTickets.slice(offset, offset + limit);
+      
+      res.status(200).json(paginatedTickets);
     } catch (error) {
       res.status(500).json({
         message: "Error retrieving tickets",
