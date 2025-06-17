@@ -214,9 +214,6 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
               <Button onClick={onClose} variant="outline" className="flex-1">
                 Close
               </Button>
-              <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
-                Contact Seller
-              </Button>
             </div>
           </div>
         ) : error ? (
