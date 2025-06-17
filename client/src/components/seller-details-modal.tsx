@@ -252,9 +252,7 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
                 <div className="text-sm">
                   <span className="font-medium">Event:</span> {ticket.eventTitle}
                 </div>
-                <div className="text-sm">
-                  <span className="font-medium">Venue:</span> {ticket.venue}
-                </div>
+
                 <div className="text-sm">
                   <span className="font-medium">Transfer Method:</span> {ticket.transferMethod}
                 </div>

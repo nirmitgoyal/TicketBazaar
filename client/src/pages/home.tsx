@@ -629,7 +629,6 @@ export default function Home() {
                       <h3 className="font-semibold text-sm leading-tight">
                         {ticket.eventTitle}
                       </h3>
-                      <p className="text-xs text-gray-600">{ticket.venue}</p>
                       <p className="text-xs text-gray-500">{ticket.city}</p>
                       <p className="text-xs text-gray-500">
                         {new Date(ticket.eventDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
@@ -680,7 +679,6 @@ export default function Home() {
                       <h3 className="font-semibold text-sm leading-tight">
                         {ticket.eventTitle}
                       </h3>
-                      <p className="text-xs text-gray-600">{ticket.venue}</p>
                       <p className="text-xs text-gray-500">{ticket.city}</p>
                       <p className="text-xs text-gray-500">
                         {new Date(ticket.eventDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
