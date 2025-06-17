@@ -247,10 +247,34 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllAvailableTickets(): Promise<Ticket[]> {
-    return await db.select().from(tickets)
+    // Get all available tickets first
+    const allTickets = await db.select().from(tickets)
       .where(eq(tickets.status, 'available'))
       .orderBy(desc(tickets.eventDate), desc(tickets.createdAt))
-      .limit(100);
+      .limit(200); // Get more tickets to account for filtering
+
+    // Filter tickets to show only future events based on venue timezone
+    const futureTickets = allTickets.filter(ticket => {
+      try {
+        const eventTimezone = ticket.eventTimezone || 'UTC';
+        const now = new Date();
+        
+        // Get current time in the venue's timezone
+        const venueCurrentTime = new Date(now.toLocaleString("en-US", {timeZone: eventTimezone}));
+        
+        // Get event time (already stored in venue timezone)
+        const eventDateTime = new Date(ticket.eventDate);
+        
+        // Compare with current time in venue timezone - only show tickets with events strictly after now
+        return eventDateTime.getTime() > venueCurrentTime.getTime();
+      } catch (error) {
+        console.error('Error filtering ticket by timezone:', error);
+        // If there's an error parsing timezone, default to basic UTC comparison
+        return new Date(ticket.eventDate).getTime() > Date.now();
+      }
+    });
+
+    return futureTickets.slice(0, 100);
   }
 
   async searchTickets(query: string): Promise<Ticket[]> {
@@ -267,7 +291,7 @@ export class DatabaseStorage implements IStorage {
       ilike(tickets.eventTitle, `%${searchTerm}%`)
     );
 
-    return await db
+    const searchResults = await db
       .select()
       .from(tickets)
       .where(and(
@@ -275,7 +299,30 @@ export class DatabaseStorage implements IStorage {
         searchCondition
       ))
       .orderBy(desc(tickets.eventDate), desc(tickets.createdAt))
-      .limit(50);
+      .limit(100); // Get more results to account for filtering
+
+    // Filter search results to show only future events based on venue timezone
+    const futureTickets = searchResults.filter(ticket => {
+      try {
+        const eventTimezone = ticket.eventTimezone || 'UTC';
+        const now = new Date();
+        
+        // Get current time in the venue's timezone
+        const venueCurrentTime = new Date(now.toLocaleString("en-US", {timeZone: eventTimezone}));
+        
+        // Get event time (already stored in venue timezone)
+        const eventDateTime = new Date(ticket.eventDate);
+        
+        // Compare with current time in venue timezone - only show tickets with events strictly after now
+        return eventDateTime.getTime() > venueCurrentTime.getTime();
+      } catch (error) {
+        console.error('Error filtering search result by timezone:', error);
+        // If there's an error parsing timezone, default to basic UTC comparison
+        return new Date(ticket.eventDate).getTime() > Date.now();
+      }
+    });
+
+    return futureTickets.slice(0, 50);
   }
 
   async createTicket(ticket: InsertTicket): Promise<Ticket> {
