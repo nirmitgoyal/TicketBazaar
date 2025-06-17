@@ -203,7 +203,7 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
                       className="flex items-center gap-2"
                     >
                       <ExternalLink className="h-3 w-3" />
-                      View Profile
+                      View Profile & DM
                     </Button>
                   </div>
                 )}
