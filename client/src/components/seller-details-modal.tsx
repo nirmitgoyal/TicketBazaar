@@ -278,6 +278,11 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
               </Button>
             </div>
           </div>
+        ) : error ? (
+          <div className="text-center py-8">
+            <p className="text-red-500 mb-2">Failed to load seller information</p>
+            <p className="text-sm text-gray-500">Please try again later</p>
+          </div>
         ) : (
           <div className="text-center py-8">
             <p className="text-gray-500">Seller information not available</p>
