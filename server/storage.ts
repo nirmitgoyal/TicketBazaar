@@ -250,7 +250,7 @@ export class DatabaseStorage implements IStorage {
     // Get all available tickets first
     const allTickets = await db.select().from(tickets)
       .where(eq(tickets.status, 'available'))
-      .orderBy(desc(tickets.eventDate), desc(tickets.createdAt))
+      .orderBy(tickets.eventDate, tickets.createdAt)
       .limit(200); // Get more tickets to account for filtering
 
     // Filter tickets to show only future events based on venue timezone
