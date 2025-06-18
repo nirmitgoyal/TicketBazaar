@@ -278,12 +278,13 @@ export class DatabaseStorage implements IStorage {
     const searchTerm = query.trim();
     
     // Enhanced search with relevance scoring
+    const searchPattern = `%${searchTerm}%`;
     const searchCondition = or(
-      ilike(tickets.title, `%${searchTerm}%`),
-      ilike(tickets.city, `%${searchTerm}%`),
-      ilike(tickets.eventTitle, `%${searchTerm}%`),
-      ilike(tickets.venue, `%${searchTerm}%`),
-      ilike(tickets.category, `%${searchTerm}%`)
+      ilike(tickets.title, searchPattern),
+      ilike(tickets.city, searchPattern),
+      ilike(tickets.eventTitle, searchPattern),
+      ilike(tickets.venue, searchPattern),
+      ilike(tickets.category, searchPattern)
     );
 
     const searchResults = await db
