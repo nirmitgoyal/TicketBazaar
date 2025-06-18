@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TrustInsightBox } from "@/components/trust-insight-box";
 import { 
   Shield, 
   ShieldCheck, 
@@ -180,6 +181,9 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
                 </div>
               </CardContent>
             </Card>
+
+            {/* AI-Powered Trust Intelligence */}
+            <TrustInsightBox sellerId={seller.id} />
 
             {/* Contact Information */}
             <Card>
