@@ -42,7 +42,7 @@ router.get("/suggestions", async (req, res) => {
     const queryLower = query.toLowerCase();
     
     // Get all available tickets to build suggestions from
-    const events = await storage.getAllEvents();
+    const events = await storage.getAllAvailableTickets();
     
     // Build unique suggestions with similarity scoring
     const suggestions = new Map<string, { text: string; type: string; priority: number; category?: string }>();
