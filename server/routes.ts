@@ -81,6 +81,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const autocompleteRoutes = (await import("./routes/autocomplete")).default;
   apiRouter.use("/autocomplete", searchLimiter, autocompleteRoutes);
 
+  // Import and register notification routes
+  const notificationRoutes = (await import("./routes/notifications")).default;
+  apiRouter.use("/notifications", notificationRoutes);
+
   // Import and register popularity tracking routes
   const popularityRoutes = (await import("./routes/popularity.routes")).default;
   apiRouter.use("/popularity", popularityRoutes);

@@ -294,17 +294,7 @@ export class DatabaseStorage implements IStorage {
         sql`event_date > NOW()`, // Filter future events at database level
         searchCondition
       ))
-      .orderBy(
-        sql`CASE 
-          WHEN LOWER(event_title) LIKE LOWER('%${searchTerm}%') THEN 1
-          WHEN LOWER(title) LIKE LOWER('%${searchTerm}%') THEN 2
-          WHEN LOWER(city) LIKE LOWER('%${searchTerm}%') THEN 3
-          WHEN LOWER(venue) LIKE LOWER('%${searchTerm}%') THEN 4
-          ELSE 5
-        END`,
-        tickets.eventDate, 
-        tickets.createdAt
-      )
+      .orderBy(tickets.eventDate, tickets.createdAt)
       .limit(50);
 
     // Cache results for 2 minutes
