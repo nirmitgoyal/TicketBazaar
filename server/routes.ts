@@ -84,6 +84,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const popularityRoutes = (await import("./routes/popularity.routes")).default;
   apiRouter.use("/popularity", popularityRoutes);
 
+  // Import and register seller trust routes
+  const sellerTrustRoutes = (await import("./routes/seller-trust.routes")).default;
+  apiRouter.use("/seller-trust", strictLimiter, sellerTrustRoutes);
+
   // Import and register sitemap routes
   const { generateSitemap, generateRobotsTxt } = await import("./routes/sitemap");
   
