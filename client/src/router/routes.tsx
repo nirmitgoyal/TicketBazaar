@@ -28,6 +28,7 @@ const SellerPolicy = lazy(() => import("@/pages/SellerPolicy"));
 const CityEvents = lazy(() => import("@/pages/city-events"));
 const GlobalCities = lazy(() => import("@/pages/global-cities"));
 const HowToSellTickets = lazy(() => import("@/pages/how-to-sell-tickets"));
+const EventDiscoveryPage = lazy(() => import("@/pages/EventDiscoveryPage"));
 
 // Lazy load dashboard components with fallback handling
 const VerificationReport = lazy(() => import("@/pages/verification-report").then(module => ({ 
