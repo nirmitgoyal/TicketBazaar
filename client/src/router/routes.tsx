@@ -160,6 +160,9 @@ export function AppRoutes() {
       <LazyRoute path="/resell-tickets" component={HowToSellTickets} />
       <LazyRoute path="/buy-second-hand-tickets" component={Home} />
       
+      {/* Event Discovery */}
+      <LazyRoute path="/event-discovery" component={EventDiscoveryPage} />
+      
       {/* Legal pages */}
       <LazyRoute path="/terms-of-service" component={TermsOfService} />
       <LazyRoute path="/privacy-policy" component={PrivacyPolicy} />
