@@ -81,7 +81,7 @@ router.get("/performance", async (req, res) => {
     
     res.json({
       timeframe,
-      data: performanceData.rows
+      data: performanceData
     });
     
   } catch (error) {

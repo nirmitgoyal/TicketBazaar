@@ -43,13 +43,13 @@ export function FilterDropdown({
   initialFilters,
 }: FilterDropdownProps) {
   const [open, setOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<string>("any");
-  const [venueLocation, setVenueLocation] = useState<string>("any");
-  const [seatingTypes, setSeatingTypes] = useState<string[]>([]);
-  const [rating, setRating] = useState<number>(0);
-  const [showVerifiedOnly, setShowVerifiedOnly] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<string>("relevance");
-  const [availability, setAvailability] = useState<string>("all");
+  const [dateRange, setDateRange] = useState<string>(initialFilters?.dateRange || "any");
+  const [venueLocation, setVenueLocation] = useState<string>(initialFilters?.venueLocation || "any");
+  const [seatingTypes, setSeatingTypes] = useState<string[]>(initialFilters?.seatingTypes || []);
+  const [rating, setRating] = useState<number>(initialFilters?.rating || 0);
+  const [showVerifiedOnly, setShowVerifiedOnly] = useState<boolean>(initialFilters?.showVerifiedOnly || false);
+  const [sortBy, setSortBy] = useState<string>(initialFilters?.sortBy || "relevance");
+  const [availability, setAvailability] = useState<string>(initialFilters?.availability || "all");
   const [activeFilterCount, setActiveFilterCount] = useState<number>(0);
 
   // Load initial filters if provided

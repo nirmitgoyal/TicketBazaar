@@ -140,7 +140,7 @@ export function SearchBar({
   placeholder = "Search events, venues, or artists...",
   onSearch,
 }: SearchBarProps) {
-  const [query, setQuery] = useState(initialQuery);
+  const [query, setQuery] = useState(initialQuery || "");
   const [location, setLocation] = useState<string>("any");
   const [category, setCategory] = useState<string>("");
   const [date, setDate] = useState<Date | undefined>(undefined);

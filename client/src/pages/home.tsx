@@ -426,13 +426,13 @@ export default function Home() {
     setIsSellerModalOpen(true);
     
     // Track seller contact intent
-    trackEvent('contact_seller', 'engagement', ticket.title, ticket.price);
+    trackEvent('contact_seller', 'engagement', ticket.title, 0);
     trackUserAction('view_item', {
       item_id: ticket.id.toString(),
       item_name: ticket.title,
       item_category: ticket.category,
-      price: ticket.price,
-      currency: ticket.currency
+      price: 0,
+      currency: 'INR'
     });
   };
 
