@@ -6,11 +6,8 @@ import { storage } from "../storage";
  */
 export async function generateSitemap(req: Request, res: Response) {
   try {
-    console.log('Starting sitemap generation...');
-    
     // Get all available tickets (which contain event information)
     const tickets = await storage.getAllAvailableTickets();
-    console.log(`Found ${tickets.length} tickets`);
     
     // Group tickets by event title to avoid duplicates
     const uniqueEvents = tickets.reduce((acc, ticket) => {
@@ -23,8 +20,6 @@ export async function generateSitemap(req: Request, res: Response) {
       }
       return acc;
     }, [] as Array<{ title: string; eventImageUrl?: string | null; id: number }>);
-    
-    console.log(`Found ${uniqueEvents.length} unique events`);
 
     const baseUrl = "https://ticketbazaar.co.in";
     const currentDate = new Date().toISOString().split('T')[0];
