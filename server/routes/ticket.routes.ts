@@ -65,6 +65,9 @@ const upload = multer({
 // Get all tickets
 router.get("/", ticketController.getAllTickets);
 
+// Get all events (alias for tickets to maintain compatibility)
+router.get("/events", ticketController.getAllTickets);
+
 // Search tickets by title and city
 router.get("/search", ticketController.searchTickets);
 
