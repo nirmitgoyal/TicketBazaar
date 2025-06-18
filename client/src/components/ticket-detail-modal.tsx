@@ -34,6 +34,7 @@ import { Ticket, User } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
 import { TicketVerificationSection } from "./ticket-verification-section";
 import { PopularityMetrics } from "./popularity-metrics";
+import { SocialShare } from "./social-share";
 import {
   useAutoTrackView,
   usePopularityMetrics,
@@ -638,19 +639,13 @@ export function TicketDetailModal({
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <TicketVerificationSection ticket={ticket} />
 
-                        <div className="flex gap-2 w-full md:w-auto">
-                          <Button
+                        <div className="flex gap-2 w-full md:w-auto items-center">
+                          <SocialShare 
+                            ticket={ticket}
                             variant="outline"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Share functionality placeholder
-                            }}
-                            className="flex-1 md:flex-none"
-                          >
-                            <Share2 className="h-4 w-4 md:mr-2" />
-                            <span className="hidden md:inline">Share</span>
-                          </Button>
+                            showWhatsApp={true}
+                            showCopy={true}
+                          />
 
                           <Button
                             onClick={(e) => {
