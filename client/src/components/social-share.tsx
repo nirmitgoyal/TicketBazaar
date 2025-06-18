@@ -115,23 +115,7 @@ export function SocialShare({
     }
   };
 
-  const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: ticket?.eventTitle || event?.eventTitle || "Ticket Bazaar",
-          text: shareMessage,
-          url: shareUrl,
-        });
-      } catch (err) {
-        // User cancelled or error occurred, fallback to copy
-        copyToClipboard();
-      }
-    } else {
-      // Native share not supported, fallback to copy
-      copyToClipboard();
-    }
-  };
+  
 
   return (
     <div className="flex gap-1">
@@ -155,22 +139,11 @@ export function SocialShare({
           title="Copy link to clipboard"
           onClick={copyToClipboard}
         >
-          <CopyLinkIcon className="h-3.5 w-3.5" />
-        </Button>
-      )}
-      
-      {/* Native share button (appears on mobile devices that support it) */}
-      {navigator.share && (
-        <Button
-          variant={variant}
-          size="icon"
-          className="h-7 w-7"
-          title="Share"
-          onClick={handleNativeShare}
-        >
           <Share2 className="h-3.5 w-3.5" />
         </Button>
       )}
+      
+      
     </div>
   );
 }
