@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GoogleMap, useJsApiLoader, InfoWindow, Marker } from "@react-google-maps/api";
-import { Event } from "@shared/schema";
+import { Ticket } from "@shared/schema";
 import { Link } from "wouter";
 import { Loader2, MapPin, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,17 +15,17 @@ import {
 
 // Set up props interface
 interface EventMapProps {
-  events: Event[];
+  events: Ticket[];
   onViewportChange?: (bounds: google.maps.LatLngBounds | null) => void;
 }
 
 const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Ticket | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<google.maps.LatLng | null>(
     null,
   );
-  const [eventMarkers, setEventMarkers] = useState<Event[]>([]);
+  const [eventMarkers, setEventMarkers] = useState<Ticket[]>([]);
 
   // Track events with valid coordinates for analytics
   useEffect(() => {
@@ -289,7 +289,7 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
             title={event.eventTitle}
             onClick={() => setSelectedEvent(event)}
             icon={{
-              path: window.google.maps.SymbolPath.CIRCLE,
+              path: window.google?.maps?.SymbolPath?.CIRCLE || google.maps.SymbolPath.CIRCLE,
               scale: 8,
               fillColor: '#1976D2',
               fillOpacity: 1,
@@ -305,7 +305,7 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
             position={userLocation}
             title="Your Location"
             icon={{
-              path: window.google.maps.SymbolPath.CIRCLE,
+              path: window.google?.maps?.SymbolPath?.CIRCLE || google.maps.SymbolPath.CIRCLE,
               scale: 6,
               fillColor: '#4285F4',
               fillOpacity: 1,
