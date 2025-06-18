@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { userRegisterSchema } from "@shared/schema";
 import { z } from "zod";
 import { getAllCountries, detectUserCountry, getCountryInfo } from "@/lib/country-utils";
-import { getAllCurrencies } from "@/lib/currency-utils";
 
 export default function Register() {
   const [, navigate] = useLocation();
@@ -26,14 +25,12 @@ export default function Register() {
     country: "",
     timezone: "",
     language: "en",
-    currency: "",
     preferredContactMethod: "email",
   });
 
   // Auto-detect user's location and preferences on component mount
   useEffect(() => {
     const detectedCountry = detectUserCountry();
-    const countryInfo = getCountryInfo(detectedCountry);
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const userLanguage = navigator.language.split('-')[0];
 
@@ -42,7 +39,6 @@ export default function Register() {
       country: detectedCountry,
       timezone: userTimezone,
       language: userLanguage,
-      currency: countryInfo?.currency || "USD",
     }));
   }, []);
 
@@ -122,51 +118,30 @@ export default function Register() {
                 required
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="country">Country</Label>
-                <Select
-                  value={formData.country}
-                  onValueChange={(value) => {
-                    handleInputChange("country", value);
-                    const countryInfo = getCountryInfo(value);
-                    if (countryInfo) {
-                      handleInputChange("currency", countryInfo.currency);
-                      handleInputChange("timezone", countryInfo.timezone);
-                      handleInputChange("language", countryInfo.language);
-                    }
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getAllCountries().map((country) => (
-                      <SelectItem key={country.code} value={country.code}>
-                        {country.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="currency">Preferred Currency</Label>
-                <Select
-                  value={formData.currency}
-                  onValueChange={(value) => handleInputChange("currency", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select currency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getAllCurrencies().map((currency) => (
-                      <SelectItem key={currency.code} value={currency.code}>
-                        {currency.symbol} {currency.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label htmlFor="country">Country</Label>
+              <Select
+                value={formData.country}
+                onValueChange={(value) => {
+                  handleInputChange("country", value);
+                  const countryInfo = getCountryInfo(value);
+                  if (countryInfo) {
+                    handleInputChange("timezone", countryInfo.timezone);
+                    handleInputChange("language", countryInfo.language);
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAllCountries().map((country) => (
+                    <SelectItem key={country.code} value={country.code}>
+                      {country.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label htmlFor="phone">Phone (Optional)</Label>
