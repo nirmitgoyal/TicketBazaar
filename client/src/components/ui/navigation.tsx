@@ -13,10 +13,36 @@ export function Navigation() {
   const [location, setLocation] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Handle navigation with proper client-side routing
+  // Handle navigation with proper client-side routing and preserve search params
   const handleNavigation = (path: string) => {
     setIsMenuOpen(false);
-    setLocation(path);
+    
+    // Preserve search parameters when navigating between tabs
+    const currentUrl = new URL(window.location.href);
+    const searchParams = currentUrl.searchParams;
+    
+    // Only preserve search params for main navigation tabs
+    if (path === "/map" || path === "/popularity" || path === "/") {
+      const newUrl = new URL(path, window.location.origin);
+      
+      // Copy relevant search parameters
+      if (searchParams.get("q")) {
+        newUrl.searchParams.set("q", searchParams.get("q")!);
+      }
+      if (searchParams.get("location")) {
+        newUrl.searchParams.set("location", searchParams.get("location")!);
+      }
+      if (searchParams.get("category")) {
+        newUrl.searchParams.set("category", searchParams.get("category")!);
+      }
+      
+      // Use the full URL with search params
+      window.history.pushState(null, "", newUrl.toString());
+      setLocation(path);
+    } else {
+      // For other pages, navigate normally
+      setLocation(path);
+    }
   };
 
   const toggleMenu = () => {

@@ -59,8 +59,26 @@ export default function MapPage() {
     userLocation: null
   });
 
+  // Get search parameters from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const searchQuery = urlParams.get("q") || "";
+  const locationFilter = urlParams.get("location") || "";
+  const categoryFilter = urlParams.get("category") || "";
+
   const { data: events, isLoading, error } = useQuery<TicketEvent[]>({
-    queryKey: ["/api/events"],
+    queryKey: ["/api/tickets", searchQuery, locationFilter, categoryFilter],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (searchQuery) params.set("q", searchQuery);
+      if (locationFilter) params.set("location", locationFilter);
+      if (categoryFilter) params.set("category", categoryFilter);
+      
+      const response = await fetch(`/api/tickets?${params}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch tickets');
+      }
+      return response.json();
+    },
   });
 
   // Remove API key validation since VenueMap handles it internally

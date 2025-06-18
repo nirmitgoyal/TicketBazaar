@@ -28,11 +28,48 @@ import { Ticket } from "@shared/schema";
 export function PopularityDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Get search parameters from URL to maintain search context
+  const urlParams = new URLSearchParams(window.location.search);
+  const searchQuery = urlParams.get("q") || "";
+  const locationFilter = urlParams.get("location") || "";
+  const categoryFilter = urlParams.get("category") || "";
+
   // Fetch analytics data
   const { data: analytics, isLoading: analyticsLoading } = usePopularityAnalytics();
   const { data: popularTickets, isLoading: popularLoading } = usePopularTickets(15);
   const { data: trendingTickets, isLoading: trendingLoading } = useTrendingTickets(15);
   const refreshMutation = useRefreshPopularity();
+  
+  // Filter tickets based on search parameters
+  const filteredPopularTickets = (popularTickets as any)?.data?.filter((ticket: Ticket) => {
+    if (searchQuery && !ticket.eventTitle?.toLowerCase().includes(searchQuery.toLowerCase()) && 
+        !ticket.venue?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !ticket.city?.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    if (locationFilter && !ticket.city?.toLowerCase().includes(locationFilter.toLowerCase())) {
+      return false;
+    }
+    if (categoryFilter && categoryFilter !== "all" && ticket.category !== categoryFilter) {
+      return false;
+    }
+    return true;
+  }) || [];
+
+  const filteredTrendingTickets = (trendingTickets as any)?.data?.filter((ticket: Ticket) => {
+    if (searchQuery && !ticket.eventTitle?.toLowerCase().includes(searchQuery.toLowerCase()) && 
+        !ticket.venue?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !ticket.city?.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    if (locationFilter && !ticket.city?.toLowerCase().includes(locationFilter.toLowerCase())) {
+      return false;
+    }
+    if (categoryFilter && categoryFilter !== "all" && ticket.category !== categoryFilter) {
+      return false;
+    }
+    return true;
+  }) || [];
 
   const handleRefresh = () => {
     refreshMutation.mutate();
@@ -240,7 +277,7 @@ export function PopularityDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {((popularTickets as any)?.data || []).map((ticket: Ticket & { popularity?: any }, index: number) => (
+                {filteredPopularTickets.map((ticket: Ticket & { popularity?: any }, index: number) => (
                   <div key={ticket.id} className="relative">
                     <Badge className="absolute top-2 left-2 z-10 bg-yellow-500 hover:bg-yellow-600">
                       #{index + 1}
