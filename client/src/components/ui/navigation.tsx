@@ -51,7 +51,7 @@ export function Navigation() {
                   <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">
                     Ticket Bazaar
                   </h1>
-                  <p className="text-xs text-gray-500 -mt-1">P2P Marketplace</p>
+                  <p className="text-xs text-gray-500 -mt-1 sticky top-0">P2P Marketplace</p>
                 </motion.div>
               </motion.div>
             </Link>
