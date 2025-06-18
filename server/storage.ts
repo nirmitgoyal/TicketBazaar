@@ -22,6 +22,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { logger } from "./utils/logger";
+import { cacheService } from "./services/cache.service";
 import connectPg from "connect-pg-simple";
 import session from "express-session";
 
@@ -266,13 +267,23 @@ export class DatabaseStorage implements IStorage {
       return this.getAllAvailableTickets();
     }
 
+    // Check cache first
+    const cacheKey = `search:${query.toLowerCase()}`;
+    const cached = cacheService.get(cacheKey);
+    if (cached) {
+      logger.debug('SEARCH', `Cache hit for search query: ${query}`);
+      return cached;
+    }
+
     const searchTerm = query.trim();
     
-    // Use case-insensitive partial matching with database-level filtering
+    // Enhanced search with relevance scoring
     const searchCondition = or(
       ilike(tickets.title, `%${searchTerm}%`),
       ilike(tickets.city, `%${searchTerm}%`),
-      ilike(tickets.eventTitle, `%${searchTerm}%`)
+      ilike(tickets.eventTitle, `%${searchTerm}%`),
+      ilike(tickets.venue, `%${searchTerm}%`),
+      ilike(tickets.category, `%${searchTerm}%`)
     );
 
     const searchResults = await db
@@ -283,9 +294,23 @@ export class DatabaseStorage implements IStorage {
         sql`event_date > NOW()`, // Filter future events at database level
         searchCondition
       ))
-      .orderBy(tickets.eventDate, tickets.createdAt)
+      .orderBy(
+        sql`CASE 
+          WHEN LOWER(event_title) LIKE LOWER('%${searchTerm}%') THEN 1
+          WHEN LOWER(title) LIKE LOWER('%${searchTerm}%') THEN 2
+          WHEN LOWER(city) LIKE LOWER('%${searchTerm}%') THEN 3
+          WHEN LOWER(venue) LIKE LOWER('%${searchTerm}%') THEN 4
+          ELSE 5
+        END`,
+        tickets.eventDate, 
+        tickets.createdAt
+      )
       .limit(50);
 
+    // Cache results for 2 minutes
+    cacheService.set(cacheKey, searchResults, 2 * 60 * 1000);
+    
+    logger.info('SEARCH', `Search for "${query}" returned ${searchResults.length} results`);
     return searchResults;
   }
 
