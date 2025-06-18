@@ -36,8 +36,8 @@ router.get("/dashboard", async (req, res) => {
     const responseTime = Date.now() - startTime;
     
     const metrics = {
-      totalViews: parseInt(Array.isArray(totalViewsQuery) ? totalViewsQuery[0]?.count || '0' : '0'),
-      activeUsers: parseInt(Array.isArray(activeUsersQuery) ? activeUsersQuery[0]?.count || '0' : '0'),
+      totalViews: parseInt(String(Array.isArray(totalViewsQuery) ? totalViewsQuery[0]?.count || '0' : '0')),
+      activeUsers: parseInt(String(Array.isArray(activeUsersQuery) ? activeUsersQuery[0]?.count || '0' : '0')),
       popularCities: Array.isArray(popularCitiesQuery) ? popularCitiesQuery.map((row: any) => ({
         city: row.city,
         count: parseInt(row.count)

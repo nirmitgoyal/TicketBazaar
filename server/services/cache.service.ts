@@ -77,8 +77,9 @@ class CacheService {
   cleanup(): number {
     let cleaned = 0;
     const now = Date.now();
+    const entries = Array.from(this.cache.entries());
     
-    for (const [key, item] of this.cache.entries()) {
+    for (const [key, item] of entries) {
       if (now > item.expiry) {
         this.cache.delete(key);
         cleaned++;

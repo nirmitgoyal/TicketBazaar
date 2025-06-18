@@ -225,8 +225,9 @@ class NotificationService {
   cleanup(): number {
     let cleaned = 0;
     const cutoffTime = Date.now() - (7 * 24 * 60 * 60 * 1000); // 7 days ago
+    const entries = Array.from(this.pendingNotifications.entries());
     
-    for (const [key, notifications] of this.pendingNotifications.entries()) {
+    for (const [key, notifications] of entries) {
       const filtered = notifications.filter(notification => {
         const timestamp = new Date(notification.data?.timestamp || 0).getTime();
         return timestamp > cutoffTime;
