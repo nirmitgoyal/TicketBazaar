@@ -25,6 +25,12 @@ interface PopularityMetrics {
 export function usePopularityMetrics(ticketId: number) {
   return useQuery<PopularityMetrics>({
     queryKey: [`/api/popularity/metrics/${ticketId}`],
+    queryFn: async () => {
+      const response = await fetch(`/api/popularity/metrics/${ticketId}`);
+      if (!response.ok) throw new Error('Failed to fetch popularity metrics');
+      const result = await response.json();
+      return result.data;
+    },
     enabled: !!ticketId,
     staleTime: 30000, // Cache for 30 seconds
     refetchOnWindowFocus: false,
