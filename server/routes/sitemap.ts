@@ -6,16 +6,25 @@ import { storage } from "../storage";
  */
 export async function generateSitemap(req: Request, res: Response) {
   try {
-    // Get all events for dynamic URLs
-    const events = await storage.getAllEvents();
+    console.log('Starting sitemap generation...');
     
-    // Group events by title to avoid duplicates
-    const uniqueEvents = events.reduce((acc, event) => {
-      if (!acc.some(e => e.title === event.title)) {
-        acc.push(event);
+    // Get all available tickets (which contain event information)
+    const tickets = await storage.getAllAvailableTickets();
+    console.log(`Found ${tickets.length} tickets`);
+    
+    // Group tickets by event title to avoid duplicates
+    const uniqueEvents = tickets.reduce((acc, ticket) => {
+      if (!acc.some(e => e.title === ticket.eventTitle)) {
+        acc.push({
+          title: ticket.eventTitle,
+          eventImageUrl: ticket.eventImageUrl,
+          id: ticket.id
+        });
       }
       return acc;
-    }, [] as typeof events);
+    }, [] as Array<{ title: string; eventImageUrl?: string | null; id: number }>);
+    
+    console.log(`Found ${uniqueEvents.length} unique events`);
 
     const baseUrl = "https://ticketbazaar.co.in";
     const currentDate = new Date().toISOString().split('T')[0];
