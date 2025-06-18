@@ -54,7 +54,8 @@ class CacheService {
 
   invalidatePattern(pattern: string): number {
     let deleted = 0;
-    for (const key of this.cache.keys()) {
+    const keys = Array.from(this.cache.keys());
+    for (const key of keys) {
       if (key.includes(pattern)) {
         this.cache.delete(key);
         deleted++;

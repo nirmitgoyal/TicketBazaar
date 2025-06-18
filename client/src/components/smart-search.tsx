@@ -93,7 +93,7 @@ export function SmartSearch({ onSearch, className }: SmartSearchProps) {
 
   // Memoized suggestion groups
   const suggestionGroups = useMemo(() => {
-    if (!suggestions || suggestions.length === 0) return null;
+    if (!suggestions || !Array.isArray(suggestions) || suggestions.length === 0) return null;
 
     const groups: Record<string, SearchSuggestion[]> = {
       events: [],
@@ -101,7 +101,7 @@ export function SmartSearch({ onSearch, className }: SmartSearchProps) {
       categories: [],
     };
 
-    suggestions.forEach((suggestion: SearchSuggestion) => {
+    (suggestions as SearchSuggestion[]).forEach((suggestion: SearchSuggestion) => {
       switch (suggestion.type) {
         case 'event':
           groups.events.push(suggestion);
@@ -204,14 +204,14 @@ export function SmartSearch({ onSearch, className }: SmartSearchProps) {
             )}
 
             {/* Trending Searches */}
-            {trendingData?.popularSearches && (
+            {trendingData && typeof trendingData === 'object' && 'popularSearches' in trendingData && Array.isArray((trendingData as any).popularSearches) && (
               <div className="mb-4">
                 <h4 className="text-sm font-medium mb-2 text-muted-foreground flex items-center">
                   <TrendingUp className="h-3 w-3 mr-1" />
                   Trending
                 </h4>
                 <div className="space-y-1">
-                  {trendingData.popularSearches.slice(0, 3).map((trend: any, index: number) => (
+                  {((trendingData as any).popularSearches || []).slice(0, 3).map((trend: any, index: number) => (
                     <Button
                       key={index}
                       variant="ghost"
@@ -294,7 +294,7 @@ export function SmartSearch({ onSearch, className }: SmartSearchProps) {
             )}
 
             {/* No suggestions */}
-            {debouncedQuery.length >= 2 && (!suggestions || suggestions.length === 0) && (
+            {debouncedQuery.length >= 2 && (!suggestions || !Array.isArray(suggestions) || suggestions.length === 0) && (
               <div className="text-center py-4 text-muted-foreground">
                 <Search className="h-8 w-8 mx-auto mb-2" />
                 <p>No suggestions found</p>

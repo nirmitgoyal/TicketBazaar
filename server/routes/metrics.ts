@@ -36,12 +36,12 @@ router.get("/dashboard", async (req, res) => {
     const responseTime = Date.now() - startTime;
     
     const metrics = {
-      totalViews: parseInt(totalViewsQuery.rows[0]?.count || '0'),
-      activeUsers: parseInt(activeUsersQuery.rows[0]?.count || '0'),
-      popularCities: popularCitiesQuery.rows.map((row: any) => ({
+      totalViews: parseInt(Array.isArray(totalViewsQuery) ? totalViewsQuery[0]?.count || '0' : '0'),
+      activeUsers: parseInt(Array.isArray(activeUsersQuery) ? activeUsersQuery[0]?.count || '0' : '0'),
+      popularCities: Array.isArray(popularCitiesQuery) ? popularCitiesQuery.map((row: any) => ({
         city: row.city,
         count: parseInt(row.count)
-      })),
+      })) : [],
       avgResponseTime: responseTime,
       recentActivity: Math.floor(Math.random() * 50) + 10 // Simulated recent activity
     };
