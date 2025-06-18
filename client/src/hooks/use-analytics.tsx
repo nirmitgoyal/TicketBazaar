@@ -43,21 +43,60 @@ const AnalyticsContext = createContext<AnalyticsContextType | undefined>(
 
 // Function to get the measurement ID
 const getMeasurementId = () => {
+  // Use the environment variable first
+  const envId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+  if (envId) {
+    return envId;
+  }
+  
+  // Fallback to window global if set
   if (typeof window !== "undefined" && window.GA4_MEASUREMENT_ID) {
     return window.GA4_MEASUREMENT_ID;
   }
-  // Fallback to hardcoded ID
-  return "G-EJP09PV05W";
+  
+  // No measurement ID available
+  console.warn('Google Analytics measurement ID not found. Please set VITE_GA_MEASUREMENT_ID.');
+  return null;
 };
 
 // Analytics Provider component
 export function AnalyticsProvider({ children }: { children: ReactNode }) {
   const [location] = useLocation();
 
+  // Initialize Google Analytics on mount
+  useEffect(() => {
+    const measurementId = getMeasurementId();
+    if (!measurementId) return;
+
+    // Initialize Google Analytics
+    const initGA = () => {
+      // Add Google Analytics script to the head
+      const script1 = document.createElement('script');
+      script1.async = true;
+      script1.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+      document.head.appendChild(script1);
+
+      // Initialize gtag
+      const script2 = document.createElement('script');
+      script2.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${measurementId}');
+      `;
+      document.head.appendChild(script2);
+    };
+
+    // Only initialize if not already done
+    if (!window.gtag) {
+      initGA();
+    }
+  }, []);
+
   // Track page views when location changes
   useEffect(() => {
-    if (typeof window !== "undefined" && typeof window.gtag !== "undefined") {
-      const measurementId = getMeasurementId();
+    const measurementId = getMeasurementId();
+    if (typeof window !== "undefined" && typeof window.gtag !== "undefined" && measurementId) {
       window.gtag("config", measurementId, {
         page_path: location,
       });
@@ -71,7 +110,8 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
     label?: string,
     value?: number,
   ) => {
-    if (typeof window !== "undefined" && typeof window.gtag !== "undefined") {
+    const measurementId = getMeasurementId();
+    if (typeof window !== "undefined" && typeof window.gtag !== "undefined" && measurementId) {
       window.gtag("event", action, {
         event_category: category,
         event_label: label,
@@ -93,7 +133,8 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
       | "share",
     params: Record<string, any>,
   ) => {
-    if (typeof window !== "undefined" && typeof window.gtag !== "undefined") {
+    const measurementId = getMeasurementId();
+    if (typeof window !== "undefined" && typeof window.gtag !== "undefined" && measurementId) {
       window.gtag("event", action, params);
     }
   };
@@ -112,12 +153,13 @@ export function useAnalytics() {
 
   // Track page views when not in context
   useEffect(() => {
+    const measurementId = getMeasurementId();
     if (
       context === undefined &&
       typeof window !== "undefined" &&
-      typeof window.gtag !== "undefined"
+      typeof window.gtag !== "undefined" &&
+      measurementId
     ) {
-      const measurementId = getMeasurementId();
       window.gtag("config", measurementId, {
         page_path: location,
       });
@@ -132,7 +174,8 @@ export function useAnalytics() {
       label?: string,
       value?: number,
     ) => {
-      if (typeof window !== "undefined" && typeof window.gtag !== "undefined") {
+      const measurementId = getMeasurementId();
+      if (typeof window !== "undefined" && typeof window.gtag !== "undefined" && measurementId) {
         window.gtag("event", action, {
           event_category: category,
           event_label: label,
@@ -153,7 +196,8 @@ export function useAnalytics() {
         | "share",
       params: Record<string, any>,
     ) => {
-      if (typeof window !== "undefined" && typeof window.gtag !== "undefined") {
+      const measurementId = getMeasurementId();
+      if (typeof window !== "undefined" && typeof window.gtag !== "undefined" && measurementId) {
         window.gtag("event", action, params);
       }
     };

@@ -13,11 +13,13 @@ import { Loader2, AlertTriangle, MapPin, Search, ArrowUp, ArrowDown, X } from "l
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
+import { useAnalytics } from "@/hooks/use-analytics";
 import { Ticket } from "@shared/schema";
 
 export default function Home() {
   const [location] = useLocation();
   const params = useParams<{ category?: string }>();
+  const { trackEvent, trackUserAction } = useAnalytics();
   const [searchParams, setSearchParams] = useState<URLSearchParams | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
