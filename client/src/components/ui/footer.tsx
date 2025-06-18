@@ -65,7 +65,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Contact Us (DM on LinkedIn)
+                  Contact Us [DM on LinkedIn]
                 </a>
               </li>
               <li>
