@@ -186,13 +186,16 @@ export default function ListTicket() {
               name: place.displayName,
               formatted_address: place.formattedAddress,
               geometry: {
-                location: {
-                  lat: () => place.location?.lat(),
-                  lng: () => place.location?.lng()
-                }
+                location: place.location ? {
+                  lat: () => place.location.lat(),
+                  lng: () => place.location.lng(),
+                  equals: () => false,
+                  toJSON: () => ({ lat: place.location.lat(), lng: place.location.lng() }),
+                  toUrlValue: () => `${place.location.lat()},${place.location.lng()}`
+                } : undefined
               },
               types: place.types || []
-            }));
+            })) as google.maps.places.PlaceResult[];
             setSearchResults(convertedResults);
             setShowResults(true);
           } else {
