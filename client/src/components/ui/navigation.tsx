@@ -32,7 +32,7 @@ export function Navigation() {
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
     >
       <nav aria-label="Main Navigation">
-        <div className="container mx-auto px-4 py-3">
+        <div className="container mx-auto px-4 py-3 sticky top-0 z-50">
         <div className="flex items-center justify-between">
           <motion.div
             className="flex items-center space-x-2 min-w-0 flex-shrink-0"
