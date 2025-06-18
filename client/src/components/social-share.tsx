@@ -127,7 +127,7 @@ export function SocialShare({
           title="Share on WhatsApp"
           onClick={shareOnWhatsApp}
         >
-          <MessageCircle className="h-3.5 w-3.5" />
+          <Share2 className="h-3.5 w-3.5" />
         </Button>
       )}
       
@@ -139,7 +139,7 @@ export function SocialShare({
           title="Copy link to clipboard"
           onClick={copyToClipboard}
         >
-          <Share2 className="h-3.5 w-3.5" />
+          <CopyLinkIcon className="h-3.5 w-3.5" />
         </Button>
       )}
       

@@ -151,9 +151,7 @@ export function TicketDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
-          <DialogTitle className="sr-only">
-            Loading Event Details
-          </DialogTitle>
+          <DialogTitle className="sr-only">Loading Event Details</DialogTitle>
           <DialogDescription className="sr-only">
             Loading event information and available tickets
           </DialogDescription>
@@ -298,7 +296,8 @@ export function TicketDetailModal({
                   {firstTicket?.eventTitle || "Event Details"}
                 </DialogTitle>
                 <DialogDescription className="sr-only">
-                  No tickets are currently available for this event. View event details and create alerts for when tickets become available.
+                  No tickets are currently available for this event. View event
+                  details and create alerts for when tickets become available.
                 </DialogDescription>
 
                 {/* Event Meta Info */}
@@ -395,7 +394,8 @@ export function TicketDetailModal({
           {firstTicket?.eventTitle || "Event Details"}
         </DialogTitle>
         <DialogDescription className="sr-only">
-          Event details and available tickets for {firstTicket?.eventTitle || "this event"}
+          Event details and available tickets for{" "}
+          {firstTicket?.eventTitle || "this event"}
         </DialogDescription>
         {/* Hero Section */}
         <div className="relative">
@@ -562,14 +562,6 @@ export function TicketDetailModal({
                               </Badge>
                             )}
                           </div>
-
-                          <div className="flex items-center gap-2">
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                            <span className="text-sm text-textSecondary">
-                              @{seller?.instagram || "unknown"} • Verified
-                              Seller
-                            </span>
-                          </div>
                         </div>
 
                         <div className="text-right">
@@ -640,7 +632,7 @@ export function TicketDetailModal({
                         <TicketVerificationSection ticket={ticket} />
 
                         <div className="flex gap-2 w-full md:w-auto items-center">
-                          <SocialShare 
+                          <SocialShare
                             ticket={ticket}
                             variant="outline"
                             showWhatsApp={true}
