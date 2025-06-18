@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { UserCircle, Menu, X, Map, Ticket, TrendingUp } from "lucide-react";
+import { UserCircle, Menu, X, Map, Ticket } from "lucide-react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeInDown, listItem, staggerContainer } from "@/lib/animations";
@@ -110,20 +110,6 @@ export function Navigation() {
               whileTap={{ scale: 0.95 }}
             >
               Popular
-            </motion.button>
-
-            <motion.button
-              className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target flex items-center gap-2 ${
-                location === "/event-discovery"
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:text-primary hover:bg-accent"
-              }`}
-              onClick={() => handleNavigation("/event-discovery")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <TrendingUp className="h-4 w-4" />
-              Discover
             </motion.button>
 
             {isAuthenticated && (

@@ -28,7 +28,6 @@ const SellerPolicy = lazy(() => import("@/pages/SellerPolicy"));
 const CityEvents = lazy(() => import("@/pages/city-events"));
 const GlobalCities = lazy(() => import("@/pages/global-cities"));
 const HowToSellTickets = lazy(() => import("@/pages/how-to-sell-tickets"));
-const EventDiscoveryPage = lazy(() => import("@/pages/EventDiscoveryPage"));
 
 // Lazy load dashboard components with fallback handling
 const VerificationReport = lazy(() => import("@/pages/verification-report").then(module => ({ 
@@ -159,9 +158,6 @@ export function AppRoutes() {
       <LazyRoute path="/sell-ticket" component={HowToSellTickets} />
       <LazyRoute path="/resell-tickets" component={HowToSellTickets} />
       <LazyRoute path="/buy-second-hand-tickets" component={Home} />
-      
-      {/* Event Discovery */}
-      <LazyRoute path="/event-discovery" component={EventDiscoveryPage} />
       
       {/* Legal pages */}
       <LazyRoute path="/terms-of-service" component={TermsOfService} />
