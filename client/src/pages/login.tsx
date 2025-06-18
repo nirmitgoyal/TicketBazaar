@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { useAnalytics } from "@/hooks/use-analytics";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ export default function Login() {
   const { isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { trackEvent, trackUserAction } = useAnalytics();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -44,6 +46,9 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async (loginData: z.infer<typeof userLoginSchema>) => {
+      // Track login attempt
+      trackEvent('login_attempt', 'authentication', 'email_login');
+      
       const response = await apiRequest("POST", "/api/auth/login", loginData);
       if (!response.ok) {
         const error = await response.json();
@@ -52,6 +57,11 @@ export default function Login() {
       return response.json();
     },
     onSuccess: () => {
+      // Track successful login
+      trackUserAction('login', {
+        method: 'email'
+      });
+      
       toast({
         title: "Login successful",
         description: "Welcome back!",
@@ -61,6 +71,9 @@ export default function Login() {
       navigate(returnTo);
     },
     onError: (error: Error) => {
+      // Track login failure
+      trackEvent('login_failed', 'authentication', error.message);
+      
       setLoginError(error.message);
       toast({
         title: "Login failed",

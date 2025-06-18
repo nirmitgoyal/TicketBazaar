@@ -366,6 +366,14 @@ export default function Home() {
     setIsLoading(true);
     setSelectedSearchFilters(searchFilters);
     
+    // Track search event in Google Analytics
+    trackUserAction('search', {
+      search_term: query,
+      search_filters: JSON.stringify(searchFilters),
+      search_category: searchFilters.category || 'all',
+      search_location: searchFilters.city || searchFilters.location || 'any'
+    });
+    
     const params = new URLSearchParams();
     if (query) params.set("q", query);
 
@@ -381,14 +389,16 @@ export default function Home() {
       }
     });
 
-    
-
     setTimeout(() => {
       setIsLoading(false);
       if (query && !events?.length) {
         setShowNoResultsMessage(true);
+        // Track no results event
+        trackEvent('search_no_results', 'search', query);
       } else {
         setShowNoResultsMessage(false);
+        // Track successful search
+        trackEvent('search_results', 'search', query, events?.length || 0);
       }
     }, 1500);
   };
@@ -396,6 +406,13 @@ export default function Home() {
   const openModal = (eventId: number) => {
     setSelectedEventId(eventId);
     setIsModalOpen(true);
+    
+    // Track event view in Google Analytics
+    trackUserAction('view_item', {
+      item_id: eventId.toString(),
+      item_name: 'Event Details',
+      item_category: 'Event'
+    });
   };
 
   const closeModal = () => {
@@ -406,6 +423,16 @@ export default function Home() {
   const openSellerModal = (ticket: Ticket) => {
     setSelectedTicket(ticket);
     setIsSellerModalOpen(true);
+    
+    // Track seller contact intent
+    trackEvent('contact_seller', 'engagement', ticket.title, ticket.price);
+    trackUserAction('view_item', {
+      item_id: ticket.id.toString(),
+      item_name: ticket.title,
+      item_category: ticket.category,
+      price: ticket.price,
+      currency: ticket.currency
+    });
   };
 
   const closeSellerModal = () => {
