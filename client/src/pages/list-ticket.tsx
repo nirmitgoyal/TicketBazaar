@@ -168,21 +168,73 @@ export default function ListTicket() {
     
     // Use Google Places API to search for venues
     if (window.google && window.google.maps && window.google.maps.places) {
-      const service = new window.google.maps.places.PlacesService(document.createElement('div'));
-      const request = {
-        query: query + " venue",
-        fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
-      };
+      try {
+        // Use the new Place class instead of deprecated PlacesService
+        const { Place } = window.google.maps.places;
+        const request = {
+          textQuery: query + " venue",
+          fields: ['id', 'displayName', 'formattedAddress', 'location', 'types'],
+          maxResultCount: 5,
+        };
 
-      service.textSearch(request, (results, status) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-          setSearchResults(results.slice(0, 5)); // Show top 5 results
-          setShowResults(true);
-        } else {
-          setSearchResults([]);
-          setShowResults(false);
-        }
-      });
+        // Use the new searchByText method
+        Place.searchByText(request).then((response) => {
+          if (response.places && response.places.length > 0) {
+            // Convert new Place format to old PlaceResult format for compatibility
+            const convertedResults = response.places.map(place => ({
+              place_id: place.id,
+              name: place.displayName,
+              formatted_address: place.formattedAddress,
+              geometry: {
+                location: {
+                  lat: () => place.location?.lat(),
+                  lng: () => place.location?.lng()
+                }
+              },
+              types: place.types || []
+            }));
+            setSearchResults(convertedResults);
+            setShowResults(true);
+          } else {
+            setSearchResults([]);
+            setShowResults(false);
+          }
+        }).catch(() => {
+          // Fallback to deprecated API if new one fails
+          const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+          const fallbackRequest = {
+            query: query + " venue",
+            fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
+          };
+
+          service.textSearch(fallbackRequest, (results, status) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
+              setSearchResults(results.slice(0, 5));
+              setShowResults(true);
+            } else {
+              setSearchResults([]);
+              setShowResults(false);
+            }
+          });
+        });
+      } catch (error) {
+        // Fallback to deprecated API if new API is not available
+        const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+        const fallbackRequest = {
+          query: query + " venue",
+          fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
+        };
+
+        service.textSearch(fallbackRequest, (results, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
+            setSearchResults(results.slice(0, 5));
+            setShowResults(true);
+          } else {
+            setSearchResults([]);
+            setShowResults(false);
+          }
+        });
+      }
     }
   }, [form, selectedPlace]);
 

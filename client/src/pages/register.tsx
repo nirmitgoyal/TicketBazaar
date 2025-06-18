@@ -121,7 +121,7 @@ export default function Register() {
             <div>
               <Label htmlFor="country">Country</Label>
               <Select
-                value={formData.country}
+                value={formData.country || undefined}
                 onValueChange={(value) => {
                   handleInputChange("country", value);
                   const countryInfo = getCountryInfo(value);

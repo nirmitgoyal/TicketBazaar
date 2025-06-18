@@ -33,8 +33,8 @@ const EventMapPage: React.FC = () => {
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [category, setCategory] = useState("all");
-  const [city, setCity] = useState("all");
+  const [category, setCategory] = useState<string>("all");
+  const [city, setCity] = useState<string>("all");
   const [visibleEvents, setVisibleEvents] = useState<Ticket[]>([]);
   const [initialLoad, setInitialLoad] = useState(true);
   const [mapBounds, setMapBounds] = useState<google.maps.LatLngBounds | null>(
