@@ -18,7 +18,7 @@ export function Footer() {
                 Ticket Bazaar
               </h3>
             </div>
-            <p className="text-sm text-textSecondary mb-4">
+            <p className="text-sm text-muted-foreground mb-4">
               Discovery and contact platform for event tickets. We are not a
               reseller or broker - we don't handle payments, hold inventory, or
               facilitate transactions. We ensure legal compliance in
@@ -54,14 +54,14 @@ export function Footer() {
             <h4 className="font-medium text-base mb-4">Support</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/faq">
-                  <a className="text-textSecondary hover:text-primary">FAQs</a>
+                <Link href="/faq" className="text-muted-foreground hover:text-primary">
+                  FAQs
                 </Link>
               </li>
               <li>
                 <a
                   href="https://www.linkedin.com/company/ticket-bazaar-co-in/"
-                  className="text-textSecondary hover:text-primary"
+                  className="text-muted-foreground hover:text-primary"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -69,14 +69,12 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <Link href="/how-to-sell-tickets">
-                  <a className="text-textSecondary hover:text-primary">
-                    How to Sell Ticket Online
-                  </a>
+                <Link href="/how-to-sell-tickets" className="text-muted-foreground hover:text-primary">
+                  How to Sell Ticket Online
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-textSecondary hover:text-primary">
+                <a href="#" className="text-muted-foreground hover:text-primary">
                   Dispute Resolution
                 </a>
               </li>
@@ -86,7 +84,7 @@ export function Footer() {
 
         <div className="border-t mt-8 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-textSecondary mb-4 md:mb-0">
+            <p className="text-sm text-muted-foreground mb-4 md:mb-0">
               © {year} Ticket Bazaar. All rights reserved.
             </p>
             <div className="flex space-x-4 text-sm">
@@ -94,7 +92,7 @@ export function Footer() {
                 href="/privacy-policy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-textSecondary hover:text-primary"
+                className="text-muted-foreground hover:text-primary"
               >
                 Privacy Policy
               </a>
@@ -102,7 +100,7 @@ export function Footer() {
                 href="/terms-of-service"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-textSecondary hover:text-primary"
+                className="text-muted-foreground hover:text-primary"
               >
                 Terms of Service
               </a>
@@ -110,7 +108,7 @@ export function Footer() {
                 href="/privacy-policy#cookies"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-textSecondary hover:text-primary"
+                className="text-muted-foreground hover:text-primary"
               >
                 Cookie Policy
               </a>

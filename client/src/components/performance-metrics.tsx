@@ -21,8 +21,8 @@ export function PerformanceMetrics() {
   });
 
   useEffect(() => {
-    if (metricsData) {
-      setMetrics(metricsData);
+    if (metricsData && typeof metricsData === 'object') {
+      setMetrics(metricsData as MetricsData);
     }
   }, [metricsData]);
 
