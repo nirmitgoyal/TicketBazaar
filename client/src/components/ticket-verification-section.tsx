@@ -123,28 +123,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
   return (
     <div className="mt-3 pt-3 border-t border-gray-200" onClick={(e) => e.stopPropagation()}>
       <div className="flex items-center justify-start mb-3">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleVerify();
-          }}
-          disabled={isVerifying}
-          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-        >
-          {isVerifying ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-              Analyzing...
-            </>
-          ) : (
-            <>
-              <Shield className="h-4 w-4 mr-1" />
-              {verificationResult ? 'Re-analyze with AI' : 'Verify with AI'}
-            </>
-          )}
-        </Button>
+        
       </div>
       
       {verificationResult && (

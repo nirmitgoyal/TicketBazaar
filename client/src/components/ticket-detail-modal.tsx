@@ -632,7 +632,7 @@ export function TicketDetailModal({
                         </div>
                       )}
 
-                      <Separator className="my-4" />
+                      <Separator className="my-2" />
 
                       {/* Action Area */}
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
