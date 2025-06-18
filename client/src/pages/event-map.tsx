@@ -47,13 +47,13 @@ const EventMapPage: React.FC = () => {
     setLocation("/map-to-home");
   };
 
-  // Fetch all events
+  // Fetch all tickets (which contain event information)
   const {
-    data: events,
+    data: tickets,
     isLoading,
     error,
-  } = useQuery<Event[]>({
-    queryKey: ["/api/events"],
+  } = useQuery<Ticket[]>({
+    queryKey: ["/api/tickets"],
   });
 
   // Handle map bounds change
@@ -63,75 +63,75 @@ const EventMapPage: React.FC = () => {
 
   // Initial load processing
   useEffect(() => {
-    if (events && events.length > 0 && initialLoad) {
+    if (tickets && tickets.length > 0 && initialLoad) {
       // Keep using all cities as the default (set in useState above)
       setInitialLoad(false);
     }
-  }, [events, initialLoad]);
+  }, [tickets, initialLoad]);
 
-  // Filter events based on search query, category, city and map bounds
+  // Filter tickets based on search query, category, city and map bounds
   useEffect(() => {
-    if (!events) return;
+    if (!tickets) return;
 
 
-    let filtered = [...events];
+    let filtered = [...tickets];
 
     // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
-        (event) =>
-          event.eventTitle.toLowerCase().includes(query) ||
-          (event.eventDescription &&
-            event.eventDescription.toLowerCase().includes(query)) ||
-          event.venue.toLowerCase().includes(query),
+        (ticket) =>
+          ticket.eventTitle.toLowerCase().includes(query) ||
+          (ticket.eventDescription &&
+            ticket.eventDescription.toLowerCase().includes(query)) ||
+          ticket.venue.toLowerCase().includes(query),
       );
     }
 
     // Filter by category
     if (category && category !== "all") {
-      filtered = filtered.filter((event) => event.category === category);
+      filtered = filtered.filter((ticket) => ticket.category === category);
     }
 
     // Filter by city
     if (city && city !== "all") {
       const cityLower = city.toLowerCase();
       filtered = filtered.filter(
-        (event) =>
-          (event.city && event.city.toLowerCase() === cityLower) ||
-          (event.venue && event.venue.toLowerCase().includes(cityLower)),
+        (ticket) =>
+          (ticket.city && ticket.city.toLowerCase() === cityLower) ||
+          (ticket.venue && ticket.venue.toLowerCase().includes(cityLower)),
       );
     }
 
     // Filter by map bounds
     if (mapBounds && filtered.length > 0) {
-      filtered = filtered.filter((event) => {
-        if (!event.latitude || !event.longitude) return false;
+      filtered = filtered.filter((ticket) => {
+        if (!ticket.latitude || !ticket.longitude) return false;
 
-        const eventLatLng = new google.maps.LatLng(
-          event.latitude,
-          event.longitude,
+        const ticketLatLng = new google.maps.LatLng(
+          ticket.latitude,
+          ticket.longitude,
         );
-        return mapBounds.contains(eventLatLng);
+        return mapBounds.contains(ticketLatLng);
       });
     }
 
 
     setVisibleEvents(filtered);
-  }, [events, searchQuery, category, city, mapBounds]);
+  }, [tickets, searchQuery, category, city, mapBounds]);
 
-  // Extract unique categories and cities from events
-  const categories = events
-    ? events
-        .map((event) => event.category)
+  // Extract unique categories and cities from tickets
+  const categories = tickets
+    ? tickets
+        .map((ticket) => ticket.category)
         .filter((category, index, self) => self.indexOf(category) === index)
         .sort()
     : [];
 
-  const cities = events
-    ? events
+  const cities = tickets
+    ? tickets
         .filter((e) => e.city)
-        .map((event) => event.city!)
+        .map((ticket) => ticket.city!)
         .filter((city, index, self) => self.indexOf(city) === index)
         .sort()
     : [];
