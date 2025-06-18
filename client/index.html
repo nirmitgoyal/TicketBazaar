@@ -224,27 +224,7 @@
     }
     </script>
 
-    <!-- Google Analytics 4 -->
-    <script>
-      // Define measurement ID
-      window.GA4_MEASUREMENT_ID =
-        "%GA4_MEASUREMENT_ID%" === "%GA4_MEASUREMENT_ID%"
-          ? "G-EJP09PV05W"
-          : "%GA4_MEASUREMENT_ID%";
-      // Load GTM script
-      const gtmScript = document.createElement("script");
-      gtmScript.async = true;
-      gtmScript.src = `https://www.googletagmanager.com/gtag/js?id=${window.GA4_MEASUREMENT_ID}`;
-      document.head.appendChild(gtmScript);
 
-      // Initialize GA4
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", window.GA4_MEASUREMENT_ID);
-    </script>
   </head>
   <body>
     <div id="root"></div>
