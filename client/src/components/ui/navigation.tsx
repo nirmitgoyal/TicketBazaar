@@ -51,6 +51,7 @@ export function Navigation() {
                   <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">
                     Ticket Bazaar
                   </h1>
+                  <p className="text-xs text-gray-500 -mt-1 sticky top-0">P2P Marketplace</p>
                 </motion.div>
               </motion.div>
             </Link>
@@ -426,18 +427,6 @@ export function Navigation() {
         </AnimatePresence>
         </div>
       </nav>
-      
-      {/* Sticky P2P Marketplace text */}
-      <motion.div 
-        className="sticky top-16 z-40 bg-background border-b border-gray-100 py-1"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
-      >
-        <div className="container mx-auto px-4">
-          <p className="text-xs text-gray-500 text-center">P2P Marketplace</p>
-        </div>
-      </motion.div>
     </motion.header>
   );
 }
