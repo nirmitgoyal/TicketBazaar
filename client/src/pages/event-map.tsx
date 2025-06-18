@@ -183,7 +183,7 @@ const EventMapPage: React.FC = () => {
         </div>
 
         <div>
-          <Select value={category} onValueChange={setCategory}>
+          <Select value={category || "all"} onValueChange={setCategory}>
             <SelectTrigger>
               <SelectValue placeholder="Category" />
             </SelectTrigger>
@@ -199,7 +199,7 @@ const EventMapPage: React.FC = () => {
         </div>
 
         <div>
-          <Select value={city} onValueChange={setCity}>
+          <Select value={city || "all"} onValueChange={setCity}>
             <SelectTrigger>
               <SelectValue placeholder="City" />
             </SelectTrigger>

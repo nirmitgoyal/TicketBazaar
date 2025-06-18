@@ -601,7 +601,7 @@ export function SearchBar({
             {/* Location Dropdown */}
             <div className="xs:w-44 sm:w-40">
               <Select
-                value={location}
+                value={location || "any"}
                 onValueChange={setLocation}
                 disabled={isSearching}
               >

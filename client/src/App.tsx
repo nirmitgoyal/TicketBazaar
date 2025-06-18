@@ -21,11 +21,10 @@ import { performanceMonitor } from "@/utils/performance";
 function App() {
   const [location] = useLocation();
 
-  // Monitor app performance
-  const appRenderStart = performanceMonitor.startTiming('app-render');
-  
   useEffect(() => {
-    appRenderStart();
+    // Monitor app performance on location change
+    const endTiming = performanceMonitor.startTiming('app-render');
+    endTiming();
     
     // Log performance metrics periodically
     const interval = setInterval(() => {
@@ -40,7 +39,7 @@ function App() {
     }, 30000); // Every 30 seconds
 
     return () => clearInterval(interval);
-  }, [location, appRenderStart]);
+  }, [location]);
 
   return (
     <ErrorBoundary
