@@ -101,7 +101,7 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            {seller ? seller.fullName : "Seller Information"}
+            Seller Information
           </DialogTitle>
         
         </DialogHeader>
@@ -112,33 +112,14 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
           </div>
         ) : seller ? (
           <div className="space-y-6">
-            {/* Seller Profile */}
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  <h3 className="text-lg font-semibold">{seller.fullName}</h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    {seller.rating > 0 && (
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">{seller.rating.toFixed(1)}</span>
-                        <span className="text-sm text-gray-500">
-                          ({seller.ratingsCount} review{seller.ratingsCount !== 1 ? 's' : ''})
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </CardTitle>
-              </CardHeader>
-              
-            </Card>
 
+            
             {/* Verification Details */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
-                  Verification Details
+                  {seller.fullName}'s Verification Details
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
