@@ -30,16 +30,26 @@ export function normalizeResponseTime(req: Request, res: Response, next: NextFun
  * Validate database operation parameters
  */
 export function validateDatabaseParams(req: Request, res: Response, next: NextFunction) {
+  // Whitelist of allowed parameter names to prevent prototype pollution
+  const allowedParams = new Set(['id', 'userId', 'ticketId', 'sellerId', 'eventId', 'contactId']);
+  
   // Validate numeric IDs in params
   for (const [key, value] of Object.entries(req.params)) {
-    if (key.toLowerCase().includes('id')) {
+    // Security: Only process whitelisted parameter names and ensure it's an own property
+    if (key.toLowerCase().includes('id') && allowedParams.has(key) && Object.prototype.hasOwnProperty.call(req.params, key)) {
       const numericValue = parseInt(value as string);
       if (isNaN(numericValue) || numericValue <= 0 || numericValue > Number.MAX_SAFE_INTEGER) {
         return res.status(400).json({
           error: `Invalid ${key}: must be a positive integer`
         });
       }
-      req.params[key] = numericValue.toString();
+      // Safe assignment using defineProperty to avoid prototype pollution
+      Object.defineProperty(req.params, key, {
+        value: numericValue.toString(),
+        writable: true,
+        enumerable: true,
+        configurable: true
+      });
     }
   }
   
