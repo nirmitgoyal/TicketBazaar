@@ -103,9 +103,7 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
             <User className="h-5 w-5" />
             Seller Information
           </DialogTitle>
-          <DialogDescription>
-            View detailed information about the ticket seller, including verification status and contact details.
-          </DialogDescription>
+        
         </DialogHeader>
 
         {isLoading ? (
@@ -132,12 +130,7 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
                   </div>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-sm text-gray-600">Verification Status:</span>
-                  {getVerificationBadge(seller.verificationStatus)}
-                </div>
-              </CardContent>
+              
             </Card>
 
             {/* Verification Details */}
