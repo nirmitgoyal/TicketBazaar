@@ -60,13 +60,14 @@ router.get("/performance", async (req, res) => {
   try {
     const { timeframe = '24h' } = req.query;
     
-    let interval;
-    switch (timeframe) {
-      case '1h': interval = '1 hour'; break;
-      case '24h': interval = '24 hours'; break;
-      case '7d': interval = '7 days'; break;
-      default: interval = '24 hours';
-    }
+    // Whitelist allowed intervals to prevent SQL injection
+    const allowedIntervals = {
+      '1h': '1 hour',
+      '24h': '24 hours', 
+      '7d': '7 days'
+    };
+    
+    const interval = allowedIntervals[timeframe as keyof typeof allowedIntervals] || '24 hours';
     
     const performanceData = await db.execute(`
       SELECT 
