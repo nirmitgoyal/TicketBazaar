@@ -40,6 +40,8 @@ export default function Home() {
   const [defaultTickets, setDefaultTickets] = useState<Ticket[]>([]);
   const TICKETS_PER_PAGE = 12;
   
+
+  
   // Scroll navigation state
   const [showScrollToTop, setShowScrollToTop] = useState<boolean>(false);
   const [showScrollToBottom, setShowScrollToBottom] = useState<boolean>(false);
@@ -158,10 +160,12 @@ export default function Home() {
         new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
       );
       
-      // Reset state for new search/filter
-      setCurrentPage(1);
-      setDefaultTickets(sortedData);
-      setHasMoreTickets(sortedData.length === TICKETS_PER_PAGE);
+      // Only update state if this is a new query or if we don't have tickets yet
+      if (defaultTickets.length === 0 || Object.keys(selectedSearchFilters).length > 0 || urlSearchQuery) {
+        setCurrentPage(1);
+        setDefaultTickets(sortedData);
+        setHasMoreTickets(sortedData.length === TICKETS_PER_PAGE);
+      }
       
       return sortedData;
     },
@@ -284,12 +288,25 @@ export default function Home() {
     };
   }, [handleScroll]);
 
-  // Reset pagination when filters change
+  // Reset pagination only when filters change (not on navigation back)
+  const [lastFilterState, setLastFilterState] = useState<string>('');
   useEffect(() => {
-    setCurrentPage(1);
-    setHasMoreTickets(true);
-    setAllTickets([]);
-  }, [selectedSearchFilters, activeCategory, searchQuery]);
+    const currentFilterState = JSON.stringify({
+      filters: selectedSearchFilters,
+      category: activeCategory,
+      query: searchQuery
+    });
+    
+    // Only reset if filters actually changed
+    if (lastFilterState && lastFilterState !== currentFilterState) {
+      setCurrentPage(1);
+      setHasMoreTickets(true);
+      setAllTickets([]);
+      setDefaultTickets([]);
+    }
+    
+    setLastFilterState(currentFilterState);
+  }, [selectedSearchFilters, activeCategory, searchQuery, lastFilterState]);
 
   // Extract query parameters and URL path parameters
   useEffect(() => {
