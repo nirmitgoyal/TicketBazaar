@@ -101,7 +101,7 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Seller Information
+            {seller ? seller.fullName : "Seller Information"}
           </DialogTitle>
         
         </DialogHeader>
@@ -119,7 +119,7 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
-                  {seller.fullName}'s Verification Details
+                  Verification Details
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
