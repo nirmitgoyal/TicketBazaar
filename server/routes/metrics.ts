@@ -2,6 +2,7 @@ import { Router } from "express";
 import { storage } from "../storage";
 import { db } from "../db";
 import { logger } from "../utils/logger";
+import { sql } from "drizzle-orm";
 
 const router = Router();
 
@@ -60,21 +61,21 @@ router.get("/performance", async (req, res) => {
   try {
     const { timeframe = '24h' } = req.query;
     
-    // Whitelist allowed intervals to prevent SQL injection
-    const allowedIntervals = {
-      '1h': '1 hour',
-      '24h': '24 hours', 
-      '7d': '7 days'
+    // Define safe interval mappings for parameterized queries
+    const intervalMappings = {
+      '1h': sql`INTERVAL '1 hour'`,
+      '24h': sql`INTERVAL '24 hours'`, 
+      '7d': sql`INTERVAL '7 days'`
     };
     
-    const interval = allowedIntervals[timeframe as keyof typeof allowedIntervals] || '24 hours';
+    const intervalSql = intervalMappings[timeframe as keyof typeof intervalMappings] || sql`INTERVAL '24 hours'`;
     
-    const performanceData = await db.execute(`
+    const performanceData = await db.execute(sql`
       SELECT 
         DATE_TRUNC('hour', viewed_at) as hour,
         COUNT(*) as views
       FROM ticket_views 
-      WHERE viewed_at > NOW() - INTERVAL '${interval}'
+      WHERE viewed_at > NOW() - ${intervalSql}
       GROUP BY hour 
       ORDER BY hour DESC
       LIMIT 24
