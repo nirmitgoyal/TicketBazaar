@@ -75,7 +75,8 @@ export function SocialShare({
     window.open(url, "_blank", "width=600,height=400");
   };
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       await navigator.clipboard.writeText(`${shareMessage}\n\n${shareUrl}`);
       toast({
@@ -95,7 +96,8 @@ export function SocialShare({
     }
   };
 
-  const shareOnWhatsApp = () => {
+  const shareOnWhatsApp = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const whatsappMessage = `${shareMessage}\n\n${shareUrl}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
     
