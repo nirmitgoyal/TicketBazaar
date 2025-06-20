@@ -78,13 +78,17 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
 
       // Initialize gtag
       const script2 = document.createElement('script');
-      script2.innerHTML = `
+      script2.text = `
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', '${measurementId}');
       `;
       document.head.appendChild(script2);
+
+      // Safely configure gtag with the measurement ID
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag('config', measurementId);
+      }
     };
 
     // Only initialize if not already done
