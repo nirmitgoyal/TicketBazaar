@@ -15,6 +15,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
 import { useAnalytics } from "@/hooks/use-analytics";
 import UnifiedPopularityMetrics from "@/components/unified-popularity-metrics";
+
 import { Ticket } from "@shared/schema";
 
 export default function Home() {
@@ -32,13 +33,67 @@ export default function Home() {
   const [selectedSearchFilters, setSelectedSearchFilters] = useState<SearchFilters>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
   
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
-  const [hasMoreTickets, setHasMoreTickets] = useState<boolean>(true);
-  const [allTickets, setAllTickets] = useState<Ticket[]>([]);
-  const [defaultTickets, setDefaultTickets] = useState<Ticket[]>([]);
+  // Pagination state with localStorage persistence
   const TICKETS_PER_PAGE = 12;
+  const [currentPage, setCurrentPage] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('home-current-page');
+      return saved ? parseInt(saved) : 1;
+    } catch {
+      return 1;
+    }
+  });
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const [hasMoreTickets, setHasMoreTickets] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('home-has-more');
+      return saved ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
+  const [defaultTickets, setDefaultTickets] = useState<Ticket[]>(() => {
+    try {
+      const saved = localStorage.getItem('home-tickets');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Save state to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('home-current-page', currentPage.toString());
+  }, [currentPage]);
+
+  useEffect(() => {
+    localStorage.setItem('home-has-more', JSON.stringify(hasMoreTickets));
+  }, [hasMoreTickets]);
+
+  useEffect(() => {
+    localStorage.setItem('home-tickets', JSON.stringify(defaultTickets));
+  }, [defaultTickets]);
+
+  const [allTickets, setAllTickets] = useState<Ticket[]>([]);
+  
+  // Clear cached data when filters change
+  useEffect(() => {
+    const filterKey = JSON.stringify({ selectedSearchFilters, activeCategory, searchQuery });
+    const lastFilterKey = localStorage.getItem('home-filter-key');
+    
+    if (lastFilterKey && lastFilterKey !== filterKey) {
+      // Filters changed, reset pagination
+      setCurrentPage(1);
+      setHasMoreTickets(true);
+      setDefaultTickets([]);
+      setAllTickets([]);
+      localStorage.removeItem('home-current-page');
+      localStorage.removeItem('home-has-more');
+      localStorage.removeItem('home-tickets');
+    }
+    
+    localStorage.setItem('home-filter-key', filterKey);
+  }, [selectedSearchFilters, activeCategory, searchQuery]);
   
 
   
@@ -160,7 +215,7 @@ export default function Home() {
         new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
       );
       
-      // Only update state if this is a new query or if we don't have tickets yet
+      // Only update tickets if we don't have any cached or if filters are active
       if (defaultTickets.length === 0 || Object.keys(selectedSearchFilters).length > 0 || urlSearchQuery) {
         setCurrentPage(1);
         setDefaultTickets(sortedData);
@@ -288,25 +343,7 @@ export default function Home() {
     };
   }, [handleScroll]);
 
-  // Reset pagination only when filters change (not on navigation back)
-  const [lastFilterState, setLastFilterState] = useState<string>('');
-  useEffect(() => {
-    const currentFilterState = JSON.stringify({
-      filters: selectedSearchFilters,
-      category: activeCategory,
-      query: searchQuery
-    });
-    
-    // Only reset if filters actually changed
-    if (lastFilterState && lastFilterState !== currentFilterState) {
-      setCurrentPage(1);
-      setHasMoreTickets(true);
-      setAllTickets([]);
-      setDefaultTickets([]);
-    }
-    
-    setLastFilterState(currentFilterState);
-  }, [selectedSearchFilters, activeCategory, searchQuery, lastFilterState]);
+  // Pagination reset is now handled by the localStorage logic above
 
   // Extract query parameters and URL path parameters
   useEffect(() => {
