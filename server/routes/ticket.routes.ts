@@ -2,13 +2,16 @@ import { Router } from "express";
 import { validateBody } from "../middleware/validation.middleware";
 import { ticketListingSchema } from "@shared/schema";
 import { TicketController } from "../controllers/ticket.controller";
-import { isAuthenticated } from "../middleware/auth.middleware";
+import { isAuthenticated, isTicketOwner, sanitizeInput } from "../middleware/auth.middleware";
 import { 
   assessTicketListingFraud, 
   addFraudAssessmentToResponse,
   verificationBasedRateLimit 
 } from "../middleware/fraud-protection.middleware";
 import { ticketCreationLimiter, uploadLimiter } from "../middleware/rate-limit.middleware";
+import { secureUpload, validateFileContent, handleUploadError } from "../middleware/file-upload.middleware";
+import { validateExternalUrls } from "../middleware/ssrf-protection.middleware";
+import { validateSearchQuery } from "../middleware/search-validation.middleware";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -69,7 +72,7 @@ router.get("/", ticketController.getAllTickets);
 router.get("/events", ticketController.getAllTickets);
 
 // Search tickets by title and city
-router.get("/search", ticketController.searchTickets);
+router.get("/search", validateSearchQuery, ticketController.searchTickets);
 
 // Simple in-memory cache for ticket batch requests
 const ticketBatchCache = new Map<string, { data: any[], timestamp: number }>();
@@ -133,12 +136,14 @@ router.get("/event/:eventId", ticketController.getTicketsByEvent);
 // Get tickets by seller
 router.get("/seller/:sellerId", ticketController.getTicketsBySeller);
 
-// Upload ticket file
+// Upload ticket file with enhanced security
 router.post(
   "/upload",
   isAuthenticated,
   uploadLimiter,
-  upload.single("ticketFile"),
+  secureUpload.single("ticketFile"),
+  validateFileContent,
+  handleUploadError,
   async (req, res) => {
     try {
       if (!req.file) {
@@ -160,7 +165,9 @@ router.post(
 
 // Create a new ticket listing with fraud detection
 router.post("/", 
-  isAuthenticated, 
+  isAuthenticated,
+  sanitizeInput,
+  validateExternalUrls,
   ticketCreationLimiter,
   verificationBasedRateLimit,
   assessTicketListingFraud,
@@ -170,7 +177,9 @@ router.post("/",
 
 // Create ticket with event details and fraud detection
 router.post("/with-event", 
-  isAuthenticated, 
+  isAuthenticated,
+  sanitizeInput,
+  validateExternalUrls,
   ticketCreationLimiter,
   verificationBasedRateLimit,
   assessTicketListingFraud,
@@ -184,10 +193,10 @@ router.get("/:id/qrcode", isAuthenticated, ticketController.generateQrCode);
 // Verify ticket
 router.post("/:id/verify", isAuthenticated, ticketController.verifyTicket);
 
-// Delete ticket
-router.delete("/:id", isAuthenticated, ticketController.deleteTicket);
+// Delete ticket (only owner can delete)
+router.delete("/:id", isAuthenticated, isTicketOwner, ticketController.deleteTicket);
 
-// Delete all tickets
+// Delete all tickets (admin only)
 router.delete("/", isAuthenticated, ticketController.deleteAllTickets);
 
 // Clean up expired tickets manually

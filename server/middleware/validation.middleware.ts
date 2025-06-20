@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { AnyZodObject, ZodError, ZodSchema } from "zod";
+import { AnyZodObject, ZodError, ZodSchema, z } from "zod";
 import { ValidationError } from "../services/error.service";
 
 /**
@@ -102,3 +102,23 @@ export const validateParams = (schema: ZodSchema) => {
 function formatZodError(error: ZodError) {
   return error.format();
 }
+
+/**
+ * Validate ID parameters to prevent injection attacks
+ */
+export const validateIdParam = (paramName: string = 'id') => {
+  const { z } = require('zod');
+  return validateParams(z.object({
+    [paramName]: z.string().transform((val: string, ctx: any) => {
+      const parsed = parseInt(val);
+      if (isNaN(parsed) || parsed <= 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Invalid ${paramName}: must be a positive integer`,
+        });
+        return z.NEVER;
+      }
+      return parsed;
+    })
+  }));
+};

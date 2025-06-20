@@ -84,7 +84,12 @@ export default function Register() {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    // Sanitize input to prevent XSS
+    const sanitizedValue = value
+      .replace(/[<>\"'&]/g, '') // Remove dangerous characters
+      .trim();
+    
+    setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
   };
 
   return (

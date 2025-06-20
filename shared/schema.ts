@@ -307,54 +307,136 @@ export type TicketPopularity = typeof ticketPopularity.$inferSelect;
 
 // Extended schemas with validations for forms
 export const ticketListingSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  eventTitle: z.string().optional(),
-  eventDescription: z.string().optional(),
-  venue: z.string().min(1, "Venue is required"),
-  venueAddress: z.string().optional(),
-  eventDate: z.coerce.date(),
+  title: z.string()
+    .min(1, "Title is required")
+    .max(200, "Title too long")
+    .trim()
+    .refine((val) => !/[<>\"'&]/.test(val), "Title contains invalid characters"),
+  eventTitle: z.string()
+    .max(200, "Event title too long")
+    .trim()
+    .optional()
+    .refine((val) => !val || !/[<>\"'&]/.test(val), "Event title contains invalid characters"),
+  eventDescription: z.string()
+    .max(2000, "Description too long")
+    .trim()
+    .optional()
+    .refine((val) => !val || !/[<>\"'&]/.test(val), "Description contains invalid characters"),
+  venue: z.string()
+    .min(1, "Venue is required")
+    .max(200, "Venue name too long")
+    .trim()
+    .refine((val) => !/[<>\"'&]/.test(val), "Venue contains invalid characters"),
+  venueAddress: z.string()
+    .max(500, "Address too long")
+    .trim()
+    .optional(),
+  eventDate: z.coerce.date()
+    .refine((date) => date > new Date(), "Event date must be in the future"),
   category: z.enum([
     "concerts", "sports", "theater", "comedy", "festivals", 
     "conferences", "exhibitions", "movies", "dance", "opera",
     "classical", "family", "nightlife", "education", "networking"
   ]),
-  eventImageUrl: z.string().optional(),
+  eventImageUrl: z.string()
+    .url("Invalid image URL")
+    .max(2000, "URL too long")
+    .optional()
+    .refine((val) => !val || /^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i.test(val), "Image URL must be a valid image"),
   trending: z.boolean().default(false),
   sellingFast: z.boolean().default(false),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
-  city: z.string().min(1, "City is required"),
-  country: z.string().length(2, "Country must be 2-letter ISO code"),
-  state: z.string().optional(),
-  postalCode: z.string().optional(),
-  section: z.string().optional(),
-  row: z.string().optional(),
-  seat: z.string().optional(),
-
-  quantity: z.number().int().positive(),
-  status: z.string().default("available"),
+  latitude: z.number()
+    .min(-90, "Invalid latitude")
+    .max(90, "Invalid latitude")
+    .optional(),
+  longitude: z.number()
+    .min(-180, "Invalid longitude")
+    .max(180, "Invalid longitude")
+    .optional(),
+  city: z.string()
+    .min(1, "City is required")
+    .max(100, "City name too long")
+    .trim()
+    .refine((val) => /^[a-zA-Z\s\-'\.]+$/.test(val), "City contains invalid characters"),
+  country: z.string()
+    .length(2, "Country must be 2-letter ISO code")
+    .toUpperCase(),
+  state: z.string()
+    .max(100, "State name too long")
+    .trim()
+    .optional(),
+  postalCode: z.string()
+    .max(20, "Postal code too long")
+    .trim()
+    .optional()
+    .refine((val) => !val || /^[A-Za-z0-9\s\-]+$/.test(val), "Invalid postal code format"),
+  section: z.string()
+    .max(50, "Section too long")
+    .trim()
+    .optional()
+    .refine((val) => !val || /^[A-Za-z0-9\s\-]+$/.test(val), "Section contains invalid characters"),
+  row: z.string()
+    .max(20, "Row too long")
+    .trim()
+    .optional()
+    .refine((val) => !val || /^[A-Za-z0-9\s\-]+$/.test(val), "Row contains invalid characters"),
+  seat: z.string()
+    .max(20, "Seat too long")
+    .trim()
+    .optional()
+    .refine((val) => !val || /^[A-Za-z0-9\s\-,]+$/.test(val), "Seat contains invalid characters"),
+  quantity: z.number()
+    .int("Quantity must be a whole number")
+    .min(1, "Quantity must be at least 1")
+    .max(50, "Maximum 50 tickets per listing"),
+  status: z.enum(["available", "pending", "sold", "expired"]).default("available"),
   isTransferrable: z.boolean().default(true),
   transferMethod: z.enum(["in-person", "electronic", "mail", "digital"]),
-  additionalInfo: z.string().optional(),
+  additionalInfo: z.string()
+    .max(1000, "Additional info too long")
+    .trim()
+    .optional()
+    .refine((val) => !val || !/[<>\"'&]/.test(val), "Additional info contains invalid characters"),
   showContactInfo: z.boolean().default(false),
-  eventTimezone: z.string().default("UTC"),
-  ageRestriction: z.string().optional(),
-  expiresAt: z.coerce.date().optional(),
+  eventTimezone: z.string().max(50, "Timezone too long").default("UTC"),
+  ageRestriction: z.string()
+    .max(50, "Age restriction too long")
+    .trim()
+    .optional()
+    .refine((val) => !val || /^[A-Za-z0-9\s\+\-]+$/.test(val), "Age restriction contains invalid characters"),
+  expiresAt: z.coerce.date()
+    .optional()
+    .refine((date) => !date || date > new Date(), "Expiry date must be in the future"),
 });
 
 export const userRegisterSchema = z.object({
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  fullName: z.string().min(2, "Full name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
-  whatsapp: z.string().optional(),
-  instagram: z.string().optional(), // Made optional for global markets
-  country: z.string().length(2, "Country must be 2-letter ISO code"),
+  password: z.string()
+    .min(8, "Password must be at least 8 characters")
+    .max(128, "Password too long")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain uppercase, lowercase, and number"),
+  fullName: z.string()
+    .min(2, "Full name is required")
+    .max(100, "Name too long")
+    .regex(/^[a-zA-Z\s\-'\.]+$/, "Name contains invalid characters"),
+  email: z.string()
+    .email("Invalid email address")
+    .max(254, "Email too long")
+    .toLowerCase(),
+  phone: z.string()
+    .optional()
+    .refine((val) => !val || /^\+?[\d\s\-\(\)]{7,20}$/.test(val), "Invalid phone number format"),
+  whatsapp: z.string()
+    .optional()
+    .refine((val) => !val || /^\+?[\d\s\-\(\)]{7,20}$/.test(val), "Invalid WhatsApp number format"),
+  instagram: z.string()
+    .optional()
+    .refine((val) => !val || /^[a-zA-Z0-9_.]{1,30}$/.test(val.replace(/^@/, "")), "Invalid Instagram handle"),
+  country: z.string().length(2, "Country must be 2-letter ISO code").toUpperCase(),
   timezone: z.string().default("UTC"),
   language: z.string().length(2, "Language must be 2-letter ISO code").default("en"),
   preferredContactMethod: z
     .enum(["email", "whatsapp", "phone"])
-    .default("email"), // Email as global default
+    .default("email"),
   confirmPassword: z.string(),
 })
 .refine((data) => data.password === data.confirmPassword, {

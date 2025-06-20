@@ -1,111 +1,92 @@
 import { Request, Response, NextFunction } from "express";
-import {
-  AuthenticationError,
-  AuthorizationError,
-} from "../services/error.service";
+import { storage } from "../storage";
 
 /**
- * Middleware to check if a user is authenticated
+ * Middleware to check if user is authenticated
  */
-export function isAuthenticated(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  console.log("Authentication check:", {
-    isAuthenticated: req.isAuthenticated(),
-    user: req.user?.id || "none",
-    sessionID: req.sessionID,
-    cookies: req.headers.cookie
-  });
-  
+export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
   if (req.isAuthenticated()) {
     return next();
   }
-
-  throw new AuthenticationError("Unauthorized. Authentication required.");
+  res.status(401).json({ message: "Authentication required" });
 }
 
 /**
- * Middleware to check if the user is the owner of the resource
- * @param userIdParam The name of the parameter that contains the user ID
+ * Middleware to check if user owns the ticket
  */
-export function isResourceOwner(userIdParam: string = "userId") {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.isAuthenticated()) {
-      throw new AuthenticationError("Unauthorized. Authentication required.");
+export function isTicketOwner(req: Request, res: Response, next: NextFunction) {
+  return async (innerReq: Request, innerRes: Response, innerNext: NextFunction) => {
+    try {
+      if (!innerReq.user) {
+        return innerRes.status(401).json({ message: "Authentication required" });
+      }
+
+      const ticketId = parseInt(innerReq.params.id);
+      if (isNaN(ticketId) || ticketId <= 0) {
+        return innerRes.status(400).json({ message: "Invalid ticket ID" });
+      }
+
+      const ticket = await storage.getTicket(ticketId);
+      if (!ticket) {
+        return innerRes.status(404).json({ message: "Ticket not found" });
+      }
+
+      if (ticket.sellerId !== innerReq.user.id) {
+        return innerRes.status(403).json({ message: "Access denied: You can only modify your own tickets" });
+      }
+
+      innerNext();
+    } catch (error) {
+      innerRes.status(500).json({ message: "Error verifying ticket ownership" });
     }
-
-    const resourceUserId = parseInt(req.params[userIdParam]);
-    const authenticatedUserId = req.user!.id;
-
-    if (isNaN(resourceUserId)) {
-      return next(new Error(`Invalid user ID: ${req.params[userIdParam]}`));
-    }
-
-    if (resourceUserId !== authenticatedUserId) {
-      throw new AuthorizationError(
-        "You do not have permission to access this resource.",
-      );
-    }
-
-    next();
   };
 }
 
 /**
- * Middleware to check if a user is an admin
- * This is a placeholder that would need to be implemented with real admin validation
+ * Middleware to check if user is admin
  */
 export function isAdmin(req: Request, res: Response, next: NextFunction) {
-  if (!req.isAuthenticated()) {
-    throw new AuthenticationError("Unauthorized. Authentication required.");
+  if (!req.user?.isAdmin) {
+    return res.status(403).json({ message: "Admin access required" });
   }
-
-  // Check if user has admin role
-  const user = req.user!;
-
-  // For now, there is no admin role field in the User type
-  // This would need to be added in a real admin implementation
-  // if (user.role !== 'admin') {
-  //   throw new AuthorizationError('Admin privileges required.');
-  // }
-
-  // Placeholder for admin check - in a real app we would check the user role
-  // For now, we'll just let any authenticated user through
-
   next();
 }
 
 /**
- * Middleware to check if a user is either an admin or the owner of a resource
- * @param userIdParam The name of the parameter that contains the user ID
+ * Middleware to sanitize user input and prevent XSS
  */
-export function isAdminOrResourceOwner(userIdParam: string = "userId") {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.isAuthenticated()) {
-      throw new AuthenticationError("Unauthorized. Authentication required.");
-    }
-
-    // For a real admin implementation, check if user is admin first
-    // if (req.user.role === 'admin') {
-    //   return next();
-    // }
-
-    // If not admin, check if user is the owner
-    const resourceUserId = parseInt(req.params[userIdParam]);
-    const authenticatedUserId = req.user!.id;
-
-    if (isNaN(resourceUserId)) {
-      return next(new Error(`Invalid user ID: ${req.params[userIdParam]}`));
-    }
-
-    if (resourceUserId !== authenticatedUserId) {
-      throw new AuthorizationError(
-        "You do not have permission to access this resource.",
-      );
-    }
-
-    next();
+export function sanitizeInput(req: Request, res: Response, next: NextFunction) {
+  const sanitizeString = (str: string): string => {
+    if (typeof str !== 'string') return str;
+    // Remove script tags and dangerous HTML
+    return str
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+\s*=/gi, '')
+      .trim();
   };
+
+  const sanitizeObject = (obj: any): any => {
+    if (typeof obj === 'string') {
+      return sanitizeString(obj);
+    }
+    if (Array.isArray(obj)) {
+      return obj.map(sanitizeObject);
+    }
+    if (obj && typeof obj === 'object') {
+      const sanitized: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        sanitized[key] = sanitizeObject(value);
+      }
+      return sanitized;
+    }
+    return obj;
+  };
+
+  if (req.body) {
+    req.body = sanitizeObject(req.body);
+  }
+  
+  next();
 }

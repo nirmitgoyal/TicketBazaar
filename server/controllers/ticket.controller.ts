@@ -77,8 +77,8 @@ export class TicketController {
   getTicketById = async (req: Request, res: Response) => {
     try {
       const ticketId = parseInt(req.params.id);
-      if (isNaN(ticketId)) {
-        return res.status(400).json({ message: "Invalid ticket ID" });
+      if (isNaN(ticketId) || ticketId <= 0) {
+        return res.status(400).json({ message: "Invalid ticket ID: must be a positive integer" });
       }
 
       const ticket = await this.ticketService.getTicketById(ticketId);
