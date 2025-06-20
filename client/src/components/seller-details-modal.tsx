@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrustInsightBox } from "@/components/trust-insight-box";
@@ -117,25 +117,18 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
             {/* Seller Profile */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
-                      {seller.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="text-lg font-semibold">{seller.fullName}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      {seller.rating > 0 && (
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium">{seller.rating.toFixed(1)}</span>
-                          <span className="text-sm text-gray-500">
-                            ({seller.ratingsCount} review{seller.ratingsCount !== 1 ? 's' : ''})
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                <CardTitle>
+                  <h3 className="text-lg font-semibold">{seller.fullName}</h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    {seller.rating > 0 && (
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium">{seller.rating.toFixed(1)}</span>
+                        <span className="text-sm text-gray-500">
+                          ({seller.ratingsCount} review{seller.ratingsCount !== 1 ? 's' : ''})
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </CardTitle>
               </CardHeader>
