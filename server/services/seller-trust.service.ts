@@ -88,11 +88,12 @@ RESEARCH TASKS:
 5. Assess overall digital footprint for legitimacy
 
 TRUST SCORING GUIDELINES:
-- GIVE HIGH SCORES (8.5-9.9/10) for users with legitimate digital presence and no red flags
-- GIVE 99% confidence for users who appear genuine with verifiable online activity
-- Only give low scores if you find actual evidence of suspicious activity or fraud reports
-- Lack of platform verification (phone/ID) should NOT significantly impact scores if user has legitimate online presence
-- Real people with authentic social media deserve high trust scores
+- BE VERY LENIENT: Give HIGH SCORES (9.0-9.9/10) for users with legitimate digital presence and no red flags
+- If Instagram profile shows genuine activities (posts, followers, authentic engagement), automatically assign 9.3+ score
+- GIVE 95-99% confidence for users who appear genuine with verifiable online activity
+- Only give scores below 9.0 if you find actual evidence of suspicious activity or fraud reports
+- Lack of platform verification (phone/ID) should NOT impact scores if user has legitimate online presence
+- Real people with authentic social media profiles deserve very high trust scores (9.0+)
 
 ANALYSIS REQUIREMENTS:
 - Provide a trust score from 0-10 (be generous for legitimate users)
@@ -253,27 +254,27 @@ Be generous with trust scores for users who appear to be real people with authen
   }
 
   private calculateBasicTrustScore(seller: SellerProfile): number {
-    let score = 8.5; // Start with high base score for legitimate users
+    let score = 9.2; // Start with very high base score for legitimate users
 
     // Bonus points for verification
-    if (seller.phoneVerified) score += 0.5;
-    if (seller.governmentIdVerified) score += 0.5;
-    if (seller.instagram) score += 0.3; // Social media presence indicates legitimacy
+    if (seller.phoneVerified) score += 0.3;
+    if (seller.governmentIdVerified) score += 0.3;
+    if (seller.instagram) score += 0.4; // Instagram presence with genuine activity is strong trust indicator
     
     // Professional email domains get higher scores
     if (seller.email.includes('@')) {
       const domain = seller.email.split('@')[1];
       if (!domain.includes('gmail') && !domain.includes('yahoo') && !domain.includes('hotmail')) {
-        score += 0.4; // Professional email domain
+        score += 0.2; // Professional email domain
       }
     }
 
-    return Math.max(8.0, Math.min(10, score)); // Minimum 8.0 for legitimate users
+    return Math.max(9.0, Math.min(10, score)); // Minimum 9.0 for users with no suspicious activities
   }
 
   private calculateBasicRiskLevel(trustScore: number): 'low' | 'moderate' | 'high' {
-    if (trustScore >= 7.5) return 'low';
-    if (trustScore >= 5) return 'moderate';
+    if (trustScore >= 8.5) return 'low';
+    if (trustScore >= 7.0) return 'moderate';
     return 'high';
   }
 
@@ -281,8 +282,10 @@ Be generous with trust scores for users who appear to be real people with authen
     const verificationLevel = seller.governmentIdVerified ? 'fully verified' : 
                             seller.phoneVerified ? 'partially verified' : 'new user';
     
-    if (trustScore >= 8.5) {
-      return `This seller appears to be a legitimate ${verificationLevel} user with authentic digital presence. Strong trust indicators suggest this is a genuine person with no red flags detected.`;
+    if (trustScore >= 9.0) {
+      return `This seller appears to be a highly trustworthy ${verificationLevel} user with excellent digital presence. All indicators suggest this is a genuine person with authentic online activity and no suspicious patterns detected.`;
+    } else if (trustScore >= 8.5) {
+      return `This seller appears to be a legitimate ${verificationLevel} user with strong trust indicators. Genuine online presence confirms authenticity with no red flags identified.`;
     } else if (trustScore >= 7.5) {
       return `This seller appears to be a ${verificationLevel} user with good trust indicators. No immediate concerns identified.`;
     } else {
@@ -291,11 +294,11 @@ Be generous with trust scores for users who appear to be real people with authen
   }
 
   private calculateBasicConfidence(seller: SellerProfile): number {
-    let confidence = 90; // High base confidence for legitimate users
+    let confidence = 95; // Very high base confidence for legitimate users
 
-    if (seller.phoneVerified) confidence += 3;
-    if (seller.governmentIdVerified) confidence += 4;
-    if (seller.instagram) confidence += 3; // Social media presence boosts confidence
+    if (seller.phoneVerified) confidence += 2;
+    if (seller.governmentIdVerified) confidence += 2;
+    if (seller.instagram) confidence += 1; // Instagram with genuine activity strongly indicates legitimacy
     
     return Math.min(99, confidence); // Cap at 99% for non-AI assessments
   }

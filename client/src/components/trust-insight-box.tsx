@@ -55,8 +55,8 @@ export function TrustInsightBox({ sellerId, className }: TrustInsightBoxProps) {
   };
 
   const getTrustScoreColor = (score: number): string => {
-    if (score >= 7.5) return "text-green-600";
-    if (score >= 5) return "text-yellow-600";
+    if (score >= 8.5) return "text-green-600";
+    if (score >= 7.0) return "text-yellow-600";
     return "text-red-600";
   };
 
