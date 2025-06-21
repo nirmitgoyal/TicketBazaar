@@ -101,6 +101,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const emailDebugRoutes = (await import("./routes/email-debug.routes")).default;
   apiRouter.use("/email-debug", emailDebugRoutes);
 
+  // Import and register SendGrid setup routes
+  const sendgridSetupRoutes = (await import("./routes/sendgrid-setup.routes")).default;
+  apiRouter.use("/sendgrid-setup", sendgridSetupRoutes);
+
   // Import and register sitemap routes
   const { generateSitemap, generateRobotsTxt } = await import("./routes/sitemap");
   

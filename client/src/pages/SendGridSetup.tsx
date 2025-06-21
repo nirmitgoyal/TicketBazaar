@@ -1,23 +1,79 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, CheckCircle, ExternalLink, Mail, Settings } from "lucide-react";
+import { AlertTriangle, CheckCircle, ExternalLink, Mail, Settings, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SendGridSetup() {
-  const [verificationStatus, setVerificationStatus] = useState<'checking' | 'verified' | 'unverified'>('checking');
+  const [loading, setLoading] = useState(false);
+  const [diagnosticResults, setDiagnosticResults] = useState<any>(null);
+  const { toast } = useToast();
 
-  const checkVerificationStatus = async () => {
+  const runDiagnostics = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/email-debug/connectivity');
-      if (response.ok) {
-        const data = await response.json();
-        setVerificationStatus(data.status === 200 ? 'verified' : 'unverified');
+      const response = await fetch('/api/sendgrid-setup/error-details');
+      const data = await response.json();
+      setDiagnosticResults(data);
+      
+      if (data.status === 'success') {
+        toast({
+          title: "Success!",
+          description: "SendGrid is working correctly",
+        });
       } else {
-        setVerificationStatus('unverified');
+        toast({
+          title: "Issue Found",
+          description: data.details.message,
+          variant: "destructive"
+        });
       }
     } catch (error) {
-      setVerificationStatus('unverified');
+      toast({
+        title: "Error",
+        description: "Failed to run diagnostics",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const testMultipleSenders = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/sendgrid-setup/test-senders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ testEmail: 'nirmitgoyal.goyal@gmail.com' })
+      });
+      
+      const data = await response.json();
+      setDiagnosticResults(data);
+      
+      const successCount = data.results?.filter((r: any) => r.status === 'success').length || 0;
+      
+      if (successCount > 0) {
+        toast({
+          title: "Working Senders Found!",
+          description: `${successCount} sender(s) work correctly`,
+        });
+      } else {
+        toast({
+          title: "No Working Senders",
+          description: "All senders need verification",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to test senders",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -102,30 +158,49 @@ export default function SendGridSetup() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5" />
-              Step 3: Test Email Functionality
+              Step 3: Run Diagnostics & Test
             </CardTitle>
             <CardDescription>
-              Verify your setup is working correctly.
+              Use our diagnostic tools to identify and resolve issues.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="mb-4">
-              After completing sender verification, test your email functionality:
-            </p>
-            <div className="space-y-2">
-              <Button 
-                onClick={checkVerificationStatus}
-                variant="outline"
-                className="w-full"
-              >
-                Check Verification Status
-              </Button>
+            <div className="space-y-4">
+              <div className="grid gap-2 md:grid-cols-2">
+                <Button 
+                  onClick={runDiagnostics}
+                  disabled={loading}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  Run Full Diagnostics
+                </Button>
+                <Button 
+                  onClick={testMultipleSenders}
+                  disabled={loading}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  Test All Senders
+                </Button>
+              </div>
               <a href="/email-test" className="block">
                 <Button className="w-full">
                   Go to Email Test Page
                 </Button>
               </a>
             </div>
+            
+            {diagnosticResults && (
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-semibold mb-2">Diagnostic Results:</h4>
+                <pre className="text-sm overflow-auto max-h-40">
+                  {JSON.stringify(diagnosticResults, null, 2)}
+                </pre>
+              </div>
+            )}
           </CardContent>
         </Card>
 
