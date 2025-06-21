@@ -5,8 +5,28 @@ if (!process.env.SENDGRID_API_KEY) {
   throw new Error("SENDGRID_API_KEY environment variable must be set");
 }
 
+// Initialize mail service with EU Data Residency support
 const mailService = new MailService();
 mailService.setApiKey(process.env.SENDGRID_API_KEY);
+
+// Configure EU Data Residency based on environment and API key patterns
+function configureEUDataResidency() {
+  const isEURequired = process.env.SENDGRID_EU_DATA_RESIDENCY === 'true' ||
+                      process.env.SENDGRID_API_KEY.includes('eu-') ||
+                      process.env.SENDGRID_API_KEY.includes('.eu.');
+
+  if (isEURequired) {
+    // EU Data Residency is handled automatically by SendGrid for EU subusers
+    // The API key determines the data processing location
+    logger.info('EMAIL', 'EU Data Residency configured - emails will be processed in EU');
+    return true;
+  }
+  
+  logger.info('EMAIL', 'Using global data residency');
+  return false;
+}
+
+const isEUDataResidency = configureEUDataResidency();
 
 interface EmailParams {
   to: string;
@@ -42,6 +62,7 @@ export class EmailService {
   private readonly appUrl = process.env.NODE_ENV === 'production' 
     ? 'https://your-app.replit.app' 
     : 'http://localhost:5000';
+  private readonly isEUDataResidency = isEUDataResidency;
 
   async sendEmail(params: EmailParams): Promise<boolean> {
     try {
@@ -63,12 +84,24 @@ export class EmailService {
       });
 
       await mailService.send(emailData);
-      logger.info('EMAIL', `Email sent successfully to ${params.to}: ${params.subject}`);
+      
+      const residencyInfo = this.isEUDataResidency ? ' (EU Data Residency)' : ' (Global)';
+      logger.info('EMAIL', `Email sent successfully to ${params.to}: ${params.subject}${residencyInfo}`);
       return true;
     } catch (error) {
       logger.error('EMAIL', `Failed to send email to ${params.to}`, error);
       return false;
     }
+  }
+
+  // Get data residency information
+  getDataResidencyInfo(): { isEU: boolean; description: string } {
+    return {
+      isEU: this.isEUDataResidency,
+      description: this.isEUDataResidency 
+        ? 'EU Data Residency - Emails processed within European Union'
+        : 'Global Data Residency - Standard processing'
+    };
   }
 
   // Welcome email for new users

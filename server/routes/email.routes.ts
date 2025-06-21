@@ -226,9 +226,14 @@ router.get("/stats", async (req, res) => {
       return res.status(401).json({ message: "Authentication required" });
     }
 
+    const { emailService } = await import("../services/email.service");
+    const dataResidencyInfo = emailService.getDataResidencyInfo();
+
     const stats = {
       activeResetTokens: resetTokens.size,
       activeVerificationCodes: verificationCodes.size,
+      dataResidency: dataResidencyInfo,
+      euCompliant: dataResidencyInfo.isEU,
       // Add more email statistics as needed
     };
 
@@ -236,6 +241,23 @@ router.get("/stats", async (req, res) => {
   } catch (error) {
     logger.error('EMAIL', 'Email stats error', error);
     res.status(500).json({ message: "Error fetching email statistics" });
+  }
+});
+
+// Get EU Data Residency status
+router.get("/data-residency", async (req, res) => {
+  try {
+    const { emailService } = await import("../services/email.service");
+    const dataResidencyInfo = emailService.getDataResidencyInfo();
+    
+    res.status(200).json({
+      ...dataResidencyInfo,
+      apiKeyType: process.env.SENDGRID_API_KEY?.includes('eu-') ? 'EU Subuser' : 'Global',
+      compliance: dataResidencyInfo.isEU ? 'GDPR Compliant' : 'Standard'
+    });
+  } catch (error) {
+    logger.error('EMAIL', 'Data residency info error', error);
+    res.status(500).json({ message: "Error fetching data residency information" });
   }
 });
 

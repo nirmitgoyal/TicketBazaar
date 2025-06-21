@@ -29,25 +29,28 @@ router.post("/",
       
       // Send email notification to seller
       try {
-        // Get ticket and seller information
-        const ticket = await storage.getTicket(validatedData.ticketId);
-        if (ticket) {
-          const buyer = req.user as any;
-          
-          // Send notification with email
-          await notificationService.sendContactRequestNotification(
-            ticket.sellerId,
-            buyer.fullName,
-            ticket.title,
-            {
-              ticketTitle: ticket.title,
-              buyerName: buyer.fullName,
-              venue: ticket.venue,
-              eventDate: ticket.eventDate.toLocaleDateString()
-            }
-          );
-          
-          logger.info('CONTACT', `Contact request notification sent for ticket ${ticket.id}`);
+        // Get ticket and seller information using the ticketId from validated data
+        const ticketId = (validatedData as any).ticketId || (contactRequest as any).ticketId;
+        if (ticketId) {
+          const ticket = await storage.getTicket(ticketId);
+          if (ticket) {
+            const buyer = req.user as any;
+            
+            // Send notification with email
+            await notificationService.sendContactRequestNotification(
+              ticket.sellerId,
+              buyer.fullName,
+              ticket.title,
+              {
+                ticketTitle: ticket.title,
+                buyerName: buyer.fullName,
+                venue: ticket.venue,
+                eventDate: ticket.eventDate.toLocaleDateString()
+              }
+            );
+            
+            logger.info('CONTACT', `Contact request notification sent for ticket ${ticket.id}`);
+          }
         }
       } catch (emailError) {
         logger.error('CONTACT', 'Failed to send contact request notification email', emailError);

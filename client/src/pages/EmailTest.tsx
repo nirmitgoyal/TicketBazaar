@@ -312,9 +312,10 @@ export default function EmailTest() {
                   });
                   if (response.ok) {
                     const stats = await response.json();
+                    const residencyText = stats.dataResidency?.isEU ? "EU Data Residency" : "Global";
                     toast({
                       title: "Email Statistics",
-                      description: `Active reset tokens: ${stats.activeResetTokens}, Active verification codes: ${stats.activeVerificationCodes}`,
+                      description: `Active reset tokens: ${stats.activeResetTokens}, Active verification codes: ${stats.activeVerificationCodes}, Data residency: ${residencyText}`,
                     });
                   }
                 } catch (error) {
@@ -330,6 +331,46 @@ export default function EmailTest() {
             >
               <Mail className="mr-2 h-4 w-4" />
               View Stats
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* EU Data Residency */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5" />
+              EU Data Residency
+            </CardTitle>
+            <CardDescription>
+              Check GDPR compliance and data processing location.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={async () => {
+                try {
+                  const response = await fetch("/api/email/data-residency");
+                  if (response.ok) {
+                    const residency = await response.json();
+                    toast({
+                      title: "Data Residency Status",
+                      description: `${residency.description} - API: ${residency.apiKeyType}, Compliance: ${residency.compliance}`,
+                    });
+                  }
+                } catch (error) {
+                  toast({
+                    title: "Error",
+                    description: "Failed to fetch data residency information.",
+                    variant: "destructive",
+                  });
+                }
+              }}
+              variant="outline"
+              className="w-full"
+            >
+              <AlertCircle className="mr-2 h-4 w-4" />
+              Check Residency
             </Button>
           </CardContent>
         </Card>
