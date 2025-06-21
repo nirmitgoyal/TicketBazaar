@@ -58,7 +58,7 @@ interface NotificationEmailData {
 }
 
 export class EmailService {
-  private readonly defaultFromEmail = 'noreply@ticketbazaar.com';
+  private readonly defaultFromEmail = 'nirmitgoyal.goyal@gmail.com'; // Use your verified email temporarily
   private readonly appUrl = process.env.NODE_ENV === 'production' 
     ? 'https://your-app.replit.app' 
     : 'http://localhost:5000';
@@ -66,6 +66,18 @@ export class EmailService {
 
   async sendEmail(params: EmailParams): Promise<boolean> {
     try {
+      // Validate email parameters
+      if (!params.to || !params.subject) {
+        logger.error('EMAIL', 'Missing required email parameters', { to: params.to, subject: params.subject });
+        return false;
+      }
+
+      // Validate SendGrid API key
+      if (!process.env.SENDGRID_API_KEY || process.env.SENDGRID_API_KEY.length < 10) {
+        logger.error('EMAIL', 'Invalid or missing SendGrid API key');
+        return false;
+      }
+
       const emailData = {
         to: params.to,
         from: params.from || this.defaultFromEmail,
@@ -83,13 +95,31 @@ export class EmailService {
         }
       });
 
-      await mailService.send(emailData);
+      logger.info('EMAIL', 'Attempting to send email', {
+        to: emailData.to,
+        from: emailData.from,
+        subject: emailData.subject,
+        hasHtml: !!emailData.html,
+        hasText: !!emailData.text,
+        apiKeyPrefix: process.env.SENDGRID_API_KEY?.substring(0, 10) + '...'
+      });
+
+      const response = await mailService.send(emailData);
       
       const residencyInfo = this.isEUDataResidency ? ' (EU Data Residency)' : ' (Global)';
-      logger.info('EMAIL', `Email sent successfully to ${params.to}: ${params.subject}${residencyInfo}`);
+      logger.info('EMAIL', `Email sent successfully to ${params.to}: ${params.subject}${residencyInfo}`, {
+        messageId: response?.[0]?.headers?.['x-message-id'],
+        statusCode: response?.[0]?.statusCode,
+        headers: response?.[0]?.headers
+      });
       return true;
     } catch (error) {
-      logger.error('EMAIL', `Failed to send email to ${params.to}`, error);
+      logger.error('EMAIL', `Failed to send email to ${params.to}`, {
+        error: error.message,
+        response: error.response?.body,
+        statusCode: error.code || error.response?.statusCode,
+        stack: error.stack
+      });
       return false;
     }
   }

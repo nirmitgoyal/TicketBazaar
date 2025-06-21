@@ -29,6 +29,7 @@ const CityEvents = lazy(() => import("@/pages/city-events"));
 const GlobalCities = lazy(() => import("@/pages/global-cities"));
 const HowToSellTickets = lazy(() => import("@/pages/how-to-sell-tickets"));
 const EmailTest = lazy(() => import("@/pages/EmailTest"));
+const SendGridSetup = lazy(() => import("@/pages/SendGridSetup"));
 
 // Lazy load dashboard components with fallback handling
 const VerificationReport = lazy(() => import("@/pages/verification-report").then(module => ({ 
@@ -173,6 +174,7 @@ export function AppRoutes() {
       
       {/* Email Testing */}
       <LazyRoute path="/email-test" component={EmailTest} />
+      <LazyRoute path="/sendgrid-setup" component={SendGridSetup} />
       
       {/* Redirect route */}
       <Route path="/map-to-home" component={() => {

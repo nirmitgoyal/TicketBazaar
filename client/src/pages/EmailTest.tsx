@@ -162,10 +162,13 @@ export default function EmailTest() {
         </p>
       </div>
 
-      <Alert className="mb-6">
-        <Mail className="h-4 w-4" />
-        <AlertDescription>
-          This page allows you to test various email functionalities. Make sure you're logged in to test the authenticated email features.
+      <Alert className="mb-6 border-orange-200 bg-orange-50">
+        <AlertCircle className="h-4 w-4 text-orange-600" />
+        <AlertDescription className="text-orange-800">
+          <strong>Setup Required:</strong> If you're not receiving emails, you need to verify your sender identity in SendGrid.
+          <a href="/sendgrid-setup" className="ml-2 underline text-blue-600 hover:text-blue-800">
+            View Setup Instructions
+          </a>
         </AlertDescription>
       </Alert>
 

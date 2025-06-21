@@ -93,6 +93,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const sellerTrustRoutes = (await import("./routes/seller-trust.routes")).default;
   apiRouter.use("/seller-trust", strictLimiter, sellerTrustRoutes);
 
+  // Import and register email routes
+  const emailRoutes = (await import("./routes/email.routes")).default;
+  apiRouter.use("/email", emailRoutes);
+
+  // Import and register email debug routes
+  const emailDebugRoutes = (await import("./routes/email-debug.routes")).default;
+  apiRouter.use("/email-debug", emailDebugRoutes);
+
   // Import and register sitemap routes
   const { generateSitemap, generateRobotsTxt } = await import("./routes/sitemap");
   
