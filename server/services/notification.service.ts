@@ -1,4 +1,6 @@
 import { logger } from "../utils/logger";
+import { emailService } from "./email.service";
+import { storage } from "../storage";
 
 interface NotificationData {
   userId: number;
@@ -125,13 +127,77 @@ class NotificationService {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
-  // Simulate email notification
+  // Send actual email notification using SendGrid
   private async sendEmailNotification(notification: NotificationData): Promise<void> {
-    // In a real app, this would integrate with SendGrid, SES, etc.
-    logger.info('NOTIFICATIONS', `[EMAIL] ${notification.title} -> User ${notification.userId}`);
-    
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 200));
+    try {
+      // Get user email from database
+      const user = await storage.getUser(notification.userId);
+      if (!user?.email) {
+        logger.error('NOTIFICATIONS', `No email found for user ${notification.userId}`);
+        return;
+      }
+
+      const userName = user.fullName || 'User';
+      let emailSent = false;
+
+      // Send appropriate email based on notification type
+      switch (notification.type) {
+        case 'contact_request':
+          emailSent = await emailService.sendContactRequestEmail(user.email, {
+            userName,
+            ticketTitle: notification.data?.ticketTitle || notification.message,
+            buyerName: notification.data?.buyerName || 'A potential buyer',
+            venue: notification.data?.venue,
+            eventDate: notification.data?.eventDate,
+            price: notification.data?.price
+          });
+          break;
+
+        case 'ticket_sold':
+          emailSent = await emailService.sendTicketSoldEmail(user.email, {
+            userName,
+            ticketTitle: notification.data?.ticketTitle || notification.message,
+            salePrice: notification.data?.salePrice
+          });
+          break;
+
+        case 'price_drop':
+          emailSent = await emailService.sendPriceDropEmail(user.email, {
+            userName,
+            ticketTitle: notification.data?.ticketTitle || notification.message,
+            oldPrice: notification.data?.oldPrice,
+            newPrice: notification.data?.newPrice,
+            savings: notification.data?.savings,
+            percentageOff: Math.round(((notification.data?.oldPrice - notification.data?.newPrice) / notification.data?.oldPrice) * 100),
+            venue: notification.data?.venue,
+            eventDate: notification.data?.eventDate
+          });
+          break;
+
+        case 'new_listing':
+          emailSent = await emailService.sendNewListingEmail(user.email, {
+            userName,
+            ticketTitle: notification.data?.ticketTitle || notification.message,
+            city: notification.data?.city,
+            category: notification.data?.category,
+            venue: notification.data?.venue,
+            eventDate: notification.data?.eventDate
+          });
+          break;
+
+        default:
+          logger.info('NOTIFICATIONS', `No email template for notification type: ${notification.type}`);
+          return;
+      }
+
+      if (emailSent) {
+        logger.info('NOTIFICATIONS', `[EMAIL] ${notification.title} -> ${user.email}`);
+      } else {
+        logger.error('NOTIFICATIONS', `Failed to send email for ${notification.type} to user ${notification.userId}`);
+      }
+    } catch (error) {
+      logger.error('NOTIFICATIONS', `Error sending email notification to user ${notification.userId}`, error);
+    }
   }
 
   // Get pending notifications for a user
@@ -183,13 +249,17 @@ class NotificationService {
   }
 
   // Send contact request notification
-  async sendContactRequestNotification(sellerId: number, buyerName: string, ticketTitle: string): Promise<void> {
+  async sendContactRequestNotification(sellerId: number, buyerName: string, ticketTitle: string, additionalData?: any): Promise<void> {
     await this.sendNotification({
       userId: sellerId,
       type: 'contact_request',
       title: 'New Contact Request',
       message: `${buyerName} wants to buy ${ticketTitle}`,
-      data: { buyerName },
+      data: { 
+        buyerName, 
+        ticketTitle,
+        ...additionalData 
+      },
       priority: 'high'
     });
   }

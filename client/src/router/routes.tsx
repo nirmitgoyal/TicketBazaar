@@ -28,6 +28,7 @@ const SellerPolicy = lazy(() => import("@/pages/SellerPolicy"));
 const CityEvents = lazy(() => import("@/pages/city-events"));
 const GlobalCities = lazy(() => import("@/pages/global-cities"));
 const HowToSellTickets = lazy(() => import("@/pages/how-to-sell-tickets"));
+const EmailTest = lazy(() => import("@/pages/EmailTest"));
 
 // Lazy load dashboard components with fallback handling
 const VerificationReport = lazy(() => import("@/pages/verification-report").then(module => ({ 
@@ -169,6 +170,9 @@ export function AppRoutes() {
       {/* Analytics */}
       <LazyRoute path="/popularity" component={PopularityDashboard} />
       <LazyRoute path="/analytics" component={PopularityDashboard} />
+      
+      {/* Email Testing */}
+      <LazyRoute path="/email-test" component={EmailTest} />
       
       {/* Redirect route */}
       <Route path="/map-to-home" component={() => {

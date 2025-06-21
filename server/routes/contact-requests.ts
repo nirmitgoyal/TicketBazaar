@@ -11,6 +11,8 @@ import {
   addFraudAssessmentToResponse,
   verificationBasedRateLimit 
 } from "../middleware/fraud-protection.middleware";
+import { notificationService } from "../services/notification.service";
+import { logger } from "../utils/logger";
 
 const router = Router();
 
@@ -24,6 +26,34 @@ router.post("/",
     try {
       const validatedData = insertContactRequestSchema.parse(req.body);
       const contactRequest = await storage.createContactRequest(validatedData);
+      
+      // Send email notification to seller
+      try {
+        // Get ticket and seller information
+        const ticket = await storage.getTicket(validatedData.ticketId);
+        if (ticket) {
+          const buyer = req.user as any;
+          
+          // Send notification with email
+          await notificationService.sendContactRequestNotification(
+            ticket.sellerId,
+            buyer.fullName,
+            ticket.title,
+            {
+              ticketTitle: ticket.title,
+              buyerName: buyer.fullName,
+              venue: ticket.venue,
+              eventDate: ticket.eventDate.toLocaleDateString()
+            }
+          );
+          
+          logger.info('CONTACT', `Contact request notification sent for ticket ${ticket.id}`);
+        }
+      } catch (emailError) {
+        logger.error('CONTACT', 'Failed to send contact request notification email', emailError);
+        // Don't fail the contact request if email fails
+      }
+      
       res.status(201).json(contactRequest);
     } catch (error) {
       if (error instanceof z.ZodError) {

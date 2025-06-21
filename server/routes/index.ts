@@ -4,6 +4,7 @@ import { createServer } from "http";
 import { setupAuth } from "../auth";
 import authRoutes from "./auth.routes";
 import ticketRoutes from "./ticket.routes";
+import emailRoutes from "./email.routes";
 
 import contactRequestRoutes from "./contact-requests";
 import dataPrivacyRoutes from "./data-privacy";
@@ -27,6 +28,7 @@ export async function registerRoutes(app: Express) {
   // Register API routes
   app.use("/api/auth", authRoutes);
   app.use("/api/tickets", ticketRoutes);
+  app.use("/api/email", emailRoutes);
 
   app.use("/api/contact-requests", contactRequestRoutes);
   app.use("/api/data-privacy", dataPrivacyRoutes);

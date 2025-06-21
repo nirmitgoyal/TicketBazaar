@@ -3,6 +3,8 @@ import { UserService } from "../services";
 import { userLoginSchema, userRegisterSchema } from "@shared/schema";
 import passport from "passport";
 import { z } from "zod";
+import { emailService } from "../services/email.service";
+import { logger } from "../utils/logger";
 
 /**
  * Controller for user-related endpoints
@@ -46,6 +48,15 @@ export class UserController {
       // Create the user
       const { confirmPassword, ...userData } = validatedData;
       const user = await this.userService.createUser(userData);
+
+      // Send welcome email
+      try {
+        await emailService.sendWelcomeEmail(user.email, user.fullName);
+        logger.info('AUTH', `Welcome email sent to ${user.email}`);
+      } catch (emailError) {
+        logger.error('AUTH', `Failed to send welcome email to ${user.email}`, emailError);
+        // Don't fail registration if email fails
+      }
 
       // Log the user in
       req.login(user, (err) => {
