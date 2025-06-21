@@ -598,11 +598,7 @@ export class VerificationService {
       confidence -= 20;
     }
 
-    // Check price reasonableness
-    if (eventData.price && (eventData.price < 1 || eventData.price > 10000)) {
-      riskFlags.push('Suspicious pricing detected');
-      confidence -= 15;
-    }
+    // P2P marketplace - no price validation needed
 
     return {
       isValid: confidence >= 60,
@@ -612,26 +608,28 @@ export class VerificationService {
   }
 
   /**
-   * Verify ticket pricing against market rates
+   * Verify ticket authenticity for P2P marketplace
    */
-  async verifyTicketPricing(ticketData: any): Promise<{ isReasonable: boolean; confidence: number; marketPrice?: number }> {
-    // Simulate market price analysis
-    const basePrice = ticketData.price || 100;
-    const marketPrice = basePrice * (0.8 + Math.random() * 0.4); // ±20% variance
-    
-    const priceDiff = Math.abs(ticketData.price - marketPrice) / marketPrice;
-    let confidence = 90;
+  async verifyTicketAuthenticity(ticketData: any): Promise<{ isAuthentic: boolean; confidence: number; factors: string[] }> {
+    const factors: string[] = [];
+    let confidence = 80;
 
-    if (priceDiff > 0.5) {
-      confidence -= 40; // Price is >50% off market rate
-    } else if (priceDiff > 0.3) {
-      confidence -= 20; // Price is >30% off market rate
+    // Check event legitimacy
+    if (!ticketData.venue || ticketData.venue.length < 5) {
+      confidence -= 20;
+      factors.push('Incomplete venue information');
+    }
+
+    // Check contact information availability
+    if (!ticketData.showContactInfo) {
+      confidence -= 10;
+      factors.push('Limited contact information');
     }
 
     return {
-      isReasonable: confidence >= 60,
+      isAuthentic: confidence >= 60,
       confidence,
-      marketPrice
+      factors
     };
   }
 

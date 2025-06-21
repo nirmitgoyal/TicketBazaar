@@ -1,5 +1,5 @@
 import { db } from "../db";
-import { users, tickets, contactRequests, userReviews } from "../../shared/schema";
+import { users, tickets, contactRequests } from "../../shared/schema";
 import { eq, and, gt, lt, desc, sql, count } from "drizzle-orm";
 import { logger } from "../utils/logger";
 
@@ -63,9 +63,9 @@ export class FraudDetectionService {
       riskFactors.push(...behaviorRisk.factors);
 
       // Price manipulation detection
-      const priceRisk = await this.assessPriceManipulationRisk(ticketData);
-      riskScore += priceRisk.score;
-      riskFactors.push(...priceRisk.factors);
+      const listingRisk = await this.assessListingManipulationRisk(ticketData);
+      riskScore += listingRisk.score;
+      riskFactors.push(...listingRisk.factors);
 
       const assessment = this.generateRiskAssessment(riskScore, riskFactors);
       
@@ -160,7 +160,7 @@ export class FraudDetectionService {
       );
 
       const verificationLevel = this.calculateVerificationLevel(userInfo);
-      const reviewScore = userInfo.rating || 0;
+      const reviewScore = 0; // No rating system in current schema
       const transactionHistory = recentTickets.length + recentRequests.length;
 
       // Calculate total risk score
@@ -316,29 +316,22 @@ export class FraudDetectionService {
   }
 
   /**
-   * Assess price manipulation risk
+   * Assess listing manipulation risk (P2P marketplace)
    */
-  private async assessPriceManipulationRisk(ticketData: any): Promise<{ score: number; factors: string[] }> {
+  private async assessListingManipulationRisk(ticketData: any): Promise<{ score: number; factors: string[] }> {
     const factors: string[] = [];
     let score = 0;
 
-    // Check for round number pricing (often suspicious)
-    if (ticketData.price % 100 === 0 && ticketData.price > 100) {
-      score += 5;
-      factors.push('Round number pricing pattern');
+    // Check for suspicious contact methods
+    if (!ticketData.showContactInfo) {
+      score += 10;
+      factors.push('Hidden contact information');
     }
 
-    // Extremely low prices (potential fake listings)
-    if (ticketData.price < 10) {
-      score += 30;
-      factors.push('Suspiciously low pricing');
-    }
-
-    // Check for price changes in similar events
-    const priceVolatility = await this.calculatePriceVolatility(ticketData.eventTitle);
-    if (priceVolatility > 0.5) {
+    // Check for unrealistic quantities
+    if (ticketData.quantity > 20) {
       score += 15;
-      factors.push('High price volatility in similar events');
+      factors.push('Unusually high ticket quantity');
     }
 
     return { score, factors };
@@ -497,14 +490,14 @@ export class FraudDetectionService {
     return score;
   }
 
-  private async getAverageEventPrice(eventTitle: string): Promise<number | null> {
+  private async getEventTicketCount(eventTitle: string): Promise<number> {
     try {
-      const prices = await db
-        .select({ price: tickets.price })
+      const result = await db
+        .select({ count: count() })
         .from(tickets)
         .where(eq(tickets.eventTitle, eventTitle));
 
-      if (prices.length === 0) return null;
+      return result[0]?.count || 0;
       
       const total = prices.reduce((sum, p) => sum + (p.price || 0), 0);
       return total / prices.length;
@@ -529,25 +522,7 @@ export class FraudDetectionService {
     }
   }
 
-  private async calculatePriceVolatility(eventTitle: string): Promise<number> {
-    try {
-      const prices = await db
-        .select({ price: tickets.price })
-        .from(tickets)
-        .where(eq(tickets.eventTitle, eventTitle));
 
-      if (prices.length < 2) return 0;
-
-      const priceValues = prices.map(p => p.price || 0);
-      const mean = priceValues.reduce((a, b) => a + b) / priceValues.length;
-      const variance = priceValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / priceValues.length;
-      const stdDev = Math.sqrt(variance);
-      
-      return mean > 0 ? stdDev / mean : 0;
-    } catch {
-      return 0;
-    }
-  }
 }
 
 export const fraudDetectionService = FraudDetectionService.getInstance();

@@ -16,27 +16,13 @@ interface AdvancedFiltersProps {
 
 export function AdvancedFilters({ filters, onFiltersChange, onClose }: AdvancedFiltersProps) {
   const [localFilters, setLocalFilters] = useState(filters);
-  const [priceRange, setPriceRange] = useState([0, 50000]);
-
   useEffect(() => {
     setLocalFilters(filters);
-    if (filters.minPrice || filters.maxPrice) {
-      setPriceRange([filters.minPrice || 0, filters.maxPrice || 50000]);
-    }
   }, [filters]);
 
   const handleFilterChange = (key: string, value: any) => {
     const updated = { ...localFilters, [key]: value };
     setLocalFilters(updated);
-  };
-
-  const handlePriceChange = (value: number[]) => {
-    setPriceRange(value);
-    setLocalFilters({
-      ...localFilters,
-      minPrice: value[0],
-      maxPrice: value[1]
-    });
   };
 
   const applyFilters = () => {
@@ -47,7 +33,6 @@ export function AdvancedFilters({ filters, onFiltersChange, onClose }: AdvancedF
   const clearFilters = () => {
     const cleared = {};
     setLocalFilters(cleared);
-    setPriceRange([0, 50000]);
     onFiltersChange(cleared);
   };
 
@@ -138,27 +123,7 @@ export function AdvancedFilters({ filters, onFiltersChange, onClose }: AdvancedF
 
           <Separator />
 
-          {/* Price Range */}
-          <div>
-            <Label className="text-base font-medium mb-3 block flex items-center gap-2">
-              <IndianRupee className="h-4 w-4" />
-              Price Range
-            </Label>
-            <div className="px-3">
-              <Slider
-                value={priceRange}
-                onValueChange={handlePriceChange}
-                max={50000}
-                min={0}
-                step={500}
-                className="w-full"
-              />
-              <div className="flex justify-between text-sm text-muted-foreground mt-2">
-                <span>₹{priceRange[0].toLocaleString('en-IN')}</span>
-                <span>₹{priceRange[1].toLocaleString('en-IN')}</span>
-              </div>
-            </div>
-          </div>
+          {/* P2P Marketplace - No price filtering needed */}
 
           <Separator />
 
