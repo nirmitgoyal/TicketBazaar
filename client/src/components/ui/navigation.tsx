@@ -51,14 +51,14 @@ export function Navigation() {
 
   return (
     <motion.header
-      className="bg-background border-b shadow-md sticky top-0 z-50"
+      className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b shadow-sm z-50"
       data-testid="navigation"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
     >
       <nav aria-label="Main Navigation">
-        <div className="container mx-auto px-4 py-3 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <motion.div
             className="flex items-center space-x-2 min-w-0 flex-shrink-0"
@@ -77,7 +77,7 @@ export function Navigation() {
                   <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">
                     Ticket Bazaar
                   </h1>
-                  <p className="text-xs text-gray-500 -mt-1 sticky top-0">P2P Marketplace</p>
+                  <p className="text-xs text-gray-500 -mt-1">P2P Marketplace</p>
                 </motion.div>
               </motion.div>
             </Link>

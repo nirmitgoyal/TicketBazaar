@@ -85,7 +85,7 @@ function App() {
                         <Navigation />
                       </ErrorBoundary>
                       
-                      <main className="flex-grow container mx-auto mobile-container py-3 sm:py-6">
+                      <main className="flex-grow container mx-auto mobile-container py-3 sm:py-6 pt-20 sm:pt-24">
                         <AppRoutes />
                       </main>
                       
