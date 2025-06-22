@@ -123,16 +123,6 @@ export function RealTimeNotifications() {
           >
             <div className="p-4 border-b border-gray-100 flex justify-between items-center">
               <h3 className="font-semibold text-gray-900">Notifications</h3>
-              {unreadCount > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={markAllAsRead}
-                  className="text-xs text-primary hover:text-primary/80"
-                >
-                  Mark all read
-                </Button>
-              )}
             </div>
 
             <div className="max-h-64 overflow-y-auto">
