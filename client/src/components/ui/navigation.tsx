@@ -5,7 +5,7 @@ import { UserCircle, Menu, X, Map, Ticket } from "lucide-react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeInDown, listItem, staggerContainer } from "@/lib/animations";
-import { RealTimeNotifications } from "@/components/real-time-notifications";
+
 
 
 export function Navigation() {
@@ -230,7 +230,6 @@ export function Navigation() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
           >
-            <RealTimeNotifications />
 
             <motion.div
               className="flex items-center"
