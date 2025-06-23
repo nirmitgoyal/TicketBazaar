@@ -222,22 +222,17 @@ export default function HowToSellTickets() {
                 <CardContent className="space-y-4">
                   <div>
                     <h3 className="font-semibold mb-2">Is it legal to resell tickets in India?</h3>
-                    <p className="text-gray-600">Yes, reselling tickets is legal in India as long as you follow platform guidelines and don't engage in black marketing or excessive price inflation.</p>
+                    <p className="text-gray-600">Yes, reselling tickets is legal in India as long as you follow platform guidelines and don't engage in black marketing or price inflation.</p>
                   </div>
                   
                   <div>
                     <h3 className="font-semibold mb-2">How do I price my tickets for resale?</h3>
-                    <p className="text-gray-600">Price your tickets fairly based on original cost, demand, and market rates. Avoid excessive markups to ensure quick sales.</p>
+                    <p className="text-gray-600">Price your tickets fairly based on original cost, demand, and market's original rates. Avoid markups to ensure quick sales.</p>
                   </div>
                   
                   <div>
                     <h3 className="font-semibold mb-2">What if my event gets cancelled?</h3>
                     <p className="text-gray-600">If an event is cancelled, work with buyers to either refund their money or wait for rescheduled dates as per the event organizer's policy.</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold mb-2">How can I verify that my tickets are authentic?</h3>
-                    <p className="text-gray-600">Keep original purchase receipts, use official ticketing platform confirmations, and ensure tickets have proper barcodes or QR codes.</p>
                   </div>
                   
                   <div>

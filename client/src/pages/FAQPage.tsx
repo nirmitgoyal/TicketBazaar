@@ -107,7 +107,7 @@ const faqData: FAQItem[] = [
     id: 11,
     question: "How do I transfer tickets to buyers?",
     answer:
-      "Ticket transfer is simple and direct between you and the buyer. For most events, sellers can share QR codes with buyers for instant digital transfer. For transportation tickets like bus or train tickets, sellers can share screenshots of their tickets. Always ensure you transfer tickets only after receiving payment, and verify the buyer's identity through their social media profile before sharing any ticket information.",
+      "Ticket transfer is simple and direct between you and the buyer. For most events, sellers can share QR codes with buyers for instant digital transfer. For transportation tickets like bus tickets, sellers can share screenshots of their tickets. Always ensure you transfer tickets only after receiving payment, and verify the buyer's identity through their social media profile before sharing any ticket information.",
     category: "selling",
     icon: <FileText className="h-5 w-5" />,
   },
