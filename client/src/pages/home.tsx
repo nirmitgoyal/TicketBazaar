@@ -776,8 +776,8 @@ export default function Home() {
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {/* Sample Event Cards to match the original design */}
                 {(() => {
-                  // Create sample tickets array first
-                  const sampleTickets = Array.from({ length: 12 }, (_, i) => ({
+                  // Create sample tickets array first - limit to TICKETS_PER_PAGE for first load
+                  const sampleTickets = Array.from({ length: TICKETS_PER_PAGE }, (_, i) => ({
                     id: i + 1000,
                     sellerId: Math.floor(Math.random() * 5) + 1,
                     title: `Sample Event Ticket ${i + 1}`,
