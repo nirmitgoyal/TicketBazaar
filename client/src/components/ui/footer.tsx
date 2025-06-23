@@ -24,19 +24,24 @@ export function Footer() {
               facilitate transactions. We ensure legal compliance in
               peer-to-peer transfers.
             </p>
-            <div className="flex space-x-3">
+            <div className="flex items-center space-x-4">
               <a
                 href="https://www.instagram.com/ticketbazaar.co.in"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="inline-flex items-center justify-center hover:opacity-80 transition-opacity"
               >
-                <img src={instagramLogo} alt="Instagram" className="h-6 w-6" />
+                <img 
+                  src={instagramLogo} 
+                  alt="Instagram" 
+                  className="h-6 w-6 object-contain" 
+                />
               </a>
               <a
                 href="https://www.linkedin.com/company/ticket-bazaar-co-in/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:opacity-80 transition-opacity"
+                className="inline-flex items-center justify-center hover:opacity-80 transition-opacity"
               >
                 <svg
                   className="h-6 w-6"
