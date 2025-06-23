@@ -75,6 +75,7 @@ export default function Home() {
   }, [defaultTickets]);
 
   const [allTickets, setAllTickets] = useState<Ticket[]>([]);
+  const [displayedTicketsCount, setDisplayedTicketsCount] = useState<number>(TICKETS_PER_PAGE);
   
   // Clear cached data when filters change
   useEffect(() => {
@@ -87,6 +88,7 @@ export default function Home() {
       setHasMoreTickets(true);
       setDefaultTickets([]);
       setAllTickets([]);
+      setDisplayedTicketsCount(TICKETS_PER_PAGE);
       localStorage.removeItem('home-current-page');
       localStorage.removeItem('home-has-more');
       localStorage.removeItem('home-tickets');
@@ -278,44 +280,53 @@ export default function Home() {
 
   // Load more tickets functionality
   const handleLoadMore = async () => {
-    if (!hasMoreTickets || isLoadingMore) return;
+    const futureTickets = defaultTickets.filter(isFutureTicket);
+    const canShowMoreFromCurrent = futureTickets.length > displayedTicketsCount;
+    
+    if (isLoadingMore) return;
     
     setIsLoadingMore(true);
-    const nextPage = currentPage + 1;
     
     try {
-      const params = new URLSearchParams();
-      if (urlSearchQuery) params.set("q", urlSearchQuery);
-      params.set("page", nextPage.toString());
-      params.set("limit", TICKETS_PER_PAGE.toString());
-      
-      Object.entries(selectedSearchFilters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
-          if (typeof value === "boolean") {
-            params.set(key, value.toString());
-          } else if (value instanceof Date) {
-            params.set(key, value.toISOString());
-          } else {
-            params.set(key, value.toString());
+      if (canShowMoreFromCurrent) {
+        // Show more tickets from current data
+        setDisplayedTicketsCount(prev => prev + TICKETS_PER_PAGE);
+      } else if (hasMoreTickets) {
+        // Fetch new tickets from API
+        const nextPage = currentPage + 1;
+        const params = new URLSearchParams();
+        if (urlSearchQuery) params.set("q", urlSearchQuery);
+        params.set("page", nextPage.toString());
+        params.set("limit", TICKETS_PER_PAGE.toString());
+        
+        Object.entries(selectedSearchFilters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== "") {
+            if (typeof value === "boolean") {
+              params.set(key, value.toString());
+            } else if (value instanceof Date) {
+              params.set(key, value.toISOString());
+            } else {
+              params.set(key, value.toString());
+            }
           }
-        }
-      });
+        });
 
-      const response = await fetch(`/api/tickets?${params}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch more tickets');
+        const response = await fetch(`/api/tickets?${params}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch more tickets');
+        }
+        const newTickets = await response.json();
+        
+        // Sort new tickets by date and append to existing ones
+        const sortedNewTickets = newTickets.sort((a: Ticket, b: Ticket) => {
+          return new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime();
+        });
+        
+        setDefaultTickets(prev => [...prev, ...sortedNewTickets]);
+        setCurrentPage(nextPage);
+        setHasMoreTickets(newTickets.length === TICKETS_PER_PAGE);
+        setDisplayedTicketsCount(prev => prev + TICKETS_PER_PAGE);
       }
-      const newTickets = await response.json();
-      
-      // Sort new tickets by date and append to existing ones
-      const sortedNewTickets = newTickets.sort((a: Ticket, b: Ticket) => {
-        return new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime();
-      });
-      
-      setDefaultTickets(prev => [...prev, ...sortedNewTickets]);
-      setCurrentPage(nextPage);
-      setHasMoreTickets(newTickets.length === TICKETS_PER_PAGE);
-      
     } catch (error) {
       console.error('Error loading more tickets:', error);
     } finally {
@@ -653,7 +664,7 @@ export default function Home() {
               ) : (
                 defaultTickets.length > 0 && (
                   <p className="text-sm text-gray-600 mt-1">
-                    Showing {Math.min(defaultTickets.filter(isFutureTicket).length, TICKETS_PER_PAGE)} ticket{Math.min(defaultTickets.filter(isFutureTicket).length, TICKETS_PER_PAGE) !== 1 ? 's' : ''}
+                    Showing {Math.min(defaultTickets.filter(isFutureTicket).length, displayedTicketsCount)} ticket{Math.min(defaultTickets.filter(isFutureTicket).length, displayedTicketsCount) !== 1 ? 's' : ''}
                   </p>
                 )
               )}
@@ -727,7 +738,7 @@ export default function Home() {
               />
             ) : defaultTickets && defaultTickets.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {defaultTickets.filter(isFutureTicket).slice(0, TICKETS_PER_PAGE).map((ticket) => (
+                {defaultTickets.filter(isFutureTicket).slice(0, displayedTicketsCount).map((ticket) => (
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
@@ -866,14 +877,14 @@ export default function Home() {
                 className="text-blue-600 border-blue-600 hover:bg-blue-50" 
                 aria-label="Load more second-hand tickets"
                 onClick={handleLoadMore}
-                disabled={!hasMoreTickets || isLoadingMore}
+                disabled={!(hasMoreTickets || defaultTickets.filter(isFutureTicket).length > displayedTicketsCount) || isLoadingMore}
               >
                 {isLoadingMore ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                     Loading...
                   </>
-                ) : hasMoreTickets ? (
+                ) : (hasMoreTickets || defaultTickets.filter(isFutureTicket).length > displayedTicketsCount) ? (
                   "Load More Tickets"
                 ) : (
                   "No More Tickets"
