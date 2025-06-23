@@ -31,12 +31,12 @@ export default function CityEvents() {
     return null;
   }
 
-  // Fetch events for this city
+  // Fetch tickets for this city (tickets contain all event information)
   const { data: events, isLoading, error } = useQuery({
-    queryKey: ["/api/events", "city", citySlug],
+    queryKey: ["/api/tickets", "city", citySlug],
     queryFn: async () => {
-      const response = await fetch(`/api/events?city=${encodeURIComponent(cityData.name)}`);
-      if (!response.ok) throw new Error("Failed to fetch events");
+      const response = await fetch(`/api/tickets?city=${encodeURIComponent(cityData.name)}`);
+      if (!response.ok) throw new Error("Failed to fetch tickets");
       return response.json();
     },
   });
@@ -248,9 +248,6 @@ export default function CityEvents() {
                 <EventCard
                   key={event.id}
                   event={event}
-                  tickets={tickets?.filter((ticket: Ticket) => 
-                    ticket.eventTitle === event.eventTitle
-                  ) || []}
                   onClick={() => openModal(event.id)}
                 />
               ))}

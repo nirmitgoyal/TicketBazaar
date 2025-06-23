@@ -91,11 +91,7 @@ class ComprehensiveTestRunner {
         path: '/api/tickets',
         expectedStatus: 200
       },
-      {
-        name: 'Get All Events',
-        path: '/api/events',
-        expectedStatus: 200
-      },
+
       {
         name: 'Search Tickets',
         path: '/api/tickets/search?query=concert',

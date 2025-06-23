@@ -47,7 +47,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register route modules with specific rate limiters
   apiRouter.use("/auth", authLimiter, authRoutes);
   apiRouter.use("/tickets", ticketRoutes);
-  apiRouter.use("/events", ticketRoutes); // Events endpoint uses same ticket controller
 
   apiRouter.use("/contact-requests", contactRequestLimiter, contactRequestRoutes);
   apiRouter.use("/search", searchLimiter, searchHintsRoutes);

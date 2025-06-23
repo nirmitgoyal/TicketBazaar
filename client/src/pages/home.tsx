@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { SearchBar, SearchFilters } from "@/components/search-bar";
 import { TicketCard } from "@/components/ticket-card";
-import { EventCard } from "@/components/event-card";
 import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { SellerDetailsModal } from "@/components/seller-details-modal";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
@@ -155,27 +154,7 @@ export default function Home() {
   // Get search query from URL if present
   const urlSearchQuery = searchParams?.get("q") || "";
 
-  // Fetch events data
-  const {
-    data: events = [],
-    isLoading: eventsLoading,
-    error: eventsError,
-  } = useQuery<Ticket[]>({
-    queryKey: ["/api/events", activeCategory, selectedSearchFilters],
-    queryFn: async () => {
-      const response = await fetch(`/api/events`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch events');
-      }
-      const data = await response.json();
-      
-      // Sort events by event date and time in ascending order
-      return data.sort((a: Ticket, b: Ticket) => 
-        new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
-      );
-    },
-    enabled: true,
-  });
+
 
   // Fetch initial tickets data
   const {
@@ -411,14 +390,14 @@ export default function Home() {
 
     setTimeout(() => {
       setIsLoading(false);
-      if (query && !events?.length) {
+      if (query && !searchResults?.length) {
         setShowNoResultsMessage(true);
         // Track no results event
         trackEvent('search_no_results', 'search', query);
       } else {
         setShowNoResultsMessage(false);
         // Track successful search
-        trackEvent('search_results', 'search', query, events?.length || 0);
+        trackEvent('search_results', 'search', query, searchResults?.length || 0);
       }
     }, 1500);
   };
@@ -721,20 +700,6 @@ export default function Home() {
                       <UnifiedPopularityMetrics ticketId={ticket.id} variant="inline" />
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : events && events.length > 0 ? (
-              <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {events.filter(isFutureTicket).sort((a, b) => {
-                  const dateA = new Date(a.eventDate).getTime();
-                  const dateB = new Date(b.eventDate).getTime();
-                  return dateA - dateB;
-                }).slice(0, TICKETS_PER_PAGE).map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    onClick={() => openModal(event.id)}
-                  />
                 ))}
               </div>
             ) : (

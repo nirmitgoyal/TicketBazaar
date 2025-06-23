@@ -8,7 +8,7 @@ import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { TicketHeatMap } from "@/components/ticket-heatmap";
 import { TicketComparison } from "@/components/ticket-comparison";
 import { Link } from "wouter";
-import { Event, Ticket } from "@shared/schema";
+import { Ticket } from "@shared/schema";
 import { useAnalytics } from "@/hooks/use-analytics";
 import EnhancedSEO from "@/components/enhanced-seo";
 import { generateEventStructuredData, generateBreadcrumbStructuredData, generateOrganizationStructuredData } from "@/utils/seo-utils";
@@ -22,13 +22,13 @@ export default function EventDetails() {
   // Initialize analytics
   const { trackEvent, trackUserAction } = useAnalytics();
 
-  // Fetch event details
+  // Fetch ticket details (tickets contain all event information)
   const {
     data: event,
     isLoading: eventLoading,
     error: eventError,
-  } = useQuery<Event>({
-    queryKey: [`/api/events/${eventId}`],
+  } = useQuery<Ticket>({
+    queryKey: [`/api/tickets/${eventId}`],
     enabled: !isNaN(eventId),
   });
 
@@ -118,11 +118,10 @@ export default function EventDetails() {
   const [location] = useLocation();
   const currentUrl = `https://ticketbazaar.co.in${location}`;
 
-  // Calculate ticket price range for schema
-  const ticketPrices = (tickets && tickets.length > 0) ? {
-    min: Math.min(...tickets.map(t => t.price)),
-    max: Math.max(...tickets.map(t => t.price)),
-    currency: "INR"
+  // Ticket availability for schema
+  const ticketAvailability = (tickets && tickets.length > 0) ? {
+    available: tickets.filter(t => t.status === 'available').length,
+    total: tickets.length
   } : undefined;
 
   // Breadcrumb data
@@ -141,7 +140,7 @@ export default function EventDetails() {
     date: event.eventDate.toISOString(),
     category: event.category,
     city: event.city || event.venue.split(',').pop()?.trim() || 'India',
-    price: ticketPrices?.min,
+
     imageUrl: event.eventImageUrl ? event.eventImageUrl : undefined,
     latitude: event.latitude ? event.latitude : undefined,
     longitude: event.longitude ? event.longitude : undefined
