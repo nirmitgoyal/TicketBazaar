@@ -647,13 +647,13 @@ export default function Home() {
               {searchQuery.length >= 2 ? (
                 searchResults.length > 0 && (
                   <p className="text-sm text-gray-600 mt-1">
-                    Showing {searchResults.length} ticket{searchResults.length !== 1 ? 's' : ''}
+                    Showing {Math.min(searchResults.filter(isFutureTicket).length, TICKETS_PER_PAGE)} ticket{Math.min(searchResults.filter(isFutureTicket).length, TICKETS_PER_PAGE) !== 1 ? 's' : ''}
                   </p>
                 )
               ) : (
                 defaultTickets.length > 0 && (
                   <p className="text-sm text-gray-600 mt-1">
-                    Showing {defaultTickets.length} ticket{defaultTickets.length !== 1 ? 's' : ''}
+                    Showing {Math.min(defaultTickets.filter(isFutureTicket).length, TICKETS_PER_PAGE)} ticket{Math.min(defaultTickets.filter(isFutureTicket).length, TICKETS_PER_PAGE) !== 1 ? 's' : ''}
                   </p>
                 )
               )}
@@ -677,7 +677,7 @@ export default function Home() {
               />
             ) : searchResults.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {searchResults.filter(isFutureTicket).map((ticket) => (
+                {searchResults.filter(isFutureTicket).slice(0, TICKETS_PER_PAGE).map((ticket) => (
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
@@ -727,7 +727,7 @@ export default function Home() {
               />
             ) : defaultTickets && defaultTickets.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {defaultTickets.filter(isFutureTicket).map((ticket) => (
+                {defaultTickets.filter(isFutureTicket).slice(0, TICKETS_PER_PAGE).map((ticket) => (
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
@@ -764,7 +764,7 @@ export default function Home() {
                   const dateA = new Date(a.eventDate).getTime();
                   const dateB = new Date(b.eventDate).getTime();
                   return dateA - dateB;
-                }).map((event) => (
+                }).slice(0, TICKETS_PER_PAGE).map((event) => (
                   <EventCard
                     key={event.id}
                     event={event}
