@@ -11,7 +11,31 @@ window.addEventListener('unhandledrejection', (event) => {
 
 window.addEventListener('error', (event) => {
   console.warn('Global error:', event.error);
+  event.preventDefault(); // Prevent error overlay from showing
 });
+
+// Override Vite's error overlay behavior in development
+if (import.meta.env.DEV) {
+  // Remove any existing error overlays on load
+  const removeErrorOverlay = () => {
+    const overlay = document.querySelector('vite-error-overlay');
+    if (overlay) {
+      overlay.remove();
+    }
+  };
+  
+  // Watch for error overlays and remove them
+  const observer = new MutationObserver(() => {
+    removeErrorOverlay();
+  });
+  
+  observer.observe(document.body, { childList: true, subtree: true });
+  
+  // Clean up on page unload
+  window.addEventListener('beforeunload', () => {
+    observer.disconnect();
+  });
+}
 
 const rootElement = document.getElementById("root");
 if (rootElement) {

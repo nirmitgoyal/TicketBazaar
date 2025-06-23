@@ -306,8 +306,7 @@ export default function Home() {
     }
   };
 
-  // Set up scroll listener
-
+  // Set up scroll listener - removed to fix handleScroll undefined error
 
   // Pagination reset is now handled by the localStorage logic above
 
