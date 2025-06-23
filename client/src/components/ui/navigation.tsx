@@ -51,7 +51,7 @@ export function Navigation() {
 
   return (
     <motion.header
-      className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b shadow-sm z-50"
+      className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b shadow-sm z-[100]"
       data-testid="navigation"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -327,11 +327,11 @@ export function Navigation() {
             <>
               {/* Click outside overlay to close menu */}
               <div
-                className="fixed inset-0 z-40 md:hidden"
+                className="fixed inset-0 z-[60] md:hidden bg-black/20 backdrop-blur-[2px]"
                 onClick={() => setIsMenuOpen(false)}
               />
               <motion.div
-                className="md:hidden mt-4 py-2 border-t relative z-50"
+                className="md:hidden mt-4 py-2 border-t relative z-[70] bg-background"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
