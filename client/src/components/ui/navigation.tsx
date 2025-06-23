@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserCircle, Menu, X, Map, Ticket } from "lucide-react";
 
@@ -12,6 +12,24 @@ export function Navigation() {
   const { user, isAuthenticated, logoutMutation } = useAuth();
   const [location, setLocation] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Handle clicking outside the menu to close it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node) && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   // Handle navigation with proper client-side routing and preserve search params
   const handleNavigation = (path: string) => {
@@ -331,6 +349,7 @@ export function Navigation() {
                 onClick={() => setIsMenuOpen(false)}
               />
               <motion.div
+                ref={menuRef}
                 className="md:hidden mt-4 py-2 border-t relative z-50"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
