@@ -8,7 +8,7 @@ const router = Router();
 router.post("/send", async (req, res) => {
   try {
     const testEmail = req.body.email || "nirmitgoyal.goyal@gmail.com";
-    const testName = req.body.name || "Test User";
+    const testName = req.body.name || "User";
 
     const emailSent = await emailService.sendEmail({
       to: testEmail,
