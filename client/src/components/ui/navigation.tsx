@@ -6,8 +6,6 @@ import { UserCircle, Menu, X, Map, Ticket } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeInDown, listItem, staggerContainer } from "@/lib/animations";
 
-
-
 export function Navigation() {
   const { user, isAuthenticated, logoutMutation } = useAuth();
   const [location, setLocation] = useLocation();
@@ -51,7 +49,7 @@ export function Navigation() {
 
   return (
     <motion.header
-      className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b shadow-sm z-[100]"
+      className="sticky top-0 z-[100] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b"
       data-testid="navigation"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -59,277 +57,209 @@ export function Navigation() {
     >
       <nav aria-label="Main Navigation">
         <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          <motion.div
-            className="flex items-center space-x-2 min-w-0 flex-shrink-0"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Link href="/">
-              <motion.div
-                className="flex items-center space-x-2 cursor-pointer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Ticket className="h-6 w-6 text-primary" />
-                <motion.div>
-                  <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">
-                    Ticket Bazaar
-                  </h1>
-                  <p className="text-xs text-gray-500 -mt-1">P2P Marketplace</p>
-                </motion.div>
-              </motion.div>
-            </Link>
-          </motion.div>
-
-          {/* Desktop Navigation */}
-          <motion.div
-            className="hidden md:flex items-center space-x-6"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-          >
-            <motion.button
-              className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
-                location === "/"
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:text-primary hover:bg-accent"
-              }`}
-              data-testid="nav-home"
-              onClick={() =>
-                handleNavigation(
-                  location === "/map" || location === "/events/map"
-                    ? "/map-to-home"
-                    : "/",
-                )
-              }
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Home
-            </motion.button>
-
-            <motion.button
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
-                location === "/events/map" || location === "/map"
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:text-primary hover:bg-accent"
-              }`}
-              data-testid="nav-map"
-              onClick={() => handleNavigation("/map")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Map className="h-4 w-4" />
-              Map View
-            </motion.button>
-
-            <motion.button
-              className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
-                location === "/popularity"
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:text-primary hover:bg-accent"
-              }`}
-              onClick={() => handleNavigation("/popularity")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Popular
-            </motion.button>
-
-            {isAuthenticated && (
-              <>
-                <motion.button
-                  className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
-                    location === "/my-tickets"
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:text-primary hover:bg-accent"
-                  }`}
-                  onClick={() => handleNavigation("/my-tickets")}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  My Tickets
-                </motion.button>
-
-                <motion.button
-                  className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
-                    location === "/list-ticket-global"
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:text-primary hover:bg-accent"
-                  }`}
-                  data-testid="nav-list-ticket"
-                  onClick={() => handleNavigation("/list-ticket-global")}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Sell Globally
-                </motion.button>
-
-                <motion.button
-                  className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
-                    location === "/enhanced-verification"
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:text-primary hover:bg-accent"
-                  }`}
-                  onClick={() => handleNavigation("/enhanced-verification")}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Verification
-                </motion.button>
-
-                <motion.button
-                  className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
-                    location === "/profile"
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:text-primary hover:bg-accent"
-                  }`}
-                  data-testid="nav-profile"
-                  onClick={() => handleNavigation("/profile")}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Profile
-                </motion.button>
-
-                <motion.button
-                  className="text-muted-foreground hover:text-primary hover:bg-accent px-4 py-2 rounded-lg transition-all duration-200 touch-target"
-                  onClick={() => {
-                    logoutMutation.mutate(undefined, {
-                      onSuccess: () => setLocation("/"),
-                    });
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Logout
-                </motion.button>
-              </>
-            )}
-
-            {!isAuthenticated && (
-              <motion.button
-                className="border-primary text-primary hover:bg-primary/10 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => handleNavigation("/list-ticket")}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Start Selling
-              </motion.button>
-            )}
-
-
-          </motion.div>
-
-          {/* Mobile Navigation Controls */}
-          <motion.div
-            className="md:hidden flex items-center space-x-3"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
-          >
-
+          <div className="flex items-center justify-between">
             <motion.div
-              className="flex items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
+              className="flex items-center space-x-2 min-w-0 flex-shrink-0"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <button
-                  className="border-primary text-primary hover:bg-primary/10 flex items-center justify-center gap-1 px-3 py-2 touch-target border border-input bg-background h-9 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                  onClick={() => handleNavigation("/list-ticket")}
+              <Link href="/">
+                <motion.div
+                  className="flex items-center space-x-2 cursor-pointer p-2 rounded-lg transition-colors hover:bg-accent/50"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <span className="text-xs whitespace-nowrap">Sell</span>
-                </button>
+                  <Ticket className="h-8 w-8 text-primary" />
+                  <span className="font-bold text-xl">Ticket Bazaar</span>
+                </motion.div>
+              </Link>
+            </motion.div>
+
+            {/* Desktop Navigation Links */}
+            <motion.div
+              className="hidden md:flex items-center space-x-1"
+              variants={staggerContainer(0.1, 0.1)}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.div variants={listItem}>
+                <Link href="/">
+                  <button
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      location === "/" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"
+                    }`}
+                    onClick={() =>
+                      handleNavigation(
+                        location === "/map" || location === "/events/map"
+                          ? "/map-to-home"
+                          : "/",
+                      )
+                    }
+                  >
+                    Home
+                  </button>
+                </Link>
+              </motion.div>
+
+              <motion.div variants={listItem}>
+                <Link href="/map">
+                  <button
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      location === "/events/map" || location === "/map"
+                        ? "text-primary bg-primary/5"
+                        : "text-foreground hover:bg-accent"
+                    }`}
+                    onClick={() => handleNavigation("/map")}
+                  >
+                    <Map className="h-4 w-4" />
+                    Map View
+                  </button>
+                </Link>
+              </motion.div>
+
+              <motion.div variants={listItem}>
+                <Link href="/popularity">
+                  <button
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      location === "/popularity" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"
+                    }`}
+                    onClick={() => handleNavigation("/popularity")}
+                  >
+                    Popular Tickets
+                  </button>
+                </Link>
               </motion.div>
             </motion.div>
 
-            {isAuthenticated && (
-              <motion.div
-                className="flex items-center"
-                whileHover={{ scale: 1.05 }}
-              >
-                <motion.button
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs cursor-pointer overflow-hidden bg-primary touch-target"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 20,
-                  }}
-                  onClick={() => handleNavigation("/profile")}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {user?.instagram ? (
-                    <img
-                      src={`https://unavatar.io/instagram/${user.instagram}`}
-                      alt={user.fullName || "User"}
-                      className="w-full h-full object-cover rounded-full"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = "none";
-                      }}
-                    />
-                  ) : null}
-                  <span
-                    className={`w-full h-full flex items-center justify-center ${user?.instagram ? "hidden" : "flex"}`}
-                  >
-                    {user?.fullName?.charAt(0).toUpperCase() || "U"}
-                  </span>
-                </motion.button>
-              </motion.div>
-            )}
-
-            <motion.button
-              className="text-foreground touch-target p-1"
-              onClick={toggleMenu}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+            {/* Desktop Auth Actions */}
+            <motion.div
+              className="hidden md:flex items-center space-x-2"
+              variants={staggerContainer(0.1, 0.1)}
+              initial="hidden"
+              animate="visible"
             >
-              <AnimatePresence mode="wait">
-                {isMenuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <X className="h-6 w-6" />
+              {!isAuthenticated && (
+                <>
+                  <motion.div variants={listItem}>
+                    <Link href="/list-ticket">
+                      <button className="px-4 py-2 text-sm font-medium text-primary rounded-lg transition-colors hover:bg-primary/5">
+                        Start Selling
+                      </button>
+                    </Link>
                   </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Menu className="h-6 w-6" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
-          </motion.div>
-        </div>
 
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <>
-              {/* Click outside overlay to close menu */}
-              <div
-                className="fixed inset-0 z-[60] md:hidden bg-black/20 backdrop-blur-[2px]"
-                onClick={() => setIsMenuOpen(false)}
-              />
+                  <motion.div variants={listItem}>
+                    <Link href="/login">
+                      <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary rounded-lg transition-colors hover:bg-primary/5">
+                        Sign In
+                      </button>
+                    </Link>
+                  </motion.div>
+                </>
+              )}
+
+              {isAuthenticated && (
+                <>
+                  <motion.div variants={listItem}>
+                    <Link href="/my-tickets">
+                      <button
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          location === "/my-tickets" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"
+                        }`}
+                      >
+                        My Tickets
+                      </button>
+                    </Link>
+                  </motion.div>
+
+                  <motion.div variants={listItem}>
+                    <Link href="/list-ticket">
+                      <button
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          location === "/list-ticket" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"
+                        }`}
+                      >
+                        Sell Tickets
+                      </button>
+                    </Link>
+                  </motion.div>
+
+                  <motion.div variants={listItem}>
+                    <Link href="/profile">
+                      <button
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          location === "/profile" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"
+                        }`}
+                      >
+                        <UserCircle className="h-4 w-4" />
+                        {user?.email?.split("@")[0] || "Profile"}
+                      </button>
+                    </Link>
+                  </motion.div>
+
+                  <motion.div variants={listItem}>
+                    <button
+                      className="px-4 py-2 text-sm font-medium text-muted-foreground rounded-lg transition-colors hover:bg-accent"
+                      onClick={() => {
+                        logoutMutation.mutate(undefined, {
+                          onSuccess: () => {
+                            setLocation("/");
+                          },
+                        });
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </motion.div>
+                </>
+              )}
+            </motion.div>
+
+            {/* Mobile Menu Button */}
+            <motion.div
+              className="md:hidden"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+            >
+              <motion.button
+                onClick={toggleMenu}
+                className="p-2 rounded-lg text-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/20"
+                whileTap={{ scale: 0.95 }}
+                aria-label="Toggle mobile menu"
+                aria-expanded={isMenuOpen}
+              >
+                <AnimatePresence mode="wait">
+                  {isMenuOpen ? (
+                    <motion.div
+                      key="close"
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <X className="h-6 w-6" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="open"
+                      initial={{ rotate: 90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: -90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Menu className="h-6 w-6" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            </motion.div>
+          </div>
+
+          {/* Mobile menu */}
+          <AnimatePresence>
+            {isMenuOpen && (
               <motion.div
                 className="md:hidden mt-4 py-2 border-t relative z-[70] bg-background"
                 initial={{ opacity: 0, height: 0 }}
@@ -447,11 +377,23 @@ export function Navigation() {
                   )}
                 </motion.nav>
               </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+            )}
+          </AnimatePresence>
         </div>
       </nav>
+
+      {/* Mobile menu overlay - positioned outside nav container for proper click-outside functionality */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            className="fixed inset-0 z-[50] md:hidden bg-black/20 backdrop-blur-[2px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 }
