@@ -8,7 +8,7 @@ export { VenueMap } from './venue-map';
 export { TicketVerification } from './ticket-verification';
 export { MobileNav } from './mobile-nav';
 export { PullToRefresh } from './pull-to-refresh';
-export { RealTimeNotifications } from './real-time-notifications';
+
 export { GlobalMarketplaceStats } from './global-marketplace-stats';
 export { TrustScoreMeter } from './trust-score-meter';
 export { VerificationBadge } from './verification-badge';
@@ -83,3 +83,7 @@ export * from './ui/skeleton';
 export * from './ui/navigation';
 export * from './ui/footer';
 export * from './ui/page-transition';
+
+// Global Scroll Navigation
+export { default as ScrollNavigation } from './scroll-navigation';
+export { default as LayoutWrapper } from './layout-wrapper';

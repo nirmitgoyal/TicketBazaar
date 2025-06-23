@@ -15,6 +15,7 @@ import { Footer } from "@/components/ui/footer";
 import { SEOConsolidated } from "@/components/seo-consolidated";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { performanceMonitor } from "@/utils/performance";
+import ScrollNavigation from "@/components/scroll-navigation";
 
 // Optimized App component with consolidated routing
 
@@ -97,6 +98,7 @@ function App() {
                         <Footer />
                       </ErrorBoundary>
                     </div>
+                    <ScrollNavigation />
                     <Toaster />
                   </HelmetProvider>
                 </AtmosphereProvider>

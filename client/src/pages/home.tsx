@@ -9,7 +9,7 @@ import { EventCard } from "@/components/event-card";
 import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { SellerDetailsModal } from "@/components/seller-details-modal";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
-import { Loader2, AlertTriangle, MapPin, Search, ArrowUp, ArrowDown, X } from "lucide-react";
+import { Loader2, AlertTriangle, MapPin, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
@@ -98,11 +98,7 @@ export default function Home() {
   }, [selectedSearchFilters, activeCategory, searchQuery]);
   
 
-  
-  // Scroll navigation state
-  const [showScrollToTop, setShowScrollToTop] = useState<boolean>(false);
-  const [showScrollToBottom, setShowScrollToBottom] = useState<boolean>(false);
-  const [showScrollTooltips, setShowScrollTooltips] = useState<boolean>(true);
+
 
   // Helper function to filter tickets based on venue timezone
   const isFutureTicket = (ticket: Ticket): boolean => {
@@ -252,31 +248,7 @@ export default function Home() {
     staleTime: 30000, // Cache results for 30 seconds
   });
 
-  // Scroll navigation functionality
-  const handleScroll = useCallback(() => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const clientHeight = window.innerHeight;
-    
-    // Show/hide scroll to top button
-    setShowScrollToTop(scrollTop > 0);
-    
-    // Show/hide scroll to bottom button (hide when near bottom)
-    const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100;
-    setShowScrollToBottom(!isNearBottom && scrollTop > 0);
-  }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const scrollToBottom = () => {
-    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-  };
-
-  const dismissScrollTooltips = () => {
-    setShowScrollTooltips(false);
-  };
 
   // Load more tickets functionality
   const handleLoadMore = async () => {
@@ -335,24 +307,7 @@ export default function Home() {
   };
 
   // Set up scroll listener
-  useEffect(() => {
-    let scrollTimeout: NodeJS.Timeout;
-    
-    const throttledHandleScroll = () => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(handleScroll, 10);
-    };
 
-    window.addEventListener('scroll', throttledHandleScroll, { passive: true });
-    
-    // Initial check
-    handleScroll();
-
-    return () => {
-      window.removeEventListener('scroll', throttledHandleScroll);
-      clearTimeout(scrollTimeout);
-    };
-  }, [handleScroll]);
 
   // Pagination reset is now handled by the localStorage logic above
 
@@ -915,83 +870,7 @@ export default function Home() {
         />
       )}
 
-      {/* Scroll Navigation Tooltips */}
-      {showScrollTooltips && (
-        <div className="fixed bottom-4 right-4 flex flex-col space-y-2 z-50">
-          {/* Scroll to Top Button */}
-          {showScrollToTop && (
-            <div className="relative group">
-              <Button
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-white rounded-full p-2 shadow-lg transition-all duration-200"
-                onClick={scrollToTop}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    scrollToTop();
-                  }
-                }}
-                aria-label="Scroll to top of page"
-                tabIndex={0}
-              >
-                <ArrowUp className="h-4 w-4" />
-              </Button>
-              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                Back to Top
-              </div>
-            </div>
-          )}
 
-          {/* Scroll to Bottom Button */}
-          {showScrollToBottom && (
-            <div className="relative group">
-              <Button
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-white rounded-full p-2 shadow-lg transition-all duration-200"
-                onClick={scrollToBottom}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    scrollToBottom();
-                  }
-                }}
-                aria-label="Scroll to bottom of page"
-                tabIndex={0}
-              >
-                <ArrowDown className="h-4 w-4" />
-              </Button>
-              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                Go to Bottom
-              </div>
-            </div>
-          )}
-
-          {/* Dismiss Button */}
-          {(showScrollToTop || showScrollToBottom) && (
-            <div className="relative group">
-              <Button
-                size="sm"
-                variant="outline"
-                className="bg-white hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 border-gray-300 rounded-full p-2 shadow-lg transition-all duration-200"
-                onClick={dismissScrollTooltips}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    dismissScrollTooltips();
-                  }
-                }}
-                aria-label="Hide scroll navigation buttons"
-                tabIndex={0}
-              >
-                <X className="h-3 w-3" />
-              </Button>
-              <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                Hide
-              </div>
-            </div>
-          )}
-        </div>
-      )}
     </>
   );
 }
