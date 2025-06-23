@@ -43,7 +43,7 @@ const faqData: FAQItem[] = [
     id: 3,
     question: "How can I sell my tickets?",
     answer:
-      "Create an Account: Sign up with your Instagram profile to verify your identity.\n\nList Your Ticket: Navigate to the 'Sell Tickets' section and provide the necessary details about your ticket.\n\nSet Your Terms: Add your preferred price range and payment methods you accept.\n\nManage Inquiries: Buyers will contact you directly through Instagram to negotiate and arrange the transaction.",
+      "Create an Account: Sign up with your Instagram profile to verify your identity.\n\nList Your Ticket: Navigate to the 'Sell Tickets' section and provide the necessary details about your ticket.\n\nSet Your Terms: Add your preferred price range and payment methods you accept.\n\nManage Inquiries: Buyers will contact you directly through Instagram to negotiate and arrange the transaction.\n\nTicket Transfer: After finalizing the deal, sellers can share QR codes (or screenshots in the case of tickets like bus tickets) with buyers directly for easy ticket transfer.",
     category: "selling",
     icon: <FileText className="h-5 w-5" />,
   },
@@ -102,6 +102,14 @@ const faqData: FAQItem[] = [
       "No. Ticket Bazaar is not a reseller or broker. We do not handle ticket payments, hold inventory, or facilitate transactions. We are a discovery and contact platform that ensures full legal compliance while improving trust in peer-to-peer ticket transfers. All transactions occur directly between users through their agreed payment methods.",
     category: "general",
     icon: <HelpCircle className="h-5 w-5" />,
+  },
+  {
+    id: 11,
+    question: "How do I transfer tickets to buyers?",
+    answer:
+      "Ticket transfer is simple and direct between you and the buyer. For most events, sellers can share QR codes with buyers for instant digital transfer. For transportation tickets like bus or train tickets, sellers can share screenshots of their tickets. Always ensure you transfer tickets only after receiving payment, and verify the buyer's identity through their social media profile before sharing any ticket information.",
+    category: "selling",
+    icon: <FileText className="h-5 w-5" />,
   },
 ];
 

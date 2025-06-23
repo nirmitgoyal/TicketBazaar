@@ -137,8 +137,8 @@ export default function HowToSellTickets() {
                   <div className="flex gap-4">
                     <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold">4</div>
                     <div>
-                      <h3 className="font-semibold text-lg mb-2">Complete Safe Transaction</h3>
-                      <p className="text-gray-600">Meet in public places or use secure digital transfer methods to complete your ticket sale safely.</p>
+                      <h3 className="font-semibold text-lg mb-2">Complete Safe Transaction & Transfer</h3>
+                      <p className="text-gray-600">Meet in public places or use secure digital transfer methods to complete your ticket sale safely. After receiving payment, sellers can share QR codes (or screenshots in the case of tickets like bus tickets) with buyers directly for easy ticket transfer.</p>
                     </div>
                   </div>
                 </CardContent>
@@ -238,6 +238,11 @@ export default function HowToSellTickets() {
                   <div>
                     <h3 className="font-semibold mb-2">How can I verify that my tickets are authentic?</h3>
                     <p className="text-gray-600">Keep original purchase receipts, use official ticketing platform confirmations, and ensure tickets have proper barcodes or QR codes.</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-semibold mb-2">How do I transfer tickets to buyers?</h3>
+                    <p className="text-gray-600">After receiving payment, sellers can share QR codes (or screenshots in the case of tickets like bus tickets) with buyers directly for easy ticket transfer. This ensures a smooth and instant transfer process for both parties.</p>
                   </div>
                 </CardContent>
               </Card>
