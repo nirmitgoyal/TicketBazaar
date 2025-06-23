@@ -59,6 +59,7 @@ interface NotificationEmailData {
 
 export class EmailService {
   private readonly defaultFromEmail = 'nirmit@ticketbazaar.co.in'; // Verified sender identity
+  private readonly defaultFromName = 'Ticket Bazaar'; // Display name for sender
   private readonly appUrl = process.env.NODE_ENV === 'production' 
     ? 'https://your-app.replit.app' 
     : 'http://localhost:5000';
@@ -78,9 +79,20 @@ export class EmailService {
         return false;
       }
 
+      // Construct proper from field with display name
+      let fromField;
+      if (params.from) {
+        fromField = params.from;
+      } else {
+        fromField = {
+          email: this.defaultFromEmail,
+          name: this.defaultFromName
+        };
+      }
+
       const emailData = {
         to: params.to,
-        from: params.from || this.defaultFromEmail,
+        from: fromField,
         subject: params.subject,
         text: params.text,
         html: params.html,
@@ -97,7 +109,7 @@ export class EmailService {
 
       logger.info('EMAIL', 'Attempting to send email', {
         to: emailData.to,
-        from: emailData.from,
+        from: typeof emailData.from === 'string' ? emailData.from : `${emailData.from.name} <${emailData.from.email}>`,
         subject: emailData.subject,
         hasHtml: !!emailData.html,
         hasText: !!emailData.text,

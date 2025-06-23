@@ -37,7 +37,7 @@ router.post("/send", async (req, res) => {
       res.status(200).json({ 
         success: true,
         message: "Test email sent successfully",
-        from: "nirmit@ticketbazaar.co.in",
+        from: "Ticket Bazaar <nirmit@ticketbazaar.co.in>",
         to: testEmail,
         status: "delivered"
       });
@@ -98,7 +98,7 @@ router.get("/status", async (req, res) => {
     
     res.status(200).json({
       status: "operational",
-      from: "nirmit@ticketbazaar.co.in",
+      from: "Ticket Bazaar <nirmit@ticketbazaar.co.in>",
       dataResidency: dataResidencyInfo,
       apiKeyConfigured: !!process.env.SENDGRID_API_KEY,
       apiKeyType: process.env.SENDGRID_API_KEY?.includes('eu-') ? 'EU Subuser' : 'Global'
