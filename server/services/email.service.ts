@@ -58,7 +58,7 @@ interface NotificationEmailData {
 }
 
 export class EmailService {
-  private readonly defaultFromEmail = 'nirmitgoyal.goyal@gmail.com'; // Use your verified email temporarily
+  private readonly defaultFromEmail = 'nirmit@ticketbazaar.co.in'; // Verified sender identity
   private readonly appUrl = process.env.NODE_ENV === 'production' 
     ? 'https://your-app.replit.app' 
     : 'http://localhost:5000';
