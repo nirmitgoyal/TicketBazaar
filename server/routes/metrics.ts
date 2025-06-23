@@ -2,7 +2,8 @@ import { Router } from "express";
 import { storage } from "../storage";
 import { db } from "../db";
 import { logger } from "../utils/logger";
-import { sql } from "drizzle-orm";
+import { sql, count, gte, desc, asc } from "drizzle-orm";
+import { tickets, users, ticketViews } from "../../shared/schema";
 
 const router = Router();
 
@@ -10,39 +11,41 @@ const router = Router();
 router.get("/dashboard", async (req, res) => {
   try {
     const startTime = Date.now();
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     
-    // Get total views in past 7 days
-    const totalViewsQuery = await db.execute(`
-      SELECT COUNT(*) as count 
-      FROM ticket_views 
-      WHERE viewed_at > NOW() - INTERVAL '7 days'
-    `);
+    // Get total views in past 7 days using parameterized query
+    const totalViewsResult = await db
+      .select({ count: count() })
+      .from(ticketViews)
+      .where(gte(ticketViews.viewedAt, sevenDaysAgo));
     
-    // Get active user count
-    const activeUsersQuery = await db.execute(`
-      SELECT COUNT(*) as count FROM users
-    `);
+    // Get active user count using parameterized query
+    const activeUsersResult = await db
+      .select({ count: count() })
+      .from(users);
     
-    // Get popular cities
-    const popularCitiesQuery = await db.execute(`
-      SELECT city, COUNT(*) as count 
-      FROM tickets 
-      WHERE status = 'available' 
-      GROUP BY city 
-      ORDER BY count DESC 
-      LIMIT 5
-    `);
+    // Get popular cities using parameterized query
+    const popularCitiesResult = await db
+      .select({
+        city: tickets.city,
+        count: count()
+      })
+      .from(tickets)
+      .where(sql`${tickets.status} = 'available'`)
+      .groupBy(tickets.city)
+      .orderBy(desc(count()))
+      .limit(5);
     
     // Calculate response time
     const responseTime = Date.now() - startTime;
     
     const metrics = {
-      totalViews: parseInt(String(Array.isArray(totalViewsQuery) ? totalViewsQuery[0]?.count || '0' : '0')),
-      activeUsers: parseInt(String(Array.isArray(activeUsersQuery) ? activeUsersQuery[0]?.count || '0' : '0')),
-      popularCities: Array.isArray(popularCitiesQuery) ? popularCitiesQuery.map((row: any) => ({
+      totalViews: totalViewsResult[0]?.count || 0,
+      activeUsers: activeUsersResult[0]?.count || 0,
+      popularCities: popularCitiesResult.map(row => ({
         city: row.city,
-        count: parseInt(row.count)
-      })) : [],
+        count: row.count
+      })),
       avgResponseTime: responseTime,
       recentActivity: Math.floor(Math.random() * 50) + 10 // Simulated recent activity
     };
@@ -61,25 +64,27 @@ router.get("/performance", async (req, res) => {
   try {
     const { timeframe = '24h' } = req.query;
     
-    // Define safe interval mappings for parameterized queries
+    // Define safe time intervals in milliseconds
     const intervalMappings = {
-      '1h': sql`INTERVAL '1 hour'`,
-      '24h': sql`INTERVAL '24 hours'`, 
-      '7d': sql`INTERVAL '7 days'`
+      '1h': 1 * 60 * 60 * 1000,
+      '24h': 24 * 60 * 60 * 1000,
+      '7d': 7 * 24 * 60 * 60 * 1000
     };
     
-    const intervalSql = intervalMappings[timeframe as keyof typeof intervalMappings] || sql`INTERVAL '24 hours'`;
+    const intervalMs = intervalMappings[timeframe as keyof typeof intervalMappings] || intervalMappings['24h'];
+    const cutoffDate = new Date(Date.now() - intervalMs);
     
-    const performanceData = await db.execute(sql`
-      SELECT 
-        DATE_TRUNC('hour', viewed_at) as hour,
-        COUNT(*) as views
-      FROM ticket_views 
-      WHERE viewed_at > NOW() - ${intervalSql}
-      GROUP BY hour 
-      ORDER BY hour DESC
-      LIMIT 24
-    `);
+    // Use parameterized query with Drizzle
+    const performanceData = await db
+      .select({
+        hour: sql`DATE_TRUNC('hour', ${ticketViews.viewedAt})`,
+        views: count()
+      })
+      .from(ticketViews)
+      .where(gte(ticketViews.viewedAt, cutoffDate))
+      .groupBy(sql`DATE_TRUNC('hour', ${ticketViews.viewedAt})`)
+      .orderBy(desc(sql`DATE_TRUNC('hour', ${ticketViews.viewedAt})`))
+      .limit(24);
     
     res.json({
       timeframe,
