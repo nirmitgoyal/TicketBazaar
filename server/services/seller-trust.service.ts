@@ -107,7 +107,7 @@ Trust Score: [0-10]
 Risk Level: [low/moderate/high]
 Summary: [2-3 sentence positive assessment for legitimate users]
 Verified Profiles: [LinkedIn: URL, Instagram: URL, etc.]
-Risk Warnings: [Only list if genuine concerns found]
+Risk Warnings: [Only list if genuine concerns found, otherwise write "None"]
 Confidence: [0-100]%
 
 Be generous with trust scores for users who appear to be real people with authentic online presence. Only penalize if you find actual evidence of fraudulent activity.`;
