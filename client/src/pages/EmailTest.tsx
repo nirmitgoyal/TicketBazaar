@@ -13,6 +13,8 @@ export default function EmailTest() {
   const [testResults, setTestResults] = useState<{ [key: string]: boolean | null }>({});
   const [resetEmail, setResetEmail] = useState("");
   const [verificationEmail, setVerificationEmail] = useState("");
+  const [welcomeEmail, setWelcomeEmail] = useState("");
+  const [welcomeName, setWelcomeName] = useState("");
   const { toast } = useToast();
 
   const sendTestEmail = async () => {
@@ -144,6 +146,55 @@ export default function EmailTest() {
     setIsLoading(false);
   };
 
+  const sendWelcomeEmail = async () => {
+    if (!welcomeEmail || !welcomeName) {
+      toast({
+        title: "Details required",
+        description: "Please enter both email address and name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/email-test/welcome", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          email: welcomeEmail,
+          name: welcomeName 
+        }),
+      });
+
+      if (response.ok) {
+        setTestResults(prev => ({ ...prev, welcome: true }));
+        toast({
+          title: "Welcome email sent!",
+          description: `Welcome email sent to ${welcomeEmail}. Check the inbox for the TicketBazaar welcome message.`,
+        });
+      } else {
+        const error = await response.json();
+        setTestResults(prev => ({ ...prev, welcome: false }));
+        toast({
+          title: "Failed to send welcome email",
+          description: error.message || "Please try again later.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      setTestResults(prev => ({ ...prev, welcome: false }));
+      toast({
+        title: "Error",
+        description: "Failed to send welcome email.",
+        variant: "destructive",
+      });
+    }
+    setIsLoading(false);
+  };
+
   const getStatusIcon = (status: boolean | null) => {
     if (status === null) return null;
     return status ? (
@@ -205,6 +256,62 @@ export default function EmailTest() {
             </Button>
             <p className="text-sm text-gray-500 mt-2">
               Requires authentication. Will send to your registered email address.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Welcome Email */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5" />
+              Welcome Email
+              {getStatusIcon(testResults.welcome)}
+            </CardTitle>
+            <CardDescription>
+              Test the welcome email that new users receive upon registration.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="welcomeEmail">Email Address</Label>
+              <Input
+                id="welcomeEmail"
+                type="email"
+                placeholder="Enter email address"
+                value={welcomeEmail}
+                onChange={(e) => setWelcomeEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="welcomeName">User Name</Label>
+              <Input
+                id="welcomeName"
+                type="text"
+                placeholder="Enter user name"
+                value={welcomeName}
+                onChange={(e) => setWelcomeName(e.target.value)}
+              />
+            </div>
+            <Button 
+              onClick={sendWelcomeEmail} 
+              disabled={isLoading || !welcomeEmail || !welcomeName}
+              className="w-full"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Mail className="mr-2 h-4 w-4" />
+                  Send Welcome Email
+                </>
+              )}
+            </Button>
+            <p className="text-sm text-gray-500">
+              Sends a beautifully formatted welcome email with platform features and getting started information.
             </p>
           </CardContent>
         </Card>
