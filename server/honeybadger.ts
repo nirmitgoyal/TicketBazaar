@@ -11,16 +11,21 @@ export const initHoneybadger = async () => {
       const HoneybadgerModule = await import('@honeybadger-io/js');
       honeybadgerInstance = HoneybadgerModule.default || HoneybadgerModule;
       
-      // Configure Honeybadger
-      honeybadgerInstance.configure({
-        apiKey: process.env.HONEYBADGER_API_KEY || "hbp_MB0R3crxF3cFxyEcYJXMpPUM9CY9Fd3OTtmV",
-        environment: process.env.NODE_ENV || 'production',
-        revision: process.env.HONEYBADGER_REVISION,
-        reportData: true,
-        developmentEnvironments: ['development', 'test']
-      });
-      
-      console.log('Honeybadger initialized successfully');
+      // Configure Honeybadger only if API key is provided
+      const apiKey = process.env.HONEYBADGER_API_KEY;
+      if (apiKey) {
+        honeybadgerInstance.configure({
+          apiKey: apiKey,
+          environment: process.env.NODE_ENV || 'production',
+          revision: process.env.HONEYBADGER_REVISION,
+          reportData: true,
+          developmentEnvironments: ['development', 'test']
+        });
+        console.log('Honeybadger initialized successfully');
+      } else {
+        console.log('Honeybadger API key not found - error monitoring disabled');
+        honeybadgerInstance = null;
+      }
     } catch (error) {
       console.error('Failed to initialize Honeybadger:', error);
     }
