@@ -8,7 +8,7 @@ import { TicketCard } from "@/components/ticket-card";
 import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { SellerDetailsModal } from "@/components/seller-details-modal";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
-import { Loader2, AlertTriangle, MapPin, Search } from "lucide-react";
+import { Loader2, AlertTriangle, MapPin, Search, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
@@ -557,7 +557,7 @@ export default function Home() {
               role="search"
               aria-label="Search for second-hand event tickets"
             >
-              <div className="flex-1 flex items-center space-x-2 py-1">
+              <div className="flex-1 flex items-center space-x-2 py-1 relative">
                 <div className="pl-1">
                   <Search
                     className="h-5 w-5 text-gray-400 flex-shrink-0"
@@ -567,11 +567,22 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="Search Ticket(or City)..."
-                  className="flex-1 p-2 text-gray-900 placeholder-gray-500 border-none outline-none min-w-0"
+                  className="flex-1 p-2 pr-8 text-gray-900 placeholder-gray-500 border-none outline-none min-w-0"
                   aria-label="Search for event tickets by artist, team, venue, or event name"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
+                {/* Clear button - only show when there's text */}
+                {searchQuery.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    aria-label="Clear search"
+                  >
+                    <X className="h-4 w-4 text-gray-500" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
