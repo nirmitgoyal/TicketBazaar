@@ -517,17 +517,7 @@ export function TicketDetailModal({
         <div className="px-6 pb-6 space-y-6">
           {/* Available Tickets Section */}
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-xl flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5" />
-                  Available Tickets
-                </div>
-                <Badge variant="secondary" className="text-sm">
-                  {tickets.length} listing{tickets.length !== 1 ? "s" : ""}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
+            
             <div className="p-6 pt-0 space-y-4">
               <AnimatePresence>
                 {tickets.map((ticket, index) => {
