@@ -152,7 +152,7 @@ export function TicketDetailModal({
   if (ticketsLoading) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 sm:m-4 m-2 sm:max-w-4xl max-w-[calc(100vw-16px)]">
           <DialogTitle className="sr-only">Loading Event Details</DialogTitle>
           <DialogDescription className="sr-only">
             Loading event information and available tickets
@@ -275,7 +275,7 @@ export function TicketDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent
-          className="max-w-4xl max-h-[90vh] overflow-y-auto p-0"
+          className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 sm:m-4 m-2 sm:max-w-4xl max-w-[calc(100vw-16px)]"
           data-testid="event-modal"
         >
           {/* Hero Section */}
@@ -383,7 +383,7 @@ export function TicketDetailModal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="max-w-4xl max-h-[90vh] overflow-y-auto p-0"
+        className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 sm:m-4 m-2 sm:max-w-4xl max-w-[calc(100vw-16px)]"
         data-testid="event-modal"
       >
         <DialogTitle className="sr-only">
