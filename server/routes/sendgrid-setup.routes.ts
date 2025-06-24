@@ -13,9 +13,8 @@ router.post('/test-senders', async (req: Request, res: Response) => {
 
   const testSenders = [
     testEmail, // User's own email
-    'noreply@ticketbazaar.com',
-    'admin@ticketbazaar.com',
-    'notifications@ticketbazaar.com'
+    'noreply@ticketbazaar.co.in',
+    'admin@ticketbazaar.co.in'
   ];
 
   const results = [];

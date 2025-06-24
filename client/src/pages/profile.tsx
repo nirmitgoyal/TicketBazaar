@@ -603,8 +603,8 @@ export default function Profile() {
                       <div className="text-sm text-textSecondary space-y-2">
                         <p>
                           For questions about your data or privacy, please contact us at{" "}
-                          <a href="mailto:privacy@ticketbazaar.com" className="text-primary hover:underline">
-                            privacy@ticketbazaar.com
+                          <a href="mailto:privacy@ticketbazaar.co.in" className="text-primary hover:underline">
+                            privacy@ticketbazaar.co.in
                           </a>
                         </p>
                         <p>

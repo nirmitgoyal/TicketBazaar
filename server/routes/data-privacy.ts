@@ -108,7 +108,7 @@ router.get("/deletion-instructions", (req, res) => {
     ],
     retention: "Data is deleted immediately upon confirmation. This action cannot be undone.",
     contact: {
-      email: "privacy@ticketbazaar.com",
+      email: "privacy@ticketbazaar.co.in",
       description: "For questions about data deletion or if you need assistance, contact our privacy team"
     }
   });

@@ -240,7 +240,7 @@ export default function PrivacyPolicy() {
             </ul>
 
             <p className="text-muted-foreground">
-              To exercise any of these rights, contact us at privacy@ticketbazaar.com or use the data management tools in your account settings. We will respond within 30 days of receiving your request.
+              To exercise any of these rights, contact us at privacy@ticketbazaar.co.in or use the data management tools in your account settings. We will respond within 30 days of receiving your request.
             </p>
           </section>
 
@@ -302,7 +302,7 @@ export default function PrivacyPolicy() {
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
               <li>We do not knowingly collect data from users under 18</li>
               <li>If we discover a minor has created an account, we will immediately suspend it</li>
-              <li>Parents/guardians can report underage accounts to privacy@ticketbazaar.com</li>
+              <li>Parents/guardians can report underage accounts to privacy@ticketbazaar.co.in</li>
               <li>We will delete any data collected from minors upon discovery</li>
             </ul>
 
@@ -437,7 +437,7 @@ export default function PrivacyPolicy() {
 
             <h3 className="text-lg font-medium mb-2">General Privacy Inquiries:</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
-              <li><strong>Email:</strong> privacy@ticketbazaar.com</li>
+              <li><strong>Email:</strong> privacy@ticketbazaar.co.in</li>
               <li><strong>Response Time:</strong> We will respond within 30 days</li>
               <li><strong>Languages:</strong> Multiple languages supported based on your region</li>
             </ul>

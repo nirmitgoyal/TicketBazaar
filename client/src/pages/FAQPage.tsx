@@ -75,7 +75,7 @@ const faqData: FAQItem[] = [
     id: 7,
     question: "How do I contact customer support?",
     answer:
-      "For any queries or assistance, reach out to our support team via the 'Contact Us' page or email us at support@ticketbazaar.in. We're here to help!",
+      "For any queries or assistance, reach out to our support team via the 'Contact Us' page. We're here to help!",
     category: "support",
     icon: <MessageCircle className="h-5 w-5" />,
   },

@@ -313,12 +313,7 @@ export default function SellerPolicy() {
               <MapPin className="h-5 w-5 mr-2" />
               Contact Support
             </a>
-            <a
-              href="mailto:support@ticketbazaar.in"
-              className="inline-flex items-center justify-center px-6 py-3 bg-white text-primary font-medium rounded-lg border border-primary hover:bg-primary hover:text-white transition-colors duration-200"
-            >
-              Email Us
-            </a>
+            
           </div>
         </motion.div>
       </div>

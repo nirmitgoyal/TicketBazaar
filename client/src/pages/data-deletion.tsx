@@ -161,11 +161,11 @@ export default function DataDeletion() {
                     {instructions?.contact?.description || "For questions about data deletion or if you need assistance, contact our privacy team"}
                   </p>
                   <a 
-                    href={`mailto:${instructions?.contact?.email || 'privacy@ticketbazaar.com'}`}
+                    href={`mailto:${instructions?.contact?.email || 'privacy@ticketbazaar.co.in'}`}
                     className="inline-flex items-center gap-2 text-primary hover:underline"
                   >
                     <Mail className="h-4 w-4" />
-                    {instructions?.contact?.email || 'privacy@ticketbazaar.com'}
+                    {instructions?.contact?.email || 'privacy@ticketbazaar.co.in'}
                   </a>
                 </div>
                 

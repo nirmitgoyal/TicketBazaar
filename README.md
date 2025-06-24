@@ -999,7 +999,6 @@ ORDER BY idx_scan DESC;
 
 - **Issues**: Report bugs and request features via GitHub Issues
 - **Discussions**: Join community discussions for questions and ideas
-- **Security**: Report security vulnerabilities privately to security@ticketbazaar.com
 - **Documentation**: Comprehensive docs available in `/docs` directory
 
 ## 📄 License

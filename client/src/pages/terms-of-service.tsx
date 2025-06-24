@@ -157,7 +157,7 @@ export default function TermsOfService() {
             </h2>
             <p className="text-muted-foreground">
               For questions regarding these Terms of Service, please contact us
-              at legal@ticketbazaar.com.
+              at legal@ticketbazaar.co.in
             </p>
           </section>
         </CardContent>
