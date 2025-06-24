@@ -277,66 +277,31 @@ export class DatabaseStorage implements IStorage {
 
     const searchTerm = query.trim();
     
-    try {
-      // Use PostgreSQL 17.4 optimized search function if available
-      const optimizedResults = await db.execute(sql`
-        SELECT id, title, event_title, venue, city, event_date, category
-        FROM search_tickets_optimized_v17(${searchTerm}, NULL, NULL, CURRENT_TIMESTAMP, 50)
-      `);
-      
-      if (optimizedResults.length > 0) {
-        // Convert results to Ticket format
-        const ticketIds = optimizedResults.map((r: any) => r.id);
-        const searchResults = await db
-          .select()
-          .from(tickets)
-          .where(sql`${tickets.id} = ANY(${ticketIds})`);
-        
-        // Cache results for 2 minutes
-        cacheService.set(cacheKey, searchResults, 2 * 60 * 1000);
-        logger.info('SEARCH', `PostgreSQL 17.4 optimized search for "${query}" returned ${searchResults.length} results`);
-        return searchResults;
-      }
-    } catch (error) {
-      // Fallback to traditional search if optimized function is not available
-      logger.warn('SEARCH', 'PostgreSQL 17.4 optimized search not available, using fallback', error);
-    }
+    // Enhanced search with relevance scoring
+    const searchPattern = `%${searchTerm}%`;
+    const searchCondition = or(
+      ilike(tickets.title, searchPattern),
+      ilike(tickets.city, searchPattern),
+      ilike(tickets.eventTitle, searchPattern),
+      ilike(tickets.venue, searchPattern),
+      ilike(tickets.category, searchPattern)
+    );
 
-    // Fallback search with PostgreSQL 17.4 enhanced full-text search
     const searchResults = await db
       .select()
       .from(tickets)
       .where(and(
         eq(tickets.status, 'available'),
-        sql`event_date > NOW()`,
-        sql`to_tsvector('english', 
-          COALESCE(title, '') || ' ' || 
-          COALESCE(event_title, '') || ' ' || 
-          COALESCE(venue, '') || ' ' || 
-          COALESCE(city, '') || ' ' || 
-          COALESCE(category, '')
-        ) @@ websearch_to_tsquery('english', ${searchTerm})`
+        sql`event_date > NOW()`, // Filter future events at database level
+        searchCondition
       ))
-      .orderBy(
-        sql`ts_rank_cd(
-          to_tsvector('english', 
-            COALESCE(title, '') || ' ' || 
-            COALESCE(event_title, '') || ' ' || 
-            COALESCE(venue, '') || ' ' || 
-            COALESCE(city, '') || ' ' || 
-            COALESCE(category, '')
-          ),
-          websearch_to_tsquery('english', ${searchTerm})
-        ) DESC`,
-        tickets.eventDate,
-        tickets.createdAt
-      )
+      .orderBy(tickets.eventDate, tickets.createdAt)
       .limit(50);
 
     // Cache results for 2 minutes
     cacheService.set(cacheKey, searchResults, 2 * 60 * 1000);
     
-    logger.info('SEARCH', `Enhanced PostgreSQL 17.4 search for "${query}" returned ${searchResults.length} results`);
+    logger.info('SEARCH', `Search for "${query}" returned ${searchResults.length} results`);
     return searchResults;
   }
 
@@ -707,29 +672,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async refreshPopularityScores(): Promise<void> {
-    try {
-      // Use PostgreSQL 17.4 optimized bulk update function if available
-      await db.execute(sql`SELECT update_popularity_metrics_v17()`);
-      logger.info('POPULARITY', 'Refreshed all popularity scores using PostgreSQL 17.4 optimized function');
-    } catch (error) {
-      // Fallback to individual updates if function is not available
-      logger.warn('POPULARITY', 'PostgreSQL 17.4 optimized function not available, using fallback method', error);
-      
-      const ticketsWithViews = await db
-        .select({ ticketId: ticketViews.ticketId })
-        .from(ticketViews)
-        .groupBy(ticketViews.ticketId);
+    // Get all tickets with views to refresh their popularity scores
+    const ticketsWithViews = await db
+      .select({ ticketId: ticketViews.ticketId })
+      .from(ticketViews)
+      .groupBy(ticketViews.ticketId);
 
-      // Update popularity for each ticket
-      const updatePromises = ticketsWithViews.map(({ ticketId }) =>
-        this.updateTicketPopularity(ticketId).catch(error =>
-          logger.error('POPULARITY', `Failed to refresh popularity for ticket ${ticketId}`, error)
-        )
-      );
+    // Update popularity for each ticket
+    const updatePromises = ticketsWithViews.map(({ ticketId }) =>
+      this.updateTicketPopularity(ticketId).catch(error =>
+        logger.error('POPULARITY', `Failed to refresh popularity for ticket ${ticketId}`, error)
+      )
+    );
 
-      await Promise.all(updatePromises);
-      logger.info('POPULARITY', `Refreshed popularity scores for ${ticketsWithViews.length} tickets`);
-    }
+    await Promise.all(updatePromises);
+    logger.info('POPULARITY', `Refreshed popularity scores for ${ticketsWithViews.length} tickets`);
   }
 
   async getUserTicketViews(userId: number): Promise<TicketView[]> {
