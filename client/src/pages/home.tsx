@@ -75,13 +75,13 @@ export default function Home() {
   const [allTickets, setAllTickets] = useState<Ticket[]>([]);
   const [displayedTicketsCount, setDisplayedTicketsCount] = useState<number>(TICKETS_PER_PAGE);
   
-  // Clear cached data when filters change
+  // Clear cached data when meaningful filters change (not search query transitions)
   useEffect(() => {
-    const filterKey = JSON.stringify({ selectedSearchFilters, activeCategory, searchQuery });
+    const filterKey = JSON.stringify({ selectedSearchFilters, activeCategory });
     const lastFilterKey = localStorage.getItem('home-filter-key');
     
     if (lastFilterKey && lastFilterKey !== filterKey) {
-      // Filters changed, reset pagination
+      // Only clear data when actual filters change, not search query changes
       setCurrentPage(1);
       setHasMoreTickets(true);
       setDefaultTickets([]);
@@ -93,7 +93,7 @@ export default function Home() {
     }
     
     localStorage.setItem('home-filter-key', filterKey);
-  }, [selectedSearchFilters, activeCategory, searchQuery]);
+  }, [selectedSearchFilters, activeCategory]); // Removed searchQuery from dependency
   
 
 
@@ -161,10 +161,9 @@ export default function Home() {
     isLoading: ticketsLoading,
     error: ticketsError,
   } = useQuery<Ticket[]>({
-    queryKey: ["/api/tickets", urlSearchQuery, selectedSearchFilters],
+    queryKey: ["/api/tickets", selectedSearchFilters],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (urlSearchQuery) params.set("q", urlSearchQuery);
       params.set("page", "1");
       params.set("limit", TICKETS_PER_PAGE.toString());
       
@@ -191,16 +190,15 @@ export default function Home() {
         new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
       );
       
-      // Only update tickets if we don't have any cached or if filters are active
-      if (defaultTickets.length === 0 || Object.keys(selectedSearchFilters).length > 0 || urlSearchQuery) {
-        setCurrentPage(1);
+      // Always update defaultTickets when we get fresh data, but preserve during search
+      if (!searchQuery || searchQuery.length < 2) {
         setDefaultTickets(sortedData);
         setHasMoreTickets(sortedData.length === TICKETS_PER_PAGE);
       }
       
       return sortedData;
     },
-    enabled: true,
+    enabled: !searchQuery || searchQuery.length < 2, // Only fetch when not in search mode
   });
 
   // Search tickets query - triggered by search input
@@ -226,7 +224,15 @@ export default function Home() {
     staleTime: 30000, // Cache results for 30 seconds
   });
 
-
+  // Track search state to prevent data clearing during transitions
+  useEffect(() => {
+    // When search query becomes empty, ensure we refetch default tickets if needed
+    if (searchQuery.length === 0 && defaultTickets.length === 0 && initialTickets.length === 0) {
+      // Force refetch of default tickets when transitioning back from search
+      setCurrentPage(1);
+      setDisplayedTicketsCount(TICKETS_PER_PAGE);
+    }
+  }, [searchQuery, defaultTickets.length, initialTickets.length]);
 
   // Load more tickets functionality
   const handleLoadMore = async () => {
@@ -699,7 +705,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-            ) : !ticketsLoading && (
+            ) : !ticketsLoading && !initialTickets.length && !defaultTickets.length && (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {/* Sample Event Cards to match the original design */}
                 {(() => {
