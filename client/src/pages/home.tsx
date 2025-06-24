@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
 import { useAnalytics } from "@/hooks/use-analytics";
-import UnifiedPopularityMetrics from "@/components/unified-popularity-metrics";
 
 import { Ticket } from "@shared/schema";
 
@@ -696,8 +695,6 @@ export default function Home() {
                       <p className="text-xs text-gray-500">
                         {new Date(ticket.eventDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                       </p>
-                      {/* Inline Popularity Metrics for Ticket */}
-                      <UnifiedPopularityMetrics ticketId={ticket.id} variant="inline" />
                     </div>
                   </div>
                 ))}
