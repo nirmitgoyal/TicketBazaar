@@ -229,8 +229,7 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center h-[600px] border rounded-lg">
-        <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />
-        <span>Loading map...</span>
+        <LoadingState message="Loading map..." />
       </div>
     );
   }

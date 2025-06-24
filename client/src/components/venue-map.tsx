@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { GoogleMap, InfoWindow, Marker, useLoadScript } from "@react-google-maps/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Loader2, AlertTriangle } from "lucide-react";
+import { AnimatedEmptyState } from "@/components/empty-states/animated-empty-state";
 import { GOOGLE_MAPS_OPTIONS, DEFAULT_CENTER, GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 
 interface VenueMapProps {
@@ -110,9 +111,13 @@ export function VenueMap({ venues, className = "" }: VenueMapProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            No venue locations available for mapping
-          </div>
+          <AnimatedEmptyState
+            icon={MapPin}
+            title="No Venue Locations"
+            description="No venue locations available for mapping"
+            animation="pulse"
+            className="py-4"
+          />
         </CardContent>
       </Card>
     );

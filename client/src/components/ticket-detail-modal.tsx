@@ -18,6 +18,8 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
+import { AnimatedEmptyState } from "@/components/empty-states/animated-empty-state";
+import { FloatingBackground } from "@/components/empty-states/floating-elements";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -354,30 +356,24 @@ export function TicketDetailModal({
 
           <div className="px-6 pb-6">
             {/* Empty State Card */}
-            <Card className="text-center py-12">
-              <CardContent>
-                <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-6">
-                  <CreditCard className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  No Tickets Available
-                </h3>
-                <p className="text-textSecondary mb-6 max-w-md mx-auto">
-                  No tickets are currently listed for sale for this event. Check
-                  back later or create an alert to be notified when tickets
-                  become available.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Button variant="outline" onClick={onClose}>
-                    Browse Other Events
-                  </Button>
-                  <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
-                    <Heart className="h-4 w-4 mr-2" />
-                    Create Alert
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <FloatingBackground>
+              <AnimatedEmptyState
+                icon={CreditCard}
+                title="No Tickets Available"
+                description="No tickets are currently listed for sale for this event. Check back later or create an alert to be notified when tickets become available."
+                animation="bounce"
+                className="py-8"
+              />
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+                <Button variant="outline" onClick={onClose}>
+                  Browse Other Events
+                </Button>
+                <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
+                  <Heart className="h-4 w-4 mr-2" />
+                  Create Alert
+                </Button>
+              </div>
+            </FloatingBackground>
           </div>
         </DialogContent>
       </Dialog>

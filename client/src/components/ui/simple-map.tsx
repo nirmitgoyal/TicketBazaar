@@ -1,6 +1,7 @@
 import React from "react";
 import { Event } from "@shared/schema";
 import { MapPin, Calendar, Clock, Users } from "lucide-react";
+import { AnimatedEmptyState } from "@/components/empty-states/animated-empty-state";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -101,13 +102,13 @@ const SimpleMap: React.FC<SimpleMapProps> = ({ events, onViewportChange }) => {
 
       {cities.length === 0 && (
         <div className="h-full flex items-center justify-center">
-          <div className="text-center">
-            <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-semibold text-lg mb-2">No Events Found</h3>
-            <p className="text-sm text-muted-foreground">
-              Try adjusting your search filters to find events.
-            </p>
-          </div>
+          <AnimatedEmptyState
+            icon={MapPin}
+            title="No Events Found"
+            description="Try adjusting your search filters to find events."
+            animation="pulse"
+            className="py-8"
+          />
         </div>
       )}
     </div>

@@ -9,6 +9,8 @@ import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, Users, Star } from "lucide-react";
+import { AnimatedEmptyState } from "@/components/empty-states/animated-empty-state";
+import { FloatingBackground } from "@/components/empty-states/floating-elements";
 import { Ticket } from "@shared/schema";
 import { 
   generateCitySEO, 
@@ -222,26 +224,20 @@ export default function CityEvents() {
               <p className="text-gray-600">Error loading events. Please try again.</p>
             </div>
           ) : filteredEvents.length === 0 ? (
-            <div className="text-center py-12">
-              <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No events found in {cityData.name}
-              </h3>
-              <p className="text-gray-600 mb-4">
-                {searchQuery ? 
-                  `No events match your search "${searchQuery}"` : 
-                  `No events currently available in ${cityData.name}`
+            <FloatingBackground>
+              <AnimatedEmptyState
+                icon={MapPin}
+                title={`No events found in ${cityData.name}`}
+                description={
+                  searchQuery 
+                    ? `No events match your search "${searchQuery}"` 
+                    : `No events currently available in ${cityData.name}`
                 }
-              </p>
-              {searchQuery && (
-                <Button 
-                  variant="outline" 
-                  onClick={() => setSearchQuery("")}
-                >
-                  Clear Search
-                </Button>
-              )}
-            </div>
+                actionText={searchQuery ? "Clear Search" : undefined}
+                onAction={searchQuery ? () => setSearchQuery("") : undefined}
+                animation="bounce"
+              />
+            </FloatingBackground>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredEvents.map((event: any) => (

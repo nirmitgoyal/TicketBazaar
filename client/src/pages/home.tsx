@@ -9,6 +9,8 @@ import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { SellerDetailsModal } from "@/components/seller-details-modal";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
 import { Loader2, AlertTriangle, MapPin, Search, X } from "lucide-react";
+import { AnimatedEmptyState, LoadingState } from "@/components/empty-states/animated-empty-state";
+import { FloatingBackground } from "@/components/empty-states/floating-elements";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
@@ -593,10 +595,9 @@ export default function Home() {
       {isLoading && (
         <section className="py-8">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-center space-x-2">
-              <Loader2 className="h-5 w-5 animate-spin" />
-              <span>Finding events...</span>
-            </div>
+            <FloatingBackground>
+              <LoadingState message="Finding events..." />
+            </FloatingBackground>
           </div>
         </section>
       )}
@@ -704,11 +705,9 @@ export default function Home() {
           {searchQuery.length >= 2 ? (
             // Show search results
             searchLoading ? (
-              <SkeletonGrid
-                type="events"
-                count={8}
-                className="grid-cols-2 lg:grid-cols-4"
-              />
+              <FloatingBackground>
+                <LoadingState message="Searching for tickets..." />
+              </FloatingBackground>
             ) : searchResults.length > 0 ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {searchResults
@@ -758,24 +757,20 @@ export default function Home() {
                   ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <AlertTriangle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No tickets found
-                </h3>
-                <p className="text-gray-600">
-                  No tickets match your search for "{searchQuery}". Try
-                  different keywords.
-                </p>
-              </div>
+              <FloatingBackground>
+                <AnimatedEmptyState
+                  icon={AlertTriangle}
+                  title="No tickets found"
+                  description={`No tickets match your search for "${searchQuery}". Try different keywords.`}
+                  animation="wiggle"
+                />
+              </FloatingBackground>
             )
           ) : // Show default tickets grid - use initialTickets or defaultTickets, prioritize real data
           ticketsLoading ? (
-            <SkeletonGrid
-              type="events"
-              count={8}
-              className="grid-cols-2 lg:grid-cols-4"
-            />
+            <FloatingBackground>
+              <LoadingState message="Loading tickets..." />
+            </FloatingBackground>
           ) : (initialTickets && initialTickets.length > 0) ||
             (defaultTickets && defaultTickets.length > 0) ? (
             <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">

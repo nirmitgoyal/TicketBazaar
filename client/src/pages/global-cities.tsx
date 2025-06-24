@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Globe, Users, Calendar, TrendingUp } from "lucide-react";
+import { AnimatedEmptyState } from "@/components/empty-states/animated-empty-state";
+import { FloatingBackground } from "@/components/empty-states/floating-elements";
 import { GLOBAL_CITIES, generateBreadcrumbStructuredData, generateFAQStructuredData } from "@/utils/global-seo-utils";
 
 export default function GlobalCities() {
@@ -230,21 +232,16 @@ export default function GlobalCities() {
             ))}
 
             {filteredCities.length === 0 && searchQuery && (
-              <div className="text-center py-12">
-                <MapPin className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-medium text-gray-900 mb-2">
-                  No cities found
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  No cities match your search "{searchQuery}"
-                </p>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setSearchQuery("")}
-                >
-                  Clear Search
-                </Button>
-              </div>
+              <FloatingBackground>
+                <AnimatedEmptyState
+                  icon={MapPin}
+                  title="No cities found"
+                  description={`No cities match your search "${searchQuery}"`}
+                  actionText="Clear Search"
+                  onAction={() => setSearchQuery("")}
+                  animation="float"
+                />
+              </FloatingBackground>
             )}
           </div>
         </div>
