@@ -127,6 +127,11 @@ Changelog:
   * Enhanced trust scoring accuracy to prevent fraudulent entities from receiving 'Low Risk' ratings
   * Integrated multi-factor analysis including social media authenticity, digital footprint, and behavioral patterns
   * Added comprehensive fraud pattern detection and real-time risk assessment
+- June 24, 2025. Fixed welcome email functionality for fresh user signups
+  * Added welcome email sending to the main UserController registration flow
+  * Integrated SendGrid email service with proper error handling
+  * Welcome emails now sent automatically to all new users upon registration
+  * Verified email delivery with proper logging and monitoring
 ```
 
 ## User Preferences

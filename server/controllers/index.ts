@@ -8,6 +8,8 @@ import { userRegisterSchema, userLoginSchema, tickets as ticketsTable } from "@s
 import { z } from "zod";
 import { db } from "../db";
 import { eq, desc } from "drizzle-orm";
+import { emailService } from "../services/email.service";
+import { logger } from "../utils/logger";
 
 // Base controller with common functionality
 export class BaseController {
@@ -60,6 +62,15 @@ export class UserController extends BaseController {
         rating: 5.0,
         ratingsCount: 0,
       });
+
+      // Send welcome email
+      try {
+        await emailService.sendWelcomeEmail(newUser.email, newUser.fullName);
+        logger.info('AUTH', `Welcome email sent to ${newUser.email}`);
+      } catch (emailError) {
+        logger.error('AUTH', `Failed to send welcome email to ${newUser.email}`, emailError);
+        // Don't fail registration if email fails
+      }
 
       // Remove password from response
       const { password: _, ...userWithoutPassword } = newUser;
