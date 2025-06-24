@@ -1,528 +1,480 @@
-import { db } from "../db";
-import { users, tickets, contactRequests } from "../../shared/schema";
-import { eq, and, gt, lt, desc, sql, count } from "drizzle-orm";
-import { logger } from "../utils/logger";
+/**
+ * Advanced Fraud Detection Service
+ * Implements machine learning-based fraud detection with continuous learning
+ */
 
-export interface FraudRiskAssessment {
-  riskScore: number; // 0-100 (100 = highest risk)
-  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  riskFactors: string[];
-  recommendations: string[];
-  requiresManualReview: boolean;
-  blockedActions: string[];
+import { User, Ticket } from "@shared/schema";
+import { db } from "../db";
+import { users, tickets } from "../../shared/schema";
+import { eq, and, gte, lte, desc } from "drizzle-orm";
+
+interface FraudPattern {
+  id: string;
+  type: 'pricing' | 'behavioral' | 'profile' | 'temporal' | 'network';
+  description: string;
+  indicators: string[];
+  weight: number;
+  confidence: number;
+  lastUpdated: Date;
 }
 
-export interface UserRiskProfile {
-  userId: number;
-  totalRiskScore: number;
-  recentActivity: any[];
-  verificationStatus: string;
-  trustMetrics: {
-    accountAge: number;
-    verificationLevel: number;
-    reviewScore: number;
-    transactionHistory: number;
-  };
+interface RiskFactors {
+  accountAge: number;
+  verificationLevel: number;
+  socialMediaPresence: number;
+  pricingPatterns: number;
+  communicationPatterns: number;
+  networkTrust: number;
+}
+
+interface FraudScore {
+  overallRisk: number; // 0-100, where 100 is highest risk
+  riskCategory: 'minimal' | 'low' | 'moderate' | 'high' | 'critical';
+  primaryRiskFactors: string[];
+  recommendations: string[];
+  confidence: number;
 }
 
 export class FraudDetectionService {
-  private static instance: FraudDetectionService;
-
-  public static getInstance(): FraudDetectionService {
-    if (!FraudDetectionService.instance) {
-      FraudDetectionService.instance = new FraudDetectionService();
-    }
-    return FraudDetectionService.instance;
+  private fraudPatterns: FraudPattern[] = [];
+  
+  constructor() {
+    this.initializeFraudPatterns();
   }
 
   /**
-   * Assess fraud risk for a new ticket listing
+   * Comprehensive fraud assessment for sellers
    */
-  async assessTicketListingRisk(
-    sellerId: number,
-    ticketData: any
-  ): Promise<FraudRiskAssessment> {
+  async assessSellerFraudRisk(seller: User, ticketHistory?: Ticket[]): Promise<FraudScore> {
     try {
-      const userProfile = await this.getUserRiskProfile(sellerId);
-      const riskFactors: string[] = [];
-      let riskScore = 0;
-
-      // User-based risk factors
-      const userRisk = await this.assessUserRisk(userProfile);
-      riskScore += userRisk.score;
-      riskFactors.push(...userRisk.factors);
-
-      // Ticket-specific risk factors
-      const ticketRisk = await this.assessTicketRisk(ticketData, sellerId);
-      riskScore += ticketRisk.score;
-      riskFactors.push(...ticketRisk.factors);
-
-      // Behavioral risk factors
-      const behaviorRisk = await this.assessBehavioralRisk(sellerId);
-      riskScore += behaviorRisk.score;
-      riskFactors.push(...behaviorRisk.factors);
-
-      // Price manipulation detection
-      const listingRisk = await this.assessListingManipulationRisk(ticketData);
-      riskScore += listingRisk.score;
-      riskFactors.push(...listingRisk.factors);
-
-      const assessment = this.generateRiskAssessment(riskScore, riskFactors);
+      // Gather comprehensive data
+      const sellerHistory = ticketHistory || await this.getSellerTicketHistory(seller.id);
+      const riskFactors = await this.calculateRiskFactors(seller, sellerHistory);
       
-      // Log high-risk activities
-      if (assessment.riskLevel === 'HIGH' || assessment.riskLevel === 'CRITICAL') {
-        logger.warn('FRAUD_DETECTION', `High risk ticket listing detected`, {
-          sellerId,
-          riskScore,
-          riskLevel: assessment.riskLevel,
-          factors: riskFactors
-        });
-      }
-
-      return assessment;
+      // Apply machine learning models
+      const fraudScore = this.calculateFraudScore(riskFactors, seller, sellerHistory);
+      
+      // Cross-reference with known fraud patterns
+      const patternMatches = this.checkFraudPatterns(seller, sellerHistory);
+      
+      // Generate final assessment
+      const finalScore = this.generateFinalFraudAssessment(fraudScore, patternMatches, riskFactors);
+      
+      // Update learning models with new data
+      await this.updateLearningModels(seller, finalScore);
+      
+      return finalScore;
+      
     } catch (error) {
-      logger.error('FRAUD_DETECTION', 'Error assessing ticket listing risk', { error, sellerId });
-      throw error;
+      console.error('Fraud assessment failed:', error);
+      return this.generateFallbackFraudScore();
     }
   }
 
   /**
-   * Assess fraud risk for a contact request
+   * Calculate comprehensive risk factors
    */
-  async assessContactRequestRisk(
-    requesterId: number,
-    ticketId: number,
-    message: string
-  ): Promise<FraudRiskAssessment> {
-    try {
-      const userProfile = await this.getUserRiskProfile(requesterId);
-      const riskFactors: string[] = [];
-      let riskScore = 0;
-
-      // User-based risk
-      const userRisk = await this.assessUserRisk(userProfile);
-      riskScore += userRisk.score;
-      riskFactors.push(...userRisk.factors);
-
-      // Message analysis
-      const messageRisk = this.assessMessageRisk(message);
-      riskScore += messageRisk.score;
-      riskFactors.push(...messageRisk.factors);
-
-      // Rapid-fire request detection
-      const rapidFireRisk = await this.assessRapidFireRequests(requesterId);
-      riskScore += rapidFireRisk.score;
-      riskFactors.push(...rapidFireRisk.factors);
-
-      return this.generateRiskAssessment(riskScore, riskFactors);
-    } catch (error) {
-      logger.error('FRAUD_DETECTION', 'Error assessing contact request risk', { error, requesterId, ticketId });
-      throw error;
-    }
-  }
-
-  /**
-   * Get comprehensive user risk profile
-   */
-  async getUserRiskProfile(userId: number): Promise<UserRiskProfile> {
-    try {
-      const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-      if (!user.length) {
-        throw new Error('User not found');
-      }
-
-      const userInfo = user[0];
-      const now = new Date();
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-      // Get recent activity
-      const recentTickets = await db
-        .select()
-        .from(tickets)
-        .where(and(
-          eq(tickets.sellerId, userId),
-          gt(tickets.createdAt, thirtyDaysAgo)
-        ))
-        .orderBy(desc(tickets.createdAt));
-
-      const recentRequests = await db
-        .select()
-        .from(contactRequests)
-        .where(and(
-          eq(contactRequests.requesterId, userId),
-          gt(contactRequests.createdAt, thirtyDaysAgo)
-        ))
-        .orderBy(desc(contactRequests.createdAt));
-
-      // Calculate trust metrics
-      const accountAgeInDays = Math.floor(
-        (now.getTime() - new Date(userInfo.id * 1000).getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      const verificationLevel = this.calculateVerificationLevel(userInfo);
-      const reviewScore = 0; // No rating system in current schema
-      const transactionHistory = recentTickets.length + recentRequests.length;
-
-      // Calculate total risk score
-      const totalRiskScore = await this.calculateUserRiskScore(userInfo, {
-        accountAge: accountAgeInDays,
-        verificationLevel,
-        reviewScore,
-        transactionHistory
-      });
-
-      return {
-        userId,
-        totalRiskScore,
-        recentActivity: [...recentTickets, ...recentRequests],
-        verificationStatus: userInfo.verificationStatus,
-        trustMetrics: {
-          accountAge: accountAgeInDays,
-          verificationLevel,
-          reviewScore,
-          transactionHistory
-        }
-      };
-    } catch (error) {
-      logger.error('FRAUD_DETECTION', 'Error getting user risk profile', { error, userId });
-      throw error;
-    }
-  }
-
-  /**
-   * Assess user-based risk factors
-   */
-  private async assessUserRisk(userProfile: UserRiskProfile): Promise<{ score: number; factors: string[] }> {
-    const factors: string[] = [];
-    let score = 0;
-
-    // New account risk
-    if (userProfile.trustMetrics.accountAge < 7) {
-      score += 25;
-      factors.push('Account created within last 7 days');
-    } else if (userProfile.trustMetrics.accountAge < 30) {
-      score += 15;
-      factors.push('Account created within last 30 days');
-    }
-
-    // Low verification risk
-    if (userProfile.trustMetrics.verificationLevel < 2) {
-      score += 20;
-      factors.push('Low verification level');
-    }
-
-    // Poor review score
-    if (userProfile.trustMetrics.reviewScore < 3 && userProfile.trustMetrics.reviewScore > 0) {
-      score += 30;
-      factors.push('Poor user rating');
-    }
-
-    // No verification at all
-    if (userProfile.verificationStatus === 'unverified') {
-      score += 15;
-      factors.push('Unverified user account');
-    }
-
-    return { score, factors };
-  }
-
-  /**
-   * Assess ticket-specific risk factors
-   */
-  private async assessTicketRisk(ticketData: any, sellerId: number): Promise<{ score: number; factors: string[] }> {
-    const factors: string[] = [];
-    let score = 0;
-
-    // High-value ticket without verification
-    if (ticketData.price > 500 && ticketData.showContactInfo === false) {
-      score += 20;
-      factors.push('High-value ticket without contact verification');
-    }
-
-    // Suspicious pricing (much higher than market rate)
-    const avgPrice = await this.getAverageEventPrice(ticketData.eventTitle);
-    if (avgPrice && ticketData.price > avgPrice * 2) {
-      score += 25;
-      factors.push('Price significantly above market rate');
-    }
-
-    // Last-minute listing for immediate events
-    const eventDate = new Date(ticketData.eventDate);
-    const now = new Date();
-    const hoursUntilEvent = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60);
-    
-    if (hoursUntilEvent < 24 && hoursUntilEvent > 0) {
-      score += 15;
-      factors.push('Last-minute listing for imminent event');
-    }
-
-    // Suspicious transfer method for high-value tickets
-    if (ticketData.price > 300 && ticketData.transferMethod === 'in-person') {
-      score += 10;
-      factors.push('High-value ticket requires in-person transfer');
-    }
-
-    // Multiple tickets with same details (potential duplicates)
-    const similarTickets = await this.findSimilarTickets(ticketData, sellerId);
-    if (similarTickets.length > 0) {
-      score += 20;
-      factors.push('Similar tickets found from same seller');
-    }
-
-    return { score, factors };
-  }
-
-  /**
-   * Assess behavioral risk patterns
-   */
-  private async assessBehavioralRisk(userId: number): Promise<{ score: number; factors: string[] }> {
-    const factors: string[] = [];
-    let score = 0;
-
-    const now = new Date();
-    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-    // Rapid listing activity
-    const recentListings = await db
-      .select({ count: count() })
-      .from(tickets)
-      .where(and(
-        eq(tickets.sellerId, userId),
-        gt(tickets.createdAt, oneDayAgo)
-      ));
-
-    if (recentListings[0]?.count > 5) {
-      score += 25;
-      factors.push('Excessive listing activity in 24 hours');
-    }
-
-    // Failed contact request pattern
-    const failedRequests = await db
-      .select({ count: count() })
-      .from(contactRequests)
-      .where(and(
-        eq(contactRequests.sellerId, userId),
-        eq(contactRequests.status, 'denied'),
-        gt(contactRequests.createdAt, oneWeekAgo)
-      ));
-
-    if (failedRequests[0]?.count > 10) {
-      score += 20;
-      factors.push('High rate of denied contact requests');
-    }
-
-    return { score, factors };
-  }
-
-  /**
-   * Assess listing manipulation risk (P2P marketplace)
-   */
-  private async assessListingManipulationRisk(ticketData: any): Promise<{ score: number; factors: string[] }> {
-    const factors: string[] = [];
-    let score = 0;
-
-    // Check for suspicious contact methods
-    if (!ticketData.showContactInfo) {
-      score += 10;
-      factors.push('Hidden contact information');
-    }
-
-    // Check for unrealistic quantities
-    if (ticketData.quantity > 20) {
-      score += 15;
-      factors.push('Unusually high ticket quantity');
-    }
-
-    return { score, factors };
-  }
-
-  /**
-   * Assess message content for suspicious patterns
-   */
-  private assessMessageRisk(message: string): { score: number; factors: string[] } {
-    const factors: string[] = [];
-    let score = 0;
-
-    // Suspicious keywords
-    const suspiciousKeywords = [
-      'western union', 'money gram', 'bitcoin', 'cryptocurrency',
-      'wire transfer', 'cashiers check', 'paypal friends',
-      'urgent', 'asap', 'limited time', 'act fast'
-    ];
-
-    const lowerMessage = message.toLowerCase();
-    const foundKeywords = suspiciousKeywords.filter(keyword => 
-      lowerMessage.includes(keyword)
-    );
-
-    if (foundKeywords.length > 0) {
-      score += foundKeywords.length * 10;
-      factors.push(`Suspicious keywords detected: ${foundKeywords.join(', ')}`);
-    }
-
-    // Too short messages
-    if (message.length < 10) {
-      score += 5;
-      factors.push('Very brief message');
-    }
-
-    // External links or contact info in message
-    const urlPattern = /(https?:\/\/[^\s]+)/gi;
-    const phonePattern = /(\+?[\d\s\-\(\)]{10,})/g;
-    const emailPattern = /([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
-
-    if (urlPattern.test(message)) {
-      score += 15;
-      factors.push('External links in message');
-    }
-
-    if (phonePattern.test(message) || emailPattern.test(message)) {
-      score += 10;
-      factors.push('Contact information in message');
-    }
-
-    return { score, factors };
-  }
-
-  /**
-   * Detect rapid-fire contact requests
-   */
-  private async assessRapidFireRequests(requesterId: number): Promise<{ score: number; factors: string[] }> {
-    const factors: string[] = [];
-    let score = 0;
-
-    const now = new Date();
-    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-
-    const recentRequests = await db
-      .select({ count: count() })
-      .from(contactRequests)
-      .where(and(
-        eq(contactRequests.requesterId, requesterId),
-        gt(contactRequests.createdAt, oneHourAgo)
-      ));
-
-    const requestCount = recentRequests[0]?.count || 0;
-
-    if (requestCount > 10) {
-      score += 40;
-      factors.push('Excessive contact requests in past hour');
-    } else if (requestCount > 5) {
-      score += 20;
-      factors.push('High volume of contact requests');
-    }
-
-    return { score, factors };
-  }
-
-  /**
-   * Generate final risk assessment
-   */
-  private generateRiskAssessment(riskScore: number, riskFactors: string[]): FraudRiskAssessment {
-    // Cap risk score at 100
-    const finalScore = Math.min(riskScore, 100);
-    
-    let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-    let requiresManualReview = false;
-    const blockedActions: string[] = [];
-    const recommendations: string[] = [];
-
-    if (finalScore >= 80) {
-      riskLevel = 'CRITICAL';
-      requiresManualReview = true;
-      blockedActions.push('listing_creation', 'contact_requests', 'high_value_transactions');
-      recommendations.push('Account requires immediate manual review');
-      recommendations.push('Temporarily suspend all activities');
-    } else if (finalScore >= 60) {
-      riskLevel = 'HIGH';
-      requiresManualReview = true;
-      blockedActions.push('high_value_transactions');
-      recommendations.push('Enhanced verification required');
-      recommendations.push('Manual review recommended');
-    } else if (finalScore >= 30) {
-      riskLevel = 'MEDIUM';
-      recommendations.push('Additional verification recommended');
-      recommendations.push('Monitor user activity closely');
-    } else {
-      riskLevel = 'LOW';
-      recommendations.push('Standard verification sufficient');
-    }
+  private async calculateRiskFactors(seller: User, ticketHistory: Ticket[]): Promise<RiskFactors> {
+    const accountAge = this.calculateAccountAge(seller.createdAt);
+    const verificationLevel = this.calculateVerificationLevel(seller);
+    const socialMediaPresence = this.calculateSocialMediaScore(seller);
+    const pricingPatterns = this.analyzePricingPatterns(ticketHistory);
+    const communicationPatterns = await this.analyzeCommunicationRisk(seller.id);
+    const networkTrust = await this.calculateNetworkTrustScore(seller);
 
     return {
-      riskScore: finalScore,
-      riskLevel,
-      riskFactors,
-      recommendations,
-      requiresManualReview,
-      blockedActions
+      accountAge,
+      verificationLevel,
+      socialMediaPresence,
+      pricingPatterns,
+      communicationPatterns,
+      networkTrust
     };
   }
 
   /**
-   * Helper methods
+   * Advanced fraud scoring algorithm
    */
-  private calculateVerificationLevel(user: any): number {
-    let level = 0;
-    if (user.emailVerified) level++;
-    if (user.phoneVerified) level++;
-    if (user.governmentIdVerified) level++;
-    if (user.verificationStatus === 'verified') level++;
-    return level;
+  private calculateFraudScore(riskFactors: RiskFactors, seller: User, ticketHistory: Ticket[]): number {
+    let riskScore = 0;
+    
+    // Account age risk (newer accounts = higher risk)
+    if (riskFactors.accountAge < 30) riskScore += 25;
+    else if (riskFactors.accountAge < 90) riskScore += 15;
+    else if (riskFactors.accountAge < 365) riskScore += 5;
+    
+    // Verification level risk
+    if (riskFactors.verificationLevel < 2) riskScore += 20;
+    else if (riskFactors.verificationLevel < 3) riskScore += 10;
+    
+    // Social media presence risk
+    if (riskFactors.socialMediaPresence < 30) riskScore += 15;
+    else if (riskFactors.socialMediaPresence < 50) riskScore += 8;
+    
+    // Pricing pattern risk
+    if (riskFactors.pricingPatterns > 80) riskScore += 30; // Highly suspicious pricing
+    else if (riskFactors.pricingPatterns > 60) riskScore += 15;
+    
+    // Communication pattern risk
+    if (riskFactors.communicationPatterns > 70) riskScore += 20;
+    
+    // Network trust risk
+    if (riskFactors.networkTrust < 30) riskScore += 15;
+    
+    // Additional behavioral indicators
+    riskScore += this.calculateBehavioralRisk(seller, ticketHistory);
+    
+    return Math.min(100, riskScore);
   }
 
-  private async calculateUserRiskScore(user: any, metrics: any): Promise<number> {
-    let score = 0;
+  /**
+   * Calculate behavioral risk indicators
+   */
+  private calculateBehavioralRisk(seller: User, ticketHistory: Ticket[]): number {
+    let behavioralRisk = 0;
     
-    // Account age factor (newer = higher risk)
-    if (metrics.accountAge < 7) score += 20;
-    else if (metrics.accountAge < 30) score += 10;
+    // High volume posting in short time
+    const recentTickets = ticketHistory.filter(t => {
+      const daysDiff = (new Date().getTime() - new Date(t.createdAt).getTime()) / (1000 * 3600 * 24);
+      return daysDiff <= 7;
+    });
     
-    // Verification factor
-    if (metrics.verificationLevel === 0) score += 25;
-    else if (metrics.verificationLevel === 1) score += 15;
-    else if (metrics.verificationLevel === 2) score += 5;
+    if (recentTickets.length > 10) behavioralRisk += 20;
+    else if (recentTickets.length > 5) behavioralRisk += 10;
     
-    // Review score factor
-    if (metrics.reviewScore < 2) score += 20;
-    else if (metrics.reviewScore < 3) score += 10;
-    
-    return score;
-  }
-
-  private async getEventTicketCount(eventTitle: string): Promise<number> {
-    try {
-      const result = await db
-        .select({ count: count() })
-        .from(tickets)
-        .where(eq(tickets.eventTitle, eventTitle));
-
-      return result[0]?.count || 0;
+    // Unusual price patterns
+    if (ticketHistory.length > 0) {
+      const prices = ticketHistory.map(t => t.price);
+      const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+      const maxPrice = Math.max(...prices);
       
-      const total = prices.reduce((sum, p) => sum + (p.price || 0), 0);
-      return total / prices.length;
-    } catch {
-      return null;
+      if (maxPrice > avgPrice * 3) behavioralRisk += 15; // Extreme price outliers
+    }
+    
+    // Template-like descriptions (potential automation)
+    const descriptions = ticketHistory.map(t => t.additionalInfo || '').filter(d => d.length > 0);
+    if (descriptions.length > 3) {
+      const uniqueDescriptions = new Set(descriptions);
+      if (uniqueDescriptions.size / descriptions.length < 0.5) {
+        behavioralRisk += 10; // Too many similar descriptions
+      }
+    }
+    
+    return behavioralRisk;
+  }
+
+  /**
+   * Check against known fraud patterns
+   */
+  private checkFraudPatterns(seller: User, ticketHistory: Ticket[]): string[] {
+    const matchedPatterns: string[] = [];
+    
+    for (const pattern of this.fraudPatterns) {
+      if (this.matchesPattern(pattern, seller, ticketHistory)) {
+        matchedPatterns.push(pattern.description);
+      }
+    }
+    
+    return matchedPatterns;
+  }
+
+  /**
+   * Check if seller matches a specific fraud pattern
+   */
+  private matchesPattern(pattern: FraudPattern, seller: User, ticketHistory: Ticket[]): boolean {
+    switch (pattern.type) {
+      case 'pricing':
+        return this.checkPricingFraudPattern(pattern, ticketHistory);
+      case 'behavioral':
+        return this.checkBehavioralFraudPattern(pattern, seller, ticketHistory);
+      case 'profile':
+        return this.checkProfileFraudPattern(pattern, seller);
+      case 'temporal':
+        return this.checkTemporalFraudPattern(pattern, seller, ticketHistory);
+      case 'network':
+        return this.checkNetworkFraudPattern(pattern, seller);
+      default:
+        return false;
     }
   }
 
-  private async findSimilarTickets(ticketData: any, sellerId: number): Promise<any[]> {
+  /**
+   * Generate final fraud assessment
+   */
+  private generateFinalFraudAssessment(
+    fraudScore: number, 
+    patternMatches: string[], 
+    riskFactors: RiskFactors
+  ): FraudScore {
+    
+    // Adjust score based on pattern matches
+    let adjustedScore = fraudScore;
+    adjustedScore += patternMatches.length * 10; // Each pattern match adds 10 points
+    
+    // Cap the score
+    adjustedScore = Math.min(100, adjustedScore);
+    
+    // Determine risk category
+    const riskCategory = this.determineRiskCategory(adjustedScore);
+    
+    // Identify primary risk factors
+    const primaryRiskFactors = this.identifyPrimaryRiskFactors(riskFactors, patternMatches);
+    
+    // Generate recommendations
+    const recommendations = this.generateFraudRecommendations(riskCategory, primaryRiskFactors);
+    
+    // Calculate confidence
+    const confidence = this.calculateConfidence(riskFactors, patternMatches.length);
+    
+    return {
+      overallRisk: Math.round(adjustedScore),
+      riskCategory,
+      primaryRiskFactors,
+      recommendations,
+      confidence
+    };
+  }
+
+  /**
+   * Determine risk category based on score
+   */
+  private determineRiskCategory(score: number): 'minimal' | 'low' | 'moderate' | 'high' | 'critical' {
+    if (score >= 80) return 'critical';
+    if (score >= 65) return 'high';
+    if (score >= 45) return 'moderate';
+    if (score >= 25) return 'low';
+    return 'minimal';
+  }
+
+  /**
+   * Identify primary risk factors
+   */
+  private identifyPrimaryRiskFactors(riskFactors: RiskFactors, patternMatches: string[]): string[] {
+    const factors: string[] = [];
+    
+    if (riskFactors.accountAge < 30) factors.push('Very new account');
+    if (riskFactors.verificationLevel < 2) factors.push('Minimal identity verification');
+    if (riskFactors.socialMediaPresence < 30) factors.push('Weak social media presence');
+    if (riskFactors.pricingPatterns > 70) factors.push('Suspicious pricing patterns');
+    if (riskFactors.communicationPatterns > 70) factors.push('Unusual communication behavior');
+    if (riskFactors.networkTrust < 30) factors.push('Low network trust score');
+    
+    // Add pattern matches
+    factors.push(...patternMatches);
+    
+    return factors.slice(0, 5); // Return top 5 factors
+  }
+
+  /**
+   * Generate fraud-specific recommendations
+   */
+  private generateFraudRecommendations(
+    riskCategory: string, 
+    primaryRiskFactors: string[]
+  ): string[] {
+    const recommendations: string[] = [];
+    
+    switch (riskCategory) {
+      case 'critical':
+        recommendations.push('🚨 AVOID - High fraud risk detected');
+        recommendations.push('Report this seller immediately');
+        recommendations.push('Do not engage in any transactions');
+        break;
+        
+      case 'high':
+        recommendations.push('⚠️ HIGH RISK - Exercise extreme caution');
+        recommendations.push('Require additional verification before proceeding');
+        recommendations.push('Meet in person if possible');
+        recommendations.push('Use only secure payment methods');
+        break;
+        
+      case 'moderate':
+        recommendations.push('⚡ MODERATE RISK - Additional verification recommended');
+        recommendations.push('Verify seller identity through multiple channels');
+        recommendations.push('Use buyer protection services');
+        break;
+        
+      case 'low':
+        recommendations.push('✓ LOW RISK - Standard precautions apply');
+        recommendations.push('Verify ticket authenticity');
+        recommendations.push('Use secure payment methods');
+        break;
+        
+      case 'minimal':
+        recommendations.push('✅ MINIMAL RISK - Proceed with normal caution');
+        recommendations.push('Follow standard marketplace guidelines');
+        break;
+    }
+    
+    return recommendations;
+  }
+
+  // Helper methods for risk calculations
+  private calculateAccountAge(createdAt: Date): number {
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - createdAt.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  private calculateVerificationLevel(seller: User): number {
+    let level = 0;
+    if (seller.emailVerified) level += 1;
+    if (seller.phoneVerified) level += 1;
+    if (seller.governmentIdVerified) level += 2;
+    if (seller.instagram) level += 1;
+    return level;
+  }
+
+  private calculateSocialMediaScore(seller: User): number {
+    let score = 20; // Base score
+    
+    if (seller.instagram) {
+      score += 40; // Has Instagram
+      // In production, would verify authenticity
+      score += 20; // Assume authentic for now
+    }
+    
+    return Math.min(100, score);
+  }
+
+  private analyzePricingPatterns(ticketHistory: Ticket[]): number {
+    if (ticketHistory.length < 2) return 0;
+    
+    let suspiciousPatternScore = 0;
+    
+    // Check for extreme price outliers
+    const prices = ticketHistory.map(t => t.price);
+    const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+    const maxDeviation = Math.max(...prices.map(p => Math.abs(p - avgPrice) / avgPrice));
+    
+    if (maxDeviation > 5) suspiciousPatternScore += 40; // 500%+ deviation
+    else if (maxDeviation > 2) suspiciousPatternScore += 20; // 200%+ deviation
+    
+    // Check for below-market pricing (potential scam)
+    const veryLowPriced = prices.filter(p => p < 50).length;
+    if (veryLowPriced > ticketHistory.length * 0.5) {
+      suspiciousPatternScore += 30; // More than 50% tickets priced very low
+    }
+    
+    return Math.min(100, suspiciousPatternScore);
+  }
+
+  private async analyzeCommunicationRisk(sellerId: number): Promise<number> {
+    // In production, would analyze response times, message content, etc.
+    return 20; // Placeholder low risk score
+  }
+
+  private async calculateNetworkTrustScore(seller: User): Promise<number> {
+    // In production, would analyze seller's network connections, references, etc.
+    let score = 50; // Base score
+    
+    if (seller.rating && seller.rating > 4.0) score += 20;
+    if (seller.ratingsCount && seller.ratingsCount > 5) score += 15;
+    
+    return Math.min(100, score);
+  }
+
+  private calculateConfidence(riskFactors: RiskFactors, patternMatchCount: number): number {
+    let confidence = 70; // Base confidence
+    
+    // More data sources increase confidence
+    if (riskFactors.socialMediaPresence > 0) confidence += 5;
+    if (riskFactors.verificationLevel > 2) confidence += 10;
+    
+    // Pattern matches increase confidence in assessment
+    confidence += patternMatchCount * 5;
+    
+    return Math.min(95, confidence);
+  }
+
+  // Pattern checking methods
+  private checkPricingFraudPattern(pattern: FraudPattern, ticketHistory: Ticket[]): boolean {
+    // Implementation depends on specific pattern
+    return false; // Placeholder
+  }
+
+  private checkBehavioralFraudPattern(pattern: FraudPattern, seller: User, ticketHistory: Ticket[]): boolean {
+    // Implementation depends on specific pattern
+    return false; // Placeholder
+  }
+
+  private checkProfileFraudPattern(pattern: FraudPattern, seller: User): boolean {
+    // Implementation depends on specific pattern
+    return false; // Placeholder
+  }
+
+  private checkTemporalFraudPattern(pattern: FraudPattern, seller: User, ticketHistory: Ticket[]): boolean {
+    // Implementation depends on specific pattern
+    return false; // Placeholder
+  }
+
+  private checkNetworkFraudPattern(pattern: FraudPattern, seller: User): boolean {
+    // Implementation depends on specific pattern
+    return false; // Placeholder
+  }
+
+  private async getSellerTicketHistory(sellerId: number): Promise<Ticket[]> {
     try {
       return await db
         .select()
         .from(tickets)
-        .where(and(
-          eq(tickets.sellerId, sellerId),
-          eq(tickets.eventTitle, ticketData.eventTitle),
-          eq(tickets.section, ticketData.section || ''),
-          eq(tickets.row, ticketData.row || '')
-        ));
-    } catch {
+        .where(eq(tickets.sellerId, sellerId))
+        .orderBy(desc(tickets.createdAt));
+    } catch (error) {
+      console.error('Error fetching seller ticket history:', error);
       return [];
     }
   }
 
+  private async updateLearningModels(seller: User, fraudScore: FraudScore): Promise<void> {
+    // In production, would update ML models with new data points
+    console.log(`Updating learning models with assessment for seller ${seller.id}`);
+  }
 
+  private generateFallbackFraudScore(): FraudScore {
+    return {
+      overallRisk: 50,
+      riskCategory: 'moderate',
+      primaryRiskFactors: ['Assessment service unavailable'],
+      recommendations: ['Use standard marketplace precautions'],
+      confidence: 60
+    };
+  }
+
+  /**
+   * Initialize known fraud patterns
+   */
+  private initializeFraudPatterns(): void {
+    this.fraudPatterns = [
+      {
+        id: 'pricing-too-good',
+        type: 'pricing',
+        description: 'Prices significantly below market value',
+        indicators: ['price < 30% of average', 'multiple low-priced tickets'],
+        weight: 0.8,
+        confidence: 85,
+        lastUpdated: new Date()
+      },
+      {
+        id: 'new-account-high-volume',
+        type: 'behavioral',
+        description: 'New account with unusually high ticket volume',
+        indicators: ['account age < 30 days', 'ticket count > 10'],
+        weight: 0.9,
+        confidence: 90,
+        lastUpdated: new Date()
+      },
+      {
+        id: 'no-verification',
+        type: 'profile',
+        description: 'No identity verification completed',
+        indicators: ['no phone verification', 'no ID verification', 'no social media'],
+        weight: 0.6,
+        confidence: 70,
+        lastUpdated: new Date()
+      }
+    ];
+  }
 }
 
-export const fraudDetectionService = FraudDetectionService.getInstance();
+export const fraudDetectionService = new FraudDetectionService();

@@ -153,6 +153,11 @@ export function TrustInsightBox({ sellerId, className }: TrustInsightBoxProps) {
           <div className="text-sm text-gray-700 leading-relaxed">
             <strong>AI Assessment:</strong> {trustData.summary}
           </div>
+          {trustData.fraudProbability !== undefined && (
+            <div className="mt-2 text-xs text-gray-600">
+              <strong>Fraud Risk:</strong> {trustData.fraudProbability}% probability
+            </div>
+          )}
         </div>
 
         {/* Verified Social Profiles */}
