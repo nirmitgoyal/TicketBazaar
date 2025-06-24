@@ -6,10 +6,60 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover"
     />
+    <!-- Chrome Extension Error Blocker - loads first -->
+    <script type="module" src="/chrome-extension-blocker.js"></script>
+    
     <!-- Enhanced error suppression - loads immediately before anything else -->
     <script>
       (function () {
         'use strict';
+        
+        // Prevent Chrome extension messaging errors at the earliest stage
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+          // Override the entire chrome.runtime API to prevent extension errors
+          const originalRuntime = chrome.runtime;
+          
+          // Create a safe wrapper for sendMessage
+          chrome.runtime.sendMessage = function(...args) {
+            try {
+              const callback = args[args.length - 1];
+              if (typeof callback === 'function') {
+                // Replace callback with error-resistant version
+                args[args.length - 1] = function(response) {
+                  try {
+                    return callback(response);
+                  } catch (e) {
+                    // Silently handle callback errors
+                  }
+                };
+              }
+              return originalRuntime.sendMessage.apply(this, args);
+            } catch (error) {
+              // Return a safe response for any sendMessage errors
+              return undefined;
+            }
+          };
+          
+          // Override onMessage to prevent listener errors
+          if (chrome.runtime.onMessage) {
+            const originalOnMessage = chrome.runtime.onMessage;
+            chrome.runtime.onMessage = {
+              ...originalOnMessage,
+              addListener: function(listener) {
+                const safeListener = function(message, sender, sendResponse) {
+                  try {
+                    const result = listener(message, sender, sendResponse);
+                    // Never return true to prevent async response expectations
+                    return false;
+                  } catch (e) {
+                    return false;
+                  }
+                };
+                return originalOnMessage.addListener.call(this, safeListener);
+              }
+            };
+          }
+        }
         
         // Comprehensive console error suppression
         var originalConsoleError = console.error;

@@ -35,6 +35,23 @@ export function Navigation() {
   const handleNavigation = (path: string) => {
     setIsMenuOpen(false);
     
+    // Suppress Chrome extension messaging during navigation to prevent listener errors
+    const suppressExtensionErrors = () => {
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        try {
+          const originalSendMessage = chrome.runtime.sendMessage;
+          chrome.runtime.sendMessage = () => undefined;
+          setTimeout(() => {
+            chrome.runtime.sendMessage = originalSendMessage;
+          }, 100);
+        } catch (e) {
+          // Ignore Chrome API errors
+        }
+      }
+    };
+    
+    suppressExtensionErrors();
+    
     // Preserve search parameters when navigating between tabs
     const currentUrl = new URL(window.location.href);
     const searchParams = currentUrl.searchParams;

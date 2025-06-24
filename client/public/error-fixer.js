@@ -87,21 +87,66 @@
     });
   };
 
-  // Handle Chrome extension listener errors specifically
+  // Comprehensive Chrome extension error prevention
   if (typeof chrome !== 'undefined' && chrome.runtime) {
     // Override chrome.runtime.sendMessage to prevent listener errors
     const originalSendMessage = chrome.runtime.sendMessage;
     chrome.runtime.sendMessage = function(...args) {
       try {
-        return originalSendMessage.apply(this, args);
+        const result = originalSendMessage.apply(this, args);
+        // Handle the case where the result is a promise that might reject
+        if (result && typeof result.catch === 'function') {
+          return result.catch(error => {
+            if (error.message && (
+              error.message.includes('listener indicated an asynchronous response') ||
+              error.message.includes('message channel closed')
+            )) {
+              // Return a resolved promise to prevent uncaught errors
+              return Promise.resolve();
+            }
+            throw error;
+          });
+        }
+        return result;
       } catch (error) {
-        if (error.message && error.message.includes('listener indicated an asynchronous response')) {
-          // Silently handle this error
-          return;
+        if (error.message && (
+          error.message.includes('listener indicated an asynchronous response') ||
+          error.message.includes('message channel closed')
+        )) {
+          // Return undefined to prevent errors
+          return undefined;
         }
         throw error;
       }
     };
+
+    // Override chrome.runtime.onMessage.addListener to handle async responses properly
+    if (chrome.runtime.onMessage && chrome.runtime.onMessage.addListener) {
+      const originalAddListener = chrome.runtime.onMessage.addListener;
+      chrome.runtime.onMessage.addListener = function(listener) {
+        const wrappedListener = function(message, sender, sendResponse) {
+          try {
+            const result = listener(message, sender, sendResponse);
+            // If listener returns true but never calls sendResponse, handle it gracefully
+            if (result === true) {
+              // Set a timeout to prevent channel closure errors
+              setTimeout(() => {
+                try {
+                  sendResponse({handled: true});
+                } catch (e) {
+                  // Channel already closed, ignore
+                }
+              }, 0);
+            }
+            return result;
+          } catch (error) {
+            // Prevent listener errors from propagating
+            return false;
+          }
+        };
+        return originalAddListener.call(this, wrappedListener);
+      };
+    }
   }
 
   // Intercept and suppress specific extension errors
