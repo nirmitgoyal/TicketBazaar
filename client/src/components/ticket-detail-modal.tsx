@@ -517,128 +517,57 @@ export function TicketDetailModal({
         <div className="px-6 pb-6 space-y-6">
           {/* Available Tickets Section */}
           <Card>
-            
             <div className="p-6 pt-0 space-y-4">
-                {tickets.map((ticket, index) => {
-                  const seller = sellers.data && sellers.data[ticket.sellerId];
+              {tickets.map((ticket, index) => {
+                const seller = sellers.data && sellers.data[ticket.sellerId];
 
-                  return (
-                    <div
-                      key={ticket.id}
-                      className="border rounded-xl p-5 hover:border-primary hover:shadow-lg transition-all duration-200 cursor-pointer bg-gradient-to-r from-background to-muted/20"
-                      onClick={() => onOpenSellerModal?.(ticket)}
-                    >
-                      {/* Ticket Header */}
-                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-bold text-lg">
-                              {ticket.section || "General Admission"}
-                              {ticket.row && ` • Row ${ticket.row}`}
-                              {ticket.seat && ` • Seat ${ticket.seat}`}
-                            </h3>
-                            {ticket.isTransferrable && (
-                              <Badge className="bg-green-100 text-green-800">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                Transferrable
-                              </Badge>
-                            )}
-                          </div>
+                return (
+                  <div
+                    key={ticket.id}
+                    className="border rounded-xl p-5 hover:border-primary hover:shadow-lg transition-all duration-200 cursor-pointer bg-gradient-to-r from-background to-muted/20"
+                    onClick={() => onOpenSellerModal?.(ticket)}
+                  >
+                    {/* Additional Information */}
+                    {ticket.additionalInfo && (
+                      <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+                        <div className="text-xs font-medium text-textSecondary uppercase tracking-wide mb-1">
+                          Additional Information
                         </div>
-
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-primary">
-                            Available for Transfer
-                          </div>
-                          <div className="text-sm text-textSecondary">
-                            {ticket.quantity} ticket
-                            {ticket.quantity !== 1 ? "s" : ""} available
-                          </div>
-                        </div>
+                        <p className="text-sm whitespace-pre-wrap">
+                          {ticket.additionalInfo}
+                        </p>
                       </div>
+                    )}
 
-                      {/* Ticket Details Grid */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div className="space-y-1">
-                          <div className="text-xs font-medium text-textSecondary uppercase tracking-wide">
-                            Transfer Method
-                          </div>
-                          <div className="font-medium capitalize">
-                            {ticket.transferMethod}
-                          </div>
-                        </div>
+                    <Separator className="my-4" />
 
-                        {ticket.createdAt && (
-                          <div className="space-y-1">
-                            <div className="text-xs font-medium text-textSecondary uppercase tracking-wide">
-                              Listed
-                            </div>
-                            <div className="font-medium">
-                              {new Date(ticket.createdAt).toLocaleDateString()}
-                            </div>
-                          </div>
-                        )}
+                    {/* Action Area */}
+                    <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+                      <TicketVerificationSection ticket={ticket} />
 
-                        <div className="space-y-1">
-                          <div className="text-xs font-medium text-textSecondary uppercase tracking-wide">
-                            Status
-                          </div>
-                          <Badge
-                            className={`capitalize ${
-                              ticket.status === "available"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
-                            }`}
-                          >
-                            {ticket.status}
-                          </Badge>
-                        </div>
-                      </div>
+                      <div className="flex gap-2 items-center">
+                        <SocialShare
+                          ticket={ticket}
+                          variant="outline"
+                          showWhatsApp={true}
+                          showCopy={true}
+                        />
 
-                      {/* Additional Information */}
-                      {ticket.additionalInfo && (
-                        <div className="mb-4 p-3 bg-muted/50 rounded-lg">
-                          <div className="text-xs font-medium text-textSecondary uppercase tracking-wide mb-1">
-                            Additional Information
-                          </div>
-                          <p className="text-sm whitespace-pre-wrap">
-                            {ticket.additionalInfo}
-                          </p>
-                        </div>
-                      )}
-
-                      <Separator className="my-2" />
-
-                      {/* Action Area */}
-                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <TicketVerificationSection ticket={ticket} />
-
-                        <div className="flex gap-2 w-full md:w-auto items-center">
-                          <SocialShare
-                            ticket={ticket}
-                            variant="outline"
-                            showWhatsApp={true}
-                            showCopy={true}
-                          />
-
-                          <Button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onOpenSellerModal?.(ticket);
-                            }}
-                            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white flex-1 md:flex-none"
-                          >
-                            <MessageCircle className="h-4 w-4 md:mr-2" />
-                            <span className="hidden md:inline">
-                              Contact Seller
-                            </span>
-                            <span className="md:hidden">Contact</span>
-                          </Button>
-                        </div>
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenSellerModal?.(ticket);
+                          }}
+                          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                        >
+                          <MessageCircle className="h-4 w-4 mr-2" />
+                          Contact Seller
+                        </Button>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
             </div>
           </Card>
         </div>
