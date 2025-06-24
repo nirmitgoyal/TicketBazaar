@@ -14,7 +14,7 @@ import { Navigation } from "@/components/ui/navigation";
 import { Footer } from "@/components/ui/footer";
 import { SEOConsolidated } from "@/components/seo-consolidated";
 import { ErrorBoundary } from "@/components/error-boundary";
-
+import { performanceMonitor } from "@/utils/performance";
 import ScrollNavigation from "@/components/scroll-navigation";
 
 // Optimized App component with consolidated routing
@@ -23,8 +23,23 @@ function App() {
   const [location] = useLocation();
 
   useEffect(() => {
-    // Track route changes for analytics
-    console.log('Route changed to:', location);
+    // Monitor app performance on location change
+    const endTiming = performanceMonitor.startTiming('app-render');
+    endTiming();
+    
+    // Log performance metrics periodically
+    const interval = setInterval(() => {
+      const memoryUsage = performanceMonitor.getMetrics('memory-usage');
+      if (memoryUsage.length > 0) {
+        console.log('App Performance:', {
+          location,
+          memoryMetrics: memoryUsage.slice(-1)[0],
+          avgRenderTime: performanceMonitor.getAverageMetric('app-render')
+        });
+      }
+    }, 30000); // Every 30 seconds
+
+    return () => clearInterval(interval);
   }, [location]);
 
   return (
@@ -32,7 +47,7 @@ function App() {
       onError={(error, errorInfo) => {
         // Log to monitoring service
         console.error('App-level error:', error, errorInfo);
-        console.error('Error recorded:', {
+        performanceMonitor.recordMetric({
           name: 'app-error',
           value: 1,
           timestamp: Date.now(),

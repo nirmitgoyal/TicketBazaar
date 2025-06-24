@@ -23,7 +23,7 @@ export function TicketVerificationSection({ ticket }: TicketVerificationSectionP
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
       
-      const response = await fetch(`/api/verification/verify/${ticket.id}`, {
+      const response = await fetch(`/api/ai-verification/verify/${ticket.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

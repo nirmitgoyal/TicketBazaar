@@ -64,7 +64,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const verificationRoutes = (await import("./routes/verification.routes")).default;
   apiRouter.use("/verification", strictLimiter, verificationRoutes);
 
+  // Import and register AI verification routes
+  const aiVerificationRoutes = (await import("./routes/ai-verification.routes")).default;
+  apiRouter.use("/ai-verification", strictLimiter, aiVerificationRoutes);
 
+  // Import and register fraud detection routes
+  const fraudDetectionRoutes = (await import("./routes/fraud-detection.routes")).default;
+  apiRouter.use("/fraud-detection", strictLimiter, fraudDetectionRoutes);
 
   // Import and register user routes
   const userRoutes = (await import("./routes/user.routes")).default;
@@ -82,13 +88,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const popularityRoutes = (await import("./routes/popularity.routes")).default;
   apiRouter.use("/popularity", popularityRoutes);
 
-
+  // Import and register seller trust routes
+  const sellerTrustRoutes = (await import("./routes/seller-trust.routes")).default;
+  apiRouter.use("/seller-trust", strictLimiter, sellerTrustRoutes);
 
   // Import and register email routes
   const emailRoutes = (await import("./routes/email.routes")).default;
   apiRouter.use("/email", emailRoutes);
 
+  // Import and register email debug routes
+  const emailDebugRoutes = (await import("./routes/email-debug.routes")).default;
+  apiRouter.use("/email-debug", emailDebugRoutes);
 
+  // Import and register email test routes (no authentication required)
+  const emailTestRoutes = (await import("./routes/email-test.routes")).default;
+  apiRouter.use("/email-test", emailTestRoutes);
+
+  // Import and register SendGrid setup routes
+  const sendgridSetupRoutes = (await import("./routes/sendgrid-setup.routes")).default;
+  apiRouter.use("/sendgrid-setup", sendgridSetupRoutes);
 
   // Import and register metrics routes  
   const metricsRoutes = (await import("./routes/metrics")).default;

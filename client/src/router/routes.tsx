@@ -21,14 +21,23 @@ const TermsOfService = lazy(() => import("@/pages/terms-of-service"));
 const PrivacyPolicy = lazy(() => import("@/pages/privacy-policy"));
 const DataDeletion = lazy(() => import("@/pages/data-deletion"));
 const NotFound = lazy(() => import("@/pages/not-found"));
-
+const VerificationDemo = lazy(() => import("@/pages/verification-demo"));
 const EnhancedVerificationPage = lazy(() => import("@/pages/enhanced-verification"));
 const FAQPage = lazy(() => import("@/pages/FAQPage"));
 const SellerPolicy = lazy(() => import("@/pages/SellerPolicy"));
 const CityEvents = lazy(() => import("@/pages/city-events"));
 const GlobalCities = lazy(() => import("@/pages/global-cities"));
 const HowToSellTickets = lazy(() => import("@/pages/how-to-sell-tickets"));
+const EmailTest = lazy(() => import("@/pages/EmailTest"));
+const SendGridSetup = lazy(() => import("@/pages/SendGridSetup"));
 
+// Lazy load dashboard components with fallback handling
+const VerificationReport = lazy(() => import("@/pages/verification-report").then(module => ({ 
+  default: (module as any).VerificationReport || (module as any).default || (() => <div>Page not found</div>)
+})));
+const PopularityDashboard = lazy(() => import("@/pages/popularity-dashboard").then(module => ({ 
+  default: (module as any).PopularityDashboard || (module as any).default || (() => <div>Page not found</div>)
+})));
 
 /**
  * Enhanced loading component with error boundary
@@ -138,6 +147,8 @@ export function AppRoutes() {
       
       {/* Verification */}
       <LazyRoute path="/ticket-verification" component={TicketVerification} />
+      <LazyRoute path="/verification-demo" component={VerificationDemo} />
+      <LazyRoute path="/verification-report/:ticketId" component={VerificationReport} />
       <LazyProtectedRoute path="/enhanced-verification" component={EnhancedVerificationPage} />
       <LazyProtectedRoute path="/ticket/verify/:ticketId" component={TicketVerification} />
       
@@ -156,6 +167,14 @@ export function AppRoutes() {
       <LazyRoute path="/data-deletion" component={DataDeletion} />
       <LazyRoute path="/faq" component={FAQPage} />
       <LazyRoute path="/seller-policy" component={SellerPolicy} />
+      
+      {/* Analytics */}
+      <LazyRoute path="/popularity" component={PopularityDashboard} />
+      <LazyRoute path="/analytics" component={PopularityDashboard} />
+      
+      {/* Email Testing */}
+      <LazyRoute path="/email-test" component={EmailTest} />
+      <LazyRoute path="/sendgrid-setup" component={SendGridSetup} />
       
       {/* Redirect route */}
       <Route path="/map-to-home" component={() => {
