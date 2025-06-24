@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { useAuth } from "./use-auth";
 import { useToast } from "./use-toast";
-import { createWebSocketFallback, suppressWebSocketErrors } from "../lib/websocket-fallback";
 
 // Define WebSocket event types
 export enum WebSocketEventType {
@@ -44,19 +43,13 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    // Initialize WebSocket fallback and error suppression
-    const fallback = createWebSocketFallback();
-    if (fallback.shouldSuppressErrors) {
-      suppressWebSocketErrors();
-    }
-
     // Only connect when user is authenticated
     if (!user) {
       return;
     }
 
     // Check if WebSocket is supported in this environment
-    if (!fallback.isSupported) {
+    if (typeof WebSocket === 'undefined') {
       console.log("WebSocket not supported in this environment");
       return;
     }

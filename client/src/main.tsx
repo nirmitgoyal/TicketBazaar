@@ -2,10 +2,6 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./lib/socket-fix";
 import "./index.css";
-import { initializeErrorSuppression } from "./utils/error-suppression";
-
-// Initialize error suppression for production environments
-initializeErrorSuppression();
 
 // Add global error handlers to prevent unhandled rejections from causing overlays
 window.addEventListener('unhandledrejection', (event) => {
