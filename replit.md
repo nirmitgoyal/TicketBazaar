@@ -132,6 +132,11 @@ Changelog:
   * Integrated SendGrid email service with proper error handling
   * Welcome emails now sent automatically to all new users upon registration
   * Verified email delivery with proper logging and monitoring
+- June 24, 2025. Enhanced search functionality with clear button
+  * Added clear (X) button to main search input on home page
+  * Button appears when user types text and disappears when input is empty
+  * Clicking X button clears search input and maintains focus for better UX
+  * Improved search input spacing and hover effects for better accessibility
 ```
 
 ## User Preferences
