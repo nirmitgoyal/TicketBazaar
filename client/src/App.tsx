@@ -26,6 +26,9 @@ function App() {
   const [location] = useLocation();
 
   useEffect(() => {
+    // Reset scroll position to top when route changes
+    window.scrollTo(0, 0);
+    
     // Monitor app performance on location change
     const endTiming = performanceMonitor.startTiming('app-render');
     endTiming();
