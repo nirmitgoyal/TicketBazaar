@@ -519,16 +519,12 @@ export function TicketDetailModal({
           <Card>
             
             <div className="p-6 pt-0 space-y-4">
-              <AnimatePresence>
                 {tickets.map((ticket, index) => {
                   const seller = sellers.data && sellers.data[ticket.sellerId];
 
                   return (
-                    <motion.div
+                    <div
                       key={ticket.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
                       className="border rounded-xl p-5 hover:border-primary hover:shadow-lg transition-all duration-200 cursor-pointer bg-gradient-to-r from-background to-muted/20"
                       onClick={() => onOpenSellerModal?.(ticket)}
                     >
@@ -640,10 +636,9 @@ export function TicketDetailModal({
                           </Button>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
-              </AnimatePresence>
             </div>
           </Card>
         </div>
