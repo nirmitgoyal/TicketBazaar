@@ -594,9 +594,9 @@ export default function Home() {
                   </p>
                 )
               ) : (
-                defaultTickets.length > 0 && (
+                ((defaultTickets.length > 0) || (initialTickets && initialTickets.length > 0)) && (
                   <p className="text-sm text-gray-600 mt-1">
-                    Showing {Math.min(defaultTickets.filter(isFutureTicket).length, displayedTicketsCount)} ticket{Math.min(defaultTickets.filter(isFutureTicket).length, displayedTicketsCount) !== 1 ? 's' : ''}
+                    Showing {Math.min((defaultTickets.length > 0 ? defaultTickets : initialTickets).filter(isFutureTicket).length, displayedTicketsCount)} ticket{Math.min((defaultTickets.length > 0 ? defaultTickets : initialTickets).filter(isFutureTicket).length, displayedTicketsCount) !== 1 ? 's' : ''}
                   </p>
                 )
               )}
@@ -661,16 +661,16 @@ export default function Home() {
               </div>
             )
           ) : (
-            // Show default tickets grid - prioritize initialTickets over allTickets for clean state
+            // Show default tickets grid - use initialTickets or defaultTickets, prioritize real data
             ticketsLoading ? (
               <SkeletonGrid 
                 type="events" 
                 count={8} 
                 className="grid-cols-2 lg:grid-cols-4" 
               />
-            ) : defaultTickets && defaultTickets.length > 0 ? (
+            ) : (initialTickets && initialTickets.length > 0) || (defaultTickets && defaultTickets.length > 0) ? (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
-                {defaultTickets.filter(isFutureTicket).slice(0, displayedTicketsCount).map((ticket) => (
+                {(defaultTickets.length > 0 ? defaultTickets : initialTickets).filter(isFutureTicket).slice(0, displayedTicketsCount).map((ticket) => (
                   <div 
                     key={ticket.id} 
                     className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
@@ -699,7 +699,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-            ) : (
+            ) : !ticketsLoading && (
               <div className="mobile-grid gap-3 sm:gap-4 lg:gap-6">
                 {/* Sample Event Cards to match the original design */}
                 {(() => {
@@ -786,7 +786,7 @@ export default function Home() {
           )}
 
           {/* Load More Button - Only show for real ticket data */}
-          {!searchQuery.length && defaultTickets.length > 0 && (
+          {!searchQuery.length && ((defaultTickets.length > 0) || (initialTickets && initialTickets.length > 0)) && (
             <div className="text-center mt-8">
               <Button 
                 variant="outline" 
