@@ -473,7 +473,7 @@ export function TicketDetailModal({
                     className="flex items-center gap-2 text-left hover:text-primary transition-colors cursor-pointer group"
                     title="Open in maps"
                   >
-                    <SiGooglemaps className="h-6 w-6 text-primary" />
+                    <SiGooglemaps className="h-8 w-8 text-primary" />
                     <span className="font-medium group-hover:underline">
                       {firstTicket.venue}
                     </span>
