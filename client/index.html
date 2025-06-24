@@ -49,6 +49,50 @@
           return originalConsoleWarn.apply(console, arguments);
         };
 
+        // Comprehensive Chrome extension error blocking
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+          // Override chrome.runtime methods to prevent extension errors
+          var originalSendMessage = chrome.runtime.sendMessage;
+          chrome.runtime.sendMessage = function() {
+            try {
+              var result = originalSendMessage.apply(this, arguments);
+              if (result && typeof result.catch === 'function') {
+                return result.catch(function(error) {
+                  if (error && error.message && (
+                    error.message.includes('listener indicated an asynchronous response') ||
+                    error.message.includes('message channel closed before a response was received') ||
+                    error.message.includes('Extension context invalidated')
+                  )) {
+                    return Promise.resolve();
+                  }
+                  throw error;
+                });
+              }
+              return result;
+            } catch (error) {
+              if (error && error.message && (
+                error.message.includes('listener indicated an asynchronous response') ||
+                error.message.includes('message channel closed before a response was received') ||
+                error.message.includes('Extension context invalidated')
+              )) {
+                return Promise.resolve();
+              }
+              throw error;
+            }
+          };
+
+          // Block problematic extension properties
+          try {
+            Object.defineProperty(chrome.runtime, 'sendMessage', {
+              value: chrome.runtime.sendMessage,
+              writable: false,
+              configurable: false
+            });
+          } catch (e) {
+            // Ignore if we can't lock the property
+          }
+        }
+
         // Enhanced unhandled rejection handling
         window.addEventListener(
           "unhandledrejection",

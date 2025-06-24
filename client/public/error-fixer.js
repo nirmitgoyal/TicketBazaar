@@ -95,14 +95,125 @@
       try {
         return originalSendMessage.apply(this, args);
       } catch (error) {
-        if (error.message && error.message.includes('listener indicated an asynchronous response')) {
+        if (error.message && (
+          error.message.includes('listener indicated an asynchronous response') ||
+          error.message.includes('message channel closed before a response was received')
+        )) {
           // Silently handle this error
-          return;
+          return Promise.resolve();
         }
         throw error;
       }
     };
+
+    // Override chrome.runtime.onMessage to prevent async listener issues
+    if (chrome.runtime.onMessage) {
+      const originalAddListener = chrome.runtime.onMessage.addListener;
+      chrome.runtime.onMessage.addListener = function(listener) {
+        const wrappedListener = function(message, sender, sendResponse) {
+          try {
+            const result = listener(message, sender, sendResponse);
+            // If listener returns true but doesn't call sendResponse, wrap it
+            if (result === true) {
+              setTimeout(() => {
+                try {
+                  sendResponse();
+                } catch (e) {
+                  // Channel might be closed, ignore
+                }
+              }, 0);
+            }
+            return result;
+          } catch (e) {
+            // Suppress extension errors
+            return false;
+          }
+        };
+        return originalAddListener.call(this, wrappedListener);
+      };
+    }
+
+    // Additional protection for extension context invalidation
+    const originalConnect = chrome.runtime.connect;
+    chrome.runtime.connect = function(...args) {
+      try {
+        return originalConnect.apply(this, args);
+      } catch (error) {
+        // Return a mock port that does nothing
+        return {
+          postMessage: () => {},
+          disconnect: () => {},
+          onMessage: { addListener: () => {}, removeListener: () => {} },
+          onDisconnect: { addListener: () => {}, removeListener: () => {} }
+        };
+      }
+    };
   }
+
+  // Override Promise rejection handling for extension errors
+  const originalPromiseReject = Promise.reject;
+  Promise.reject = function(reason) {
+    if (reason && typeof reason === 'object' && reason.message) {
+      if (reason.message.includes('listener indicated an asynchronous response') ||
+          reason.message.includes('message channel closed before a response was received')) {
+        // Create a resolved promise instead of rejection
+        return Promise.resolve();
+      }
+    }
+    return originalPromiseReject.call(this, reason);
+  };
+
+  // Comprehensive Chrome runtime API protection
+  if (typeof chrome !== 'undefined' && chrome.runtime) {
+    // Wrap all chrome.runtime methods to prevent errors
+    const runtimeMethods = ['sendMessage', 'connect', 'getManifest', 'getURL'];
+    runtimeMethods.forEach(method => {
+      if (chrome.runtime[method]) {
+        const original = chrome.runtime[method];
+        chrome.runtime[method] = function(...args) {
+          try {
+            const result = original.apply(this, args);
+            if (result && typeof result.catch === 'function') {
+              return result.catch(error => {
+                if (error.message && (
+                  error.message.includes('listener indicated an asynchronous response') ||
+                  error.message.includes('message channel closed before a response was received') ||
+                  error.message.includes('Extension context invalidated')
+                )) {
+                  return Promise.resolve();
+                }
+                throw error;
+              });
+            }
+            return result;
+          } catch (error) {
+            if (error.message && (
+              error.message.includes('listener indicated an asynchronous response') ||
+              error.message.includes('message channel closed before a response was received') ||
+              error.message.includes('Extension context invalidated')
+            )) {
+              return Promise.resolve();
+            }
+            throw error;
+          }
+        };
+      }
+    });
+
+    // Block extension-related property access that might cause errors
+    try {
+      Object.defineProperty(chrome.runtime, 'lastError', {
+        get: function() {
+          return null;
+        },
+        configurable: true
+      });
+    } catch (e) {
+      // Ignore if we can't override
+    }
+  }
+
+  console.log('Chrome Extension Error Blocker initialized');
 
   // Intercept and suppress specific extension errors
   const originalError = window.Error;
