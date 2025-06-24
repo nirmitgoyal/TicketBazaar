@@ -24,7 +24,11 @@
             errorText.includes("Failed to fetch dynamically imported module") ||
             errorText.includes("gmp-") ||
             errorText.includes("already defined") ||
-            errorText.includes("Loading chunk")
+            errorText.includes("Loading chunk") ||
+            errorText.includes("listener indicated an asynchronous response") ||
+            errorText.includes("message channel closed before a response was received") ||
+            errorText.includes("Extension context invalidated") ||
+            errorText.includes("chrome-extension://")
           ) {
             return;
           }
@@ -57,7 +61,11 @@
               message.includes("Failed to fetch dynamically imported module") ||
               message.includes("Script error") ||
               message.includes("Loading chunk") ||
-              message.includes("gmp-")
+              message.includes("gmp-") ||
+              message.includes("listener indicated an asynchronous response") ||
+              message.includes("message channel closed before a response was received") ||
+              message.includes("Extension context invalidated") ||
+              message.includes("chrome-extension://")
             ) {
               e.preventDefault();
               return false;
@@ -78,7 +86,11 @@
                 e.message.includes("Script error") ||
                 e.message.includes("Failed to fetch dynamically imported module") ||
                 e.message.includes("Loading chunk") ||
-                e.message.includes("gmp-")
+                e.message.includes("gmp-") ||
+                e.message.includes("listener indicated an asynchronous response") ||
+                e.message.includes("message channel closed before a response was received") ||
+                e.message.includes("Extension context invalidated") ||
+                e.message.includes("chrome-extension://")
               )
             ) {
               e.preventDefault();

@@ -152,6 +152,12 @@ Changelog:
   * Created error suppression utilities for non-critical WebSocket failures
   * Updated HTML error handlers to catch WebSocket connection failures
   * App now works seamlessly without WebSocket support in production environments
+- June 24, 2025. Fixed Chrome extension listener errors on production domain
+  * Resolved "listener indicated an asynchronous response" console errors
+  * Enhanced error suppression for Chrome extension interference
+  * Added Chrome runtime API override to prevent extension message channel errors
+  * Implemented comprehensive extension error handling in both HTML and error-fixer.js
+  * Production site now runs cleanly without browser extension console spam
 ```
 
 ## User Preferences

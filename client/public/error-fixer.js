@@ -25,7 +25,11 @@
       message.includes('Failed to fetch dynamically imported module') ||
       message.includes('WebSocket') ||
       message.includes('gmp-') ||
-      message.includes('already defined')
+      message.includes('already defined') ||
+      message.includes('listener indicated an asynchronous response') ||
+      message.includes('message channel closed before a response was received') ||
+      message.includes('Extension context invalidated') ||
+      message.includes('chrome-extension://')
     ) {
       return; // Suppress these errors
     }
@@ -39,7 +43,11 @@
       message.includes('WebSocket') ||
       message.includes('Failed to fetch dynamically imported module') ||
       message.includes('Script error') ||
-      message.includes('Loading chunk')
+      message.includes('Loading chunk') ||
+      message.includes('listener indicated an asynchronous response') ||
+      message.includes('message channel closed before a response was received') ||
+      message.includes('Extension context invalidated') ||
+      message.includes('chrome-extension://')
     ) {
       e.preventDefault();
       return false;
@@ -55,7 +63,11 @@
         e.message.includes('Script error') ||
         e.message.includes('Failed to fetch dynamically imported module') ||
         e.message.includes('Loading chunk') ||
-        e.message.includes('gmp-')
+        e.message.includes('gmp-') ||
+        e.message.includes('listener indicated an asynchronous response') ||
+        e.message.includes('message channel closed before a response was received') ||
+        e.message.includes('Extension context invalidated') ||
+        e.message.includes('chrome-extension://')
       )
     ) {
       e.preventDefault();
@@ -74,4 +86,38 @@
       return Promise.reject(error);
     });
   };
+
+  // Handle Chrome extension listener errors specifically
+  if (typeof chrome !== 'undefined' && chrome.runtime) {
+    // Override chrome.runtime.sendMessage to prevent listener errors
+    const originalSendMessage = chrome.runtime.sendMessage;
+    chrome.runtime.sendMessage = function(...args) {
+      try {
+        return originalSendMessage.apply(this, args);
+      } catch (error) {
+        if (error.message && error.message.includes('listener indicated an asynchronous response')) {
+          // Silently handle this error
+          return;
+        }
+        throw error;
+      }
+    };
+  }
+
+  // Intercept and suppress specific extension errors
+  const originalError = window.Error;
+  window.Error = function(message) {
+    if (typeof message === 'string' && 
+        (message.includes('listener indicated an asynchronous response') ||
+         message.includes('message channel closed before a response was received'))) {
+      // Create a silent error that won't be logged
+      const error = new originalError('Extension error suppressed');
+      error.suppressLogging = true;
+      return error;
+    }
+    return new originalError(message);
+  };
+  
+  // Preserve prototype
+  window.Error.prototype = originalError.prototype;
 })();
