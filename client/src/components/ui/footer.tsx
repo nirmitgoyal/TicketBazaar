@@ -89,16 +89,21 @@ export function Footer() {
         </div>
 
         <div className="border-t mt-8 pt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-              © {year} Ticket Bazaar. All rights reserved.
-            </p>
-            <div className="flex space-x-4 text-sm">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="text-center md:text-left">
+              <p className="text-sm text-muted-foreground">
+                © {year} Ticket Bazaar. All rights reserved.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                GSTIN: 092500308978TRN
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center md:justify-end gap-x-4 gap-y-2 text-sm">
               <a
                 href="/privacy-policy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 Privacy Policy
               </a>
@@ -106,7 +111,7 @@ export function Footer() {
                 href="/terms-of-service"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 Terms of Service
               </a>
@@ -114,7 +119,7 @@ export function Footer() {
                 href="/privacy-policy#cookies"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 Cookie Policy
               </a>
