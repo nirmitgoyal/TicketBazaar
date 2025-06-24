@@ -3,41 +3,39 @@ import { Switch, Route } from "wouter";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Loader2 } from "lucide-react";
+import { createResilientLazyComponent } from "@/utils/error-recovery";
 
-// Lazy loaded pages for optimal bundle splitting
-const Home = lazy(() => import("@/pages/home"));
-const EventDetails = lazy(() => import("@/pages/event-details"));
-const EventMap = lazy(() => import("@/pages/event-map"));
-const MapPage = lazy(() => import("@/pages/map"));
-const ListTicket = lazy(() => import("@/pages/list-ticket"));
-const ListTicketGlobal = lazy(() => import("@/pages/list-ticket-global"));
-const MyTickets = lazy(() => import("@/pages/my-tickets"));
-const TicketVerification = lazy(() => import("@/pages/ticket-verification"));
-const Profile = lazy(() => import("@/pages/profile"));
-const Login = lazy(() => import("@/pages/login"));
-const Register = lazy(() => import("@/pages/register"));
-const CompleteProfile = lazy(() => import("@/pages/complete-profile"));
-const TermsOfService = lazy(() => import("@/pages/terms-of-service"));
-const PrivacyPolicy = lazy(() => import("@/pages/privacy-policy"));
-const DataDeletion = lazy(() => import("@/pages/data-deletion"));
-const NotFound = lazy(() => import("@/pages/not-found"));
-const VerificationDemo = lazy(() => import("@/pages/verification-demo"));
-const EnhancedVerificationPage = lazy(() => import("@/pages/enhanced-verification"));
-const FAQPage = lazy(() => import("@/pages/FAQPage"));
-const SellerPolicy = lazy(() => import("@/pages/SellerPolicy"));
-const CityEvents = lazy(() => import("@/pages/city-events"));
-const GlobalCities = lazy(() => import("@/pages/global-cities"));
-const HowToSellTickets = lazy(() => import("@/pages/how-to-sell-tickets"));
-const EmailTest = lazy(() => import("@/pages/EmailTest"));
-const SendGridSetup = lazy(() => import("@/pages/SendGridSetup"));
+// Resilient lazy loaded pages with error recovery
+const Home = createResilientLazyComponent(() => import("@/pages/home"), "home");
+const EventDetails = createResilientLazyComponent(() => import("@/pages/event-details"), "event-details");
+const EventMap = createResilientLazyComponent(() => import("@/pages/event-map"), "event-map");
+const MapPage = createResilientLazyComponent(() => import("@/pages/map"), "map");
+const ListTicket = createResilientLazyComponent(() => import("@/pages/list-ticket"), "list-ticket");
+const ListTicketGlobal = createResilientLazyComponent(() => import("@/pages/list-ticket-global"), "list-ticket-global");
+const MyTickets = createResilientLazyComponent(() => import("@/pages/my-tickets"), "my-tickets");
+const TicketVerification = createResilientLazyComponent(() => import("@/pages/ticket-verification"), "ticket-verification");
+const Profile = createResilientLazyComponent(() => import("@/pages/profile"), "profile");
+const Login = createResilientLazyComponent(() => import("@/pages/login"), "login");
+const Register = createResilientLazyComponent(() => import("@/pages/register"), "register");
+const CompleteProfile = createResilientLazyComponent(() => import("@/pages/complete-profile"), "complete-profile");
+const TermsOfService = createResilientLazyComponent(() => import("@/pages/terms-of-service"), "terms-of-service");
+const PrivacyPolicy = createResilientLazyComponent(() => import("@/pages/privacy-policy"), "privacy-policy");
+const DataDeletion = createResilientLazyComponent(() => import("@/pages/data-deletion"), "data-deletion");
+const NotFound = createResilientLazyComponent(() => import("@/pages/not-found"), "not-found");
+const VerificationDemo = createResilientLazyComponent(() => import("@/pages/verification-demo"), "verification-demo");
+const EnhancedVerificationPage = createResilientLazyComponent(() => import("@/pages/enhanced-verification"), "enhanced-verification");
+const FAQPage = createResilientLazyComponent(() => import("@/pages/FAQPage"), "faq");
+const SellerPolicy = createResilientLazyComponent(() => import("@/pages/SellerPolicy"), "seller-policy");
+const CityEvents = createResilientLazyComponent(() => import("@/pages/city-events"), "city-events");
+const GlobalCities = createResilientLazyComponent(() => import("@/pages/global-cities"), "global-cities");
+const HowToSellTickets = createResilientLazyComponent(() => import("@/pages/how-to-sell-tickets"), "how-to-sell-tickets");
+const EmailTest = createResilientLazyComponent(() => import("@/pages/EmailTest"), "email-test");
+const SendGridSetup = createResilientLazyComponent(() => import("@/pages/SendGridSetup"), "sendgrid-setup");
+const PrivacySettings = createResilientLazyComponent(() => import("@/pages/privacy-settings"), "privacy-settings");
 
-// Lazy load dashboard components with fallback handling
-const VerificationReport = lazy(() => import("@/pages/verification-report").then(module => ({ 
-  default: (module as any).VerificationReport || (module as any).default || (() => <div>Page not found</div>)
-})));
-const PopularityDashboard = lazy(() => import("@/pages/popularity-dashboard").then(module => ({ 
-  default: (module as any).PopularityDashboard || (module as any).default || (() => <div>Page not found</div>)
-})));
+// Dashboard components with resilient loading
+const VerificationReport = createResilientLazyComponent(() => import("@/pages/verification-report"), "verification-report");
+const PopularityDashboard = createResilientLazyComponent(() => import("@/pages/popularity-dashboard"), "popularity-dashboard");
 
 /**
  * Enhanced loading component with error boundary
@@ -154,6 +152,7 @@ export function AppRoutes() {
       
       {/* User profile */}
       <LazyProtectedRoute path="/profile" component={Profile} />
+      <LazyProtectedRoute path="/privacy-settings" component={PrivacySettings} />
       
       {/* Information pages */}
       <LazyRoute path="/how-to-sell-tickets" component={HowToSellTickets} />

@@ -6,10 +6,12 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover"
     />
-    <!-- Inline error suppression - loads immediately before anything else -->
+    <!-- Enhanced error suppression - loads immediately before anything else -->
     <script>
       (function () {
-        // Suppress any console errors related to WebSockets
+        'use strict';
+        
+        // Comprehensive console error suppression
         var originalConsoleError = console.error;
         console.error = function () {
           var errorText = Array.from(arguments).join(" ");
@@ -17,19 +19,67 @@
             errorText.includes("WebSocket") ||
             errorText.includes("DOMException") ||
             errorText.includes("TypeError") ||
-            errorText.includes("Uncaught")
+            errorText.includes("Uncaught") ||
+            errorText.includes("Script error") ||
+            errorText.includes("Failed to fetch dynamically imported module") ||
+            errorText.includes("gmp-") ||
+            errorText.includes("already defined") ||
+            errorText.includes("Loading chunk")
           ) {
             return;
           }
           return originalConsoleError.apply(console, arguments);
         };
 
-        // Also catch unhandled rejections
+        // Suppress Google Maps warnings
+        var originalConsoleWarn = console.warn;
+        console.warn = function () {
+          var warnText = Array.from(arguments).join(" ");
+          if (
+            warnText.includes("already defined") ||
+            warnText.includes("gmp-") ||
+            warnText.includes("Element with name")
+          ) {
+            return;
+          }
+          return originalConsoleWarn.apply(console, arguments);
+        };
+
+        // Enhanced unhandled rejection handling
         window.addEventListener(
           "unhandledrejection",
           function (e) {
-            e.preventDefault();
-            return false;
+            var message = e.reason?.message || e.reason || '';
+            if (
+              message.includes("WebSocket") ||
+              message.includes("Failed to fetch dynamically imported module") ||
+              message.includes("Script error") ||
+              message.includes("Loading chunk") ||
+              message.includes("gmp-")
+            ) {
+              e.preventDefault();
+              return false;
+            }
+          },
+          true,
+        );
+
+        // Handle general errors
+        window.addEventListener(
+          "error",
+          function (e) {
+            if (
+              e.message && (
+                e.message.includes("WebSocket") ||
+                e.message.includes("Script error") ||
+                e.message.includes("Failed to fetch dynamically imported module") ||
+                e.message.includes("Loading chunk") ||
+                e.message.includes("gmp-")
+              )
+            ) {
+              e.preventDefault();
+              return false;
+            }
           },
           true,
         );

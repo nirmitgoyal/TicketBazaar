@@ -16,6 +16,9 @@ import { SEOConsolidated } from "@/components/seo-consolidated";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { performanceMonitor } from "@/utils/performance";
 import ScrollNavigation from "@/components/scroll-navigation";
+import "@/utils/error-recovery"; // Initialize global error handling
+import "@/utils/console-cleaner"; // Clean up console noise
+import "@/utils/performance-optimizer"; // Optimize performance
 
 // Optimized App component with consolidated routing
 
