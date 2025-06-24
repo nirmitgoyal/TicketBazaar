@@ -149,6 +149,7 @@ app.use((req, res, next) => {
     console.log('🔌 Setting up WebSocket...');
     try {
       setupWebSocket(server);
+      console.log('✅ WebSocket server initialized successfully');
     } catch (wsError: unknown) {
       console.warn('⚠️ WebSocket setup failed, continuing without WebSocket support:', wsError instanceof Error ? wsError.message : String(wsError));
     }

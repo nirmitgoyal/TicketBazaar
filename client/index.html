@@ -52,6 +52,8 @@
             var message = e.reason?.message || e.reason || '';
             if (
               message.includes("WebSocket") ||
+              message.includes("wss://") ||
+              message.includes("ws://") ||
               message.includes("Failed to fetch dynamically imported module") ||
               message.includes("Script error") ||
               message.includes("Loading chunk") ||
@@ -71,6 +73,8 @@
             if (
               e.message && (
                 e.message.includes("WebSocket") ||
+                e.message.includes("wss://") ||
+                e.message.includes("ws://") ||
                 e.message.includes("Script error") ||
                 e.message.includes("Failed to fetch dynamically imported module") ||
                 e.message.includes("Loading chunk") ||

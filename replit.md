@@ -145,6 +145,13 @@ Changelog:
   * Added client-side timeout handling (30 seconds) with AbortController
   * Improved error messages for timeout scenarios with user-friendly feedback
   * Delete operations now complete in ~1.3 seconds instead of timing out at 30 seconds
+- June 24, 2025. Fixed WebSocket connection errors on production domain (ticketbazaar.co.in)
+  * Enhanced WebSocket error handling with graceful fallback for unsupported environments
+  * Added production-specific error suppression to prevent console spam
+  * Implemented WebSocket connection testing and fallback mechanisms
+  * Created error suppression utilities for non-critical WebSocket failures
+  * Updated HTML error handlers to catch WebSocket connection failures
+  * App now works seamlessly without WebSocket support in production environments
 ```
 
 ## User Preferences
