@@ -310,9 +310,14 @@ export class FraudDetectionService {
   }
 
   // Helper methods for risk calculations
-  private calculateAccountAge(createdAt: Date): number {
+  private calculateAccountAge(createdAt: Date | string | undefined): number {
+    if (!createdAt) return 90; // Default to 90 days if no date provided
+    
+    const date = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
+    if (isNaN(date.getTime())) return 90; // Default if invalid date
+    
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - createdAt.getTime());
+    const diffTime = Math.abs(now.getTime() - date.getTime());
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
 

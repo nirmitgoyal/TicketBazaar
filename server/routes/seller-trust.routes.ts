@@ -74,7 +74,7 @@ router.get("/:sellerId", async (req, res) => {
       
       // Combine assessments for comprehensive evaluation
       const combinedAssessment = {
-        trustScore: enhancedAssessment.overallTrustScore / 10, // Convert to 0-10 scale for compatibility
+        trustScore: Math.min(9.9, enhancedAssessment.overallTrustScore / 10), // Convert to 0-10 scale, cap at 9.9
         riskLevel: enhancedAssessment.riskLevel === 'verified' ? 'low' : enhancedAssessment.riskLevel,
         summary: enhancedAssessment.summary,
         verifiedProfiles: enhancedAssessment.verifiedProfiles,
