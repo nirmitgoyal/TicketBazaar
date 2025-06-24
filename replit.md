@@ -138,6 +138,13 @@ Changelog:
   * Clicking X button clears search input and maintains focus for better UX
   * Improved search input spacing and hover effects for better accessibility
   * Fixed X button centering with proper flex alignment for better visual appearance
+- June 24, 2025. Fixed H12 timeout error on ticket deletion
+  * Fixed critical middleware bug in isTicketOwner that was causing infinite timeout loops
+  * Added database operation timeout protection (15 seconds) to prevent hanging queries
+  * Made WebSocket broadcasting asynchronous to prevent response blocking
+  * Added client-side timeout handling (30 seconds) with AbortController
+  * Improved error messages for timeout scenarios with user-friendly feedback
+  * Delete operations now complete in ~1.3 seconds instead of timing out at 30 seconds
 ```
 
 ## User Preferences
