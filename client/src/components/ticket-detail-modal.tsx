@@ -51,6 +51,17 @@ interface TicketDetailModalProps {
   onOpenSellerModal?: (ticket: Ticket) => void;
 }
 
+// Helper function to extract meaningful street information
+const getSimplifiedAddress = (fullAddress: string): string => {
+  if (!fullAddress) return "";
+  
+  // Split by comma and take the first meaningful part (usually street name/number)
+  const parts = fullAddress.split(',').map(part => part.trim());
+  
+  // Return the first non-empty part which is usually the street
+  return parts[0] || fullAddress;
+};
+
 export function TicketDetailModal({
   eventId,
   isOpen,
@@ -479,7 +490,7 @@ export function TicketDetailModal({
                     </span>
                     {firstTicket.venueAddress && (
                       <span className="text-textSecondary">
-                        • {firstTicket.venueAddress}
+                        • {getSimplifiedAddress(firstTicket.venueAddress)}
                       </span>
                     )}
                     <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100" />
