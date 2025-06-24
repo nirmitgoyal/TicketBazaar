@@ -42,7 +42,7 @@ export function Footer() {
                 href="https://www.linkedin.com/company/ticket-bazaar-co-in/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center hover:opacity-80 transition-opacity"
+                className="inline-flex items-center justify-center hover:opacity-80 transition-opacity -ml-1"
               >
                 <svg
                   className="h-6 w-6"
