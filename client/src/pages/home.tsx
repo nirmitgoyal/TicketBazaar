@@ -579,7 +579,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    className="absolute right-2 p-1 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center"
                     aria-label="Clear search"
                   >
                     <X className="h-4 w-4 text-gray-500" />
