@@ -137,6 +137,7 @@ Changelog:
   * Button appears when user types text and disappears when input is empty
   * Clicking X button clears search input and maintains focus for better UX
   * Improved search input spacing and hover effects for better accessibility
+  * Fixed X button centering with proper flex alignment for better visual appearance
 ```
 
 ## User Preferences
