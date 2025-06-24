@@ -18,6 +18,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
+import { SiGooglemaps } from "react-icons/si";
 import { AnimatedEmptyState } from "@/components/empty-states/animated-empty-state";
 import { FloatingBackground } from "@/components/empty-states/floating-elements";
 import { Button } from "@/components/ui/button";
@@ -472,7 +473,7 @@ export function TicketDetailModal({
                     className="flex items-center gap-2 text-left hover:text-primary transition-colors cursor-pointer group"
                     title="Open in maps"
                   >
-                    <MapPin className="h-4 w-4 text-primary" />
+                    <SiGooglemaps className="h-6 w-6 text-primary" />
                     <span className="font-medium group-hover:underline">
                       {firstTicket.venue}
                     </span>
