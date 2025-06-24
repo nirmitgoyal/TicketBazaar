@@ -19,7 +19,6 @@ import ScrollNavigation from "@/components/scroll-navigation";
 import "@/utils/error-recovery"; // Initialize global error handling
 import "@/utils/console-cleaner"; // Clean up console noise
 import "@/utils/performance-optimizer"; // Optimize performance
-import "@/utils/extension-error-handler"; // Handle Chrome extension errors
 
 // Optimized App component with consolidated routing
 
