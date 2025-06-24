@@ -119,6 +119,7 @@ TicketBazaar is a comprehensive peer-to-peer ticket marketplace platform designe
 ```
 Changelog:
 - June 24, 2025. Initial setup
+- June 24, 2025. Updated footer with improved text alignment and GSTIN number (092500308978TRN) for public compliance display
 ```
 
 ## User Preferences
