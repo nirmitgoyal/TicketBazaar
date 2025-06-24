@@ -23,6 +23,7 @@ import {
   BookOpen,
   Shirt,
   Users,
+  X,
 } from "lucide-react";
 import { SearchHints } from "@/components/search-hints";
 import { useQuery } from "@tanstack/react-query";
@@ -529,7 +530,7 @@ export function SearchBar({
                   ref={searchInputRef}
                   type="text"
                   placeholder="Search Tickets..."
-                  className={`w-full pl-10 pr-4 py-4 text-base rounded-lg touch-manipulation touch-target min-h-[48px] focus:ring-2 focus:ring-primary ${isSearching ? "opacity-60" : ""}`}
+                  className={`w-full pl-10 pr-10 py-4 text-base rounded-lg touch-manipulation touch-target min-h-[48px] focus:ring-2 focus:ring-primary ${isSearching ? "opacity-60" : ""}`}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -544,6 +545,23 @@ export function SearchBar({
                   autoCorrect="off"
                   spellCheck="false"
                 />
+                {/* Clear button - only show when there's text and not searching */}
+                {query.length > 0 && !isSearching && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuery("");
+                      if (searchInputRef.current) {
+                        searchInputRef.current.focus();
+                      }
+                    }}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    aria-label="Clear search"
+                  >
+                    <X className="h-4 w-4 text-gray-500" />
+                  </button>
+                )}
+                {/* Loading spinner */}
                 {isSearching && (
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                     <span className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
