@@ -116,12 +116,6 @@ export function Footer() {
                 Terms of Service
               </a>
               <a
-                href="/privacy-settings"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                Privacy Settings
-              </a>
-              <a
                 href="/privacy-policy#cookies"
                 target="_blank"
                 rel="noopener noreferrer"

@@ -19,7 +19,6 @@ const Register = lazy(() => import("@/pages/register"));
 const CompleteProfile = lazy(() => import("@/pages/complete-profile"));
 const TermsOfService = lazy(() => import("@/pages/terms-of-service"));
 const PrivacyPolicy = lazy(() => import("@/pages/privacy-policy"));
-const PrivacySettings = lazy(() => import("@/pages/privacy-settings"));
 const DataDeletion = lazy(() => import("@/pages/data-deletion"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 const VerificationDemo = lazy(() => import("@/pages/verification-demo"));
@@ -165,7 +164,6 @@ export function AppRoutes() {
       {/* Legal pages */}
       <LazyRoute path="/terms-of-service" component={TermsOfService} />
       <LazyRoute path="/privacy-policy" component={PrivacyPolicy} />
-      <LazyRoute path="/privacy-settings" component={PrivacySettings} />
       <LazyRoute path="/data-deletion" component={DataDeletion} />
       <LazyRoute path="/faq" component={FAQPage} />
       <LazyRoute path="/seller-policy" component={SellerPolicy} />

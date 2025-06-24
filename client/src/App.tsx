@@ -16,15 +16,11 @@ import { SEOConsolidated } from "@/components/seo-consolidated";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { performanceMonitor } from "@/utils/performance";
 import ScrollNavigation from "@/components/scroll-navigation";
-import { LegalComplianceModal } from "@/components/ui/legal-compliance-modal";
-import { CookieConsentBanner } from "@/components/ui/cookie-consent-banner";
-import { useLegalCompliance } from "@/hooks/use-legal-compliance";
 
 // Optimized App component with consolidated routing
 
 function App() {
   const [location] = useLocation();
-  const { shouldShowModal, hideModal } = useLegalCompliance();
 
   useEffect(() => {
     // Monitor app performance on location change
@@ -104,16 +100,6 @@ function App() {
                     </div>
                     <ScrollNavigation />
                     <Toaster />
-                    
-                    {/* Legal Compliance Modal - shows on first visit or when triggered */}
-                    <LegalComplianceModal
-                      isOpen={shouldShowModal}
-                      onClose={hideModal}
-                      showOnFirstVisit={true}
-                    />
-                    
-                    {/* Cookie Consent Banner - shows for users who haven't accepted */}
-                    <CookieConsentBanner />
                   </HelmetProvider>
                 </AtmosphereProvider>
               </AnalyticsProvider>
