@@ -36,6 +36,7 @@ TicketBazaar is a comprehensive peer-to-peer ticket marketplace platform designe
 - **Rate Limiting**: Comprehensive rate limiting across all endpoints
 - **Fraud Detection**: AI-powered verification and risk assessment
 - **Input Validation**: Zod schema validation for type safety
+- **Legal Compliance**: GDPR/CCPA compliant modal with cookie consent management and privacy settings
 
 ### Ticket Management
 - **P2P Listings**: Direct seller-to-buyer ticket listings with embedded event information
@@ -120,6 +121,7 @@ TicketBazaar is a comprehensive peer-to-peer ticket marketplace platform designe
 Changelog:
 - June 24, 2025. Initial setup
 - June 24, 2025. Updated footer with improved text alignment and GSTIN number (092500308978TRN) for public compliance display
+- June 24, 2025. Implemented comprehensive legal compliance modal system with GDPR/CCPA compliance, cookie consent management, and privacy settings page
 ```
 
 ## User Preferences
