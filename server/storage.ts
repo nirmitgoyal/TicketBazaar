@@ -342,7 +342,14 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTicket(id: number): Promise<boolean> {
     try {
-      const result = await db.delete(tickets).where(eq(tickets.id, id));
+      // Add timeout to prevent hanging
+      const deletePromise = db.delete(tickets).where(eq(tickets.id, id));
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Delete operation timed out')), 15000)
+      );
+      
+      const result = await Promise.race([deletePromise, timeoutPromise]);
+      
       // Handle different database drivers that may or may not have rowCount
       const hasRowCount = result && typeof result === 'object' && 'rowCount' in result;
       if (hasRowCount && (result as any).rowCount !== null) {

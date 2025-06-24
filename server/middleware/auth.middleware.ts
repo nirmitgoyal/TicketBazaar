@@ -14,32 +14,31 @@ export function isAuthenticated(req: Request, res: Response, next: NextFunction)
 /**
  * Middleware to check if user owns the ticket
  */
-export function isTicketOwner(req: Request, res: Response, next: NextFunction) {
-  return async (innerReq: Request, innerRes: Response, innerNext: NextFunction) => {
-    try {
-      if (!innerReq.user) {
-        return innerRes.status(401).json({ message: "Authentication required" });
-      }
-
-      const ticketId = parseInt(innerReq.params.id);
-      if (isNaN(ticketId) || ticketId <= 0) {
-        return innerRes.status(400).json({ message: "Invalid ticket ID" });
-      }
-
-      const ticket = await storage.getTicket(ticketId);
-      if (!ticket) {
-        return innerRes.status(404).json({ message: "Ticket not found" });
-      }
-
-      if (ticket.sellerId !== innerReq.user.id) {
-        return innerRes.status(403).json({ message: "Access denied: You can only modify your own tickets" });
-      }
-
-      innerNext();
-    } catch (error) {
-      innerRes.status(500).json({ message: "Error verifying ticket ownership" });
+export async function isTicketOwner(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Authentication required" });
     }
-  };
+
+    const ticketId = parseInt(req.params.id);
+    if (isNaN(ticketId) || ticketId <= 0) {
+      return res.status(400).json({ message: "Invalid ticket ID" });
+    }
+
+    const ticket = await storage.getTicket(ticketId);
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    if (ticket.sellerId !== req.user.id) {
+      return res.status(403).json({ message: "Access denied: You can only modify your own tickets" });
+    }
+
+    next();
+  } catch (error) {
+    console.error("Error verifying ticket ownership:", error);
+    res.status(500).json({ message: "Error verifying ticket ownership" });
+  }
 }
 
 /**

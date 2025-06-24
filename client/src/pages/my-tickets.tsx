@@ -280,8 +280,20 @@ export default function MyTickets() {
 
   // Handler for removing ticket listing
   const handleRemoveListing = async (ticketId: number) => {
+    const loadingToast = toast({
+      title: "Deleting...",
+      description: "Removing your ticket listing",
+    });
+
     try {
-      const response = await apiRequest("DELETE", `/api/tickets/${ticketId}`);
+      // Create a timeout promise to handle long requests
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout')), 25000)
+      );
+      
+      const deletePromise = apiRequest("DELETE", `/api/tickets/${ticketId}`);
+      const response = await Promise.race([deletePromise, timeoutPromise]);
+      
       if (response.ok) {
         toast({
           title: "Success",
@@ -295,13 +307,17 @@ export default function MyTickets() {
           queryKey: ["/api/events"] 
         });
       } else {
-        throw new Error("Failed to remove listing");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to remove listing");
       }
     } catch (error) {
+      const isTimeout = error instanceof Error && error.message === 'Request timeout';
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to remove ticket listing",
+        title: isTimeout ? "Request Timeout" : "Error",
+        description: isTimeout 
+          ? "The delete request is taking longer than expected. Please refresh the page to see if it was successful."
+          : "Failed to remove ticket listing. Please try again.",
       });
     }
   };

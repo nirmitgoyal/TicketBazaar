@@ -373,15 +373,10 @@ export class TicketController {
         return res.status(400).json({ message: "Invalid ticket ID" });
       }
 
-      // Check if ticket exists and user is the seller
+      // Get ticket for broadcasting (middleware already verified ownership)
       const ticket = await storage.getTicket(id);
       if (!ticket) {
         return res.status(404).json({ message: "Ticket not found" });
-      }
-
-      // Check if authenticated user is the seller
-      if (req.user?.id !== ticket.sellerId) {
-        return res.status(403).json({ message: "You can only delete your own tickets" });
       }
 
       // Delete the ticket from database
@@ -390,16 +385,23 @@ export class TicketController {
         return res.status(500).json({ message: "Failed to delete ticket" });
       }
 
-      // Broadcast ticket deletion via WebSocket
-      const { broadcastToAll } = await import("../services/websocket.service");
-      broadcastToAll({
-        type: "ticket_deleted",
-        ticketId: id,
-        eventTitle: ticket.eventTitle,
-        sellerId: req.user.id
-      });
-
+      // Respond immediately to prevent timeout
       res.status(200).json({ message: "Ticket deleted successfully" });
+
+      // Broadcast deletion asynchronously (don't await)
+      setImmediate(async () => {
+        try {
+          const { broadcastToAll } = await import("../services/websocket.service");
+          broadcastToAll({
+            type: "ticket_deleted",
+            ticketId: id,
+            eventTitle: ticket.eventTitle,
+            sellerId: req.user!.id
+          });
+        } catch (broadcastError) {
+          console.error("Error broadcasting ticket deletion:", broadcastError);
+        }
+      });
     } catch (error) {
       console.error("Error deleting ticket:", error);
       res.status(500).json({
