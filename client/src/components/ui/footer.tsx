@@ -95,7 +95,7 @@ export function Footer() {
                 © {year} Ticket Bazaar. All rights reserved.
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                GSTIN: 092500308978TRN
+                GSTIN: 
               </p>
             </div>
             <div className="flex flex-wrap justify-center md:justify-end gap-x-4 gap-y-2 text-sm">
@@ -115,14 +115,7 @@ export function Footer() {
               >
                 Terms of Service
               </a>
-              <a
-                href="/privacy-policy#cookies"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                Cookie Policy
-              </a>
+              
             </div>
           </div>
         </div>
