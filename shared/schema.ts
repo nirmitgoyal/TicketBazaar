@@ -339,10 +339,11 @@ export const ticketListingSchema = z.object({
     "classical", "family", "nightlife", "education", "networking"
   ]),
   eventImageUrl: z.string()
-    .url("Invalid image URL")
     .max(2000, "URL too long")
     .optional()
-    .refine((val) => !val || /^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i.test(val), "Image URL must be a valid image"),
+    .transform((val) => val === "" ? undefined : val)
+    .refine((val) => !val || z.string().url().safeParse(val).success, "Invalid image URL")
+    .refine((val) => !val || /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i.test(val), "Image URL must be a valid image file"),
   trending: z.boolean().default(false),
   sellingFast: z.boolean().default(false),
   latitude: z.number()

@@ -447,6 +447,139 @@ export class FraudDetectionService {
   }
 
   /**
+   * Assess fraud risk for ticket listings
+   */
+  async assessTicketListingRisk(userId: number, ticketData: any): Promise<{
+    riskLevel: 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
+    riskScore: number;
+    riskFactors: string[];
+    recommendations: string[];
+  }> {
+    try {
+      // Get user data
+      const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+      if (!user.length) {
+        return this.generateBasicRiskAssessment('MODERATE', 60, ['User not found']);
+      }
+
+      // Get user's ticket history
+      const ticketHistory = await this.getSellerTicketHistory(userId);
+      
+      // Perform comprehensive fraud assessment
+      const fraudScore = await this.assessSellerFraudRisk(user[0], ticketHistory);
+      
+      // Convert to expected format
+      return {
+        riskLevel: this.mapRiskCategory(fraudScore.riskCategory),
+        riskScore: fraudScore.overallRisk,
+        riskFactors: fraudScore.primaryRiskFactors,
+        recommendations: fraudScore.recommendations
+      };
+    } catch (error) {
+      console.error('Error in assessTicketListingRisk:', error);
+      return this.generateBasicRiskAssessment('LOW', 30, ['Assessment service temporarily unavailable']);
+    }
+  }
+
+  /**
+   * Assess fraud risk for contact requests
+   */
+  async assessContactRequestRisk(userId: number, ticketId: number, message: string): Promise<{
+    riskLevel: 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
+    riskScore: number;
+    riskFactors: string[];
+    recommendations: string[];
+  }> {
+    try {
+      // Get user data
+      const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+      if (!user.length) {
+        return this.generateBasicRiskAssessment('MODERATE', 60, ['User not found']);
+      }
+
+      // Basic risk assessment for contact requests
+      let riskScore = 20; // Base score
+      const riskFactors: string[] = [];
+      
+      // Check account age
+      const accountAge = this.calculateAccountAge(user[0].createdAt);
+      if (accountAge < 7) {
+        riskScore += 30;
+        riskFactors.push('Very new account (less than 7 days)');
+      } else if (accountAge < 30) {
+        riskScore += 15;
+        riskFactors.push('New account (less than 30 days)');
+      }
+
+      // Check verification status
+      const verificationLevel = this.calculateVerificationLevel(user[0]);
+      if (verificationLevel < 2) {
+        riskScore += 20;
+        riskFactors.push('Low verification level');
+      }
+
+      // Check message content for spam patterns
+      if (message && message.length < 10) {
+        riskScore += 10;
+        riskFactors.push('Very short message');
+      }
+
+      const riskLevel = riskScore >= 70 ? 'CRITICAL' : 
+                       riskScore >= 50 ? 'HIGH' : 
+                       riskScore >= 30 ? 'MODERATE' : 'LOW';
+
+      return {
+        riskLevel,
+        riskScore,
+        riskFactors,
+        recommendations: this.generateContactRequestRecommendations(riskLevel)
+      };
+    } catch (error) {
+      console.error('Error in assessContactRequestRisk:', error);
+      return this.generateBasicRiskAssessment('LOW', 30, ['Assessment service temporarily unavailable']);
+    }
+  }
+
+  private mapRiskCategory(category: 'minimal' | 'low' | 'moderate' | 'high' | 'critical'): 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL' {
+    switch (category) {
+      case 'minimal':
+      case 'low':
+        return 'LOW';
+      case 'moderate':
+        return 'MODERATE';
+      case 'high':
+        return 'HIGH';
+      case 'critical':
+        return 'CRITICAL';
+      default:
+        return 'MODERATE';
+    }
+  }
+
+  private generateBasicRiskAssessment(riskLevel: 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL', score: number, factors: string[]) {
+    return {
+      riskLevel,
+      riskScore: score,
+      riskFactors: factors,
+      recommendations: this.generateContactRequestRecommendations(riskLevel)
+    };
+  }
+
+  private generateContactRequestRecommendations(riskLevel: string): string[] {
+    switch (riskLevel) {
+      case 'CRITICAL':
+        return ['Contact blocked for security review', 'Report suspicious activity'];
+      case 'HIGH':
+        return ['Exercise extreme caution', 'Verify identity before proceeding'];
+      case 'MODERATE':
+        return ['Use standard verification', 'Meet in safe public locations'];
+      case 'LOW':
+      default:
+        return ['Follow standard safety guidelines', 'Use secure payment methods'];
+    }
+  }
+
+  /**
    * Initialize known fraud patterns
    */
   private initializeFraudPatterns(): void {
