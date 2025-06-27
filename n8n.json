@@ -1,0 +1,304 @@
+{
+  "name": "TicketBazaar – Daily Video Shorts (Web Scrape)",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hours": [9],
+              "minutes": [0],
+              "seconds": [0]
+            }
+          ]
+        },
+        "timezone": "Asia/Kolkata"
+      },
+      "name": "Daily Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [100, 100]
+    },
+    {
+      "parameters": {
+        "authentication": "none",
+        "url": "https://www.imdb.com/chart/moviemeter",
+        "method": "GET",
+        "responseFormat": "file",
+        "binaryPropertyName": "html"
+      },
+      "name": "Scrape Trending Movies",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [300, 100]
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "html",
+        "rules": [
+          {
+            "name": "title",
+            "type": "css",
+            "selector": "td.titleColumn a",
+            "attribute": "innerText"
+          }
+        ]
+      },
+      "name": "Extract Movie Titles",
+      "type": "n8n-nodes-base.htmlExtract",
+      "typeVersion": 1,
+      "position": [500, 100]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Build a human-centric resell prompt\nconst title = items[0].json.title;\nconst today = new Date().toLocaleDateString('en-GB');\nreturn [{\n  json: {\n    prompt: `A friendly person in Delhi has a ticket for ${title} on ${today} but can’t attend. They want to resell their ticket safely. Show them packing the ticket and posting it on their phone.`\n  }\n}];"
+      },
+      "name": "Build Veo Prompt",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [700, 100]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "Bearer {{$env.VERTEX_AI_TOKEN}}"
+        },
+        "url": "https://us-central1-aiplatform.googleapis.com/v1/projects/{{$env.GCP_PROJECT_ID}}/locations/us-central1/generativeLongVideo:generateVideo",
+        "method": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"model\": \"projects/{{$env.GCP_PROJECT_ID}}/locations/us-central1/models/video-text-bison@001\",\n  \"prompt\": { \"text\": \"{{$json.prompt}}\" },\n  \"videoConfig\": { \"resolution\": \"1080p\", \"duration\": \"15s\" }\n}"
+      },
+      "name": "Generate Video (Veo)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [900, 100]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract the video URI from the Veo response\nreturn [{ json: { videoUrl: items[0].json.videoUri } }];"
+      },
+      "name": "Extract Video URL",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1100, 100]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Generate platform-ready caption & hashtags\nconst title = items[0].json.title;\nreturn [{ json: {\n  caption: `🎫 Got a spare ticket for ${title}? Resell in seconds with TicketBazaar! Visit ticketbazaar.co.in #ResellYourSeat #TicketBazaar #${title.replace(/\\W/g,'')}`\n} }];"
+      },
+      "name": "Build Caption",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1300, 100]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "Bearer {{$credentials.instagram.accessToken}}"
+        },
+        "url": "https://graph.facebook.com/v18.0/{{$credentials.instagram.userId}}/media",
+        "method": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"video_url\": \"{{$node[\"Extract Video URL\"].json.videoUrl}}\",\n  \"caption\": \"{{$node[\"Build Caption\"].json.caption}}\",\n  \"media_type\": \"VIDEO\"\n}"
+      },
+      "name": "IG: Create Container",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [1500, 50]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "Bearer {{$credentials.instagram.accessToken}}"
+        },
+        "url": "https://graph.facebook.com/v18.0/{{$credentials.instagram.userId}}/media_publish",
+        "method": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\"creation_id\":\"{{$node[\"IG: Create Container\"].json.id}}\"}"
+      },
+      "name": "IG: Publish Reel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [1500, 150]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "Bearer {{$credentials.linkedin.accessToken}}"
+        },
+        "url": "https://api.linkedin.com/v2/videos?action=initializeUpload",
+        "method": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"initializeUploadRequest\": {\n    \"owner\":\"urn:li:organization:{{$env.LINKEDIN_ORG_ID}}\",\n    \"fileSizeBytes\":0\n  }\n}"
+      },
+      "name": "LI: Init Upload",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [1700, 50]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "Bearer {{$credentials.linkedin.accessToken}}"
+        },
+        "url": "={{$node[\"LI: Init Upload\"].json.value.uploadUrl}}",
+        "method": "PUT",
+        "binaryPropertyName": "data"
+      },
+      "name": "LI: Upload Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [1700, 150]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "Bearer {{$credentials.linkedin.accessToken}}"
+        },
+        "url": "https://api.linkedin.com/v2/ugcPosts",
+        "method": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"author\":\"urn:li:organization:{{$env.LINKEDIN_ORG_ID}}\",\n  \"lifecycleState\":\"PUBLISHED\",\n  \"specificContent\":{\n    \"com.linkedin.ugc.ShareContent\":{\n      \"media\":[{\"status\":\"READY\",\"media\":\"{{$node[\"LI: Init Upload\"].json.value.asset}}\"}],\n      \"shareCommentary\":{\"text\":\"{{$node[\"Build Caption\"].json.caption}}\"},\n      \"shareMediaCategory\":\"VIDEO\"\n    }\n  },\n  \"visibility\":{\"com.linkedin.ugc.MemberNetworkVisibility\":\"PUBLIC\"}\n}"
+      },
+      "name": "LI: Publish Post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [1900, 100]
+    }
+  ],
+  "connections": {
+    "Daily Trigger": {
+      "main": [
+        [
+          {
+            "node": "Scrape Trending Movies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Trending Movies": {
+      "main": [
+        [
+          {
+            "node": "Extract Movie Titles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Movie Titles": {
+      "main": [
+        [
+          {
+            "node": "Build Veo Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Veo Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Video (Veo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Video (Veo)": {
+      "main": [
+        [
+          {
+            "node": "Extract Video URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Video URL": {
+      "main": [
+        [
+          {
+            "node": "Build Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Caption": {
+      "main": [
+        [
+          {
+            "node": "IG: Create Container",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LI: Init Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IG: Create Container": {
+      "main": [
+        [
+          {
+            "node": "IG: Publish Reel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LI: Init Upload": {
+      "main": [
+        [
+          {
+            "node": "LI: Upload Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LI: Upload Video": {
+      "main": [
+        [
+          {
+            "node": "LI: Publish Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
