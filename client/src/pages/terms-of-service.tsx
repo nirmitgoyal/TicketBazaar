@@ -249,12 +249,18 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">13. Governing Law</h2>
+            <h2 className="text-xl font-semibold mb-3">13. Governing Law and Jurisdiction</h2>
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Legal Jurisdiction</h3>
+              <p className="text-gray-700 dark:text-gray-200 text-sm">
+                These Terms are governed by the laws of India. All disputes shall be subject to the exclusive jurisdiction of the courts of Delhi.
+              </p>
+            </div>
+            <p className="text-muted-foreground mb-3">
+              By using TicketBazaar, you agree that any legal disputes arising from or relating to these Terms of Service or your use of the platform will be resolved exclusively in the courts of Delhi, India, under Indian law.
+            </p>
             <p className="text-muted-foreground">
-              These terms are governed by the laws of the jurisdiction where
-              our company is registered. Disputes arising from these terms
-              shall be resolved through applicable legal channels based on
-              the user's and our company's respective jurisdictions.
+              This governing law clause applies regardless of your location or nationality. You waive any objection to the jurisdiction of Delhi courts and agree that Delhi courts have exclusive jurisdiction over all disputes.
             </p>
           </section>
 

@@ -206,6 +206,12 @@ Changelog:
   * Added compliance acknowledgment to Section 11 (User Acknowledgments) with bold emphasis
   * Clear statement: "All buyers and sellers are responsible for ensuring that ticket resale complies with their local laws and taxes"
   * Reinforces that TicketBazaar is not responsible for user compliance with applicable regulations
+- June 29, 2025. Specified governing law and jurisdiction for legal clarity
+  * Updated Section 13 (Governing Law and Jurisdiction) with explicit Indian law governance
+  * Clear statement: "These Terms are governed by the laws of India. All disputes shall be subject to the exclusive jurisdiction of the courts of Delhi"
+  * Added disclaimer box highlighting legal jurisdiction for users
+  * Specified that jurisdiction applies regardless of user location or nationality
+  * Users waive objection to Delhi courts' jurisdiction, eliminating legal ambiguity
 ```
 
 ## User Preferences
