@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
             <p className="text-muted-foreground mb-3">
-              Ticket Bazaar operates as a global discovery and contact platform connecting individual ticket sellers with buyers worldwide. We are not a reseller or broker - we do not handle ticket payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer ticket transfers. We respect your privacy and are committed to protecting your personal data in compliance with applicable data protection laws including GDPR, CCPA, and other international standards.
+              Ticket Bazaar is operated by <strong>Atrina Technologies Pvt Ltd</strong> ("we", "us", or "our"), a company registered under the laws of India. We operate as a global discovery and contact platform connecting individual ticket sellers with buyers worldwide. We are not a reseller or broker - we do not handle ticket payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer ticket transfers. We respect your privacy and are committed to protecting your personal data in compliance with applicable data protection laws including GDPR, CCPA, India's Digital Personal Data Protection Act (DPDP), and other international standards.
             </p>
             <p className="text-muted-foreground">
               This Privacy Policy explains how we collect, use, process, and safeguard your information when you use our website, mobile applications, and related services. By using our platform, you consent to the data practices described in this policy.
@@ -449,9 +449,12 @@ export default function PrivacyPolicy() {
               <li>Include your account email and specific request details</li>
             </ul>
 
-            <h3 className="text-lg font-medium mb-2">Company Information:</h3>
+            <h3 className="text-lg font-medium mb-2">Data Fiduciary Information:</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
-              <li><strong>Company Name:</strong> Ticket Bazaar</li>
+              <li><strong>Legal Entity:</strong> Atrina Technologies Pvt Ltd</li>
+              <li><strong>Registered Address:</strong> 123, Tech Park, Sector 5, Gurugram, Haryana 122001, India</li>
+              <li><strong>GSTIN:</strong> 092500308978TRN</li>
+              <li><strong>Platform Name:</strong> Ticket Bazaar</li>
               <li><strong>Global Operations:</strong> Serving customers worldwide</li>
               <li><strong>Business Hours:</strong> 24/7 support across multiple time zones</li>
             </ul>
