@@ -94,8 +94,8 @@ export function Footer() {
               <p className="text-sm text-muted-foreground">
                 © {year} Ticket Bazaar. All rights reserved.
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                GSTIN: 
+              <p className="text-sm text-muted-foreground">
+                Made with ❤️ in India
               </p>
             </div>
             <div className="flex flex-wrap justify-center md:justify-end gap-x-4 gap-y-2 text-sm">
