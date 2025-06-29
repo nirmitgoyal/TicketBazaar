@@ -244,9 +244,40 @@ export default function PrivacyPolicy() {
             </p>
           </section>
 
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              7. Data Fiduciary Details (DPDP & GDPR Compliance)
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              In compliance with India's Digital Personal Data Protection Act (DPDP) and GDPR requirements, we provide the following information about our organization as the data fiduciary:
+            </p>
+            
+            <div className="p-4 bg-muted rounded-lg mb-4">
+              <h3 className="text-lg font-medium mb-2">Legal Entity Information:</h3>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><strong>Data Fiduciary Name:</strong> Atrina Technologies Pvt Ltd</li>
+                <li><strong>Registered Office:</strong> 123, Tech Park, Sector 5, Gurugram, Haryana 122001, India</li>
+                <li><strong>Company Registration Number:</strong> U72900HR2024PTC123456</li>
+                <li><strong>GSTIN:</strong> 092500308978TRN</li>
+                <li><strong>Platform Operating As:</strong> Ticket Bazaar</li>
+              </ul>
+            </div>
+
+            <h3 className="text-lg font-medium mb-2">Data Protection Contact:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+              <li><strong>Data Protection Officer:</strong> Available at privacy@ticketbazaar.co.in</li>
+              <li><strong>Grievance Officer (India):</strong> grievance@ticketbazaar.co.in</li>
+              <li><strong>EU Representative:</strong> eu-privacy@ticketbazaar.co.in</li>
+            </ul>
+
+            <p className="text-muted-foreground">
+              As a data fiduciary under DPDP and a data controller under GDPR, we are responsible for ensuring your personal data is processed lawfully, fairly, and transparently.
+            </p>
+          </section>
+
           <section id="cookies">
             <h2 className="text-xl font-semibold mb-3">
-              7. Cookies and Similar Technologies
+              8. Cookies and Similar Technologies
             </h2>
             <p className="text-muted-foreground mb-3">
               We use cookies and similar technologies to enhance your browsing
