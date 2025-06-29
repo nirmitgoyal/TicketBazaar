@@ -15,7 +15,6 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
 import { useAnalytics } from "@/hooks/use-analytics";
-import { FraudConfidenceIndicator } from "@/components/FraudConfidenceIndicator";
 
 import { Ticket } from "@shared/schema";
 
@@ -717,10 +716,9 @@ export default function Home() {
                   .map((ticket) => (
                     <div
                       key={ticket.id}
-                      className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow relative"
+                      className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
                       onClick={() => openModal(ticket.id)}
                     >
-                      <FraudConfidenceIndicator ticket={ticket} />
                       <div className="text-center">
                         <div className="text-2xl font-bold text-blue-600">
                           {String(
@@ -782,10 +780,9 @@ export default function Home() {
                 .map((ticket) => (
                   <div
                     key={ticket.id}
-                    className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow relative"
+                    className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
                     onClick={() => openModal(ticket.id)}
                   >
-                    <FraudConfidenceIndicator ticket={ticket} />
                     <div className="text-center">
                       <div className="text-2xl font-bold text-blue-600">
                         {String(new Date(ticket.eventDate).getDate()).padStart(
@@ -911,10 +908,9 @@ export default function Home() {
                     return (
                       <div
                         key={sampleTicket.id}
-                        className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow relative"
+                        className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
                         onClick={() => openSellerModal(sampleTicket)}
                       >
-                        <FraudConfidenceIndicator ticket={sampleTicket} />
                         <div className="text-center">
                           <div className="text-2xl font-bold text-blue-600">
                             {String(eventDate.getDate()).padStart(2, "0")}
