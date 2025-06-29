@@ -212,6 +212,22 @@ export default function PrivacyPolicy() {
               <li>Any other sharing will only occur with your explicit consent</li>
               <li>You can withdraw consent at any time where legally permissible</li>
             </ul>
+
+            <h3 className="text-lg font-medium mb-2">Sale of Personal Information:</h3>
+            <div className="bg-primary/10 border-l-4 border-primary p-4 rounded-md mb-4">
+              <p className="text-foreground font-semibold">
+                TicketBazaar does not sell personal information to third parties.
+              </p>
+              <p className="text-muted-foreground mt-2">
+                We have not sold personal information in the preceding 12 months and do not intend to sell personal information in the future. This commitment applies to all user data, including data from California residents under CCPA/CPRA and users worldwide.
+              </p>
+            </div>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4">
+              <li>We do not exchange personal information for monetary consideration</li>
+              <li>We do not share personal information with third parties for their own marketing purposes</li>
+              <li>Any data sharing is limited to the purposes explicitly outlined in this policy</li>
+              <li>You have the right to opt-out of any future sale of personal information should our practices change</li>
+            </ul>
           </section>
 
           <section>

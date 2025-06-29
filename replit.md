@@ -165,6 +165,12 @@ Changelog:
   * Added data controller/fiduciary designation and responsibilities
   * Updated all subsequent section numbers (3-14) to accommodate new section
   * Enhanced Contact Information section with registered address for consistency
+- June 29, 2025. Added explicit CCPA/CPRA compliance statement about not selling personal information
+  * Added "Sale of Personal Information" subsection in Section 5 (Information Sharing and Disclosure)
+  * Explicitly states "TicketBazaar does not sell personal information to third parties"
+  * Confirms no sales in past 12 months and no intention to sell in future
+  * Clarifies commitment applies to all users globally, including California residents
+  * Added visual emphasis with highlighted box to ensure clear visibility of this commitment
 ```
 
 ## User Preferences
