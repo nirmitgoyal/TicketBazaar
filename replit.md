@@ -225,6 +225,12 @@ Changelog:
   * Added placeholders for CIN and GSTIN to be updated upon incorporation/registration
   * Enhanced Section 15 (Contact Information) with both email and postal address
   * Clarified that all legal obligations under Terms are assumed by Atrina Technologies Pvt Ltd
+- June 29, 2025. Added Grievance Officer information for regulatory compliance
+  * Created new Section 15 (Grievance Officer) with dedicated Grievance Redressal information
+  * Specified Grievance Officer: Jyoti Agarwal with email legal@ticketbazaar.co.in
+  * Added 15 business days response time commitment for grievance resolution
+  * Enhanced Section 16 (Contact Information) to include both general inquiries and grievance officer details
+  * Provided clear escalation path for user complaints and platform-related issues
 ```
 
 ## User Preferences

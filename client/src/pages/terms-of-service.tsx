@@ -286,7 +286,7 @@ export default function TermsOfService() {
             <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Legal Entity Details</h3>
               <div className="space-y-2 text-gray-700 dark:text-gray-200 text-sm">
-                <p><strong>Company Name:</strong> Atrina Technologies Pvt Ltd</p>
+                <p><strong>Company Name:</strong> Ticket Bazaar</p>
                 <p><strong>CIN:</strong> [To be updated upon incorporation]</p>
                 <p><strong>GSTIN:</strong> [To be updated upon registration]</p>
                 <div>
@@ -301,26 +301,57 @@ export default function TermsOfService() {
               </div>
             </div>
             <p className="text-muted-foreground">
-              TicketBazaar is operated by Atrina Technologies Pvt Ltd, a company incorporated under the laws of India. All legal obligations and liabilities under these Terms are assumed by Atrina Technologies Pvt Ltd.
+              TicketBazaar is operated under the laws of India. All legal obligations and liabilities under these Terms are assumed by Ticket Bazaar.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              15. Contact Information
+              15. Grievance Officer
+            </h2>
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Grievance Redressal</h3>
+              <div className="space-y-2 text-gray-700 dark:text-gray-200 text-sm">
+                <p><strong>Grievance Officer:</strong> Jyoti Agarwal</p>
+                <p><strong>Email:</strong> legal@ticketbazaar.co.in</p>
+                <p><strong>Address:</strong> Same as company's registered address</p>
+                <p><strong>Response Time:</strong> 15 business days</p>
+              </div>
+            </div>
+            <p className="text-muted-foreground">
+              For any grievances or complaints related to the platform, users can contact our designated Grievance Officer. We are committed to addressing user concerns in a timely and fair manner within the specified response timeframe.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              16. Contact Information
             </h2>
             <p className="text-muted-foreground mb-3">
               For questions regarding these Terms of Service, please contact us:
             </p>
-            <div className="space-y-2 text-muted-foreground">
-              <p><strong>Email:</strong> legal@ticketbazaar.co.in</p>
-              <p><strong>Postal Address:</strong></p>
-              <div className="ml-4">
-                <p>Atrina Technologies Pvt Ltd</p>
-                <p>3/336, Jha Compound</p>
-                <p>Marris Road</p>
-                <p>Aligarh, UP 202001</p>
-                <p>India</p>
+            <div className="space-y-4 text-muted-foreground">
+              <div>
+                <p><strong>General Inquiries:</strong></p>
+                <p className="ml-4">Email: legal@ticketbazaar.co.in</p>
+              </div>
+              <div>
+                <p><strong>Grievance Officer:</strong></p>
+                <div className="ml-4">
+                  <p>Jyoti Agarwal</p>
+                  <p>Email: legal@ticketbazaar.co.in</p>
+                  <p>Response Time: 15 business days</p>
+                </div>
+              </div>
+              <div>
+                <p><strong>Postal Address:</strong></p>
+                <div className="ml-4">
+                  <p>Ticket Bazaar</p>
+                  <p>3/336, Jha Compound</p>
+                  <p>Marris Road</p>
+                  <p>Aligarh, UP 202001</p>
+                  <p>India</p>
+                </div>
               </div>
             </div>
           </section>
