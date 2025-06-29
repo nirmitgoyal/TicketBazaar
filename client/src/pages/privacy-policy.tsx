@@ -1,5 +1,5 @@
 import React from "react";
-import { Shield } from "lucide-react";
+import { Shield, Globe } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -9,8 +9,12 @@ import {
 } from "@/components/ui/card";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function PrivacyPolicy() {
+  const [language, setLanguage] = useState<'english' | 'hindi'>('english');
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <SEOManager
@@ -22,14 +26,118 @@ export default function PrivacyPolicy() {
       </SEOManager>
       <Card className="w-full shadow-lg">
         <CardHeader className="border-b border-border pb-4">
-          <div className="flex items-center gap-2">
-            <Shield className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl">Privacy Policy</CardTitle>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Shield className="h-6 w-6 text-primary" />
+              <CardTitle className="text-2xl">Privacy Policy</CardTitle>
+            </div>
+            <div className="flex items-center gap-2">
+              <Globe className="h-5 w-5 text-muted-foreground" />
+              <Button
+                variant={language === 'english' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLanguage('english')}
+              >
+                English
+              </Button>
+              <Button
+                variant={language === 'hindi' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLanguage('hindi')}
+              >
+                हिंदी
+              </Button>
+            </div>
           </div>
-          <CardDescription>Last Updated: June 3, 2025</CardDescription>
+          <CardDescription>
+            {language === 'english' ? 'Last Updated: June 3, 2025' : 'अंतिम अपडेट: 3 जून 2025'}
+          </CardDescription>
         </CardHeader>
         <CardContent className="pt-6 pb-10 space-y-6">
-          <section>
+          {language === 'hindi' ? (
+            <>
+              <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg mb-6">
+                <p className="text-sm text-amber-800 dark:text-amber-200 mb-2">
+                  <strong>सूचना:</strong> यह हमारी अंग्रेजी गोपनीयता नीति का हिंदी सारांश है। कानूनी उद्देश्यों के लिए, कृपया पूर्ण अंग्रेजी संस्करण देखें।
+                </p>
+              </div>
+              
+              <section>
+                <h2 className="text-xl font-semibold mb-3">गोपनीयता नीति सारांश</h2>
+                
+                <h3 className="text-lg font-medium mb-2 mt-4">1. हमारे बारे में</h3>
+                <p className="text-muted-foreground mb-3">
+                  टिकट बाज़ार एक पीयर-टू-पीयर टिकट मार्केटप्लेस है जो व्यक्तिगत विक्रेताओं को खरीदारों से जोड़ता है। हमारा पंजीकृत कार्यालय 3/336, झा कंपाउंड, मैरिस रोड, अलीगढ़ 202001, भारत में है।
+                </p>
+                
+                <h3 className="text-lg font-medium mb-2 mt-4">2. हम कौन सी जानकारी एकत्र करते हैं</h3>
+                <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+                  <li><strong>व्यक्तिगत जानकारी:</strong> नाम, ईमेल, फोन नंबर, जन्म तिथि</li>
+                  <li><strong>पहचान सत्यापन:</strong> सरकारी आईडी विवरण (धोखाधड़ी रोकथाम के लिए)</li>
+                  <li><strong>लेनदेन डेटा:</strong> टिकट विवरण, बिक्री/खरीद इतिहास</li>
+                  <li><strong>तकनीकी जानकारी:</strong> आईपी पता, डिवाइस जानकारी, उपयोग डेटा</li>
+                </ul>
+                
+                <h3 className="text-lg font-medium mb-2 mt-4">3. हम आपकी जानकारी का उपयोग कैसे करते हैं</h3>
+                <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+                  <li>उपयोगकर्ताओं के बीच टिकट लेनदेन की सुविधा प्रदान करना</li>
+                  <li>धोखाधड़ी की रोकथाम और सुरक्षा सुनिश्चित करना</li>
+                  <li>ग्राहक सहायता प्रदान करना</li>
+                  <li>कानूनी आवश्यकताओं का अनुपालन करना</li>
+                </ul>
+                
+                <h3 className="text-lg font-medium mb-2 mt-4">4. जानकारी साझाकरण</h3>
+                <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+                  <li><strong>अन्य उपयोगकर्ताओं के साथ:</strong> नाम, रेटिंग, लेनदेन इतिहास (विश्वास बनाने के लिए)</li>
+                  <li><strong>सेवा प्रदाताओं के साथ:</strong> भुगतान प्रोसेसर, क्लाउड सेवाएं</li>
+                  <li><strong>कानूनी आवश्यकताएं:</strong> जब कानून द्वारा आवश्यक हो</li>
+                </ul>
+                
+                <div className="bg-primary/10 border-l-4 border-primary p-4 rounded-md mb-4">
+                  <p className="text-foreground font-semibold">
+                    महत्वपूर्ण: टिकट बाज़ार तीसरे पक्षों को व्यक्तिगत जानकारी नहीं बेचता है।
+                  </p>
+                </div>
+                
+                <h3 className="text-lg font-medium mb-2 mt-4">5. आपके अधिकार</h3>
+                <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
+                  <li><strong>पहुंच का अधिकार:</strong> अपनी व्यक्तिगत जानकारी की प्रति मांगें</li>
+                  <li><strong>सुधार का अधिकार:</strong> गलत जानकारी को अपडेट करें</li>
+                  <li><strong>मिटाने का अधिकार:</strong> अपना डेटा हटाने का अनुरोध करें</li>
+                  <li><strong>डेटा पोर्टेबिलिटी:</strong> अपना डेटा डाउनलोड करें (प्रोफाइल पेज से)</li>
+                </ul>
+                
+                <h3 className="text-lg font-medium mb-2 mt-4">6. डेटा सुरक्षा</h3>
+                <p className="text-muted-foreground mb-3">
+                  हम आपके डेटा की सुरक्षा के लिए एन्क्रिप्शन, सुरक्षित SSL/TLS कनेक्शन, और नियमित सुरक्षा ऑडिट का उपयोग करते हैं।
+                </p>
+                
+                <h3 className="text-lg font-medium mb-2 mt-4">7. कुकीज़</h3>
+                <p className="text-muted-foreground mb-3">
+                  हम एनालिटिक्स के लिए कुकीज़ का उपयोग करते हैं। गैर-आवश्यक कुकीज़ केवल आपकी सहमति से उपयोग की जाती हैं।
+                </p>
+                
+                <h3 className="text-lg font-medium mb-2 mt-4">8. आयु प्रतिबंध</h3>
+                <p className="text-muted-foreground mb-3">
+                  टिकट बाज़ार केवल 18 वर्ष या उससे अधिक आयु के उपयोगकर्ताओं के लिए है।
+                </p>
+                
+                <h3 className="text-lg font-medium mb-2 mt-4">9. संपर्क जानकारी</h3>
+                <p className="text-muted-foreground mb-3">
+                  गोपनीयता संबंधी प्रश्नों के लिए: privacy@ticketbazaar.co.in<br />
+                  हम 30 दिनों के भीतर जवाब देंगे।
+                </p>
+                
+                <div className="mt-6 p-4 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    <strong>प्रभावी तिथि:</strong> यह गोपनीयता नीति 3 जून 2025 से प्रभावी है।
+                  </p>
+                </div>
+              </section>
+            </>
+          ) : (
+            <>
+              <section>
             <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
             <p className="text-muted-foreground mb-3">
               Ticket Bazaar operates as a global discovery and contact platform connecting individual ticket sellers with buyers worldwide. We are not a reseller or broker - we do not handle ticket payments, hold inventory, or facilitate transactions. We ensure full legal compliance while improving trust in peer-to-peer ticket transfers. We respect your privacy and are committed to protecting your personal data in compliance with applicable data protection laws including GDPR, CCPA, and other international standards.
@@ -548,6 +656,8 @@ export default function PrivacyPolicy() {
               </p>
             </div>
           </section>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>

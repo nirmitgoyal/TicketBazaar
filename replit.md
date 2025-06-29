@@ -183,6 +183,13 @@ Changelog:
   * Created dedicated "Cookie Consent" subsection explaining the cookie banner functionality
   * Clarified that essential cookies are always used, while analytics/performance/targeting cookies require consent
   * Mentioned ability to change preferences via cookie settings link in website footer
+- June 29, 2025. Added multilingual privacy policy support with Hindi translation
+  * Implemented language toggle feature with English/Hindi (हिंदी) options
+  * Created comprehensive Hindi summary of privacy policy for DPDP compliance
+  * Added visual language selector with Globe icon in privacy policy header
+  * Hindi summary covers all key sections: data collection, usage, rights, security, cookies
+  * Included disclaimer that Hindi version is a summary, English version remains legally binding
+  * Foundation laid for adding other regional Indian languages (Tamil, Telugu, Bengali, etc.)
 ```
 
 ## User Preferences
