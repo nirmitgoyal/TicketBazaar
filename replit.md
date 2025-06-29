@@ -199,6 +199,13 @@ Changelog:
   * Added new Section 11 (User Acknowledgments) requiring users to accept full responsibility
   * Included visual warning boxes (yellow, blue, red, purple) to highlight key disclaimers
   * Reinforced throughout that TicketBazaar has no liability for ticket delivery, payment disputes, or event validity
+  * Simplified color scheme to professional black and white styling for all disclaimer boxes
+- June 29, 2025. Added legal compliance clause for local laws and taxes
+  * Added clear compliance responsibility in Section 4 (Listing and Selling Tickets)
+  * Enhanced Section 5 (Buying Tickets) with buyer compliance requirements
+  * Added compliance acknowledgment to Section 11 (User Acknowledgments) with bold emphasis
+  * Clear statement: "All buyers and sellers are responsible for ensuring that ticket resale complies with their local laws and taxes"
+  * Reinforces that TicketBazaar is not responsible for user compliance with applicable regulations
 ```
 
 ## User Preferences

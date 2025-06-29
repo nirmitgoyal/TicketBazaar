@@ -79,21 +79,29 @@ export default function TermsOfService() {
             <h2 className="text-xl font-semibold mb-3">
               4. Listing and Selling Tickets
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-3">
               Sellers must accurately represent the tickets they list and must
               have the legal right to sell them. Resale prices must comply with
               applicable local laws and regulations governing ticket resale in
               the seller's and buyer's respective jurisdictions.
             </p>
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+              <p className="text-gray-900 dark:text-gray-100 text-sm font-medium">
+                <strong>Legal Compliance Responsibility:</strong> All buyers and sellers are responsible for ensuring that ticket resale complies with their local laws and taxes. TicketBazaar is not responsible for user compliance with applicable regulations.
+              </p>
+            </div>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold mb-3">5. Buying Tickets</h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-3">
               Buyers are responsible for verifying event details before
               purchasing tickets. All sales are final unless the event is
               canceled or rescheduled. Refunds are subject to our Refund Policy
               and applicable laws.
+            </p>
+            <p className="text-muted-foreground">
+              <strong>Buyer Compliance:</strong> Buyers must ensure that their ticket purchases comply with all applicable local laws, tax obligations, and resale regulations in their jurisdiction.
             </p>
           </section>
 
@@ -220,6 +228,7 @@ export default function TermsOfService() {
               <li>TicketBazaar cannot and will not intervene in transaction disputes</li>
               <li>Users assume all risks associated with peer-to-peer ticket purchases</li>
               <li>TicketBazaar makes no representations about listing accuracy</li>
+              <li><strong>Users are fully responsible for ensuring compliance with all local laws, taxes, and resale regulations</strong></li>
             </ul>
             <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mt-4">
               <p className="text-sm text-gray-900 dark:text-gray-100">
