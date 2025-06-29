@@ -58,8 +58,8 @@ const getSimplifiedAddress = (fullAddress: string): string => {
   // Split by comma and take the first meaningful part (usually street name/number)
   const parts = fullAddress.split(',').map(part => part.trim());
   
-  // Return the 4th non-empty part which is usually the street
-  return parts[3] || fullAddress;
+  // Return the first non-empty part which is usually the street
+  return parts[0] || fullAddress;
 };
 
 export function TicketDetailModal({
