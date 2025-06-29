@@ -158,6 +158,13 @@ Changelog:
   * Added Chrome runtime API override to prevent extension message channel errors
   * Implemented comprehensive extension error handling in both HTML and error-fixer.js
   * Production site now runs cleanly without browser extension console spam
+- June 29, 2025. Updated Privacy Policy with DPDP and GDPR compliance requirements
+  * Added dedicated "Data Fiduciary Information" section as Section 2
+  * Included legal entity name: Ticket Bazaar
+  * Added registered address: 3/336, Jha Compound, Marris Road, Aligarh 202001, India
+  * Added data controller/fiduciary designation and responsibilities
+  * Updated all subsequent section numbers (3-14) to accommodate new section
+  * Enhanced Contact Information section with registered address for consistency
 ```
 
 ## User Preferences

@@ -41,7 +41,45 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              2. Information We Collect
+              2. Data Fiduciary Information
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              As per the Digital Personal Data Protection Act (DPDP) and General Data Protection Regulation (GDPR) requirements, we provide the following information about our organization:
+            </p>
+            
+            <div className="bg-muted p-4 rounded-lg space-y-3">
+              <div>
+                <h3 className="text-lg font-medium mb-2">Legal Entity:</h3>
+                <p className="text-muted-foreground font-medium">Ticket Bazaar</p>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-medium mb-2">Registered Address:</h3>
+                <address className="text-muted-foreground not-italic">
+                  3/336, Jha Compound<br />
+                  Marris Road<br />
+                  Aligarh<br />
+                  202001<br />
+                  India
+                </address>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-medium mb-2">Data Protection Contact:</h3>
+                <p className="text-muted-foreground">
+                  Email: <a href="mailto:privacy@ticketbazaar.co.in" className="text-primary hover:underline">privacy@ticketbazaar.co.in</a>
+                </p>
+              </div>
+            </div>
+            
+            <p className="text-muted-foreground mt-3">
+              Ticket Bazaar acts as the data controller/data fiduciary for all personal data processed through our platform. We are responsible for determining the purposes and means of processing personal data as described in this policy.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              3. Information We Collect
             </h2>
             <p className="text-muted-foreground mb-3">
               As a discovery and contact platform, we collect information necessary to connect users and improve trust in peer-to-peer transfers:
@@ -81,7 +119,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              3. How We Use Your Information
+              4. How We Use Your Information
             </h2>
             <p className="text-muted-foreground mb-3">
               We process your personal data for specific, legitimate purposes essential to our P2P marketplace operations:
@@ -132,7 +170,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              4. Information Sharing and Disclosure
+              5. Information Sharing and Disclosure
             </h2>
             <p className="text-muted-foreground mb-3">
               As a P2P marketplace, sharing certain information is essential for transactions. We share your information only as described below:
@@ -177,7 +215,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">5. Data Security</h2>
+            <h2 className="text-xl font-semibold mb-3">6. Data Security</h2>
             <p className="text-muted-foreground mb-3">
               We implement comprehensive security measures to protect your personal data in our P2P marketplace:
             </p>
@@ -206,7 +244,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              6. Your Rights and Choices
+              7. Your Rights and Choices
             </h2>
             <p className="text-muted-foreground mb-3">
               Under applicable privacy laws, including GDPR, CCPA, and other international standards, you have specific rights regarding your personal data:
@@ -246,7 +284,7 @@ export default function PrivacyPolicy() {
 
           <section id="cookies">
             <h2 className="text-xl font-semibold mb-3">
-              7. Cookies and Similar Technologies
+              8. Cookies and Similar Technologies
             </h2>
             <p className="text-muted-foreground mb-3">
               We use cookies and similar technologies to enhance your browsing
@@ -285,7 +323,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              8. Age Restrictions and Children's Privacy
+              9. Age Restrictions and Children's Privacy
             </h2>
             <p className="text-muted-foreground mb-3">
               Ticket Bazaar is designed for users who are 18 years of age or older. We strictly comply with children's privacy protection laws.
@@ -313,7 +351,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              9. International Data Transfers
+              10. International Data Transfers
             </h2>
             <p className="text-muted-foreground mb-3">
               As a global platform serving users worldwide, we may transfer your data across borders:
@@ -337,7 +375,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              10. Third-Party Services and Integrations
+              11. Third-Party Services and Integrations
             </h2>
             <p className="text-muted-foreground mb-3">
               Our platform integrates with various third-party services to enhance your experience:
@@ -371,7 +409,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              11. Changes to This Privacy Policy
+              12. Changes to This Privacy Policy
             </h2>
             <p className="text-muted-foreground mb-3">
               We may update this Privacy Policy periodically to reflect changes in our practices, services, or legal requirements:
@@ -399,7 +437,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">12. Data Retention</h2>
+            <h2 className="text-xl font-semibold mb-3">13. Data Retention</h2>
             <p className="text-muted-foreground mb-3">
               We retain your personal data based on specific business needs and legal requirements:
             </p>
@@ -430,7 +468,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">13. Contact Information and Data Protection Officer</h2>
+            <h2 className="text-xl font-semibold mb-3">14. Contact Information and Data Protection Officer</h2>
             <p className="text-muted-foreground mb-3">
               For questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us through the following channels:
             </p>
@@ -452,6 +490,7 @@ export default function PrivacyPolicy() {
             <h3 className="text-lg font-medium mb-2">Company Information:</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">
               <li><strong>Company Name:</strong> Ticket Bazaar</li>
+              <li><strong>Registered Address:</strong> 3/336, Jha Compound, Marris Road, Aligarh 202001, India</li>
               <li><strong>Global Operations:</strong> Serving customers worldwide</li>
               <li><strong>Business Hours:</strong> 24/7 support across multiple time zones</li>
             </ul>
