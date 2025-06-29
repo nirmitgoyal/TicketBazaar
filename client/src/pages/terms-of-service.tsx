@@ -26,7 +26,7 @@ export default function TermsOfService() {
             <Scroll className="h-6 w-6 text-primary" />
             <CardTitle className="text-2xl">Terms of Service</CardTitle>
           </div>
-          <CardDescription>Last Updated: April 6, 2025</CardDescription>
+          <CardDescription>Last Updated: June 29, 2025</CardDescription>
         </CardHeader>
         <CardContent className="pt-6 pb-10 space-y-6">
           <section>
@@ -42,13 +42,26 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              2. Service Description
+              2. Service Description - Discovery Platform Only
             </h2>
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-4">
+              <p className="text-yellow-800 dark:text-yellow-200 font-medium">
+                IMPORTANT: TicketBazaar is strictly a discovery and information platform. We are NOT involved in ticket sales, payment processing, or ticket delivery.
+              </p>
+            </div>
             <p className="text-muted-foreground mb-3">
-              Ticket Bazaar operates as a global discovery and contact platform connecting ticket buyers with sellers worldwide. We are not a reseller or broker and do not handle ticket payments, hold inventory, or facilitate transactions.
+              TicketBazaar operates exclusively as a discovery and contact platform that enables users to find information about tickets that may be available from other users. We function solely as an intermediary information service under applicable safe harbor provisions.
             </p>
+            <ul className="list-disc list-inside text-muted-foreground mb-3 space-y-2">
+              <li>We DO NOT sell, resell, or broker tickets</li>
+              <li>We DO NOT process or handle any payments</li>
+              <li>We DO NOT hold, store, or deliver tickets</li>
+              <li>We DO NOT facilitate or execute transactions</li>
+              <li>We DO NOT verify ticket authenticity or validity</li>
+              <li>We DO NOT guarantee event occurrence or ticket legitimacy</li>
+            </ul>
             <p className="text-muted-foreground">
-              Our platform ensures compliance with applicable local laws while improving trust in peer-to-peer ticket transfers through verified user profiles and secure communication channels. All transactions occur directly between users, and we do not guarantee the validity of tickets or the occurrence of events.
+              Our platform merely provides a space for users to post information about tickets they wish to sell and for other users to discover such listings. All negotiations, payments, and ticket transfers occur entirely outside our platform through direct user-to-user arrangements.
             </p>
           </section>
 
@@ -85,9 +98,24 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">6. Payment and Fees</h2>
+            <h2 className="text-xl font-semibold mb-3">6. Payments - No Platform Involvement</h2>
+            <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4 mb-4">
+              <p className="text-purple-800 dark:text-purple-200 text-sm">
+                <strong>No Payment Processing:</strong> TicketBazaar has NO involvement in any financial transactions between users. We do not process payments, hold funds, or provide payment protection.
+              </p>
+            </div>
+            <p className="text-muted-foreground mb-3">
+              All payment arrangements occur entirely outside our platform:
+            </p>
+            <ul className="list-disc list-inside text-muted-foreground mb-3 space-y-2">
+              <li>We DO NOT process credit cards, digital payments, or any form of payment</li>
+              <li>We DO NOT provide escrow, payment protection, or buyer guarantees</li>
+              <li>We DO NOT handle refunds, chargebacks, or payment disputes</li>
+              <li>We DO NOT verify payment completion or transfer confirmation</li>
+              <li>We have NO knowledge of or involvement in user payment methods</li>
+            </ul>
             <p className="text-muted-foreground">
-              As a discovery and contact platform, Ticket Bazaar does not handle payments or process transactions between users. All payment arrangements are made directly between buyers and sellers through their preferred methods. Any service fees for platform usage are clearly communicated and separate from transaction payments.
+              Users are solely responsible for their payment arrangements and assume all risks associated with peer-to-peer financial transactions. Platform service fees, if any, are separate from and unrelated to user-to-user ticket transactions.
             </p>
           </section>
 
@@ -105,10 +133,30 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              8. Platform Role and Limitations
+              8. Platform Role and Legal Status
             </h2>
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+              <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">TicketBazaar's Legal Status as Intermediary</h3>
+              <p className="text-blue-700 dark:text-blue-300 text-sm">
+                TicketBazaar operates as an "intermediary" under applicable information technology and e-commerce laws. We merely provide a platform for information exchange and are not liable for third-party content or actions.
+              </p>
+            </div>
+            <p className="text-muted-foreground mb-3">
+              <strong>What We Are:</strong> A passive intermediary platform that provides technological infrastructure for users to post and discover ticket-related information.
+            </p>
+            <p className="text-muted-foreground mb-3">
+              <strong>What We Are NOT:</strong>
+            </p>
+            <ul className="list-disc list-inside text-muted-foreground mb-3 space-y-2">
+              <li>A party to any transaction between users</li>
+              <li>A ticket seller, reseller, broker, or agent</li>
+              <li>A payment processor or escrow service</li>
+              <li>A guarantor of ticket authenticity or delivery</li>
+              <li>Responsible for event cancellations or changes</li>
+              <li>Liable for user disputes or fraudulent activities</li>
+            </ul>
             <p className="text-muted-foreground">
-              Ticket Bazaar is not a reseller or broker. We do not handle ticket payments, hold inventory, or facilitate transactions. We are a discovery and contact platform ensuring full legal compliance while improving trust in peer-to-peer ticket transfers. All financial transactions and ticket transfers occur independently between users through their chosen methods and locations.
+              Users acknowledge that TicketBazaar exercises no control over the quality, safety, legality, availability, or delivery of tickets listed on the platform. We do not endorse any user, listing, or transaction.
             </p>
           </section>
 
@@ -123,16 +171,66 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              10. Limitation of Liability
+              10. Comprehensive Limitation of Liability
             </h2>
-            <p className="text-muted-foreground">
-              As a discovery and contact platform that does not handle payments, hold inventory, or facilitate transactions, Ticket Bazaar is not liable for the actions of users, the validity of tickets, transaction disputes, payment issues, or the cancellation or rescheduling of events. Our liability is limited to platform-related services only and does not extend to user-to-user transactions.
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
+              <h3 className="font-semibold text-red-800 dark:text-red-200 mb-2">DISCLAIMER OF LIABILITY</h3>
+              <p className="text-red-700 dark:text-red-300 text-sm font-medium">
+                TO THE MAXIMUM EXTENT PERMITTED BY LAW, TICKETBAZAAR DISCLAIMS ALL LIABILITY FOR ANY USER-TO-USER TRANSACTIONS, TICKET VALIDITY, OR EVENT-RELATED ISSUES.
+              </p>
+            </div>
+            <p className="text-muted-foreground mb-3">
+              <strong>TicketBazaar is NOT liable for:</strong>
             </p>
+            <ul className="list-disc list-inside text-muted-foreground mb-3 space-y-2">
+              <li><strong>Ticket Delivery Issues:</strong> Failed, delayed, or non-delivery of tickets</li>
+              <li><strong>Payment Disputes:</strong> Any payment-related conflicts between users</li>
+              <li><strong>Ticket Validity:</strong> Counterfeit, invalid, or duplicate tickets</li>
+              <li><strong>Event Changes:</strong> Cancellations, postponements, or venue changes</li>
+              <li><strong>User Fraud:</strong> Scams, misrepresentations, or fraudulent listings</li>
+              <li><strong>Transaction Failures:</strong> Incomplete or disputed transactions</li>
+              <li><strong>Financial Losses:</strong> Any monetary losses from user transactions</li>
+              <li><strong>Legal Violations:</strong> Users violating local ticket resale laws</li>
+            </ul>
+            <p className="text-muted-foreground mb-3">
+              Users expressly acknowledge and agree that:
+            </p>
+            <ul className="list-disc list-inside text-muted-foreground space-y-2">
+              <li>All transactions are at their own risk</li>
+              <li>TicketBazaar provides no warranties regarding listings</li>
+              <li>Users must conduct their own due diligence</li>
+              <li>TicketBazaar's role is limited to providing information access</li>
+              <li>Users waive all claims against TicketBazaar for transaction-related issues</li>
+            </ul>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              11. Modifications to Terms
+              11. User Acknowledgments and Responsibilities
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              By using TicketBazaar, users explicitly acknowledge and agree that:
+            </p>
+            <ul className="list-disc list-inside text-muted-foreground mb-3 space-y-2">
+              <li>TicketBazaar is merely a discovery platform and not involved in transactions</li>
+              <li>All ticket purchases are made directly from other users, not from TicketBazaar</li>
+              <li>Users are solely responsible for verifying ticket authenticity before purchase</li>
+              <li>Users must verify seller credibility through their own due diligence</li>
+              <li>Payment arrangements are private agreements between users</li>
+              <li>TicketBazaar cannot and will not intervene in transaction disputes</li>
+              <li>Users assume all risks associated with peer-to-peer ticket purchases</li>
+              <li>TicketBazaar makes no representations about listing accuracy</li>
+            </ul>
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mt-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>User Agreement:</strong> "I understand that TicketBazaar is only a discovery platform. I acknowledge that all transactions, payments, and ticket transfers occur outside of TicketBazaar's control, and I accept full responsibility for my interactions with other users."
+              </p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              12. Modifications to Terms
             </h2>
             <p className="text-muted-foreground">
               We may modify these terms at any time by posting updated terms on
@@ -142,7 +240,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">12. Governing Law</h2>
+            <h2 className="text-xl font-semibold mb-3">13. Governing Law</h2>
             <p className="text-muted-foreground">
               These terms are governed by the laws of the jurisdiction where
               our company is registered. Disputes arising from these terms
@@ -153,7 +251,7 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              13. Contact Information
+              14. Contact Information
             </h2>
             <p className="text-muted-foreground">
               For questions regarding these Terms of Service, please contact us

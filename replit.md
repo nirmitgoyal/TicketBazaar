@@ -190,6 +190,15 @@ Changelog:
   * Hindi summary covers all key sections: data collection, usage, rights, security, cookies
   * Included disclaimer that Hindi version is a summary, English version remains legally binding
   * Foundation laid for adding other regional Indian languages (Tamil, Telugu, Bengali, etc.)
+- June 29, 2025. Strengthened Terms of Service to explicitly define TicketBazaar as discovery-only platform
+  * Updated Section 2 (Service Description) with prominent disclaimer about non-involvement in transactions
+  * Added explicit list of what TicketBazaar does NOT do (no payment processing, ticket delivery, etc.)
+  * Enhanced Section 6 (Payments) to emphasize complete non-involvement in financial transactions
+  * Strengthened Section 8 (Platform Role) to clarify legal status as passive intermediary
+  * Expanded Section 10 (Limitation of Liability) with comprehensive disclaimers for all transaction risks
+  * Added new Section 11 (User Acknowledgments) requiring users to accept full responsibility
+  * Included visual warning boxes (yellow, blue, red, purple) to highlight key disclaimers
+  * Reinforced throughout that TicketBazaar has no liability for ticket delivery, payment disputes, or event validity
 ```
 
 ## User Preferences
