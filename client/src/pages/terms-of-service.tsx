@@ -241,10 +241,25 @@ export default function TermsOfService() {
             <h2 className="text-xl font-semibold mb-3">
               12. Modifications to Terms
             </h2>
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Updates and Notifications</h3>
+              <p className="text-gray-700 dark:text-gray-200 text-sm">
+                TicketBazaar reserves the right to update these Terms. Significant changes will be notified via email or website banner.
+              </p>
+            </div>
+            <p className="text-muted-foreground mb-3">
+              We may modify these terms at any time by posting updated terms on our website. For significant changes that materially affect your rights or obligations, we will provide at least 30 days' advance notice through:
+            </p>
+            <ul className="list-disc list-inside text-muted-foreground mb-3 space-y-2">
+              <li>Email notification to your registered email address</li>
+              <li>Prominent website banner on the platform</li>
+              <li>In-app notification when you log in</li>
+            </ul>
+            <p className="text-muted-foreground mb-3">
+              Minor changes, such as formatting updates or clarifications that do not affect your rights, may be made without advance notice.
+            </p>
             <p className="text-muted-foreground">
-              We may modify these terms at any time by posting updated terms on
-              our website. Your continued use of our services after such changes
-              constitutes acceptance of the modified terms.
+              Your continued use of our services after the effective date of any changes constitutes acceptance of the modified terms. If you do not agree to the changes, you must discontinue use of the platform.
             </p>
           </section>
 

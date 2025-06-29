@@ -212,6 +212,12 @@ Changelog:
   * Added disclaimer box highlighting legal jurisdiction for users
   * Specified that jurisdiction applies regardless of user location or nationality
   * Users waive objection to Delhi courts' jurisdiction, eliminating legal ambiguity
+- June 29, 2025. Enhanced terms modification procedures for enforceability and fairness
+  * Updated Section 12 (Modifications to Terms) with comprehensive notification procedures
+  * Added 30-day advance notice requirement for significant changes affecting user rights
+  * Specified notification methods: email, website banner, and in-app notifications
+  * Distinguished between significant changes (requiring notice) and minor updates (formatting/clarifications)
+  * Clear statement: "TicketBazaar reserves the right to update these Terms. Significant changes will be notified via email or website banner"
 ```
 
 ## User Preferences
