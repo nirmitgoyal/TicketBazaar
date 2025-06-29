@@ -271,7 +271,7 @@ export default function PrivacyPolicy() {
               <li><strong>Right to Access:</strong> Request a copy of your personal data we hold</li>
               <li><strong>Right to Correction:</strong> Update or correct inaccurate information</li>
               <li><strong>Right to Erasure:</strong> Request deletion of your personal data (with some limitations for P2P transactions)</li>
-              <li><strong>Right to Data Portability:</strong> Receive your data in a machine-readable format</li>
+              <li><strong>Right to Data Portability:</strong> Receive your data in a structured, commonly used, and machine-readable format that can be transferred to another service provider</li>
               <li><strong>Right to Object:</strong> Object to processing of your data for certain purposes</li>
               <li><strong>Right to Restrict Processing:</strong> Limit how we use your data</li>
               <li><strong>Right to Withdraw Consent:</strong> Withdraw consent for data processing where applicable</li>
@@ -285,6 +285,22 @@ export default function PrivacyPolicy() {
               <li><strong>Data Download:</strong> Export your data through your account settings</li>
               <li><strong>Account Deletion:</strong> Delete your account and associated data</li>
             </ul>
+
+            <h3 className="text-lg font-medium mb-2">Data Portability - Download Your Data:</h3>
+            <div className="bg-muted p-4 rounded-lg mb-4">
+              <p className="text-muted-foreground mb-3">
+                You have the right to receive a copy of your personal data in a structured, commonly used, and machine-readable format. This allows you to:
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-3">
+                <li>Review all information we have about you</li>
+                <li>Transfer your data to another service provider</li>
+                <li>Keep a personal backup of your information</li>
+                <li>Verify the accuracy of your data</li>
+              </ul>
+              <p className="text-muted-foreground">
+                <strong>How to request your data:</strong> Simply visit your profile page and click on the "Download My Data" button. We'll prepare a comprehensive data export including your profile information, transaction history, communications, and all other personal data we hold. You'll receive an email notification when your download is ready, typically within 24-48 hours.
+              </p>
+            </div>
 
             <h3 className="text-lg font-medium mb-2">Important Notes for P2P Transactions:</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground pl-4 mb-4">

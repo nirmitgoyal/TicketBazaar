@@ -171,6 +171,12 @@ Changelog:
   * Confirms no sales in past 12 months and no intention to sell in future
   * Clarifies commitment applies to all users globally, including California residents
   * Added visual emphasis with highlighted box to ensure clear visibility of this commitment
+- June 29, 2025. Enhanced data portability rights in Privacy Policy
+  * Expanded "Right to Data Portability" description to clarify data format and transferability
+  * Added dedicated "Data Portability - Download Your Data" subsection in Section 7
+  * Explains how users can request downloadable copy of their data via profile page
+  * Specifies "Download My Data" button functionality with 24-48 hour processing time
+  * Lists benefits: review information, transfer to other services, personal backup, verify accuracy
 ```
 
 ## User Preferences
