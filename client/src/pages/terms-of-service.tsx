@@ -281,12 +281,48 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">
-              14. Contact Information
+              14. Company Information
             </h2>
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Legal Entity Details</h3>
+              <div className="space-y-2 text-gray-700 dark:text-gray-200 text-sm">
+                <p><strong>Company Name:</strong> Atrina Technologies Pvt Ltd</p>
+                <p><strong>CIN:</strong> [To be updated upon incorporation]</p>
+                <p><strong>GSTIN:</strong> [To be updated upon registration]</p>
+                <div>
+                  <p><strong>Registered Office:</strong></p>
+                  <div className="ml-4 mt-1">
+                    <p>3/336, Jha Compound</p>
+                    <p>Marris Road</p>
+                    <p>Aligarh, UP 202001</p>
+                    <p>India</p>
+                  </div>
+                </div>
+              </div>
+            </div>
             <p className="text-muted-foreground">
-              For questions regarding these Terms of Service, please contact us
-              at legal@ticketbazaar.co.in
+              TicketBazaar is operated by Atrina Technologies Pvt Ltd, a company incorporated under the laws of India. All legal obligations and liabilities under these Terms are assumed by Atrina Technologies Pvt Ltd.
             </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3">
+              15. Contact Information
+            </h2>
+            <p className="text-muted-foreground mb-3">
+              For questions regarding these Terms of Service, please contact us:
+            </p>
+            <div className="space-y-2 text-muted-foreground">
+              <p><strong>Email:</strong> legal@ticketbazaar.co.in</p>
+              <p><strong>Postal Address:</strong></p>
+              <div className="ml-4">
+                <p>Atrina Technologies Pvt Ltd</p>
+                <p>3/336, Jha Compound</p>
+                <p>Marris Road</p>
+                <p>Aligarh, UP 202001</p>
+                <p>India</p>
+              </div>
+            </div>
           </section>
         </CardContent>
       </Card>

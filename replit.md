@@ -218,6 +218,13 @@ Changelog:
   * Specified notification methods: email, website banner, and in-app notifications
   * Distinguished between significant changes (requiring notice) and minor updates (formatting/clarifications)
   * Clear statement: "TicketBazaar reserves the right to update these Terms. Significant changes will be notified via email or website banner"
+- June 29, 2025. Added comprehensive company information for legal transparency
+  * Added new Section 14 (Company Information) with complete legal entity details
+  * Specified operating company: Atrina Technologies Pvt Ltd
+  * Included registered office address: 3/336, Jha Compound, Marris Road, Aligarh, UP 202001, India
+  * Added placeholders for CIN and GSTIN to be updated upon incorporation/registration
+  * Enhanced Section 15 (Contact Information) with both email and postal address
+  * Clarified that all legal obligations under Terms are assumed by Atrina Technologies Pvt Ltd
 ```
 
 ## User Preferences
