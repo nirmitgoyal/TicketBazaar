@@ -212,6 +212,13 @@ Changelog:
   * Added disclaimer box highlighting legal jurisdiction for users
   * Specified that jurisdiction applies regardless of user location or nationality
   * Users waive objection to Delhi courts' jurisdiction, eliminating legal ambiguity
+- June 29, 2025. Fixed "Load More Tickets" pagination functionality
+  * Fixed issue where Load More button was not working properly when cached page state was invalid
+  * Added proper validation for cached currentPage to ensure it's always a positive number
+  * Fixed displayedTicketsCount to increment by actual number of tickets received, not always by TICKETS_PER_PAGE
+  * Reset pagination state (currentPage and displayedTicketsCount) when initial tickets are loaded to prevent stale state
+  * Ensured hasMoreTickets state correctly reflects whether a full page of tickets was received from API
+  * Load More now properly handles end-of-data scenarios when API returns fewer tickets than page size
 - June 29, 2025. Enhanced terms modification procedures for enforceability and fairness
   * Updated Section 12 (Modifications to Terms) with comprehensive notification procedures
   * Added 30-day advance notice requirement for significant changes affecting user rights

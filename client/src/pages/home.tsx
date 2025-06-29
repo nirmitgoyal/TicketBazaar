@@ -261,15 +261,6 @@ export default function Home() {
     const futureTickets = defaultTickets.filter(isFutureTicket);
     const canShowMoreFromCurrent = futureTickets.length > displayedTicketsCount;
 
-    console.log("Load More clicked:", {
-      defaultTicketsLength: defaultTickets.length,
-      futureTicketsLength: futureTickets.length,
-      displayedTicketsCount,
-      canShowMoreFromCurrent,
-      hasMoreTickets,
-      currentPage,
-    });
-
     if (isLoadingMore) return;
 
     setIsLoadingMore(true);
@@ -303,12 +294,6 @@ export default function Home() {
           throw new Error("Failed to fetch more tickets");
         }
         const newTickets = await response.json();
-        
-        console.log("API response for Load More:", {
-          page: nextPage,
-          ticketsReceived: newTickets.length,
-          params: params.toString(),
-        });
 
         // Sort new tickets by date and append to existing ones
         const sortedNewTickets = newTickets.sort((a: Ticket, b: Ticket) => {
