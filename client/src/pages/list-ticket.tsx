@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, Info, MapPin, X, Globe } from "lucide-react";
+import { AlertCircle, Info, MapPin, X, Globe, Shield, CheckCircle, XCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
@@ -74,6 +74,19 @@ const ticketFormSchema = z.object({
 
 type TicketWithEventForm = z.infer<typeof ticketFormSchema>;
 
+interface VerificationResult {
+  legitimacy: 'legit' | 'suspicious' | 'fake';
+  legitimacyEmoji: '✅' | '⚠️' | '❌';
+  explanation: string;
+  confidence: number;
+  checkDetails: {
+    eventExists: boolean;
+    venueValid: boolean;
+    dateValid: boolean;
+    possibleDuplicate: boolean;
+  };
+}
+
 export default function ListTicket() {
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
@@ -82,6 +95,8 @@ export default function ListTicket() {
 
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [venueInputValue, setVenueInputValue] = useState("");
+  const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const form = useForm<TicketWithEventForm>({
     resolver: zodResolver(ticketFormSchema),
@@ -113,6 +128,16 @@ export default function ListTicket() {
       showContactInfo: false,
     },
   });
+
+  // Reset verification when key fields change
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name && ['title', 'eventDate', 'eventTime', 'venue', 'category'].includes(name)) {
+        setVerificationResult(null);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   // Auto-detect user's location and set defaults
   useEffect(() => {
@@ -282,6 +307,75 @@ export default function ListTicket() {
     form.setValue("latitude", undefined);
     form.setValue("longitude", undefined);
   }, [form]);
+
+  // Verify ticket listing using Perplexity AI
+  const verifyTicket = async () => {
+    const values = form.getValues();
+    
+    if (!values.title || !values.eventDate || !values.venue || !values.category) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields before verifying",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsVerifying(true);
+    
+    try {
+      const response = await apiRequest("POST", "/api/ticket-verification/check", {
+        listingTitle: values.title,
+        eventDate: values.eventDate,
+        eventTime: values.eventTime,
+        venueLocation: values.venue + (values.venueAddress ? `, ${values.venueAddress}` : ''),
+        eventCategory: values.category,
+        ticketQuantity: values.quantity,
+        additionalInfo: values.additionalInfo
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setVerificationResult(result.data);
+        
+        // Show toast based on legitimacy
+        const toastConfig = {
+          legit: {
+            title: "✅ Ticket Verified",
+            description: "Your ticket listing appears legitimate",
+          },
+          suspicious: {
+            title: "⚠️ Verification Warning",
+            description: "Some concerns were found with your listing",
+            variant: "destructive" as const,
+          },
+          fake: {
+            title: "❌ Verification Failed",
+            description: "This listing appears to have significant issues",
+            variant: "destructive" as const,
+          }
+        };
+        
+        const config = toastConfig[result.data.legitimacy];
+        toast(config);
+      } else {
+        toast({
+          title: "Verification Error",
+          description: result.error || "Failed to verify ticket listing",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Verification Error",
+        description: "Unable to verify ticket listing. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
 
   const createTicketMutation = useMutation({
     mutationFn: async (data: TicketWithEventForm) => {
@@ -718,17 +812,87 @@ export default function ListTicket() {
                     />
                   </div>
 
+                  {/* Verification Section */}
+                  <div className="space-y-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                      disabled={isVerifying}
+                      onClick={verifyTicket}
+                    >
+                      <Shield className="mr-2 h-4 w-4" />
+                      {isVerifying ? "Verifying..." : "Verify Listing"}
+                    </Button>
+
+                    {verificationResult && (
+                      <Alert className={
+                        verificationResult.legitimacy === 'legit' 
+                          ? "border-green-200 bg-green-50" 
+                          : verificationResult.legitimacy === 'suspicious'
+                          ? "border-yellow-200 bg-yellow-50"
+                          : "border-red-200 bg-red-50"
+                      }>
+                        <div className="flex items-start gap-3">
+                          <span className="text-2xl mt-[-4px]">
+                            {verificationResult.legitimacyEmoji}
+                          </span>
+                          <div className="flex-1">
+                            <AlertTitle className="text-base">
+                              {verificationResult.legitimacy === 'legit' 
+                                ? "Ticket Verified" 
+                                : verificationResult.legitimacy === 'suspicious'
+                                ? "Verification Warning"
+                                : "Verification Failed"}
+                            </AlertTitle>
+                            <AlertDescription className="mt-1">
+                              {verificationResult.explanation}
+                            </AlertDescription>
+                            <div className="mt-3 space-y-1 text-sm">
+                              <div className="flex items-center gap-2">
+                                {verificationResult.checkDetails.eventExists ? (
+                                  <CheckCircle className="h-4 w-4 text-green-600" />
+                                ) : (
+                                  <XCircle className="h-4 w-4 text-red-600" />
+                                )}
+                                <span>Event exists</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {verificationResult.checkDetails.venueValid ? (
+                                  <CheckCircle className="h-4 w-4 text-green-600" />
+                                ) : (
+                                  <XCircle className="h-4 w-4 text-red-600" />
+                                )}
+                                <span>Venue is valid</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {verificationResult.checkDetails.dateValid ? (
+                                  <CheckCircle className="h-4 w-4 text-green-600" />
+                                ) : (
+                                  <XCircle className="h-4 w-4 text-red-600" />
+                                )}
+                                <span>Date is valid</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Alert>
+                    )}
+                  </div>
+
                   <Button
                     data-testid="submit-button"
                     type="submit"
                     className="w-full"
-                    disabled={createTicketMutation.isPending}
+                    disabled={createTicketMutation.isPending || !verificationResult || verificationResult.legitimacy !== 'legit'}
                     onClick={() => {
 
                     }}
                   >
                     {createTicketMutation.isPending
                       ? "Creating your listing..."
+                      : verificationResult && verificationResult.legitimacy !== 'legit'
+                      ? "Verification Required"
                       : "List Ticket"}
                   </Button>
                   

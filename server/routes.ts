@@ -72,6 +72,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const fraudDetectionRoutes = (await import("./routes/fraud-detection.routes")).default;
   apiRouter.use("/fraud-detection", strictLimiter, fraudDetectionRoutes);
 
+  // Import and register ticket verification routes
+  const ticketVerificationRoutes = (await import("./routes/ticket-verification.routes")).default;
+  apiRouter.use("/ticket-verification", strictLimiter, ticketVerificationRoutes);
+
   // Import and register user routes
   const userRoutes = (await import("./routes/user.routes")).default;
   apiRouter.use("/users", userRoutes);
