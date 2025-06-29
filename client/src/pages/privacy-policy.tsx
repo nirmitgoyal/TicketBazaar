@@ -320,9 +320,17 @@ export default function PrivacyPolicy() {
             </h2>
             <p className="text-muted-foreground mb-3">
               We use cookies and similar technologies to enhance your browsing
-              experience, analyze site traffic, and personalize content. You can
+              experience, analyze site traffic, and personalize content. We use cookies for analytics.
+              Non-essential cookies are only used with your consent. You can
               manage your cookie preferences through your browser settings.
             </p>
+            
+            <div className="bg-muted p-4 rounded-lg mb-4">
+              <h3 className="text-lg font-medium mb-2">Cookie Consent:</h3>
+              <p className="text-muted-foreground">
+                When you first visit our website, you will see a cookie consent banner that allows you to accept or reject non-essential cookies. Essential cookies required for basic site functionality will always be used, but analytics, performance, and targeting cookies require your explicit consent. You can change your cookie preferences at any time through the cookie settings link in our website footer.
+              </p>
+            </div>
             <h3 className="text-lg font-medium mb-2">
               Types of Cookies We Use:
             </h3>

@@ -177,6 +177,12 @@ Changelog:
   * Explains how users can request downloadable copy of their data via profile page
   * Specifies "Download My Data" button functionality with 24-48 hour processing time
   * Lists benefits: review information, transfer to other services, personal backup, verify accuracy
+- June 29, 2025. Added cookie consent mechanism details to Privacy Policy
+  * Updated Section 8 (Cookies and Similar Technologies) with explicit consent requirements
+  * Added statement: "We use cookies for analytics. Non-essential cookies are only used with your consent"
+  * Created dedicated "Cookie Consent" subsection explaining the cookie banner functionality
+  * Clarified that essential cookies are always used, while analytics/performance/targeting cookies require consent
+  * Mentioned ability to change preferences via cookie settings link in website footer
 ```
 
 ## User Preferences
