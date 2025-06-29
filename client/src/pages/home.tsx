@@ -42,7 +42,9 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState<number>(() => {
     try {
       const saved = localStorage.getItem("home-current-page");
-      return saved ? parseInt(saved) : 1;
+      const page = saved ? parseInt(saved) : 1;
+      // Ensure page is a valid positive number
+      return page > 0 ? page : 1;
     } catch {
       return 1;
     }
@@ -203,6 +205,10 @@ export default function Home() {
       if (!searchQuery || searchQuery.length < 2) {
         setDefaultTickets(sortedData);
         setHasMoreTickets(sortedData.length === TICKETS_PER_PAGE);
+        // Reset displayedTicketsCount to show first page of results
+        setDisplayedTicketsCount(TICKETS_PER_PAGE);
+        // Reset current page to 1 for fresh data
+        setCurrentPage(1);
       }
 
       return sortedData;
@@ -255,6 +261,15 @@ export default function Home() {
     const futureTickets = defaultTickets.filter(isFutureTicket);
     const canShowMoreFromCurrent = futureTickets.length > displayedTicketsCount;
 
+    console.log("Load More clicked:", {
+      defaultTicketsLength: defaultTickets.length,
+      futureTicketsLength: futureTickets.length,
+      displayedTicketsCount,
+      canShowMoreFromCurrent,
+      hasMoreTickets,
+      currentPage,
+    });
+
     if (isLoadingMore) return;
 
     setIsLoadingMore(true);
@@ -288,6 +303,12 @@ export default function Home() {
           throw new Error("Failed to fetch more tickets");
         }
         const newTickets = await response.json();
+        
+        console.log("API response for Load More:", {
+          page: nextPage,
+          ticketsReceived: newTickets.length,
+          params: params.toString(),
+        });
 
         // Sort new tickets by date and append to existing ones
         const sortedNewTickets = newTickets.sort((a: Ticket, b: Ticket) => {
@@ -298,8 +319,10 @@ export default function Home() {
 
         setDefaultTickets((prev) => [...prev, ...sortedNewTickets]);
         setCurrentPage(nextPage);
+        // Only has more if we received a full page of tickets
         setHasMoreTickets(newTickets.length === TICKETS_PER_PAGE);
-        setDisplayedTicketsCount((prev) => prev + TICKETS_PER_PAGE);
+        // Only increase displayed count by the actual number of new tickets
+        setDisplayedTicketsCount((prev) => prev + newTickets.length);
       }
     } catch (error) {
       console.error("Error loading more tickets:", error);
