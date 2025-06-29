@@ -128,23 +128,17 @@ export function TrustInsightBox({ sellerId, className }: TrustInsightBoxProps) {
     <Card className={cn("border-blue-200 bg-blue-50/50", className)}>
       <CardContent className="p-4 space-y-4">
         {/* Header with Trust Score */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {getRiskIcon(trustData.riskLevel)}
-            <div>
-              <div className="font-semibold text-gray-900">
-                Trust Score: <span className={getTrustScoreColor(trustData.trustScore)}>
-                  {trustData.trustScore.toFixed(1)}/10
-                </span>
-              </div>
-              <Badge className={getRiskLevelColor(trustData.riskLevel)}>
-                {trustData.riskLevel.charAt(0).toUpperCase() + trustData.riskLevel.slice(1)} Risk
-              </Badge>
+        <div className="flex items-center gap-3">
+          {getRiskIcon(trustData.riskLevel)}
+          <div>
+            <div className="font-semibold text-gray-900">
+              Trust Score: <span className={getTrustScoreColor(trustData.trustScore)}>
+                {trustData.trustScore.toFixed(1)}/10
+              </span>
             </div>
-          </div>
-          <div className="text-right">
-            <div className="text-xs text-gray-500">Confidence</div>
-            <div className="text-sm font-medium">{trustData.confidence}%</div>
+            <Badge className={getRiskLevelColor(trustData.riskLevel)}>
+              {trustData.riskLevel.charAt(0).toUpperCase() + trustData.riskLevel.slice(1)} Risk
+            </Badge>
           </div>
         </div>
 
