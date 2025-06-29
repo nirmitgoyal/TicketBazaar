@@ -231,6 +231,12 @@ Changelog:
   * Added 15 business days response time commitment for grievance resolution
   * Enhanced Section 16 (Contact Information) to include both general inquiries and grievance officer details
   * Provided clear escalation path for user complaints and platform-related issues
+- June 29, 2025. Updated cookie consent policy to reflect automatic acceptance
+  * Removed references to cookie consent banner/pop-up
+  * Updated Section 8 (Cookies and Similar Technologies) to clarify automatic consent through website usage
+  * Clear statement: "By using our website, you automatically consent to the use of all cookies"
+  * Emphasized that continued use constitutes agreement to cookie practices
+  * Maintained option for users to manage cookies through browser settings
 ```
 
 ## User Preferences
