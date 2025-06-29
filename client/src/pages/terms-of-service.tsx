@@ -44,8 +44,8 @@ export default function TermsOfService() {
             <h2 className="text-xl font-semibold mb-3">
               2. Service Description - Discovery Platform Only
             </h2>
-            <div className="bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-800/30 rounded-lg p-4 mb-4">
-              <p className="text-amber-900 dark:text-amber-100 font-medium">
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+              <p className="text-gray-900 dark:text-gray-100 font-medium">
                 IMPORTANT: TicketBazaar is strictly a discovery and information platform. We are NOT involved in ticket sales, payment processing, or ticket delivery.
               </p>
             </div>
@@ -99,8 +99,8 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-semibold mb-3">6. Payments - No Platform Involvement</h2>
-            <div className="bg-slate-50 dark:bg-slate-900/30 border border-slate-200/60 dark:border-slate-700/40 rounded-lg p-4 mb-4">
-              <p className="text-slate-700 dark:text-slate-200 text-sm">
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+              <p className="text-gray-900 dark:text-gray-100 text-sm">
                 <strong>No Payment Processing:</strong> TicketBazaar has NO involvement in any financial transactions between users. We do not process payments, hold funds, or provide payment protection.
               </p>
             </div>
@@ -135,9 +135,9 @@ export default function TermsOfService() {
             <h2 className="text-xl font-semibold mb-3">
               8. Platform Role and Legal Status
             </h2>
-            <div className="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-200/40 dark:border-sky-800/30 rounded-lg p-4 mb-4">
-              <h3 className="font-semibold text-sky-900 dark:text-sky-100 mb-2">TicketBazaar's Legal Status as Intermediary</h3>
-              <p className="text-sky-700 dark:text-sky-200 text-sm">
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">TicketBazaar's Legal Status as Intermediary</h3>
+              <p className="text-gray-700 dark:text-gray-200 text-sm">
                 TicketBazaar operates as an "intermediary" under applicable information technology and e-commerce laws. We merely provide a platform for information exchange and are not liable for third-party content or actions.
               </p>
             </div>
@@ -173,9 +173,9 @@ export default function TermsOfService() {
             <h2 className="text-xl font-semibold mb-3">
               10. Comprehensive Limitation of Liability
             </h2>
-            <div className="bg-rose-50/30 dark:bg-rose-950/15 border border-rose-200/40 dark:border-rose-800/25 rounded-lg p-4 mb-4">
-              <h3 className="font-semibold text-rose-900 dark:text-rose-100 mb-2">DISCLAIMER OF LIABILITY</h3>
-              <p className="text-rose-700 dark:text-rose-200 text-sm font-medium">
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">DISCLAIMER OF LIABILITY</h3>
+              <p className="text-gray-700 dark:text-gray-200 text-sm font-medium">
                 TO THE MAXIMUM EXTENT PERMITTED BY LAW, TICKETBAZAAR DISCLAIMS ALL LIABILITY FOR ANY USER-TO-USER TRANSACTIONS, TICKET VALIDITY, OR EVENT-RELATED ISSUES.
               </p>
             </div>
@@ -221,8 +221,8 @@ export default function TermsOfService() {
               <li>Users assume all risks associated with peer-to-peer ticket purchases</li>
               <li>TicketBazaar makes no representations about listing accuracy</li>
             </ul>
-            <div className="bg-indigo-50/30 dark:bg-indigo-950/15 border border-indigo-200/30 dark:border-indigo-800/20 rounded-lg p-4 mt-4">
-              <p className="text-sm text-indigo-900 dark:text-indigo-100">
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mt-4">
+              <p className="text-sm text-gray-900 dark:text-gray-100">
                 <strong>User Agreement:</strong> "I understand that TicketBazaar is only a discovery platform. I acknowledge that all transactions, payments, and ticket transfers occur outside of TicketBazaar's control, and I accept full responsibility for my interactions with other users."
               </p>
             </div>
