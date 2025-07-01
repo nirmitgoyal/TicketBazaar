@@ -551,31 +551,6 @@ export function TicketDetailModal({
                     )}
 
                     <Separator className="my-4" />
-
-                    {/* Action Area */}
-                    <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
-                      <TicketVerificationSection ticket={ticket} />
-
-                      <div className="flex gap-2 items-center">
-                        <SocialShare
-                          ticket={ticket}
-                          variant="outline"
-                          showWhatsApp={true}
-                          showCopy={true}
-                        />
-
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onOpenSellerModal?.(ticket);
-                          }}
-                          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-                        >
-                          <MessageCircle className="h-4 w-4 mr-2" />
-                          Contact Seller
-                        </Button>
-                      </div>
-                    </div>
                   </div>
                 );
             })}
