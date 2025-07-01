@@ -549,8 +549,6 @@ export function TicketDetailModal({
                         </p>
                       </div>
                     )}
-
-                    <Separator className="my-4" />
                   </div>
                 );
             })}
