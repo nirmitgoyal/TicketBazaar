@@ -539,6 +539,18 @@ export function TicketDetailModal({
                     className="border rounded-xl p-5 hover:border-primary hover:shadow-lg transition-all duration-200 cursor-pointer bg-gradient-to-r from-background to-muted/20"
                     onClick={() => onOpenSellerModal?.(ticket)}
                   >
+                    {/* Additional Information */}
+                    {ticket.additionalInfo && (
+                      <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+                        <div className="text-xs font-medium text-textSecondary uppercase tracking-wide mb-1">
+                          Additional Information
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap">
+                          {ticket.additionalInfo}
+                        </p>
+                      </div>
+                    )}
+
                     <Separator className="my-4" />
 
                     {/* Action Area */}
