@@ -528,9 +528,8 @@ export function TicketDetailModal({
 
         <div className="px-6 pb-6 space-y-6">
           {/* Available Tickets Section */}
-          <Card>
-            <div className="p-6 pt-0 space-y-4">
-              {tickets.map((ticket, index) => {
+          <div className="space-y-4">
+            {tickets.map((ticket, index) => {
                 const seller = sellers.data && sellers.data[ticket.sellerId];
 
                 return (
@@ -579,9 +578,8 @@ export function TicketDetailModal({
                     </div>
                   </div>
                 );
-              })}
-            </div>
-          </Card>
+            })}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
