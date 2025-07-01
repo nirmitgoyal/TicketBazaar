@@ -14,6 +14,7 @@ import {
   Star,
   Badge as BadgeIcon,
   Globe,
+
   Eye,
   TrendingUp,
   Zap,
@@ -54,10 +55,10 @@ interface TicketDetailModalProps {
 // Helper function to extract meaningful street information
 const getSimplifiedAddress = (fullAddress: string): string => {
   if (!fullAddress) return "";
-  
+
   // Split by comma and take the first meaningful part (usually street name/number)
-  const parts = fullAddress.split(',').map(part => part.trim());
-  
+  const parts = fullAddress.split(",").map((part) => part.trim());
+
   // Return the first non-empty part which is usually the street
   return parts[0] || fullAddress;
 };
@@ -528,28 +529,28 @@ export function TicketDetailModal({
 
         {/* Available Tickets Section */}
         {tickets.map((ticket, index) => {
-                const seller = sellers.data && sellers.data[ticket.sellerId];
+          const seller = sellers.data && sellers.data[ticket.sellerId];
 
-                return (
-                  <div
-                    key={ticket.id}
-                    className="border rounded-xl p-5 hover:border-primary hover:shadow-lg transition-all duration-200 cursor-pointer bg-gradient-to-r from-background to-muted/20"
-                    onClick={() => onOpenSellerModal?.(ticket)}
-                  >
-                    {/* Additional Information */}
-                    {ticket.additionalInfo && (
-                      <div className="mb-4 p-3 bg-muted/50 rounded-lg">
-                        <div className="text-xs font-medium text-textSecondary uppercase tracking-wide mb-1">
-                          Additional Information
-                        </div>
-                        <p className="text-sm whitespace-pre-wrap">
-                          {ticket.additionalInfo}
-                        </p>
-                      </div>
-                    )}
+          return (
+            <div
+              key={ticket.id}
+              className="border rounded-xl p-5 hover:border-primary hover:shadow-lg transition-all duration-200 cursor-pointer bg-gradient-to-r from-background to-muted/20"
+              onClick={() => onOpenSellerModal?.(ticket)}
+            >
+              {/* Additional Information */}
+              {ticket.additionalInfo && (
+                <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+                  <div className="text-xs font-medium text-textSecondary uppercase tracking-wide mb-1">
+                    Additional Information
                   </div>
-                );
-            })}
+                  <p className="text-sm whitespace-pre-wrap">
+                    {ticket.additionalInfo}
+                  </p>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </DialogContent>
     </Dialog>
   );
