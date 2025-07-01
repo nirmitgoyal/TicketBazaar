@@ -1,5 +1,12 @@
 // Centralized component exports for better organization
-export { default as UnifiedPopularityMetrics } from './unified-popularity-metrics';
+
+// Unified Components (NEW - Use these instead of individual components)
+export { UnifiedModal, useModal } from './unified-modal';
+export { UnifiedSEO, EventSEO, TicketSEO, CitySEO, CategorySEO, useDynamicSEO } from './unified-seo';
+export { UnifiedMetrics, usePopularityMetrics } from './unified-metrics';
+export { UnifiedEmptyState, NoTicketsEmptyState, NoSearchResultsEmptyState, ErrorEmptyState } from './unified-empty-state';
+
+// Core Components
 export { EventCard } from './event-card';
 export { TicketCard } from './ticket-card';
 export { SearchBar } from './search-bar';
@@ -20,20 +27,24 @@ export { EventRecommendations } from './event-recommendations';
 export { TicketComparison } from './ticket-comparison';
 export { SearchHints } from './search-hints';
 
-// Modal exports
-export { ContactRequestModal } from './contact-request-modal';
-export { SellerProfileModal } from './seller-profile-modal';
-export { SellerDetailsModal } from './seller-details-modal';
-export { TicketDetailModal } from './ticket-detail-modal';
-export { VerificationModal } from './verification-modal';
-export { AIVerificationModal } from './ai-verification-modal';
+// DEPRECATED - Use UnifiedModal instead
+// export { ContactRequestModal } from './contact-request-modal';
+// export { SellerProfileModal } from './seller-profile-modal';
+// export { SellerDetailsModal } from './seller-details-modal';
+// export { TicketDetailModal } from './ticket-detail-modal';
+// export { VerificationModal } from './verification-modal';
+// export { AIVerificationModal } from './ai-verification-modal';
 
-// SEO Components (consolidated)
-export { default as SEO } from './seo';
+// DEPRECATED - Use UnifiedSEO instead  
+// export { default as SEO } from './seo';
+// export { InternationalSEO } from './international-seo';
+// export { default as EnhancedSEO } from './enhanced-seo';
+
+// DEPRECATED - Use UnifiedMetrics instead
+// export { default as UnifiedPopularityMetrics } from './unified-popularity-metrics';
+
 export { HelmetProvider } from './helmet-manager';
 export { CanonicalUrlManager } from './canonical-url-manager';
-export { InternationalSEO } from './international-seo';
-export { default as EnhancedSEO } from './enhanced-seo';
 export { default as AdvancedStructuredData } from './advanced-structured-data';
 
 // UI Components
