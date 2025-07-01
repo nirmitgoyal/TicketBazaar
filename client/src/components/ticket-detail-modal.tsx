@@ -527,8 +527,7 @@ export function TicketDetailModal({
         </div>
 
         {/* Available Tickets Section */}
-        <>
-          {tickets.map((ticket, index) => {
+        {tickets.map((ticket, index) => {
                 const seller = sellers.data && sellers.data[ticket.sellerId];
 
                 return (
@@ -551,7 +550,6 @@ export function TicketDetailModal({
                   </div>
                 );
             })}
-        </>
       </DialogContent>
     </Dialog>
   );
