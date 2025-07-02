@@ -95,8 +95,13 @@ jobs:
         }
       env:
         NODE_ENV: test
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
+        SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+        VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
+        VITE_PUBLIC_BUILDER_KEY: ${{ secrets.VITE_PUBLIC_BUILDER_KEY }}
+        PORT: 5001
 
     - name: Install Playwright
       run: npx playwright install chromium --with-deps
@@ -156,8 +161,12 @@ jobs:
       env:
         NODE_ENV: test
         DATABASE_URL: postgresql://test:test@localhost:5432/test
+        SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+        VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
+        VITE_PUBLIC_BUILDER_KEY: ${{ secrets.VITE_PUBLIC_BUILDER_KEY }}
+        PORT: 5001
         CI: true
 
     - name: Upload test results
