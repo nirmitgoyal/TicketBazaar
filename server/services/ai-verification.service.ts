@@ -48,6 +48,13 @@ export class AIVerificationService {
   private baseUrl = 'https://api.perplexity.ai/chat/completions';
 
   constructor() {
+    // In test environment, allow initialization without real API key
+    if (process.env.NODE_ENV === 'test' && !process.env.PERPLEXITY_API_KEY) {
+      console.log('Test mode: Using mock AI verification service');
+      this.apiKey = 'test_key_for_testing_only';
+      return;
+    }
+
     this.apiKey = process.env.PERPLEXITY_API_KEY || '';
     if (!this.apiKey) {
       throw new Error('PERPLEXITY_API_KEY is required for AI verification');
@@ -55,6 +62,12 @@ export class AIVerificationService {
   }
 
   async verifyTicketAndSeller(ticket: Ticket, seller: User): Promise<VerificationResult> {
+    // In test mode, return mock verification result
+    if (process.env.NODE_ENV === 'test') {
+      console.log('Test mode: Mocking AI verification for ticket:', ticket.id);
+      return this.getMockVerificationResult(ticket, seller);
+    }
+
     const prompt = this.buildVerificationPrompt(ticket, seller);
     
     try {
@@ -345,6 +358,55 @@ Format your response as a structured analysis with clear sections for each aspec
     
     return sectionContent || content;
   }
+
+  private getMockVerificationResult(ticket: Ticket, seller: User): VerificationResult {
+    return {
+      overall: {
+        isVerified: true,
+        confidence: 0.85,
+        fraudRisk: 'low',
+        reasons: ['Test mode - mock verification result']
+      },
+      event: {
+        confidence: 0.9,
+        isLegitimate: true,
+        findings: ['Event appears legitimate (test mode)']
+      },
+      seller: {
+        confidence: 0.8,
+        isTrustworthy: true,
+        findings: ['Seller appears trustworthy (test mode)']
+      },
+      pricing: {
+        confidence: 0.85,
+        isFair: true,
+        findings: ['Pricing appears fair (test mode)']
+      },
+      recommendations: [
+        'This is a mock verification result for testing',
+        'In production, this would be a real AI analysis'
+      ],
+      citations: ['Test mode - no real citations'],
+      analysisTimestamp: new Date().toISOString()
+    };
+  }
 }
 
-export const aiVerificationService = new AIVerificationService();
+// Lazy initialization to allow environment variables to be set first
+let aiVerificationServiceInstance: AIVerificationService | null = null;
+
+export const getAIVerificationService = (): AIVerificationService => {
+  if (!aiVerificationServiceInstance) {
+    aiVerificationServiceInstance = new AIVerificationService();
+  }
+  return aiVerificationServiceInstance;
+};
+
+// For backward compatibility - delegate all calls to the lazy instance
+export const aiVerificationService = new Proxy({} as AIVerificationService, {
+  get(target, prop) {
+    const instance = getAIVerificationService();
+    const value = (instance as any)[prop];
+    return typeof value === 'function' ? value.bind(instance) : value;
+  }
+});
