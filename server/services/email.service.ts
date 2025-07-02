@@ -54,6 +54,14 @@ class EmailServiceSetup {
 
   static initialize(): MailService {
     if (!EmailServiceSetup.instance) {
+      // In test environment, allow initialization without real SendGrid API key
+      if (process.env.NODE_ENV === 'test' && !process.env.SENDGRID_API_KEY) {
+        logger.info('EMAIL', 'Test mode: Using mock email service (no real emails will be sent)');
+        EmailServiceSetup.instance = new MailService();
+        EmailServiceSetup.instance.setApiKey('SG.test_key_for_testing_only');
+        return EmailServiceSetup.instance;
+      }
+
       if (!process.env.SENDGRID_API_KEY) {
         throw new Error("SENDGRID_API_KEY environment variable must be set");
       }
@@ -404,6 +412,16 @@ export class EmailService {
     try {
       this.validateEmailParams(params);
       
+      // In test mode, mock email sending
+      if (process.env.NODE_ENV === 'test') {
+        logger.info('EMAIL', 'Test mode: Mocking email send', {
+          to: params.to,
+          subject: params.subject,
+          from: params.from || this.config.defaultFromEmail
+        });
+        return true;
+      }
+      
       const emailData = this.prepareEmailData(params);
       this.logEmailAttempt(emailData);
       
@@ -422,7 +440,8 @@ export class EmailService {
       throw new Error(`Missing required email parameters: to=${params.to}, subject=${params.subject}`);
     }
 
-    if (!process.env.SENDGRID_API_KEY || process.env.SENDGRID_API_KEY.length < 10) {
+    // Skip API key validation in test mode
+    if (process.env.NODE_ENV !== 'test' && (!process.env.SENDGRID_API_KEY || process.env.SENDGRID_API_KEY.length < 10)) {
       throw new Error('Invalid or missing SendGrid API key');
     }
   }
