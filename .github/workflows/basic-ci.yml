@@ -119,8 +119,8 @@ jobs:
         echo "Database URL: $DATABASE_URL"
         echo "Node Environment: $NODE_ENV"
         
-        # Start server in background
-        npm run start &
+        # Start server in background with test environment
+        node dist/index.js &
         SERVER_PID=$!
         echo "Server started with PID: $SERVER_PID"
         
