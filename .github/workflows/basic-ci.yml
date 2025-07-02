@@ -115,9 +115,17 @@ jobs:
         export DATABASE_URL="postgresql://test:test@localhost:5432/test"
         export PORT=5001
         export NODE_ENV=test
+        export SESSION_SECRET="${SESSION_SECRET:-test-session-secret-for-ci}"
+        export SENDGRID_API_KEY="${SENDGRID_API_KEY}"
+        export PERPLEXITY_API_KEY="${PERPLEXITY_API_KEY}"
+        export VITE_GOOGLE_MAPS_API_KEY="${VITE_GOOGLE_MAPS_API_KEY}"
+        export VITE_PUBLIC_BUILDER_KEY="${VITE_PUBLIC_BUILDER_KEY}"
+        export CI=true
+        
         echo "Port: $PORT"
         echo "Database URL: $DATABASE_URL"
         echo "Node Environment: $NODE_ENV"
+        echo "Session Secret configured: ${SESSION_SECRET:+Yes}"
         
         # Start server in background with test environment
         node dist/index.js &
