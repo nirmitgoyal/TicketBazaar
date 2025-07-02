@@ -18,6 +18,8 @@ import {
   Eye,
   TrendingUp,
   Zap,
+  Instagram,
+  User as UserIcon,
 } from "lucide-react";
 import { SiGooglemaps } from "react-icons/si";
 import { AnimatedEmptyState } from "@/components/empty-states/animated-empty-state";
@@ -83,6 +85,12 @@ export function TicketDetailModal({
 
   // Get event details from the first ticket (since events are embedded in tickets)
   const firstTicket = tickets?.[0];
+
+  // Fetch seller data for the first ticket
+  const { data: seller } = useQuery<User>({
+    queryKey: [`/api/auth/users/${firstTicket?.sellerId}`],
+    enabled: !!firstTicket?.sellerId && isOpen,
+  });
 
   // Function to handle venue click with device-specific behavior
   const handleVenueClick = () => {
@@ -524,6 +532,35 @@ export function TicketDetailModal({
                 </div>
               </div>
             </DialogHeader>
+
+            {/* Seller Information */}
+            {seller && (
+              <div className="mt-4 p-4 bg-secondary/20 rounded-lg border border-border">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <UserIcon className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="text-sm text-textSecondary">Posted by</p>
+                      <p className="font-semibold text-base">{seller.fullName}</p>
+                    </div>
+                  </div>
+                  {seller.instagram && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const instagramHandle = seller.instagram?.replace("@", "");
+                        window.open(`https://instagram.com/${instagramHandle}`, "_blank");
+                      }}
+                      className="flex items-center gap-2 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-colors"
+                    >
+                      <Instagram className="h-4 w-4" />
+                      <span>{seller.instagram}</span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
