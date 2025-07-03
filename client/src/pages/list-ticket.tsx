@@ -589,6 +589,7 @@ export default function ListTicket() {
                           <FormControl>
                             <Input
                               placeholder="e.g., 2 VIP tickets for Arijit Singh concert"
+                              maxLength={100}
                               {...field}
                             />
                           </FormControl>
