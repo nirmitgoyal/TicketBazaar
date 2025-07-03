@@ -24,7 +24,15 @@ try {
 }
 
 const router = Router();
-const sellerTrustService = new SellerTrustService();
+let sellerTrustService: SellerTrustService | null = null;
+
+// Lazy initialization of seller trust service
+function getSellerTrustService(): SellerTrustService {
+  if (!sellerTrustService) {
+    sellerTrustService = new SellerTrustService();
+  }
+  return sellerTrustService;
+}
 
 // GET /api/seller-trust/:sellerId - Get trust assessment for a seller
 router.get("/:sellerId", async (req, res) => {
@@ -99,7 +107,7 @@ router.get("/:sellerId", async (req, res) => {
       logger.warn('express', `Enhanced verification failed, falling back to standard assessment: ${enhancedError}`);
       
       // Fallback to original assessment method
-      const trustAssessment = await sellerTrustService.assessSellerTrust(sellerProfile);
+      const trustAssessment = await getSellerTrustService().assessSellerTrust(sellerProfile);
 
       logger.info('express', `Trust assessment completed for seller ${sellerId}`);
 

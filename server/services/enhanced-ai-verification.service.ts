@@ -865,4 +865,19 @@ Provide detailed evidence for all findings.`;
   }
 }
 
-export const enhancedAIVerificationService = new EnhancedAIVerificationService();
+// Lazy initialization to avoid constructor errors during module import
+let enhancedAIVerificationServiceInstance: EnhancedAIVerificationService | null = null;
+
+export function getEnhancedAIVerificationService(): EnhancedAIVerificationService {
+  if (!enhancedAIVerificationServiceInstance) {
+    enhancedAIVerificationServiceInstance = new EnhancedAIVerificationService();
+  }
+  return enhancedAIVerificationServiceInstance;
+}
+
+// Backward compatibility export
+export const enhancedAIVerificationService = {
+  get instance() {
+    return getEnhancedAIVerificationService();
+  }
+};
