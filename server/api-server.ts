@@ -38,8 +38,8 @@ async function startApiServer() {
   // Add error handler
   app.use(errorHandler);
 
-  // Start on port 5001
-  const port = 5001;
+  // Start on port 
+  const port = 500;
   server.listen(port, '0.0.0.0', () => {
     console.log(`🔧 API Server running on port ${port}`);
   });

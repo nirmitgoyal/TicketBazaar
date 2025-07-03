@@ -25,7 +25,14 @@ export function setupAuth(app: Express) {
   const SessionStore = MemoryStore(session);
 
   // Configure session settings
-  const sessionSecret = process.env.SESSION_SECRET;
+  let sessionSecret = process.env.SESSION_SECRET;
+  
+  // In test mode, provide a default session secret if none is provided
+  if (!sessionSecret && process.env.NODE_ENV === 'test') {
+    console.log('Test mode: Using default session secret for testing');
+    sessionSecret = 'test-session-secret-for-testing-only-not-secure';
+  }
+  
   if (!sessionSecret) {
     throw new Error("SESSION_SECRET environment variable is required for security");
   }

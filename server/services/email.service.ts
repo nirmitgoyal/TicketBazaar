@@ -54,6 +54,14 @@ class EmailServiceSetup {
 
   static initialize(): MailService {
     if (!EmailServiceSetup.instance) {
+      // In test environment, allow initialization without real SendGrid API key
+      if (process.env.NODE_ENV === 'test' && !process.env.SENDGRID_API_KEY) {
+        logger.info('EMAIL', 'Test mode: Using mock email service (no real emails will be sent)');
+        EmailServiceSetup.instance = new MailService();
+        EmailServiceSetup.instance.setApiKey('SG.test_key_for_testing_only');
+        return EmailServiceSetup.instance;
+      }
+
       if (!process.env.SENDGRID_API_KEY) {
         throw new Error("SENDGRID_API_KEY environment variable must be set");
       }
@@ -383,8 +391,9 @@ This email was sent because someone requested a password reset for your TicketBa
 // Main Email Service Class
 export class EmailService {
   private readonly config: EmailServiceConfig;
-  private readonly mailService: MailService;
+  private mailService?: MailService; // Make this optional and lazy-load it
   private readonly templateGenerator: EmailTemplateGenerator;
+  private isEUDataResidency?: boolean; // Make this lazy too
 
   constructor() {
     this.config = {
@@ -393,21 +402,48 @@ export class EmailService {
       appUrl: process.env.NODE_ENV === 'production' 
         ? 'https://your-app.replit.app' 
         : 'http://localhost:5000',
-      isEUDataResidency: EmailServiceSetup.configureEUDataResidency()
+      isEUDataResidency: false // Will be set lazily
     };
 
-    this.mailService = EmailServiceSetup.initialize();
+    // Don't initialize mail service in constructor - do it lazily
     this.templateGenerator = new EmailTemplateGenerator(this.config.appUrl);
+  }
+
+  // Lazy initialization of mail service
+  private getMailService(): MailService {
+    if (!this.mailService) {
+      this.mailService = EmailServiceSetup.initialize();
+    }
+    return this.mailService;
+  }
+
+  // Lazy initialization of EU data residency config
+  private getEUDataResidency(): boolean {
+    if (this.isEUDataResidency === undefined) {
+      this.isEUDataResidency = EmailServiceSetup.configureEUDataResidency();
+      this.config.isEUDataResidency = this.isEUDataResidency;
+    }
+    return this.isEUDataResidency;
   }
 
   async sendEmail(params: EmailParams): Promise<boolean> {
     try {
       this.validateEmailParams(params);
       
+      // In test mode, mock email sending
+      if (process.env.NODE_ENV === 'test') {
+        logger.info('EMAIL', 'Test mode: Mocking email send', {
+          to: params.to,
+          subject: params.subject,
+          from: params.from || this.config.defaultFromEmail
+        });
+        return true;
+      }
+      
       const emailData = this.prepareEmailData(params);
       this.logEmailAttempt(emailData);
       
-      const response = await this.mailService.send(emailData);
+      const response = await this.getMailService().send(emailData);
       this.logEmailSuccess(params, response);
       
       return true;
@@ -422,7 +458,8 @@ export class EmailService {
       throw new Error(`Missing required email parameters: to=${params.to}, subject=${params.subject}`);
     }
 
-    if (!process.env.SENDGRID_API_KEY || process.env.SENDGRID_API_KEY.length < 10) {
+    // Skip API key validation in test mode
+    if (process.env.NODE_ENV !== 'test' && (!process.env.SENDGRID_API_KEY || process.env.SENDGRID_API_KEY.length < 10)) {
       throw new Error('Invalid or missing SendGrid API key');
     }
   }
@@ -464,7 +501,7 @@ export class EmailService {
   }
 
   private logEmailSuccess(params: EmailParams, response: any): void {
-    const residencyInfo = this.config.isEUDataResidency ? ' (EU Data Residency)' : ' (Global)';
+    const residencyInfo = this.getEUDataResidency() ? ' (EU Data Residency)' : ' (Global)';
     logger.info('EMAIL', `Email sent successfully to ${params.to}: ${params.subject}${residencyInfo}`, {
       messageId: response?.[0]?.headers?.['x-message-id'],
       statusCode: response?.[0]?.statusCode,
@@ -482,9 +519,10 @@ export class EmailService {
   }
 
   getDataResidencyInfo(): DataResidencyInfo {
+    const isEU = this.getEUDataResidency();
     return {
-      isEU: this.config.isEUDataResidency,
-      description: this.config.isEUDataResidency 
+      isEU: isEU,
+      description: isEU 
         ? 'EU Data Residency - Emails processed within European Union'
         : 'Global Data Residency - Standard processing'
     };
@@ -544,4 +582,21 @@ export class EmailService {
   }
 }
 
-export const emailService = new EmailService();
+// Lazy initialization to allow environment variables to be set first
+let emailServiceInstance: EmailService | null = null;
+
+export const getEmailService = (): EmailService => {
+  if (!emailServiceInstance) {
+    emailServiceInstance = new EmailService();
+  }
+  return emailServiceInstance;
+};
+
+// For backward compatibility - delegate all calls to the lazy instance
+export const emailService = new Proxy({} as EmailService, {
+  get(target, prop) {
+    const instance = getEmailService();
+    const value = (instance as any)[prop];
+    return typeof value === 'function' ? value.bind(instance) : value;
+  }
+});

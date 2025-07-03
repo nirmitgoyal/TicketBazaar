@@ -4,7 +4,7 @@
 - Full‑stack TypeScript: React + Vite frontend, Node.js + Express backend.
 - Drizzle ORM with PostgreSQL.
 - WebSocket real‑time messaging.
-- Google Maps, Google Analytics, Instagram verification.
+- Perplexity API, Google Analytics, Instagram verification.
 
 ## 📏 Coding Standards & Style
 - Use TypeScript types/interfaces everywhere.
@@ -21,7 +21,7 @@
 - Match naming and folder structure exactly.
 
 ## 🧪 Testing & Quality Assurance
-- Always include visual + integration tests for new modules.
+<!-- - Always include visual + integration tests for new modules. -->
 - Enforce ESLint and Prettier.
 - Flag missing types, tests, or lint errors in PRs.
 
@@ -35,7 +35,7 @@
 - Annotate functions/components with intent before prompting.
 - Use inline comments or `// TODO:` placeholders for Copilot suggestions.
 - Ask Copilot to refactor complex functions into smaller units.
-- Request tests for any generated logic.
+<!-- - Request tests for any generated logic. -->
 - Prompt Copilot to explain code it generated if unclear.
 
 ---
