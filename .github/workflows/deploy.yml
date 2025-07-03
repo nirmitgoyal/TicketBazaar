@@ -140,6 +140,9 @@ jobs:
         echo "Running deployment script..."
         bash deploy.sh
         echo "Heroku deployment initiated"
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
         
     - name: Upload production build
       uses: actions/upload-artifact@v4
