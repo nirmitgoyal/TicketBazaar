@@ -26,9 +26,9 @@ jobs:
     - name: Build application
       run: npm run build
 
-    - name: Deploy to production
+    - name: Deploy to Heroku
       run: |
-        echo "Deploying to production..."
+        echo "Deploying to Heroku (cryptic-inlet-49772)..."
         # Add your deployment commands here
         # Example: npm run deploy or deployment script
       env:
