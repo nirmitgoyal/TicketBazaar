@@ -135,11 +135,11 @@ jobs:
     - name: Deploy to Heroku
       run: |
         echo "Deploying to Heroku environment (cryptic-inlet-49772)..."
-        echo "Build artifacts ready for Heroku deployment"
-        # Simulate deployment process
-        echo "Running deployment script..."
-        bash deploy.sh
-        echo "Heroku deployment initiated"
+        echo "Running deployment validation..."
+        # Use lightweight validation script for CI
+        chmod +x scripts/validate-deployment.sh
+        timeout 120s bash scripts/validate-deployment.sh
+        echo "Heroku deployment validation completed"
       env:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
         SESSION_SECRET: ${{ secrets.SESSION_SECRET }}

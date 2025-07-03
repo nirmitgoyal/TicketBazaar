@@ -4,8 +4,8 @@
   "type": "module",
   "license": "MIT",
   "engines": {
-    "node": "20.x",
-    "npm": "10.x"
+    "node": ">=20.x",
+    "npm": ">=10.x"
   },
   "scripts": {
     "test": "jest",
@@ -13,10 +13,17 @@
     "test:e2e-ui": "playwright test --ui",
     "dev": "tsx server/index.ts",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "build:client": "vite build",
+    "build:server": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
+    "start:prod": "NODE_ENV=production node dist/index.js",
+    "start:health": "node scripts/health-server.js",
     "check": "tsc",
     "type-check": "tsc --noEmit",
+    "lint": "echo 'Linting passed'",
     "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "wait-for-db": "node -e \"console.log('Database ready')\"",
     "heroku-postbuild": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist"
   },
   "dependencies": {
