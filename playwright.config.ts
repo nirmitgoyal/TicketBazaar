@@ -21,7 +21,7 @@ export default defineConfig({
   
   // Basic test configuration
   use: {
-    baseURL: "http://localhost:5001",
+    baseURL: "http://localhost:5000",
     actionTimeout: 10000,
     navigationTimeout: 15000,
     screenshot: "only-on-failure",
@@ -42,7 +42,7 @@ export default defineConfig({
   // Development server configuration
   webServer: process.env.CI ? undefined : {
     command: "npm run dev",
-    url: "http://localhost:5001",
+    url: "http://localhost:5000",
     reuseExistingServer: true,
     timeout: 60 * 1000,
   },

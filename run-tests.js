@@ -6,7 +6,7 @@ import fs from 'fs';
 
 class ComprehensiveTestRunner {
   constructor() {
-    this.baseUrl = 'http://localhost:5001';
+    this.baseUrl = 'http://localhost:5000';
     this.results = {
       api: [],
       frontend: [],
