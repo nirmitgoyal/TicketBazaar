@@ -5,7 +5,7 @@
 
 import express from "express";
 import { fraudDetectionService } from "../services/fraud-detection.service";
-import { enhancedAIVerificationService } from "../services/enhanced-ai-verification.service";
+import { getEnhancedAIVerificationService } from "../services/enhanced-ai-verification.service";
 import { db } from "../db";
 import { users, tickets } from "../../shared/schema";
 import { eq } from "drizzle-orm";
@@ -51,7 +51,7 @@ router.get("/seller/:sellerId", async (req, res) => {
     const fraudAssessment = await fraudDetectionService.assessSellerFraudRisk(sellerData, ticketHistory);
     
     // Get enhanced AI verification
-    const enhancedVerification = await enhancedAIVerificationService.performEnhancedTrustAssessment(sellerData);
+    const enhancedVerification = await getEnhancedAIVerificationService().performEnhancedTrustAssessment(sellerData);
 
     logger.info('express', `Fraud detection completed for seller ${sellerId}`);
 
