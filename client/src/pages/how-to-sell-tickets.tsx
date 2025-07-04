@@ -254,9 +254,9 @@ export default function HowToSellTickets() {
                       List Your Tickets Now
                     </Button>
                   </Link>
-                  <Link href="/login">
+                  <Link href="/register">
                     <Button size="lg" variant="outline" className="font-semibold">
-                      Login with Instagram
+                      Create Account
                     </Button>
                   </Link>
                 </div>

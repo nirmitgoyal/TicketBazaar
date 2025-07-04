@@ -15,7 +15,7 @@ const MyTickets = createResilientLazyComponent(() => import("@/pages/my-tickets"
 const TicketVerification = createResilientLazyComponent(() => import("@/pages/ticket-verification"), "ticket-verification");
 const Profile = createResilientLazyComponent(() => import("@/pages/profile"), "profile");
 const Login = createResilientLazyComponent(() => import("@/pages/login"), "login");
-
+const Register = createResilientLazyComponent(() => import("@/pages/register"), "register");
 const CompleteProfile = createResilientLazyComponent(() => import("@/pages/complete-profile"), "complete-profile");
 const TermsOfService = createResilientLazyComponent(() => import("@/pages/terms-of-service"), "terms-of-service");
 const PrivacyPolicy = createResilientLazyComponent(() => import("@/pages/privacy-policy"), "privacy-policy");
@@ -134,7 +134,7 @@ export function AppRoutes() {
       {/* Authentication routes */}
       <LazyRoute path="/auth" component={Login} />
       <LazyRoute path="/login" component={Login} />
-
+      <LazyRoute path="/register" component={Register} />
       <LazyRoute path="/complete-profile" component={CompleteProfile} />
       
       {/* Ticket management */}

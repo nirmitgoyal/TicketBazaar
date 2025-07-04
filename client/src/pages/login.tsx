@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -14,13 +18,20 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Ticket, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useToast } from "@/hooks/use-toast";
 import SEO from "@/components/seo";
-import { SiInstagram } from "react-icons/si";
+import { userLoginSchema } from "@shared/schema";
+import { z } from "zod";
 
 export default function Login() {
   const { isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
-  const { trackEvent } = useAnalytics();
+  const { toast } = useToast();
+  const { trackEvent, trackUserAction } = useAnalytics();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [loginError, setLoginError] = useState<string | null>(null);
 
   // Redirect if already logged in
@@ -33,41 +44,68 @@ export default function Login() {
     }
   }, [isAuthenticated, navigate]);
 
-  // Check for error messages from Instagram auth
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get("error");
-    const message = urlParams.get("message");
+  const loginMutation = useMutation({
+    mutationFn: async (loginData: z.infer<typeof userLoginSchema>) => {
+      // Track login attempt
+      trackEvent('login_attempt', 'authentication', 'email_login');
+      
+      const response = await apiRequest("POST", "/api/auth/login", loginData);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Login failed");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      // Track successful login
+      trackUserAction('login', {
+        method: 'email'
+      });
+      
+      toast({
+        title: "Login successful",
+        description: "Welcome back!",
+      });
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get("returnTo") || "/";
+      navigate(returnTo);
+    },
+    onError: (error: Error) => {
+      // Track login failure
+      trackEvent('login_failed', 'authentication', error.message);
+      
+      setLoginError(error.message);
+      toast({
+        title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
-    if (error === "instagram_denied") {
-      setLoginError("Instagram login was cancelled");
-    } else if (error === "eligibility") {
-      setLoginError(message || "You need at least 50 followers and 1 post to continue");
-    } else if (error === "instagram_error") {
-      setLoginError("An error occurred during Instagram login. Please try again.");
-    } else if (error === "login_failed") {
-      setLoginError("Failed to log you in. Please try again.");
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError(null);
+    try {
+      const validatedData = userLoginSchema.parse(formData);
+      loginMutation.mutate(validatedData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setLoginError(error.errors[0].message);
+      }
     }
-  }, []);
+  };
 
-  const handleInstagramLogin = () => {
-    // Track login attempt
-    trackEvent('login_attempt', 'authentication', 'instagram_login');
-    
-    // Get the return URL if any
-    const urlParams = new URLSearchParams(window.location.search);
-    const returnTo = urlParams.get("returnTo") || "/";
-    
-    // Redirect to Instagram OAuth
-    window.location.href = `/api/auth/instagram?returnTo=${encodeURIComponent(returnTo)}`;
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
     <div className="container max-w-md mx-auto px-4 py-8">
       <SEO
-        title="Login with Instagram | Ticket Bazaar"
-        description="Sign in to Ticket Bazaar using your Instagram account to buy and sell verified tickets for concerts, sports events, and festivals across India."
-        keywords="instagram login, sign in, ticket bazaar, secure login, social login"
+        title="Login | Access Your Account - Ticket Bazaar"
+        description="Sign in to your Ticket Bazaar account to buy and sell verified tickets for concerts, sports events, and festivals across India."
+        keywords="login, sign in, ticket bazaar, user account, secure login"
       />
       <div className="flex justify-center mb-6">
         <div className="flex items-center space-x-1">
@@ -80,52 +118,68 @@ export default function Login() {
 
       <Card>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Welcome to Ticket Bazaar</CardTitle>
+          <CardTitle className="text-2xl text-center">Sign in</CardTitle>
           <CardDescription className="text-center">
-            Login with your Instagram account to continue
+            Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent>
           {loginError && (
             <Alert variant="destructive" className="mb-4">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Login Error</AlertTitle>
+              <AlertTitle>Authentication Error</AlertTitle>
               <AlertDescription>{loginError}</AlertDescription>
             </Alert>
           )}
 
-          <div className="space-y-4">
-            <Button 
-              onClick={handleInstagramLogin}
-              className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:from-purple-600 hover:via-pink-600 hover:to-orange-600 text-white"
-              size="lg"
-            >
-              <SiInstagram className="mr-2 h-5 w-5" />
-              Login with Instagram
-            </Button>
-
-            <div className="rounded-lg bg-muted p-4 text-sm space-y-2">
-              <p className="font-medium text-center">Requirements:</p>
-              <ul className="space-y-1 text-muted-foreground">
-                <li className="flex items-center">
-                  <span className="mr-2">•</span>
-                  <span>At least 50 followers on Instagram</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="mr-2">•</span>
-                  <span>At least 1 post on your account</span>
-                </li>
-              </ul>
-              <p className="text-xs text-center text-muted-foreground mt-2">
-                We use Instagram to verify real users and prevent fraud
-              </p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                required
+                placeholder="Enter your email"
+              />
             </div>
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => handleInputChange("password", e.target.value)}
+                required
+                placeholder="Enter your password"
+              />
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={loginMutation.isPending}
+            >
+              {loginMutation.isPending ? "Signing in..." : "Sign in"}
+            </Button>
+          </form>
+
+          <div className="mt-4 text-center">
+            <span className="text-sm text-gray-600">
+              Don't have an account?{" "}
+              <button
+                onClick={() => navigate("/register")}
+                className="text-primary hover:underline"
+              >
+                Sign up
+              </button>
+            </span>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col">
           <Separator className="mb-4" />
-          <div className="text-center text-xs text-muted-foreground">
-            By logging in, you agree to our
+          <div className="mt-4 text-center text-xs text-muted-foreground">
+            By using this service, you agree to our
             <a
               href="/terms-of-service"
               target="_blank"
