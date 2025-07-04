@@ -193,6 +193,32 @@ router.get("/:id/qrcode", isAuthenticated, ticketController.generateQrCode);
 // Verify ticket
 router.post("/:id/verify", isAuthenticated, ticketController.verifyTicket);
 
+// Update ticket (only owner can update)
+router.patch("/:id", isAuthenticated, isTicketOwner, async (req, res) => {
+  try {
+    const ticketId = parseInt(req.params.id);
+    const { quantity } = req.body;
+    
+    // Validate quantity
+    if (quantity !== undefined) {
+      if (typeof quantity !== 'number' || quantity < 1 || quantity > 999) {
+        return res.status(400).json({ error: "Invalid quantity. Must be between 1 and 999." });
+      }
+    }
+    
+    const updatedTicket = await ticketController.updateTicket(ticketId, { quantity });
+    
+    if (!updatedTicket) {
+      return res.status(404).json({ error: "Ticket not found" });
+    }
+    
+    res.json(updatedTicket);
+  } catch (error) {
+    console.error("Error updating ticket:", error);
+    res.status(500).json({ error: "Failed to update ticket" });
+  }
+});
+
 // Delete ticket (only owner can delete)
 router.delete("/:id", isAuthenticated, isTicketOwner, ticketController.deleteTicket);
 

@@ -59,6 +59,7 @@ export interface IStorage {
   searchTickets(query: string): Promise<Ticket[]>;
   createTicket(ticket: InsertTicket): Promise<Ticket>;
   updateTicketStatus(id: number, status: string): Promise<Ticket | undefined>;
+  updateTicket(id: number, updateData: Partial<InsertTicket>): Promise<Ticket | undefined>;
   updateTicketVerification(
     id: number,
     verificationCode: string,
@@ -317,6 +318,18 @@ export class DatabaseStorage implements IStorage {
     const [ticket] = await db
       .update(tickets)
       .set({ status } as any)
+      .where(eq(tickets.id, id))
+      .returning();
+    return ticket || undefined;
+  }
+
+  async updateTicket(
+    id: number,
+    updateData: Partial<InsertTicket>,
+  ): Promise<Ticket | undefined> {
+    const [ticket] = await db
+      .update(tickets)
+      .set(updateData as any)
       .where(eq(tickets.id, id))
       .returning();
     return ticket || undefined;

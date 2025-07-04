@@ -292,9 +292,9 @@ export default function MyTickets() {
       );
       
       const deletePromise = apiRequest("DELETE", `/api/tickets/${ticketId}`);
-      const response = await Promise.race([deletePromise, timeoutPromise]);
+      const response = await Promise.race([deletePromise, timeoutPromise]) as Response;
       
-      if (response.ok) {
+      if (response && response.ok) {
         toast({
           title: "Success",
           description: "Ticket listing removed successfully",
@@ -307,7 +307,7 @@ export default function MyTickets() {
           queryKey: ["/api/events"] 
         });
       } else {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await (response as Response).json().catch(() => ({}));
         throw new Error(errorData.message || "Failed to remove listing");
       }
     } catch (error) {
@@ -326,6 +326,40 @@ export default function MyTickets() {
   const handleViewContactRequests = (ticketId: number) => {
     // Navigate to contact requests page or open modal
     navigate(`/contact-requests/${ticketId}`);
+  };
+
+  // Handler for updating ticket quantity
+  const handleUpdateQuantity = async (ticketId: number, newQuantity: number) => {
+    // Validate quantity
+    if (newQuantity < 1 || newQuantity > 999) {
+      return;
+    }
+
+    try {
+      const response = await apiRequest("PATCH", `/api/tickets/${ticketId}`, {
+        quantity: newQuantity
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Quantity updated successfully",
+        });
+        // Invalidate and refetch the tickets
+        await queryClient.invalidateQueries({
+          queryKey: [`/api/tickets/seller/${user?.id}`]
+        });
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to update quantity");
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update quantity. Please try again.",
+      });
+    }
   };
 
   const listedTicketsByEvent: Record<number, Ticket[]> = {};
@@ -400,80 +434,56 @@ export default function MyTickets() {
                     <div className="space-y-4">
                       {tickets.map((ticket) => (
                         <div key={ticket.id} className="p-4 border rounded-lg">
-                          <div className="flex justify-between items-start mb-4">
+                          <div className="space-y-3">
+                            {/* Event Title */}
                             <div>
-                              <p className="font-medium">
-                                {ticket.section}
-                                {ticket.row ? ` - Row ${ticket.row}` : ""}
-                                {ticket.seat ? `, Seat ${ticket.seat}` : ""}
-                              </p>
-                              <p className="text-sm text-textSecondary mt-1">
-                                {ticket.quantity > 1
-                                  ? `${ticket.quantity} tickets`
-                                  : "1 ticket"}
+                              <h4 className="font-semibold text-lg">
+                                {ticket.eventTitle}
+                              </h4>
+                            </div>
+
+                            {/* Event Date and Time */}
+                            <div>
+                              <p className="text-textSecondary">
+                                {formatDate(ticket.eventDate)}
                               </p>
                             </div>
-                            <Badge className={getStatusColor(ticket.status)}>
-                              <span className="flex items-center gap-1">
-                                {getStatusIcon(ticket.status)}
-                                {ticket.status.charAt(0).toUpperCase() +
-                                  ticket.status.slice(1)}
-                              </span>
-                            </Badge>
-                          </div>
 
-                          <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                              <p className="text-sm text-textSecondary">
-                                Section
-                              </p>
-                              <p className="font-medium">
-                                {ticket.section}
-                              </p>
+                            {/* Quantity Input and Remove Button */}
+                            <div className="flex items-center justify-between gap-4">
+                              <div className="flex items-center gap-2">
+                                <label htmlFor={`quantity-${ticket.id}`} className="text-sm font-medium">
+                                  Quantity Available:
+                                </label>
+                                <input
+                                  id={`quantity-${ticket.id}`}
+                                  type="number"
+                                  min="1"
+                                  max="999"
+                                  value={ticket.quantity}
+                                  onChange={(e) => handleUpdateQuantity(ticket.id, parseInt(e.target.value) || 1)}
+                                  className="w-20 px-2 py-1 border rounded-md text-center focus:outline-none focus:ring-2 focus:ring-primary"
+                                />
+                              </div>
+
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleRemoveListing(ticket.id)}
+                              >
+                                Remove
+                              </Button>
                             </div>
-                            <div>
-                              <p className="text-sm text-textSecondary">
-                                Quantity
-                              </p>
-                              <p className="font-medium text-primary">
-                                {ticket.quantity}
-                              </p>
-                            </div>
-                          </div>
 
-                          <div className="flex items-center justify-between">
-                            <div className="flex gap-2">
-                              {ticket.status === "available" && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-red-500"
-                                  onClick={() => handleRemoveListing(ticket.id)}
-                                >
-                                  Remove Listing
-                                </Button>
-                              )}
-
-                              {ticket.status === "contacted" && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-blue-500"
-                                  onClick={() => handleViewContactRequests(ticket.id)}
-                                >
-                                  View Contact Requests
-                                </Button>
-                              )}
-
-                              {ticket.status === "sold" && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-green-500"
-                                >
-                                  Sold ✓
-                                </Button>
-                              )}
+                            {/* Status Badge */}
+                            <div className="flex justify-end">
+                              <Badge className={getStatusColor(ticket.status)}>
+                                <span className="flex items-center gap-1">
+                                  {getStatusIcon(ticket.status)}
+                                  {ticket.status.charAt(0).toUpperCase() +
+                                    ticket.status.slice(1)}
+                                </span>
+                              </Badge>
                             </div>
                           </div>
                         </div>

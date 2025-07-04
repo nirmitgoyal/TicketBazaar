@@ -412,6 +412,41 @@ export class TicketController {
   };
 
   /**
+   * Update ticket details
+   */
+  updateTicket = async (ticketId: number, updateData: { quantity?: number }) => {
+    try {
+      // Get the existing ticket
+      const ticket = await storage.getTicket(ticketId);
+      if (!ticket) {
+        return null;
+      }
+
+      // Update only the fields that are provided
+      const updatedTicket = await storage.updateTicket(ticketId, updateData);
+      
+      // Broadcast ticket update via WebSocket
+      const { broadcastToAll } = await import("../services/websocket.service");
+      setTimeout(() => {
+        try {
+          broadcastToAll({
+            type: "ticket_updated",
+            ticketId: ticketId,
+            updateData: updateData
+          });
+        } catch (broadcastError) {
+          console.error("Error broadcasting ticket update:", broadcastError);
+        }
+      });
+
+      return updatedTicket;
+    } catch (error) {
+      console.error("Error updating ticket:", error);
+      throw error;
+    }
+  };
+
+  /**
    * Delete all tickets (admin function)
    */
   deleteAllTickets = async (req: Request, res: Response) => {
