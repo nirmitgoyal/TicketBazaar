@@ -301,4 +301,5 @@ Changelog:
 
 ```
 Preferred communication style: Simple, everyday language.
+Do not document work done in changelog (from July 4, 2025 onwards).
 ```
