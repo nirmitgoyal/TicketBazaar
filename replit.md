@@ -118,6 +118,13 @@ TicketBazaar is a comprehensive peer-to-peer ticket marketplace platform designe
 
 ```
 Changelog:
+- July 4, 2025. Revamped ticket listings UI in My Tickets page
+  * Simplified ticket display to show only Event Title and Event Date/Time
+  * Replaced "Remove Listing" with cleaner "Remove" button
+  * Added real-time quantity update feature with input box
+  * Created PATCH /api/tickets/:id endpoint for updating ticket quantity
+  * Added updateTicket method to storage layer and controller
+  * Improved UX with instant database updates when changing ticket quantity
 - July 4, 2025. Enhanced verification system with lenient validation and no web search
   * Disabled web search in Perplexity API calls to prevent inaccurate results
   * Made verification extremely lenient - only flags clear red flags:
