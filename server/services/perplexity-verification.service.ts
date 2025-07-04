@@ -102,7 +102,7 @@ Respond in JSON format:
    */
   private async callPerplexityAPI(prompt: string): Promise<any> {
     const requestBody = {
-      model: 'sonar',
+      model: 'r1-1776',
       messages: [
         {
           role: 'system',
