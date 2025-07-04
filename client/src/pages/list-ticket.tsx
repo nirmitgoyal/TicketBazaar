@@ -804,6 +804,7 @@ export default function ListTicket() {
                               placeholder="Any additional details about the tickets, seating information, or other relevant details..."
                               className="resize-none"
                               rows={3}
+                              maxLength={200}
                               {...field}
                             />
                           </FormControl>
