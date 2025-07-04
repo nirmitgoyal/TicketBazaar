@@ -101,26 +101,39 @@ Respond in JSON format:
    * Call Perplexity API
    */
   private async callPerplexityAPI(prompt: string): Promise<any> {
+    const requestBody = {
+      model: 'llama-3.1-sonar-small-128k-online',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a ticket listing fraud-check assistant. Analyze ticket listings for legitimacy and provide JSON responses.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.2,
+      max_tokens: 1000,
+      top_p: 0.9,
+      return_images: false,
+      return_related_questions: false,
+      search_recency_filter: 'month',
+      stream: false
+    };
+
     const response = await fetch(this.apiUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        model: 'llama-3.1-sonar-small-128k-online',
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.2,
-        max_tokens: 1000
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      logger.error('PERPLEXITY', `API error response: ${errorBody}`);
       throw new Error(`Perplexity API error: ${response.status}`);
     }
 
