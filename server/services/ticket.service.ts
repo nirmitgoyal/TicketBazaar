@@ -127,7 +127,6 @@ export class TicketService {
     transferMethod: "electronic" | "physical" | "pickup";
     additionalInfo?: string;
     trending?: boolean;
-    sellingFast?: boolean;
     eventImageUrl?: string | null;
     isTransferrable: boolean;
     showContactInfo: boolean;
@@ -157,7 +156,6 @@ export class TicketService {
       additionalInfo: data.additionalInfo || "",
       showContactInfo: data.showContactInfo,
       trending: data.trending || false,
-      sellingFast: data.sellingFast || false,
       eventImageUrl: data.eventImageUrl,
     };
 

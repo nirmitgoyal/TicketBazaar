@@ -66,7 +66,7 @@ export function TicketCard({
   onClick,
   index = 0,
 }: TicketCardProps) {
-  const { id, eventTitle: title, venue, eventDate: date, eventImageUrl: imageUrl, trending, sellingFast } = ticket;
+  const { id, eventTitle: title, venue, eventDate: date, eventImageUrl: imageUrl, trending } = ticket;
   const { setActiveEvent } = useAtmosphereContext();
   const { playTicketHover, playButtonHover, playClick } = useSoundEffects();
   const [showVerificationModal, setShowVerificationModal] = useState(false);
@@ -247,26 +247,7 @@ export function TicketCard({
             </motion.div>
           )}
 
-          {sellingFast && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.25 + index * 0.05 }}
-            >
-              <Badge
-                variant="outline"
-                className="bg-alert/10 text-alert border-transparent"
-              >
-                <motion.span
-                  variants={pulseAnimation}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  Selling Fast
-                </motion.span>
-              </Badge>
-            </motion.div>
-          )}
+
         </div>
         
         {/* Trust Score Section */}

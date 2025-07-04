@@ -57,7 +57,6 @@ export interface UnifiedMetricsProps {
   responseTime?: number;
   trustScore?: number;
   trending?: boolean;
-  sellingFast?: boolean;
 }
 
 const defaultMetricIcons: Record<string, React.ElementType> = {
@@ -89,8 +88,7 @@ export const UnifiedMetrics: React.FC<UnifiedMetricsProps> = ({
   responseRate,
   responseTime,
   trustScore,
-  trending,
-  sellingFast
+  trending
 }) => {
   // Generate metrics based on type
   const getMetricsForType = (): MetricData[] => {
@@ -167,7 +165,7 @@ export const UnifiedMetrics: React.FC<UnifiedMetricsProps> = ({
       return <CardMetrics metrics={metricsToDisplay} className={className} animated={animated} />;
     
     case 'compact':
-      return <CompactMetrics metrics={metricsToDisplay} className={className} trending={trending} sellingFast={sellingFast} />;
+      return <CompactMetrics metrics={metricsToDisplay} className={className} trending={trending} />;
     
     case 'detailed':
       return <DetailedMetrics metrics={metricsToDisplay} className={className} animated={animated} />;
@@ -259,8 +257,7 @@ const CompactMetrics: React.FC<{
   metrics: MetricData[];
   className?: string;
   trending?: boolean;
-  sellingFast?: boolean;
-}> = ({ metrics, className, trending, sellingFast }) => {
+}> = ({ metrics, className, trending }) => {
   return (
     <div className={cn('flex flex-wrap items-center gap-2', className)}>
       {metrics.slice(0, 3).map((metric, index) => {
@@ -278,12 +275,7 @@ const CompactMetrics: React.FC<{
           Trending
         </Badge>
       )}
-      {sellingFast && (
-        <Badge variant="destructive" className="text-xs">
-          <Activity className="w-3 h-3 mr-1" />
-          Selling Fast
-        </Badge>
-      )}
+
     </div>
   );
 };

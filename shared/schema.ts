@@ -62,7 +62,6 @@ export const tickets = pgTable("tickets", {
   category: text("category").notNull(),
   eventImageUrl: text("event_image_url"),
   trending: boolean("trending").default(false),
-  sellingFast: boolean("selling_fast").default(false),
   latitude: doublePrecision("latitude"),
   longitude: doublePrecision("longitude"),
   city: text("city"),

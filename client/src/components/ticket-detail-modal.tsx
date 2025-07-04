@@ -437,18 +437,7 @@ export function TicketDetailModal({
                 </Badge>
               </motion.div>
             )}
-            {firstTicket?.sellingFast && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.1 }}
-              >
-                <Badge className="bg-orange-500 text-white">
-                  <Zap className="h-3 w-3 mr-1" />
-                  Selling Fast
-                </Badge>
-              </motion.div>
-            )}
+
           </div>
 
           {/* Header Content */}

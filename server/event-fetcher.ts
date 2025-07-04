@@ -12,7 +12,6 @@ interface EventData {
   latitude?: number;
   longitude?: number;
   trending?: boolean;
-  sellingFast?: boolean;
 }
 
 /**
@@ -131,7 +130,6 @@ export async function saveEventsToDatabase(
           category: eventData.category,
           eventImageUrl: eventData.imageUrl,
           trending: eventData.trending || false,
-          sellingFast: eventData.sellingFast || false,
           latitude: eventData.latitude,
           longitude: eventData.longitude,
           city: eventData.city,
@@ -156,7 +154,6 @@ export async function saveEventsToDatabase(
           category: eventData.category,
           eventImageUrl: eventData.imageUrl,
           trending: eventData.trending || false,
-          sellingFast: eventData.sellingFast || false,
           latitude: eventData.latitude,
           longitude: eventData.longitude,
           city: eventData.city,
