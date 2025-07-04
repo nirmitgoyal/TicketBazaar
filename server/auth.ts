@@ -58,14 +58,25 @@ export function setupAuth(app: Express) {
   app.use(passport.session());
 
   // Configure Google OAuth2 strategy
+  const googleClientId = process.env.GOOGLE_CLIENT_ID || '';
+  const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || '';
+  
+  // Log for debugging (remove in production)
+  console.log('Google OAuth Config:', {
+    clientIdLength: googleClientId.length,
+    clientSecretLength: googleClientSecret.length,
+    callbackURL: "/api/auth/google/callback"
+  });
+  
   passport.use(
     new GoogleStrategy(
       {
-        clientID: process.env.GOOGLE_CLIENT_ID || '',
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-        callbackURL: "/api/auth/google/callback",
+        clientID: googleClientId,
+        clientSecret: googleClientSecret,
+        callbackURL: "https://d306cb34-7ff8-4c43-be3f-5bc3dc3bf3fc-00-2tsp72f1ce0rb.sisko.replit.dev/api/auth/google/callback",
+        passReqToCallback: true
       },
-      async (accessToken, refreshToken, profile, done) => {
+      async (req, accessToken, refreshToken, profile, done) => {
         try {
           // Check if user exists with this Google ID
           let user = await storage.getUserByGoogleId(profile.id);
