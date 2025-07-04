@@ -77,13 +77,13 @@ Listing Details:
 - Number of Tickets: ${data.ticketQuantity}
 - Additional Info: ${data.additionalInfo || 'None provided'}
 
-Please verify:
-1. Is this a real, upcoming event?
-2. Is the venue valid and does it align with the artist/event?
-3. Are there signs of potential scam (made-up venues, past dates, suspicious titles)?
-4. Does this appear to be bulk-resale or duplicate listing?
+Please search the web to verify:
+1. Is this a real, upcoming event? Search for the event name and date to confirm it exists.
+2. Is the venue valid and does it host such events? Verify the venue location using maps/web search.
+3. Does the event date and time match official sources? Check event websites, ticketing platforms.
+4. Are there any red flags like non-existent venues, past dates, or fake event names?
 
-Be lenient - only flag clear red flags or obvious inconsistencies.
+Use live web data to validate these details. Be lenient - only flag clear red flags or obvious inconsistencies.
 
 Respond in JSON format:
 {
@@ -102,11 +102,11 @@ Respond in JSON format:
    */
   private async callPerplexityAPI(prompt: string): Promise<any> {
     const requestBody = {
-      model: 'llama-3.1-sonar-small-128k-online',
+      model: 'sonar-pro',
       messages: [
         {
           role: 'system',
-          content: 'You are a ticket listing fraud-check assistant. Analyze ticket listings for legitimacy and provide JSON responses.'
+          content: 'You are a ticket listing fraud-check assistant. Use live web search to verify event details, dates, and venue information. Analyze ticket listings for legitimacy and provide JSON responses.'
         },
         {
           role: 'user',
