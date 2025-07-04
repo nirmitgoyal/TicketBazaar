@@ -102,7 +102,7 @@ Respond in JSON format:
    */
   private async callPerplexityAPI(prompt: string): Promise<any> {
     const requestBody = {
-      model: 'sonar-small-online',
+      model: 'sonar',
       messages: [
         {
           role: 'system',
@@ -138,7 +138,9 @@ Respond in JSON format:
     }
 
     const data = await response.json();
-    return data.choices[0].message.content;
+    const content = data.choices[0].message.content;
+    logger.info('PERPLEXITY', `API Response: ${content}`);
+    return content;
   }
 
   /**
