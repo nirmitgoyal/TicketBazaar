@@ -139,7 +139,11 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
 
     const data = await response.json();
     const content = data.choices[0].message.content;
-    logger.info('PERPLEXITY', `API Response: ${content}`);
+    
+    // Log the first 500 characters of response for debugging
+    logger.info('PERPLEXITY', `API Response (first 500 chars): ${content.substring(0, 500)}`);
+    logger.info('PERPLEXITY', `Response length: ${content.length} characters`);
+    
     return content;
   }
 
@@ -151,14 +155,30 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
       // First try to parse as pure JSON
       let parsed;
       try {
-        parsed = JSON.parse(response);
+        parsed = JSON.parse(response.trim());
       } catch {
-        // If that fails, extract JSON from response (handling potential markdown formatting)
-        const jsonMatch = response.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) {
+        // If that fails, try to find JSON object at the end of response
+        // Look for the last occurrence of a JSON object
+        const jsonMatches = response.match(/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g);
+        if (!jsonMatches || jsonMatches.length === 0) {
           throw new Error('No JSON found in response');
         }
-        parsed = JSON.parse(jsonMatch[0]);
+        
+        // Try parsing from the last match (most likely the actual result)
+        let jsonFound = false;
+        for (let i = jsonMatches.length - 1; i >= 0; i--) {
+          try {
+            parsed = JSON.parse(jsonMatches[i]);
+            jsonFound = true;
+            break;
+          } catch {
+            continue;
+          }
+        }
+        
+        if (!jsonFound) {
+          throw new Error('No valid JSON found in response');
+        }
       }
       
       const legitimacyMap = {
