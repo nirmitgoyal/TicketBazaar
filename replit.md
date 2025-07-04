@@ -118,6 +118,16 @@ TicketBazaar is a comprehensive peer-to-peer ticket marketplace platform designe
 
 ```
 Changelog:
+- July 4, 2025. Enhanced verification system with lenient validation and no web search
+  * Disabled web search in Perplexity API calls to prevent inaccurate results
+  * Made verification extremely lenient - only flags clear red flags:
+    - Past event dates
+    - Obviously fake venue names (containing "Scam", "Fake", etc.)
+    - Excessive ticket quantities (>10,000)
+    - Invalid pricing (0 or negative)
+    - Odd/nonsensical event titles (gibberish, random characters)
+  * System now defaults to "legit" with 95% confidence when no red flags found
+  * Fixed legitimate events being marked suspicious due to lack of online listings
 - July 4, 2025. Fixed Perplexity API compatibility with r1-1776 model
   * Updated model from deprecated sonar models to r1-1776 as requested by user
   * Enhanced JSON parsing to handle r1-1776's thinking tag format (<think>...</think>)
