@@ -31,7 +31,7 @@ TicketBazaar is a comprehensive peer-to-peer ticket marketplace platform designe
 ## Key Components
 
 ### Authentication & Security
-- **Multi-factor Authentication**: Email/phone verification with optional Instagram linking
+- **Google OAuth**: Exclusive authentication through Google accounts (no email/password)
 - **Session Management**: Secure session handling with configurable cookie settings
 - **Rate Limiting**: Comprehensive rate limiting across all endpoints
 - **Fraud Detection**: AI-powered verification and risk assessment

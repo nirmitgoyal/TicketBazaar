@@ -61,13 +61,6 @@ export function setupAuth(app: Express) {
   const googleClientId = process.env.GOOGLE_CLIENT_ID || '';
   const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || '';
   
-  // Log for debugging (remove in production)
-  console.log('Google OAuth Config:', {
-    clientIdLength: googleClientId.length,
-    clientSecretLength: googleClientSecret.length,
-    callbackURL: "/api/auth/google/callback"
-  });
-  
   passport.use(
     new GoogleStrategy(
       {
