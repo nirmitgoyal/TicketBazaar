@@ -287,8 +287,8 @@ export default function TermsOfService() {
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Legal Entity Details</h3>
               <div className="space-y-2 text-gray-700 dark:text-gray-200 text-sm">
                 <p><strong>Company Name:</strong> Ticket Bazaar</p>
-                <p><strong>CIN:</strong> [To be updated upon incorporation]</p>
-                <p><strong>GSTIN:</strong> [To be updated upon registration]</p>
+                {/* <p><strong>CIN:</strong> [To be updated upon incorporation]</p> */}
+                <p><strong>GSTIN: 09BLFPG9572A1Z3</strong> [To be updated upon registration]</p>
                 <div>
                   <p><strong>Registered Office:</strong></p>
                   <div className="ml-4 mt-1">
