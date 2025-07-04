@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { UserService } from "../services";
-import { userLoginSchema, userRegisterSchema } from "@shared/schema";
 import passport from "passport";
 import { z } from "zod";
 import { emailService } from "../services/email.service";
@@ -30,85 +29,17 @@ export class UserController {
   };
 
   /**
-   * Register a new user
+   * Register a new user - removed as we're using Google OAuth
    */
   register = async (req: Request, res: Response) => {
-    try {
-      // Validate request body
-      const validatedData = userRegisterSchema.parse(req.body);
-
-      // Check if email already exists
-      const existingEmail = await this.userService.getUserByEmail(
-        validatedData.email,
-      );
-      if (existingEmail) {
-        return res.status(400).json({ message: "Email already exists" });
-      }
-
-      // Create the user
-      const { confirmPassword, ...userData } = validatedData;
-      const user = await this.userService.createUser(userData);
-
-      // Send welcome email
-      try {
-        await emailService.sendWelcomeEmail(user.email, user.fullName);
-        logger.info('AUTH', `Welcome email sent to ${user.email}`);
-      } catch (emailError) {
-        logger.error('AUTH', `Failed to send welcome email to ${user.email}`, emailError);
-        // Don't fail registration if email fails
-      }
-
-      // Log the user in
-      req.login(user, (err) => {
-        if (err) {
-          return res
-            .status(500)
-            .json({ message: "Error logging in after registration" });
-        }
-        res.status(201).json(user);
-      });
-    } catch (error) {
-      res.status(400).json({
-        message: "Validation error",
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
+    return res.status(501).json({ message: "Registration is handled through Google OAuth" });
   };
 
   /**
-   * Login with username and password
+   * Login - removed as we're using Google OAuth
    */
   login = (req: Request, res: Response, next: Function) => {
-    try {
-      // Validate request body
-      userLoginSchema.parse(req.body);
-
-      // Use passport to authenticate
-      passport.authenticate("local", (err, user, info) => {
-        if (err) {
-          return next(err);
-        }
-
-        if (!user) {
-          return res
-            .status(401)
-            .json({ message: info?.message || "Authentication failed" });
-        }
-
-        // Log the user in
-        req.login(user, (err) => {
-          if (err) {
-            return next(err);
-          }
-          res.status(200).json(user);
-        });
-      })(req, res, next);
-    } catch (error) {
-      res.status(400).json({
-        message: "Validation error",
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
+    return res.status(501).json({ message: "Login is handled through Google OAuth" });
   };
 
   /**

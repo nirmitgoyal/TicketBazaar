@@ -1,8 +1,7 @@
 import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Express, Request, Response } from "express";
 import session from "express-session";
-import bcrypt from "bcrypt";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import MemoryStore from "memorystore";
@@ -58,32 +57,44 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Configure Local authentication strategy
+  // Configure Google OAuth2 strategy
   passport.use(
-    new LocalStrategy(
+    new GoogleStrategy(
       {
-        usernameField: "email",
-        passwordField: "password",
+        clientID: process.env.GOOGLE_CLIENT_ID || '',
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+        callbackURL: "/api/auth/google/callback",
       },
-      async (email, password, done) => {
+      async (accessToken, refreshToken, profile, done) => {
         try {
-          // Find user by email
-          const user = await storage.getUserByEmail(email);
-          if (!user) {
-            return done(null, false, { message: "Invalid email or password" });
-          }
+          // Check if user exists with this Google ID
+          let user = await storage.getUserByGoogleId(profile.id);
 
-          // Check password
-          const isValidPassword = await bcrypt.compare(password, user.password);
-          if (!isValidPassword) {
-            return done(null, false, { message: "Invalid email or password" });
+          if (!user) {
+            // Check if user exists with this email
+            user = await storage.getUserByEmail(profile.emails?.[0]?.value || '');
+
+            if (user) {
+              // Update existing user with Google ID
+              user = await storage.updateUserGoogleId(user.id, profile.id);
+            } else {
+              // Create new user
+              user = await storage.createUser({
+                googleId: profile.id,
+                email: profile.emails?.[0]?.value || '',
+                fullName: profile.displayName || 'User',
+                rating: 5.0,
+                ratingsCount: 0,
+                preferredContactMethod: "whatsapp",
+              });
+            }
           }
 
           // Remove password from user object for security
-          const { password: _, ...userWithoutPassword } = user;
+          const { password, ...userWithoutPassword } = user;
           return done(null, userWithoutPassword as any);
         } catch (error) {
-          return done(error, false);
+          return done(error as Error, false);
         }
       }
     )

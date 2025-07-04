@@ -4,7 +4,7 @@ import { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import QRCode from "qrcode";
-import { userRegisterSchema, userLoginSchema, tickets as ticketsTable } from "@shared/schema";
+import { tickets as ticketsTable } from "@shared/schema";
 import { z } from "zod";
 import { db } from "../db";
 import { eq, desc } from "drizzle-orm";
@@ -29,81 +29,14 @@ export class BaseController {
 
 // User controller for authentication and user management
 export class UserController extends BaseController {
-  // User registration
+  // User registration - removed as we're using Google OAuth
   public register = async (req: Request, res: Response) => {
-    try {
-      // Validate request body using the registration schema
-      const validatedData = userRegisterSchema.parse(req.body);
-      
-      const { password, confirmPassword, fullName, email, phone, instagram, preferredContactMethod } = validatedData;
-
-      // Ensure password and confirmPassword match
-      if (password !== confirmPassword) {
-        return this.sendError(res, "Passwords do not match", 400);
-      }
-      // Check if user already exists
-      const existingUserByEmail = await storage.getUserByEmail(email);
-      if (existingUserByEmail) {
-        return this.sendError(res, "Email already exists", 400);
-      }
-
-      // Hash password
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-      // Create user (exclude confirmPassword from creation)
-      const newUser = await storage.createUser({
-        password: hashedPassword,
-        fullName,
-        email,
-        phone: phone || "",
-        instagram,
-        preferredContactMethod: preferredContactMethod || "whatsapp",
-        rating: 5.0,
-        ratingsCount: 0,
-      });
-
-      // Send welcome email
-      try {
-        await emailService.sendWelcomeEmail(newUser.email, newUser.fullName);
-        logger.info('AUTH', `Welcome email sent to ${newUser.email}`);
-      } catch (emailError) {
-        logger.error('AUTH', `Failed to send welcome email to ${newUser.email}`, emailError);
-        // Don't fail registration if email fails
-      }
-
-      // Remove password from response
-      const { password: _, ...userWithoutPassword } = newUser;
-      this.sendSuccess(res, { 
-        message: "User registered successfully", 
-        user: userWithoutPassword 
-      }, 201);
-    } catch (error) {
-      console.error("Registration error:", error);
-      if (error instanceof z.ZodError) {
-        return this.sendError(res, error.errors[0].message, 400);
-      }
-      this.handleError(error, res);
-    }
+    return this.sendError(res, "Registration is handled through Google OAuth", 501);
   };
 
-  // User login
+  // User login - removed as we're using Google OAuth
   public login = (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate("local", (err: any, user: any, info: any) => {
-      if (err) {
-        return this.handleError(err, res);
-      }
-      if (!user) {
-        return this.sendError(res, info?.message || "Invalid username or password", 401);
-      }
-
-      req.login(user, (err: any) => {
-        if (err) {
-          return this.handleError(err, res);
-        }
-        return this.sendSuccess(res, { message: "Login successful", user });
-      });
-    })(req, res, next);
+    return this.sendError(res, "Login is handled through Google OAuth", 501);
   };
 
   // Get current authenticated user

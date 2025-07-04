@@ -16,13 +16,13 @@ import { z } from "zod";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  password: text("password").notNull(),
+  password: text("password"), // Made optional for OAuth users
   fullName: text("full_name").notNull(),
   email: text("email").notNull().unique(),
   phone: text("phone"),
   whatsapp: text("whatsapp"), // WhatsApp number for direct contact
   instagram: text("instagram"), // Instagram handle for profile verification (optional globally)
-  googleId: text("google_id"), // Google OAuth ID
+  googleId: text("google_id").unique(), // Google OAuth ID
 
   preferredContactMethod: text("preferred_contact_method").default("email"), // email, whatsapp, phone
   country: text("country").notNull().default("US"), // ISO 3166-1 alpha-2 country code
@@ -409,45 +409,7 @@ export const ticketListingSchema = z.object({
     .refine((date) => !date || date > new Date(), "Expiry date must be in the future"),
 });
 
-export const userRegisterSchema = z.object({
-  password: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .max(128, "Password too long")
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain uppercase, lowercase, and number"),
-  fullName: z.string()
-    .min(2, "Full name is required")
-    .max(100, "Name too long")
-    .regex(/^[a-zA-Z\s\-'\.]+$/, "Name contains invalid characters"),
-  email: z.string()
-    .email("Invalid email address")
-    .max(254, "Email too long")
-    .toLowerCase(),
-  phone: z.string()
-    .optional()
-    .refine((val) => !val || /^\+?[\d\s\-\(\)]{7,20}$/.test(val), "Invalid phone number format"),
-  whatsapp: z.string()
-    .optional()
-    .refine((val) => !val || /^\+?[\d\s\-\(\)]{7,20}$/.test(val), "Invalid WhatsApp number format"),
-  instagram: z.string()
-    .optional()
-    .refine((val) => !val || /^[a-zA-Z0-9_.]{1,30}$/.test(val.replace(/^@/, "")), "Invalid Instagram handle"),
-  country: z.string().length(2, "Country must be 2-letter ISO code").toUpperCase(),
-  timezone: z.string().default("UTC"),
-  language: z.string().length(2, "Language must be 2-letter ISO code").default("en"),
-  preferredContactMethod: z
-    .enum(["email", "whatsapp", "phone"])
-    .default("email"),
-  confirmPassword: z.string(),
-})
-.refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-export const userLoginSchema = z.object({
-  email: z.string().email("Valid email is required"),
-  password: z.string().min(1, "Password is required"),
-});
+// Removed userRegisterSchema and userLoginSchema as we're using Google OAuth
 
 export const userReviewSchema = z.object({
   rating: z

@@ -1,18 +1,25 @@
 import { Router } from "express";
 import passport from "passport";
 import { validateBody } from "../middleware/validation.middleware";
-import { userLoginSchema, userRegisterSchema } from "@shared/schema";
 import { UserController } from "../controllers/index";
 import { z } from "zod";
 
 const router = Router();
 const userController = new UserController();
 
-// User registration
-router.post("/register", validateBody(userRegisterSchema), userController.register);
+// Google OAuth login route
+router.get("/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
-// User login
-router.post("/login", validateBody(userLoginSchema), userController.login);
+// Google OAuth callback route
+router.get("/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    // Successful authentication, redirect to home page
+    res.redirect("/");
+  }
+);
 
 // Get current user
 router.get("/user", userController.getCurrentUser);

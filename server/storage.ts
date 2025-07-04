@@ -43,7 +43,9 @@ export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByGoogleId(googleId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserGoogleId(userId: number, googleId: string): Promise<User | undefined>;
 
   updateUserPhone(userId: number, phone: string): Promise<User | undefined>;
   updateUserInstagram(
@@ -221,6 +223,42 @@ export class DatabaseStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db.insert(users).values(insertUser as any).returning();
     return user;
+  }
+
+  async getUserByGoogleId(googleId: string): Promise<User | undefined> {
+    const startTime = Date.now();
+    try {
+      const [user] = await db.select().from(users).where(eq(users.googleId, googleId)).limit(1);
+      const duration = Date.now() - startTime;
+      if (duration > 1000) {
+        logger.info('DATABASE', `Slow query: SELECT users by googleId took ${duration}ms`);
+      }
+      return user || undefined;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      logger.error('DATABASE', `Error in SELECT users by googleId (${duration}ms)`, error);
+      throw error;
+    }
+  }
+
+  async updateUserGoogleId(
+    userId: number,
+    googleId: string,
+  ): Promise<User | undefined> {
+    try {
+      const [user] = await db
+        .update(users)
+        .set({ googleId } as any)
+        .where(eq(users.id, userId))
+        .returning();
+      
+      // Clear cache after update
+      this.userCache.delete(userId);
+      return user || undefined;
+    } catch (error) {
+      console.error('Error updating user Google ID:', error);
+      return undefined;
+    }
   }
 
 
