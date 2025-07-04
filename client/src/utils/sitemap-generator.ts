@@ -45,12 +45,6 @@ export function generateMainSitemapUrls(): SitemapUrl[] {
       priority: 0.9
     },
     {
-      loc: `${baseUrl}/list-ticket-global`,
-      lastmod: currentDate,
-      changefreq: 'daily',
-      priority: 0.8
-    },
-    {
       loc: `${baseUrl}/map`,
       lastmod: currentDate,
       changefreq: 'daily',
@@ -210,7 +204,6 @@ Allow: /city/*
 Allow: /events/category/*
 Allow: /event/*
 Allow: /map
-Allow: /list-ticket-global
 
 # Sitemap locations
 Sitemap: ${baseUrl}/sitemap.xml

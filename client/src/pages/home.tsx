@@ -685,28 +685,6 @@ export default function Home() {
                     </p>
                   )}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center space-x-2"
-              aria-label="Filter ticket results"
-            >
-              <span>Filter</span>
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </Button>
           </div>
 
           {/* Search Results or Events Grid */}

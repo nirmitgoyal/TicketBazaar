@@ -11,7 +11,6 @@ const EventDetails = createResilientLazyComponent(() => import("@/pages/event-de
 const EventMap = createResilientLazyComponent(() => import("@/pages/event-map"), "event-map");
 const MapPage = createResilientLazyComponent(() => import("@/pages/map"), "map");
 const ListTicket = createResilientLazyComponent(() => import("@/pages/list-ticket"), "list-ticket");
-const ListTicketGlobal = createResilientLazyComponent(() => import("@/pages/list-ticket-global"), "list-ticket-global");
 const MyTickets = createResilientLazyComponent(() => import("@/pages/my-tickets"), "my-tickets");
 const TicketVerification = createResilientLazyComponent(() => import("@/pages/ticket-verification"), "ticket-verification");
 const Profile = createResilientLazyComponent(() => import("@/pages/profile"), "profile");
@@ -140,7 +139,6 @@ export function AppRoutes() {
       
       {/* Ticket management */}
       <LazyRoute path="/list-ticket" component={ListTicket} />
-      <LazyRoute path="/list-ticket-global" component={ListTicketGlobal} />
       <LazyProtectedRoute path="/my-tickets" component={MyTickets} />
       
       {/* Verification */}

@@ -743,20 +743,18 @@ export default function ListTicket() {
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="concerts">Music & Concerts</SelectItem>
+                              <SelectItem value="concerts">Cult.fit</SelectItem>
                               <SelectItem value="sports">Sports</SelectItem>
-                              <SelectItem value="theater">Theater & Arts</SelectItem>
                               <SelectItem value="comedy">Comedy</SelectItem>
                               <SelectItem value="festivals">Festivals</SelectItem>
                               <SelectItem value="conferences">Conferences & Events</SelectItem>
                               <SelectItem value="exhibitions">Exhibitions</SelectItem>
                               <SelectItem value="movies">Movies</SelectItem>
                               <SelectItem value="dance">Dance</SelectItem>
-                              <SelectItem value="opera">Opera</SelectItem>
-                              <SelectItem value="classical">Classical</SelectItem>
-                              <SelectItem value="family">Family</SelectItem>
                               <SelectItem value="nightlife">Nightlife</SelectItem>
                               <SelectItem value="education">Education</SelectItem>
                               <SelectItem value="networking">Networking</SelectItem>
+                              <SelectItem value="networking">Others</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -925,33 +923,12 @@ export default function ListTicket() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Alert>
-                <Info className="h-4 w-4" />
-                <AlertTitle>Price Restrictions</AlertTitle>
-                <AlertDescription>
-                  According to our policy, you cannot list tickets for more than
-                  their original face value.
-                </AlertDescription>
-              </Alert>
-
-              <Separator />
-
-              <div className="space-y-3">
-                <h3 className="font-medium">Contact Information</h3>
-                <p className="text-sm text-textSecondary">
-                  Interested buyers will contact you directly through your
-                  preferred contact method (phone or email). Make sure your
-                  profile information is up to date.
-                </p>
-              </div>
-
-              <Separator />
-
+              
               <div className="space-y-3">
                 <h3 className="font-medium">Instagram Profile</h3>
                 <p className="text-sm text-textSecondary">
-                  Your Instagram profile will be displayed to buyers to help
-                  build trust and verify your identity.
+                  Your Instagram profile will be displayed to buyers (ONLY for the Instagram logged-in users) to help
+                  build trust, verify your identity and to contact you on DM.
                 </p>
               </div>
 
