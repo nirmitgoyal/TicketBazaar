@@ -140,8 +140,9 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
     const data = await response.json();
     const content = data.choices[0].message.content;
     
-    // Log the first 500 characters of response for debugging
+    // Log the response for debugging
     logger.info('PERPLEXITY', `API Response (first 500 chars): ${content.substring(0, 500)}`);
+    logger.info('PERPLEXITY', `API Response (last 500 chars): ${content.substring(Math.max(0, content.length - 500))}`);
     logger.info('PERPLEXITY', `Response length: ${content.length} characters`);
     
     return content;
