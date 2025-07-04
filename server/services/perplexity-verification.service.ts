@@ -153,117 +153,65 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
    */
   private parseVerificationResponse(response: string): TicketVerificationResult {
     try {
-      // Remove thinking tags if present
-      let cleanResponse = response;
-      if (response.includes('<think>')) {
-        // Extract content after </think> tag
-        const thinkEndIndex = response.indexOf('</think>');
-        if (thinkEndIndex !== -1) {
-          cleanResponse = response.substring(thinkEndIndex + 8).trim();
-          logger.info('PERPLEXITY', `Cleaned response (first 200 chars): ${cleanResponse.substring(0, 200)}`);
+      // Simple approach: Look for key information in the response
+      const responseText = response.toLowerCase();
+      
+      // Determine legitimacy based on keywords
+      let legitimacy: 'legit' | 'suspicious' | 'fake' = 'suspicious';
+      let confidence = 50;
+      let explanation = 'Verification completed with limited information';
+      
+      // Look for legitimacy indicators
+      if (responseText.includes('"legitimacy"')) {
+        // Try to extract legitimacy value
+        const legitMatch = response.match(/"legitimacy"\s*:\s*"(legit|suspicious|fake)"/i);
+        if (legitMatch) {
+          legitimacy = legitMatch[1].toLowerCase() as any;
         }
       }
       
-      // Try to parse as pure JSON first
-      let parsed;
-      try {
-        parsed = JSON.parse(cleanResponse);
-      } catch (e) {
-        logger.info('PERPLEXITY', `Failed to parse as pure JSON: ${e.message}`);
-        
-        // If that fails, try to extract a complete JSON object
-        // Look for JSON starting with legitimacy field
-        const jsonStartIndex = cleanResponse.indexOf('{"legitimacy"');
-        if (jsonStartIndex === -1) {
-          // Try alternative: find any JSON object start
-          const altJsonStart = cleanResponse.indexOf('{');
-          if (altJsonStart === -1) {
-            throw new Error('No JSON found in response');
-          }
+      // Look for confidence
+      const confMatch = response.match(/"confidence"\s*:\s*(\d+)/);
+      if (confMatch) {
+        confidence = parseInt(confMatch[1]);
+      }
+      
+      // Look for explanation
+      const explMatch = response.match(/"explanation"\s*:\s*"([^"]+)"/);
+      if (explMatch) {
+        explanation = explMatch[1];
+      }
+      
+      // Simple boolean extraction
+      const eventExists = responseText.includes('"eventexists": true') || responseText.includes('"eventExists": true');
+      const venueValid = responseText.includes('"venuevalid": true') || responseText.includes('"venueValid": true');
+      const dateValid = responseText.includes('"datevalid": true') || responseText.includes('"dateValid": true');
+      
+      // If we couldn't find legitimacy, make a simple decision based on content
+      if (!legitMatch) {
+        if (responseText.includes('no evidence') || responseText.includes('could not be verified') || 
+            responseText.includes('not found') || responseText.includes('suspicious')) {
+          legitimacy = 'suspicious';
+          confidence = 40;
+        } else if (responseText.includes('fake') || responseText.includes('fraudulent') || 
+                   responseText.includes('does not exist')) {
+          legitimacy = 'fake';
+          confidence = 20;
+        } else if (responseText.includes('legitimate') || responseText.includes('valid') || 
+                   responseText.includes('confirmed')) {
+          legitimacy = 'legit';
+          confidence = 80;
         }
-        
-        logger.info('PERPLEXITY', `Found JSON at index: ${jsonStartIndex >= 0 ? jsonStartIndex : cleanResponse.indexOf('{')}`)
-        
-        // Find the matching closing brace
-        let braceCount = 0;
-        let jsonEndIndex = -1;
-        let inString = false;
-        let escapeNext = false;
-        
-        for (let i = jsonStartIndex >= 0 ? jsonStartIndex : cleanResponse.indexOf('{'); i < cleanResponse.length; i++) {
-          const char = cleanResponse[i];
-          
-          if (escapeNext) {
-            escapeNext = false;
-            continue;
-          }
-          
-          if (char === '\\') {
-            escapeNext = true;
-            continue;
-          }
-          
-          if (char === '"' && !escapeNext) {
-            inString = !inString;
-            continue;
-          }
-          
-          if (!inString) {
-            if (char === '{') braceCount++;
-            else if (char === '}') {
-              braceCount--;
-              if (braceCount === 0) {
-                jsonEndIndex = i;
-                break;
-              }
-            }
-          }
-        }
-        
-        if (jsonEndIndex === -1) {
-          // If we can't find the end, try to construct valid JSON from what we have
-          const partialJson = cleanResponse.substring(jsonStartIndex >= 0 ? jsonStartIndex : cleanResponse.indexOf('{'));
-          // Check if it's just missing closing braces
-          const openBraces = (partialJson.match(/{/g) || []).length;
-          const closeBraces = (partialJson.match(/}/g) || []).length;
-          const missingBraces = openBraces - closeBraces;
-          
-          if (missingBraces > 0) {
-            const fixedJson = partialJson + '}'.repeat(missingBraces);
-            try {
-              parsed = JSON.parse(fixedJson);
-            } catch {
-              throw new Error('Incomplete JSON in response');
-            }
-          } else {
-            throw new Error('Could not find complete JSON in response');
-          }
+      }
+      
+      // Create default explanation if none found
+      if (!explMatch) {
+        if (legitimacy === 'legit') {
+          explanation = 'Event verification indicates this is likely a legitimate listing';
+        } else if (legitimacy === 'fake') {
+          explanation = 'Event verification found significant issues with this listing';
         } else {
-          const jsonStr = cleanResponse.substring(jsonStartIndex >= 0 ? jsonStartIndex : cleanResponse.indexOf('{'), jsonEndIndex + 1);
-          parsed = JSON.parse(jsonStr);
-        }
-      }
-      
-      // Additional fallback: try to extract basic fields manually if all else fails
-      if (!parsed) {
-        const legitimacyMatch = cleanResponse.match(/"legitimacy"\s*:\s*"([^"]+)"/);
-        const explanationMatch = cleanResponse.match(/"explanation"\s*:\s*"([^"]+)"/);
-        const confidenceMatch = cleanResponse.match(/"confidence"\s*:\s*(\d+)/);
-        const eventExistsMatch = cleanResponse.match(/"eventExists"\s*:\s*(true|false)/);
-        const venueValidMatch = cleanResponse.match(/"venueValid"\s*:\s*(true|false)/);
-        const dateValidMatch = cleanResponse.match(/"dateValid"\s*:\s*(true|false)/);
-        
-        if (legitimacyMatch) {
-          parsed = {
-            legitimacy: legitimacyMatch[1],
-            explanation: explanationMatch ? explanationMatch[1] : 'Unable to extract explanation',
-            confidence: confidenceMatch ? parseInt(confidenceMatch[1]) : 50,
-            eventExists: eventExistsMatch ? eventExistsMatch[1] === 'true' : false,
-            venueValid: venueValidMatch ? venueValidMatch[1] === 'true' : false,
-            dateValid: dateValidMatch ? dateValidMatch[1] === 'true' : false,
-            possibleDuplicate: false
-          };
-          logger.info('PERPLEXITY', 'Used fallback field extraction');
+          explanation = 'Event verification found some concerns that require further review';
         }
       }
       
@@ -273,21 +221,23 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
         'fake': '❌' as const
       };
 
+      logger.info('PERPLEXITY', `Parsed result: legitimacy=${legitimacy}, confidence=${confidence}`);
+
       return {
-        legitimacy: parsed.legitimacy || 'suspicious',
-        legitimacyEmoji: legitimacyMap[parsed.legitimacy] || '⚠️',
-        explanation: parsed.explanation || 'Unable to determine legitimacy',
-        confidence: parsed.confidence || 50,
+        legitimacy,
+        legitimacyEmoji: legitimacyMap[legitimacy],
+        explanation,
+        confidence,
         checkDetails: {
-          eventExists: parsed.eventExists || false,
-          venueValid: parsed.venueValid || false,
-          dateValid: parsed.dateValid || false,
-          possibleDuplicate: parsed.possibleDuplicate || false
+          eventExists,
+          venueValid,
+          dateValid,
+          possibleDuplicate: false
         }
       };
     } catch (error) {
       logger.error('PERPLEXITY', `Failed to parse response: ${error}`);
-      return this.generateDefaultResult('Invalid response from verification service');
+      return this.generateDefaultResult('Verification completed but could not parse detailed results');
     }
   }
 
