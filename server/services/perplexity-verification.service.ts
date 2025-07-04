@@ -40,61 +40,22 @@ export class PerplexityVerificationService {
   }
 
   /**
-   * Verify ticket listing using Perplexity AI with retry mechanism
+   * Verify ticket listing using Perplexity AI
    */
   async verifyTicketListing(data: TicketVerificationRequest): Promise<TicketVerificationResult> {
-    const maxRetries = 3;
-    const retryDelay = 1000; // 1 second
-    
-    if (!this.apiKey) {
-      return this.generateDefaultResult('Unable to verify - API key not configured');
-    }
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        logger.info('PERPLEXITY', `Verification attempt ${attempt}/${maxRetries}`);
-        
-        const prompt = this.buildVerificationPrompt(data);
-        const response = await this.callPerplexityAPI(prompt);
-        const result = this.parseVerificationResponse(response);
-        
-        // Check if we got a valid result
-        if (result.legitimacy && result.confidence > 0) {
-          logger.info('PERPLEXITY', `Verification successful on attempt ${attempt}`);
-          return result;
-        }
-        
-        // If result is incomplete, try again
-        if (attempt < maxRetries) {
-          logger.warn('PERPLEXITY', `Incomplete result on attempt ${attempt}, retrying...`);
-          await this.delay(retryDelay * attempt); // Exponential backoff
-          continue;
-        }
-        
-        return result; // Return even incomplete result on final attempt
-        
-      } catch (error) {
-        logger.error('PERPLEXITY', `Verification attempt ${attempt} failed: ${error}`);
-        
-        if (attempt < maxRetries) {
-          logger.info('PERPLEXITY', `Retrying in ${retryDelay * attempt}ms...`);
-          await this.delay(retryDelay * attempt);
-          continue;
-        }
-        
-        // Final attempt failed
-        return this.generateDefaultResult(`Verification failed after ${maxRetries} attempts`);
+    try {
+      if (!this.apiKey) {
+        return this.generateDefaultResult('Unable to verify - API key not configured');
       }
-    }
-    
-    return this.generateDefaultResult('Verification service temporarily unavailable');
-  }
 
-  /**
-   * Delay helper for retry mechanism
-   */
-  private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+      const prompt = this.buildVerificationPrompt(data);
+      const response = await this.callPerplexityAPI(prompt);
+      
+      return this.parseVerificationResponse(response);
+    } catch (error) {
+      logger.error('PERPLEXITY', `Verification failed: ${error}`);
+      return this.generateDefaultResult('Verification service temporarily unavailable');
+    }
   }
 
   /**
@@ -226,8 +187,8 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
       const venueValid = responseText.includes('"venuevalid": true') || responseText.includes('"venueValid": true');
       const dateValid = responseText.includes('"datevalid": true') || responseText.includes('"dateValid": true');
       
-      // If we couldn't find legitimacy in structured format, make a simple decision based on content
-      if (!responseText.includes('"legitimacy"')) {
+      // If we couldn't find legitimacy, make a simple decision based on content
+      if (!legitMatch) {
         if (responseText.includes('no evidence') || responseText.includes('could not be verified') || 
             responseText.includes('not found') || responseText.includes('suspicious')) {
           legitimacy = 'suspicious';
@@ -244,7 +205,7 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
       }
       
       // Create default explanation if none found
-      if (!explanation || explanation === 'Verification completed with limited information') {
+      if (!explMatch) {
         if (legitimacy === 'legit') {
           explanation = 'Event verification indicates this is likely a legitimate listing';
         } else if (legitimacy === 'fake') {
