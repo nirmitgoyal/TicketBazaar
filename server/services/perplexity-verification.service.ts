@@ -77,18 +77,18 @@ Listing Details:
 - Number of Tickets: ${data.ticketQuantity}
 - Additional Info: ${data.additionalInfo || 'None provided'}
 
-Please search the web to verify:
-1. Is the venue real and does it host events? Check if the venue exists.
-2. Is the event date in the past? (Current date: ${currentDate})
-3. Are there obvious red flags like fake venue names, impossible dates, or clear scam indicators?
+DO NOT SEARCH THE WEB. Verify based only on the information provided:
 
-BE VERY LENIENT: Most events are legitimate. Only mark as suspicious/fake if you find:
-- Venue definitely does not exist
+1. Is the event date in the past? (Current date: ${currentDate})
+2. Does the venue name sound legitimate? (e.g., not "Fake Stadium" or "123 Nowhere")
+3. Are there obvious red flags like impossible dates or clear scam indicators?
+
+BE EXTREMELY LENIENT: Default to LEGIT unless you find CLEAR red flags:
 - Event date is in the past
-- Clear evidence of fraud or scam
-- Impossible or nonsensical event details
+- Venue name is obviously fake (e.g., "Scam Arena", "Fake Place")
+- Impossible details (e.g., "1000000 tickets", "Free $1M tickets")
 
-If the venue exists and date is in future, default to LEGIT even if you can't find the specific event online.
+If the date is in the future and venue name sounds reasonable, ALWAYS mark as LEGIT with high confidence.
 
 IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before or after. Return exactly this structure:
 {
@@ -111,7 +111,7 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
       messages: [
         {
           role: 'system',
-          content: 'You are a ticket listing fraud-check assistant. Use live web search to verify event details, dates, and venue information. You must ALWAYS respond with ONLY valid JSON format, no other text.'
+          content: 'You are a ticket verification assistant. DO NOT USE WEB SEARCH. Analyze only the provided information using logic. You must ALWAYS respond with ONLY valid JSON format, no other text. Be EXTREMELY LENIENT - mark tickets as "legit" unless there are OBVIOUS red flags like past dates or clearly fake venue names.'
         },
         {
           role: 'user',
