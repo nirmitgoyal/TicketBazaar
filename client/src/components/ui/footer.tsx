@@ -79,11 +79,6 @@ export function Footer() {
                   How to Sell Ticket Online
                 </Link>
               </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary">
-                  Dispute Resolution
-                </a>
-              </li>
             </ul>
           </div>
         </div>
