@@ -168,20 +168,102 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
       let parsed;
       try {
         parsed = JSON.parse(cleanResponse);
-      } catch {
-        // If that fails, look for JSON pattern
-        const jsonRegex = /\{[\s]*"legitimacy"[\s]*:[\s]*"[^"]*"[\s\S]*?\}/;
-        const jsonMatch = cleanResponse.match(jsonRegex);
+      } catch (e) {
+        logger.info('PERPLEXITY', `Failed to parse as pure JSON: ${e.message}`);
         
-        if (!jsonMatch) {
-          // Try to find any JSON object
-          const generalJsonMatch = cleanResponse.match(/\{[\s\S]*\}/);
-          if (!generalJsonMatch) {
+        // If that fails, try to extract a complete JSON object
+        // Look for JSON starting with legitimacy field
+        const jsonStartIndex = cleanResponse.indexOf('{"legitimacy"');
+        if (jsonStartIndex === -1) {
+          // Try alternative: find any JSON object start
+          const altJsonStart = cleanResponse.indexOf('{');
+          if (altJsonStart === -1) {
             throw new Error('No JSON found in response');
           }
-          parsed = JSON.parse(generalJsonMatch[0]);
+        }
+        
+        logger.info('PERPLEXITY', `Found JSON at index: ${jsonStartIndex >= 0 ? jsonStartIndex : cleanResponse.indexOf('{')}`)
+        
+        // Find the matching closing brace
+        let braceCount = 0;
+        let jsonEndIndex = -1;
+        let inString = false;
+        let escapeNext = false;
+        
+        for (let i = jsonStartIndex >= 0 ? jsonStartIndex : cleanResponse.indexOf('{'); i < cleanResponse.length; i++) {
+          const char = cleanResponse[i];
+          
+          if (escapeNext) {
+            escapeNext = false;
+            continue;
+          }
+          
+          if (char === '\\') {
+            escapeNext = true;
+            continue;
+          }
+          
+          if (char === '"' && !escapeNext) {
+            inString = !inString;
+            continue;
+          }
+          
+          if (!inString) {
+            if (char === '{') braceCount++;
+            else if (char === '}') {
+              braceCount--;
+              if (braceCount === 0) {
+                jsonEndIndex = i;
+                break;
+              }
+            }
+          }
+        }
+        
+        if (jsonEndIndex === -1) {
+          // If we can't find the end, try to construct valid JSON from what we have
+          const partialJson = cleanResponse.substring(jsonStartIndex >= 0 ? jsonStartIndex : cleanResponse.indexOf('{'));
+          // Check if it's just missing closing braces
+          const openBraces = (partialJson.match(/{/g) || []).length;
+          const closeBraces = (partialJson.match(/}/g) || []).length;
+          const missingBraces = openBraces - closeBraces;
+          
+          if (missingBraces > 0) {
+            const fixedJson = partialJson + '}'.repeat(missingBraces);
+            try {
+              parsed = JSON.parse(fixedJson);
+            } catch {
+              throw new Error('Incomplete JSON in response');
+            }
+          } else {
+            throw new Error('Could not find complete JSON in response');
+          }
         } else {
-          parsed = JSON.parse(jsonMatch[0]);
+          const jsonStr = cleanResponse.substring(jsonStartIndex >= 0 ? jsonStartIndex : cleanResponse.indexOf('{'), jsonEndIndex + 1);
+          parsed = JSON.parse(jsonStr);
+        }
+      }
+      
+      // Additional fallback: try to extract basic fields manually if all else fails
+      if (!parsed) {
+        const legitimacyMatch = cleanResponse.match(/"legitimacy"\s*:\s*"([^"]+)"/);
+        const explanationMatch = cleanResponse.match(/"explanation"\s*:\s*"([^"]+)"/);
+        const confidenceMatch = cleanResponse.match(/"confidence"\s*:\s*(\d+)/);
+        const eventExistsMatch = cleanResponse.match(/"eventExists"\s*:\s*(true|false)/);
+        const venueValidMatch = cleanResponse.match(/"venueValid"\s*:\s*(true|false)/);
+        const dateValidMatch = cleanResponse.match(/"dateValid"\s*:\s*(true|false)/);
+        
+        if (legitimacyMatch) {
+          parsed = {
+            legitimacy: legitimacyMatch[1],
+            explanation: explanationMatch ? explanationMatch[1] : 'Unable to extract explanation',
+            confidence: confidenceMatch ? parseInt(confidenceMatch[1]) : 50,
+            eventExists: eventExistsMatch ? eventExistsMatch[1] === 'true' : false,
+            venueValid: venueValidMatch ? venueValidMatch[1] === 'true' : false,
+            dateValid: dateValidMatch ? dateValidMatch[1] === 'true' : false,
+            possibleDuplicate: false
+          };
+          logger.info('PERPLEXITY', 'Used fallback field extraction');
         }
       }
       
