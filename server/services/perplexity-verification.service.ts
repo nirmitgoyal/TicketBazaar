@@ -152,32 +152,35 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
    */
   private parseVerificationResponse(response: string): TicketVerificationResult {
     try {
-      // First try to parse as pure JSON
+      // Remove thinking tags if present
+      let cleanResponse = response;
+      if (response.includes('<think>')) {
+        // Extract content after </think> tag
+        const thinkEndIndex = response.indexOf('</think>');
+        if (thinkEndIndex !== -1) {
+          cleanResponse = response.substring(thinkEndIndex + 8).trim();
+          logger.info('PERPLEXITY', `Cleaned response (first 200 chars): ${cleanResponse.substring(0, 200)}`);
+        }
+      }
+      
+      // Try to parse as pure JSON first
       let parsed;
       try {
-        parsed = JSON.parse(response.trim());
+        parsed = JSON.parse(cleanResponse);
       } catch {
-        // If that fails, try to find JSON object at the end of response
-        // Look for the last occurrence of a JSON object
-        const jsonMatches = response.match(/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g);
-        if (!jsonMatches || jsonMatches.length === 0) {
-          throw new Error('No JSON found in response');
-        }
+        // If that fails, look for JSON pattern
+        const jsonRegex = /\{[\s]*"legitimacy"[\s]*:[\s]*"[^"]*"[\s\S]*?\}/;
+        const jsonMatch = cleanResponse.match(jsonRegex);
         
-        // Try parsing from the last match (most likely the actual result)
-        let jsonFound = false;
-        for (let i = jsonMatches.length - 1; i >= 0; i--) {
-          try {
-            parsed = JSON.parse(jsonMatches[i]);
-            jsonFound = true;
-            break;
-          } catch {
-            continue;
+        if (!jsonMatch) {
+          // Try to find any JSON object
+          const generalJsonMatch = cleanResponse.match(/\{[\s\S]*\}/);
+          if (!generalJsonMatch) {
+            throw new Error('No JSON found in response');
           }
-        }
-        
-        if (!jsonFound) {
-          throw new Error('No valid JSON found in response');
+          parsed = JSON.parse(generalJsonMatch[0]);
+        } else {
+          parsed = JSON.parse(jsonMatch[0]);
         }
       }
       

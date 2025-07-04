@@ -118,6 +118,12 @@ TicketBazaar is a comprehensive peer-to-peer ticket marketplace platform designe
 
 ```
 Changelog:
+- July 4, 2025. Fixed Perplexity API compatibility with r1-1776 model
+  * Updated model from deprecated sonar models to r1-1776 as requested by user
+  * Enhanced JSON parsing to handle r1-1776's thinking tag format (<think>...</think>)
+  * Added robust JSON extraction that removes thinking tags before parsing
+  * Fixed validation errors preventing ticket listing by allowing apostrophes and quotes
+  * Improved error logging to debug model responses effectively
 - July 1, 2025. Major backend refactoring phase 1 completed
   * Created UnifiedVerificationService consolidating all verification logic (ai-verification, enhanced-ai-verification, fraud-detection services)
   * Implemented strategy pattern with 4 verification levels: basic, enhanced, AI, and comprehensive
