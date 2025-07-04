@@ -311,22 +311,22 @@ export const ticketListingSchema = z.object({
     .min(1, "Title is required")
     .max(200, "Title too long")
     .trim()
-    .refine((val) => !/[<>\"'&]/.test(val), "Title contains invalid characters"),
+    .refine((val) => !/[<>]/.test(val), "Title contains invalid HTML characters"),
   eventTitle: z.string()
     .max(200, "Event title too long")
     .trim()
     .optional()
-    .refine((val) => !val || !/[<>\"'&]/.test(val), "Event title contains invalid characters"),
+    .refine((val) => !val || !/[<>]/.test(val), "Event title contains invalid HTML characters"),
   eventDescription: z.string()
     .max(2000, "Description too long")
     .trim()
     .optional()
-    .refine((val) => !val || !/[<>\"'&]/.test(val), "Description contains invalid characters"),
+    .refine((val) => !val || !/[<>]/.test(val), "Description contains invalid HTML characters"),
   venue: z.string()
     .min(1, "Venue is required")
     .max(200, "Venue name too long")
     .trim()
-    .refine((val) => !/[<>\"'&]/.test(val), "Venue contains invalid characters"),
+    .refine((val) => !/[<>]/.test(val), "Venue contains invalid HTML characters"),
   venueAddress: z.string()
     .max(500, "Address too long")
     .trim()
@@ -397,7 +397,7 @@ export const ticketListingSchema = z.object({
     .max(1000, "Additional info too long")
     .trim()
     .optional()
-    .refine((val) => !val || !/[<>\"'&]/.test(val), "Additional info contains invalid characters"),
+    .refine((val) => !val || !/[<>]/.test(val), "Additional info contains invalid HTML characters"),
   showContactInfo: z.boolean().default(false),
   eventTimezone: z.string().max(50, "Timezone too long").default("UTC"),
   ageRestriction: z.string()
