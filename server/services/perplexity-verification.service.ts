@@ -85,7 +85,7 @@ Please search the web to verify:
 
 Use live web data to validate these details. Be lenient - only flag clear red flags or obvious inconsistencies.
 
-Respond in JSON format:
+IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before or after. Return exactly this structure:
 {
   "legitimacy": "legit" | "suspicious" | "fake",
   "explanation": "2-3 sentence explanation",
@@ -106,7 +106,7 @@ Respond in JSON format:
       messages: [
         {
           role: 'system',
-          content: 'You are a ticket listing fraud-check assistant. Use live web search to verify event details, dates, and venue information. Analyze ticket listings for legitimacy and provide JSON responses.'
+          content: 'You are a ticket listing fraud-check assistant. Use live web search to verify event details, dates, and venue information. You must ALWAYS respond with ONLY valid JSON format, no other text.'
         },
         {
           role: 'user',
@@ -148,13 +148,18 @@ Respond in JSON format:
    */
   private parseVerificationResponse(response: string): TicketVerificationResult {
     try {
-      // Extract JSON from response (handling potential markdown formatting)
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        throw new Error('No JSON found in response');
+      // First try to parse as pure JSON
+      let parsed;
+      try {
+        parsed = JSON.parse(response);
+      } catch {
+        // If that fails, extract JSON from response (handling potential markdown formatting)
+        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+          throw new Error('No JSON found in response');
+        }
+        parsed = JSON.parse(jsonMatch[0]);
       }
-
-      const parsed = JSON.parse(jsonMatch[0]);
       
       const legitimacyMap = {
         'legit': '✅' as const,
