@@ -78,12 +78,17 @@ Listing Details:
 - Additional Info: ${data.additionalInfo || 'None provided'}
 
 Please search the web to verify:
-1. Is this a real, upcoming event? Search for the event name and date to confirm it exists.
-2. Is the venue valid and does it host such events? Verify the venue location using maps/web search.
-3. Does the event date and time match official sources? Check event websites, ticketing platforms.
-4. Are there any red flags like non-existent venues, past dates, or fake event names?
+1. Is the venue real and does it host events? Check if the venue exists.
+2. Is the event date in the past? (Current date: ${currentDate})
+3. Are there obvious red flags like fake venue names, impossible dates, or clear scam indicators?
 
-Use live web data to validate these details. Be lenient - only flag clear red flags or obvious inconsistencies.
+BE VERY LENIENT: Most events are legitimate. Only mark as suspicious/fake if you find:
+- Venue definitely does not exist
+- Event date is in the past
+- Clear evidence of fraud or scam
+- Impossible or nonsensical event details
+
+If the venue exists and date is in future, default to LEGIT even if you can't find the specific event online.
 
 IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before or after. Return exactly this structure:
 {
@@ -188,31 +193,44 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
       const venueValid = responseText.includes('"venuevalid": true') || responseText.includes('"venueValid": true');
       const dateValid = responseText.includes('"datevalid": true') || responseText.includes('"dateValid": true');
       
-      // If we couldn't find legitimacy, make a simple decision based on content
+      // If we couldn't find legitimacy, make a lenient decision based on content
       if (!legitMatch) {
-        if (responseText.includes('no evidence') || responseText.includes('could not be verified') || 
-            responseText.includes('not found') || responseText.includes('suspicious')) {
-          legitimacy = 'suspicious';
-          confidence = 40;
-        } else if (responseText.includes('fake') || responseText.includes('fraudulent') || 
-                   responseText.includes('does not exist')) {
+        // Only mark as fake/suspicious for CLEAR red flags
+        if (responseText.includes('fake') || responseText.includes('fraudulent') || 
+            responseText.includes('scam') || responseText.includes('past date')) {
           legitimacy = 'fake';
           confidence = 20;
-        } else if (responseText.includes('legitimate') || responseText.includes('valid') || 
-                   responseText.includes('confirmed')) {
+        } else if (responseText.includes('does not exist') || responseText.includes('invalid venue') ||
+                   responseText.includes('no such venue')) {
+          legitimacy = 'suspicious';
+          confidence = 40;
+        } else {
+          // Default to legit if no clear red flags found
           legitimacy = 'legit';
-          confidence = 80;
+          confidence = 70;
         }
       }
       
-      // Create default explanation if none found
+      // Boost confidence if venue is valid (lenient approach)
+      if (venueValid && legitimacy !== 'fake') {
+        confidence = Math.max(confidence, 75);
+        if (legitimacy === 'suspicious') {
+          legitimacy = 'legit';
+        }
+      }
+      
+      // Create default explanation if none found (lenient approach)
       if (!explMatch) {
         if (legitimacy === 'legit') {
-          explanation = 'Event verification indicates this is likely a legitimate listing';
+          if (venueValid) {
+            explanation = 'The venue is verified as legitimate. Event details appear reasonable with no red flags detected.';
+          } else {
+            explanation = 'Event verification found no significant issues with this listing.';
+          }
         } else if (legitimacy === 'fake') {
-          explanation = 'Event verification found significant issues with this listing';
+          explanation = 'Event verification found clear red flags indicating this listing may be fraudulent.';
         } else {
-          explanation = 'Event verification found some concerns that require further review';
+          explanation = 'Some aspects of this listing could not be fully verified, but no major red flags were found.';
         }
       }
       
