@@ -102,7 +102,7 @@ Respond in JSON format:
    */
   private async callPerplexityAPI(prompt: string): Promise<any> {
     const requestBody = {
-      model: 'sonar-small-online',
+      model: 'mistral-7b-instruct',
       messages: [
         {
           role: 'system',
@@ -116,9 +116,6 @@ Respond in JSON format:
       temperature: 0.2,
       max_tokens: 1000,
       top_p: 0.9,
-      return_images: false,
-      return_related_questions: false,
-      search_recency_filter: 'month',
       stream: false
     };
 
