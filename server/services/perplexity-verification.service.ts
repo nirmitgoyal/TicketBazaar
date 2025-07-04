@@ -84,9 +84,9 @@ ONLY these are red flags:
 2. Venue name contains words like "Scam", "Fake", "Test", "123", "XXX"
 3. Ticket quantity over 10,000
 4. Price is 0 or negative
+5. Event title is odd/nonsensical (e.g., random characters, gibberish, test data)
 
 EVERYTHING ELSE IS LEGITIMATE:
-- Odd/unusual event titles are FINE
 - Misspellings are FINE
 - Unknown performers are FINE
 - Hotels hosting concerts are FINE
