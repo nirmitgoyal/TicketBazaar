@@ -162,9 +162,10 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
       let explanation = 'Verification completed with limited information';
       
       // Look for legitimacy indicators
+      let legitMatch = null;
       if (responseText.includes('"legitimacy"')) {
         // Try to extract legitimacy value
-        const legitMatch = response.match(/"legitimacy"\s*:\s*"(legit|suspicious|fake)"/i);
+        legitMatch = response.match(/"legitimacy"\s*:\s*"(legit|suspicious|fake)"/i);
         if (legitMatch) {
           legitimacy = legitMatch[1].toLowerCase() as any;
         }
