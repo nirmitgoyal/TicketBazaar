@@ -85,6 +85,7 @@
     "@types/ws": "^8.5.13",
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
+    "axios": "^1.10.0",
     "bcrypt": "^5.1.1",
     "browserslist": "^4.24.4",
     "caniuse-lite": "^1.0.30001716",

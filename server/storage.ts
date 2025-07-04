@@ -43,7 +43,9 @@ export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByInstagramId(instagramId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, data: Partial<InsertUser>): Promise<User | undefined>;
 
   updateUserPhone(userId: number, phone: string): Promise<User | undefined>;
   updateUserInstagram(
@@ -218,9 +220,42 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getUserByInstagramId(instagramId: string): Promise<User | undefined> {
+    const startTime = Date.now();
+    try {
+      const [user] = await db.select().from(users).where(eq(users.instagramId, instagramId)).limit(1);
+      const duration = Date.now() - startTime;
+      if (duration > 1000) {
+        logger.info('DATABASE', `Slow query: SELECT users by instagram id took ${duration}ms`);
+      }
+      return user || undefined;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      logger.error('DATABASE', `Error in SELECT users by instagram id (${duration}ms)`, error);
+      throw error;
+    }
+  }
+
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db.insert(users).values(insertUser as any).returning();
     return user;
+  }
+
+  async updateUser(id: number, data: Partial<InsertUser>): Promise<User | undefined> {
+    try {
+      const [user] = await db
+        .update(users)
+        .set(data as any)
+        .where(eq(users.id, id))
+        .returning();
+      
+      // Clear cache after update
+      this.userCache.delete(id);
+      return user || undefined;
+    } catch (error) {
+      logger.error('DATABASE', `Error updating user ${id}`, error);
+      throw error;
+    }
   }
 
 

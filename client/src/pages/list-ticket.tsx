@@ -504,12 +504,12 @@ export default function ListTicket() {
                 </Button>
 
                 <p className="text-center text-sm text-muted-foreground">
-                  Don't have an account?{" "}
+                  New to Ticket Bazaar?{" "}
                   <button
-                    onClick={() => navigate("/register")}
+                    onClick={() => navigate("/login")}
                     className="text-primary hover:underline"
                   >
-                    Sign up here
+                    Login with Instagram
                   </button>
                 </p>
               </div>

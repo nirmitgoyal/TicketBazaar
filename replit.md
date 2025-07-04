@@ -31,7 +31,8 @@ TicketBazaar is a comprehensive peer-to-peer ticket marketplace platform designe
 ## Key Components
 
 ### Authentication & Security
-- **Multi-factor Authentication**: Email/phone verification with optional Instagram linking
+- **Instagram OAuth Login**: Users authenticate exclusively through Instagram API v23
+- **Eligibility Requirements**: Minimum 50 followers and 1 post to prevent fraud
 - **Session Management**: Secure session handling with configurable cookie settings
 - **Rate Limiting**: Comprehensive rate limiting across all endpoints
 - **Fraud Detection**: AI-powered verification and risk assessment
