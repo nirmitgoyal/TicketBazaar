@@ -77,18 +77,25 @@ Listing Details:
 - Number of Tickets: ${data.ticketQuantity}
 - Additional Info: ${data.additionalInfo || 'None provided'}
 
-DO NOT SEARCH THE WEB. Verify based only on the information provided:
+DO NOT SEARCH THE WEB. Analyze only the provided information.
 
-1. Is the event date in the past? (Current date: ${currentDate})
-2. Does the venue name sound legitimate? (e.g., not "Fake Stadium" or "123 Nowhere")
-3. Are there obvious red flags like impossible dates or clear scam indicators?
+ONLY these are red flags:
+1. Event date is in the past (Current date: ${currentDate})
+2. Venue name contains words like "Scam", "Fake", "Test", "123", "XXX"
+3. Ticket quantity over 10,000
+4. Price is 0 or negative
 
-BE EXTREMELY LENIENT: Default to LEGIT unless you find CLEAR red flags:
-- Event date is in the past
-- Venue name is obviously fake (e.g., "Scam Arena", "Fake Place")
-- Impossible details (e.g., "1000000 tickets", "Free $1M tickets")
+EVERYTHING ELSE IS LEGITIMATE:
+- Odd/unusual event titles are FINE
+- Misspellings are FINE
+- Unknown performers are FINE
+- Hotels hosting concerts are FINE
+- Any future date is FINE
+- Any reasonable venue name is FINE
 
-If the date is in the future and venue name sounds reasonable, ALWAYS mark as LEGIT with high confidence.
+If none of the 4 red flags above are present, ALWAYS return:
+legitimacy: "legit"
+confidence: 95
 
 IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before or after. Return exactly this structure:
 {
