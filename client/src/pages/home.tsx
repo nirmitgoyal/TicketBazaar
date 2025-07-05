@@ -15,13 +15,15 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useAuth } from "@/hooks/use-auth";
 
 import { Ticket } from "@shared/schema";
 
 export default function Home() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const params = useParams<{ category?: string }>();
   const { trackEvent, trackUserAction } = useAnalytics();
+  const { isAuthenticated } = useAuth();
   const [searchParams, setSearchParams] = useState<URLSearchParams | null>(
     null,
   );
@@ -439,6 +441,12 @@ export default function Home() {
   };
 
   const openModal = (eventId: number) => {
+    // Check authentication before opening modal
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
     setSelectedEventId(eventId);
     setIsModalOpen(true);
 
@@ -456,6 +464,12 @@ export default function Home() {
   };
 
   const openSellerModal = (ticket: Ticket) => {
+    // Check authentication before opening modal
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
     setSelectedTicket(ticket);
     setIsSellerModalOpen(true);
 
