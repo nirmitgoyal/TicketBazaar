@@ -510,57 +510,16 @@ export default function ListTicket() {
     setPendingTicketData(null);
   };
 
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
   if (!isAuthenticated) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <SEOManager
-          title="Login Required | List Tickets for Sale - Ticket Bazaar"
-          description="Please log in to list your event tickets for sale on Ticket Bazaar."
-          canonicalUrl="https://ticketbazaar.co.in/list-ticket"
-        >
-          <UnifiedSchema />
-        </SEOManager>
-        <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
-          List Your Ticket
-        </h1>
-
-        <div className="max-w-lg mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle>Login Required</CardTitle>
-              <CardDescription>
-                You need to be logged in to list tickets for sale
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Authentication Required</AlertTitle>
-                <AlertDescription>
-                  Please sign in to list your tickets for sale on Ticket Bazaar.
-                </AlertDescription>
-              </Alert>
-
-              <div className="flex flex-col gap-4">
-                <Button onClick={() => navigate("/login")} className="w-full">
-                  Sign In
-                </Button>
-
-                <p className="text-center text-sm text-muted-foreground">
-                  Don't have an account?{" "}
-                  <button
-                    onClick={() => navigate("/register")}
-                    className="text-primary hover:underline"
-                  >
-                    Sign up here
-                  </button>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+    // Return empty while redirecting
+    return null;
   }
 
   const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "demo";
