@@ -7,19 +7,39 @@ import { z } from "zod";
 const router = Router();
 const userController = new UserController();
 
-// Google OAuth login route
-router.get("/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+// Check if Google OAuth is configured
+const isGoogleOAuthEnabled = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 
-// Google OAuth callback route
-router.get("/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
-  (req, res) => {
-    // Successful authentication, redirect to home page
-    res.redirect("/");
-  }
-);
+// Google OAuth login route (only if configured)
+if (isGoogleOAuthEnabled) {
+  router.get("/google",
+    passport.authenticate("google", { scope: ["profile", "email"] })
+  );
+
+  // Google OAuth callback route (only if configured)
+  router.get("/google/callback",
+    passport.authenticate("google", { failureRedirect: "/" }),
+    (req, res) => {
+      // Successful authentication, redirect to home page
+      res.redirect("/");
+    }
+  );
+} else {
+  // Provide fallback routes that return appropriate errors
+  router.get("/google", (req, res) => {
+    res.status(503).json({ 
+      message: "Google OAuth is not configured on this server",
+      error: "SERVICE_UNAVAILABLE"
+    });
+  });
+
+  router.get("/google/callback", (req, res) => {
+    res.status(503).json({ 
+      message: "Google OAuth is not configured on this server",
+      error: "SERVICE_UNAVAILABLE"
+    });
+  });
+}
 
 // Get current user
 router.get("/user", userController.getCurrentUser);

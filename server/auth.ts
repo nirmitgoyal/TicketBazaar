@@ -57,52 +57,57 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Configure Google OAuth2 strategy
-  const googleClientId = process.env.GOOGLE_CLIENT_ID || '';
-  const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || '';
+  // Configure Google OAuth2 strategy only if credentials are provided
+  const googleClientId = process.env.GOOGLE_CLIENT_ID;
+  const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
   
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: googleClientId,
-        clientSecret: googleClientSecret,
-        callbackURL: "https://d306cb34-7ff8-4c43-be3f-5bc3dc3bf3fc-00-2tsp72f1ce0rb.sisko.replit.dev/api/auth/google/callback",
-        passReqToCallback: true
-      },
-      async (req, accessToken, refreshToken, profile, done) => {
-        try {
-          // Check if user exists with this Google ID
-          let user = await storage.getUserByGoogleId(profile.id);
+  if (googleClientId && googleClientSecret) {
+    console.log('Setting up Google OAuth strategy');
+    passport.use(
+      new GoogleStrategy(
+        {
+          clientID: googleClientId,
+          clientSecret: googleClientSecret,
+          callbackURL: "https://d306cb34-7ff8-4c43-be3f-5bc3dc3bf3fc-00-2tsp72f1ce0rb.sisko.replit.dev/api/auth/google/callback",
+          passReqToCallback: true
+        },
+        async (req, accessToken, refreshToken, profile, done) => {
+          try {
+            // Check if user exists with this Google ID
+            let user = await storage.getUserByGoogleId(profile.id);
 
-          if (!user) {
-            // Check if user exists with this email
-            user = await storage.getUserByEmail(profile.emails?.[0]?.value || '');
+            if (!user) {
+              // Check if user exists with this email
+              user = await storage.getUserByEmail(profile.emails?.[0]?.value || '');
 
-            if (user) {
-              // Update existing user with Google ID
-              user = await storage.updateUserGoogleId(user.id, profile.id);
-            } else {
-              // Create new user
-              user = await storage.createUser({
-                googleId: profile.id,
-                email: profile.emails?.[0]?.value || '',
-                fullName: profile.displayName || 'User',
-                rating: 5.0,
-                ratingsCount: 0,
-                preferredContactMethod: "whatsapp",
-              });
+              if (user) {
+                // Update existing user with Google ID
+                user = await storage.updateUserGoogleId(user.id, profile.id);
+              } else {
+                // Create new user
+                user = await storage.createUser({
+                  googleId: profile.id,
+                  email: profile.emails?.[0]?.value || '',
+                  fullName: profile.displayName || 'User',
+                  rating: 5.0,
+                  ratingsCount: 0,
+                  preferredContactMethod: "whatsapp",
+                });
+              }
             }
-          }
 
-          // Remove password from user object for security
-          const { password, ...userWithoutPassword } = user;
-          return done(null, userWithoutPassword as any);
-        } catch (error) {
-          return done(error as Error, false);
+            // Remove password from user object for security
+            const { password, ...userWithoutPassword } = user;
+            return done(null, userWithoutPassword as any);
+          } catch (error) {
+            return done(error as Error, false);
+          }
         }
-      }
-    )
-  );
+      )
+    );
+  } else {
+    console.log('Google OAuth credentials not provided, skipping Google authentication setup');
+  }
 
   // User serialization and deserialization for sessions
   passport.serializeUser((user, done) => {
