@@ -511,7 +511,7 @@ export default function ListTicket() {
   };
 
   // Redirect to login if not authenticated
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
     }
