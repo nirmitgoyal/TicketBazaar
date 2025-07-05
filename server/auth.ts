@@ -68,7 +68,8 @@ export function setupAuth(app: Express) {
         {
           clientID: googleClientId,
           clientSecret: googleClientSecret,
-          callbackURL: "https://d306cb34-7ff8-4c43-be3f-5bc3dc3bf3fc-00-2tsp72f1ce0rb.sisko.replit.dev/api/auth/google/callback",
+          callbackURL: "/api/auth/google/callback",
+          proxy: true,
           passReqToCallback: true
         },
         async (req, accessToken, refreshToken, profile, done) => {
