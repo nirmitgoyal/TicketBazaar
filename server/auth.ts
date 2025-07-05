@@ -86,13 +86,17 @@ export function setupAuth(app: Express) {
                 user = await storage.updateUserGoogleId(user.id, profile.id);
               } else {
                 // Create new user
+                console.log('Creating new user with Google profile:', {
+                  googleId: profile.id,
+                  email: profile.emails?.[0]?.value || '',
+                  fullName: profile.displayName || 'User',
+                });
+                
                 user = await storage.createUser({
                   googleId: profile.id,
                   email: profile.emails?.[0]?.value || '',
                   fullName: profile.displayName || 'User',
-                  rating: 5.0,
-                  ratingsCount: 0,
-                  preferredContactMethod: "whatsapp",
+                  country: "IN", // Default to India since it's an Indian platform
                 });
               }
             }
@@ -101,6 +105,8 @@ export function setupAuth(app: Express) {
             const { password, ...userWithoutPassword } = user;
             return done(null, userWithoutPassword as any);
           } catch (error) {
+            console.error('Google OAuth error:', error);
+            console.error('Error details:', JSON.stringify(error, null, 2));
             return done(error as Error, false);
           }
         }
