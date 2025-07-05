@@ -4,6 +4,8 @@ import { useAuth } from "@/hooks/use-auth";
 import SEO from "@/components/seo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
 export default function Login() {
   const { isAuthenticated } = useAuth();
@@ -39,6 +41,14 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Information about requirements */}
+          <Alert className="border-blue-200 bg-blue-50">
+            <Info className="h-4 w-4 text-blue-600" />
+            <AlertDescription className="text-sm text-blue-800">
+              To view seller details, you need to sign in with Google and add your Instagram handle to your profile.
+            </AlertDescription>
+          </Alert>
+          
           {/* Google Sign-in Button following Google's branding guidelines */}
           <Button
             onClick={handleGoogleSignIn}

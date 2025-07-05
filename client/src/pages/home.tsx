@@ -16,6 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SEOManager } from "@/components/helmet-manager";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 import { Ticket } from "@shared/schema";
 
@@ -24,6 +25,7 @@ export default function Home() {
   const params = useParams<{ category?: string }>();
   const { trackEvent, trackUserAction } = useAnalytics();
   const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
   const [searchParams, setSearchParams] = useState<URLSearchParams | null>(
     null,
   );
@@ -443,7 +445,14 @@ export default function Home() {
   const openModal = (eventId: number) => {
     // Check authentication before opening modal
     if (!isAuthenticated) {
-      navigate("/login");
+      toast({
+        title: "Sign in Required",
+        description: "You need to be signed in via Google and have your Instagram handle added to view seller details.",
+        variant: "default",
+      });
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000); // Give user time to read the message
       return;
     }
 
@@ -466,7 +475,14 @@ export default function Home() {
   const openSellerModal = (ticket: Ticket) => {
     // Check authentication before opening modal
     if (!isAuthenticated) {
-      navigate("/login");
+      toast({
+        title: "Sign in Required",
+        description: "You need to be signed in via Google and have your Instagram handle added to view seller details.",
+        variant: "default",
+      });
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000); // Give user time to read the message
       return;
     }
 
