@@ -743,7 +743,8 @@ export default function ListTicket() {
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="concerts">Music & Concerts</SelectItem>
-                              <SelectItem value="concerts">Cult.fit</SelectItem>
+                              <SelectItem value="fitness">Cult.fit</SelectItem>
+                              <SelectItem value="travel">Zostel/Any Other Hotel</SelectItem>
                               <SelectItem value="sports">Sports</SelectItem>
                               <SelectItem value="comedy">Comedy</SelectItem>
                               <SelectItem value="festivals">Festivals</SelectItem>
@@ -754,7 +755,7 @@ export default function ListTicket() {
                               <SelectItem value="nightlife">Nightlife</SelectItem>
                               <SelectItem value="education">Education</SelectItem>
                               <SelectItem value="networking">Networking</SelectItem>
-                              <SelectItem value="networking">Others</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
