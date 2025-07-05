@@ -42,6 +42,7 @@ import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 import { getAllCountries, getCountryInfo, detectUserCountry } from "@/lib/country-utils";
 
 import { ticketListingSchema } from "@shared/schema";
+import { InstagramHandleModal } from "@/components/InstagramHandleModal";
 
 // Custom form schema for ticket listing with string dates/times
 const ticketFormSchema = z.object({
@@ -97,6 +98,8 @@ export default function ListTicket() {
   const [venueInputValue, setVenueInputValue] = useState("");
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [showInstagramModal, setShowInstagramModal] = useState(false);
+  const [pendingTicketData, setPendingTicketData] = useState<TicketWithEventForm | null>(null);
 
   const form = useForm<TicketWithEventForm>({
     resolver: zodResolver(ticketFormSchema),
@@ -413,6 +416,21 @@ export default function ListTicket() {
       };
 
       const response = await apiRequest("POST", "/api/tickets", ticketData);
+      
+      // Check for Instagram handle required error
+      if (response.status === 403) {
+        const errorData = await response.json();
+        if (errorData.error === "INSTAGRAM_HANDLE_REQUIRED") {
+          throw new Error("INSTAGRAM_HANDLE_REQUIRED");
+        }
+        throw new Error(errorData.message || "Failed to create ticket");
+      }
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create ticket");
+      }
+      
       return await response.json();
     },
     onSuccess: (data) => {
@@ -433,6 +451,16 @@ export default function ListTicket() {
     },
     onError: (error: any) => {
       console.error("Ticket creation error:", error);
+      
+      // Check if Instagram handle is required
+      if (error.message === "INSTAGRAM_HANDLE_REQUIRED") {
+        setShowInstagramModal(true);
+        // Store the ticket data to retry after Instagram handle is added
+        const formData = form.getValues();
+        setPendingTicketData(formData);
+        return;
+      }
+      
       let errorMessage = "Failed to list ticket";
       
       // Parse detailed error message if available
@@ -465,6 +493,21 @@ export default function ListTicket() {
     // Clear any previous error states
     createTicketMutation.reset();
     createTicketMutation.mutate(data);
+  };
+
+  const handleInstagramModalSuccess = () => {
+    setShowInstagramModal(false);
+    
+    // If there's pending ticket data, retry the submission
+    if (pendingTicketData) {
+      createTicketMutation.mutate(pendingTicketData);
+      setPendingTicketData(null);
+    }
+  };
+
+  const handleInstagramModalClose = () => {
+    setShowInstagramModal(false);
+    setPendingTicketData(null);
   };
 
   if (!isAuthenticated) {
@@ -957,6 +1000,13 @@ export default function ListTicket() {
         </div>
         </div>
       </div>
+      
+      {/* Instagram Handle Modal */}
+      <InstagramHandleModal
+        isOpen={showInstagramModal}
+        onClose={handleInstagramModalClose}
+        onSuccess={handleInstagramModalSuccess}
+      />
     </LoadScript>
   );
 }

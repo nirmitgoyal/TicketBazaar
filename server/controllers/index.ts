@@ -339,14 +339,22 @@ export class TicketController extends BaseController {
   // Create a new ticket
   public createTicket = async (req: Request, res: Response) => {
     try {
-      // Make sure selling price is not greater than original price
-      if (req.body.sellingPrice > req.body.originalPrice) {
-        return this.sendError(
-          res,
-          "Selling price cannot exceed original price",
-          400,
-        );
+      // Check if user is authenticated
+      if (!req.user) {
+        return res.status(401).json({ message: "Authentication required" });
       }
+
+      // Check if user has Instagram handle - MISSION CRITICAL GATE
+      const user = await storage.getUser(req.user.id);
+      if (!user || !user.instagram) {
+        return res.status(403).json({ 
+          message: "Instagram handle required", 
+          error: "INSTAGRAM_HANDLE_REQUIRED",
+          requiresInstagram: true 
+        });
+      }
+
+      // P2P model - no price validation needed as prices are negotiated directly
 
       const newTicket = await storage.createTicket(req.body);
       this.sendSuccess(res, newTicket, 201);
@@ -374,7 +382,7 @@ export class TicketController extends BaseController {
         ticketId: ticket.id,
         eventTitle: ticket.eventTitle,
         sellerId: ticket.sellerId,
-        price: ticket.price,
+        quantity: ticket.quantity,
         timestamp: new Date().toISOString(),
       });
 

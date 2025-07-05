@@ -21,7 +21,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   phone: text("phone"),
   whatsapp: text("whatsapp"), // WhatsApp number for direct contact
-  instagram: text("instagram"), // Instagram handle for profile verification (optional globally)
+  instagram: text("instagram").notNull(), // Instagram handle (required for ticket listing) - max 20 chars
   googleId: text("google_id").unique(), // Google OAuth ID
 
   preferredContactMethod: text("preferred_contact_method").default("email"), // email, whatsapp, phone

@@ -1,58 +1,56 @@
-import express from "express";
-import { storage } from "../storage";
+import { Router } from "express";
+import { isAuthenticated } from "../middleware/auth.middleware";
+import { z } from "zod";
 import { logger } from "../utils/logger";
 
-const router = express.Router();
+const router = Router();
 
-// GET /api/users/:id - Get user by ID (for seller information)
-router.get("/:id", async (req, res) => {
-  const startTime = Date.now();
-  
+// Instagram handle schema - max 20 chars as per spec
+const instagramHandleSchema = z.object({
+  instagram_handle: z
+    .string()
+    .min(1, "Instagram handle is required")
+    .max(20, "Instagram handle must be 20 characters or less")
+    .regex(/^[a-zA-Z0-9_.]+$/, "Instagram handle can only contain letters, numbers, dots, and underscores")
+});
+
+// PUT /api/users/:id/instagram - Idempotent Instagram handle update
+router.put("/:id/instagram", isAuthenticated, async (req, res) => {
   try {
     const userId = parseInt(req.params.id);
-    
-    if (isNaN(userId)) {
-      const duration = Date.now() - startTime;
-      logger.info('express', `GET /api/users/:id 400 in ${duration}ms :: {"message":"Invalid user ID"}`);
-      return res.status(400).json({ message: "Invalid user ID" });
+    const currentUserId = (req.user as any).id;
+
+    // Ensure users can only update their own Instagram handle
+    if (userId !== currentUserId) {
+      return res.status(403).json({ message: "Forbidden: Cannot update another user's Instagram handle" });
     }
 
-    const user = await storage.getUser(userId);
-    
-    if (!user) {
-      const duration = Date.now() - startTime;
-      logger.info('express', `GET /api/users/:id 404 in ${duration}ms :: {"message":"User not found"}`);
+    // Validate request body
+    const validationResult = instagramHandleSchema.safeParse(req.body);
+    if (!validationResult.success) {
+      return res.status(400).json({
+        message: "Validation error",
+        errors: validationResult.error.errors
+      });
+    }
+
+    const { instagram_handle } = validationResult.data;
+
+    // Update user's Instagram handle
+    const { storage } = await import("../storage");
+    const updatedUser = await storage.updateUserInstagram(userId, instagram_handle);
+
+    if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Return only safe user information (exclude password and sensitive data)
-    const safeUserData = {
-      id: user.id,
-      fullName: user.fullName,
-      email: user.email,
-      phone: user.phone,
-      whatsapp: user.whatsapp,
-      instagram: user.instagram,
-      rating: user.rating,
-      ratingsCount: user.ratingsCount,
-      preferredContactMethod: user.preferredContactMethod,
-      country: user.country,
-      verificationStatus: user.verificationStatus,
-      governmentIdVerified: user.governmentIdVerified,
-      phoneVerified: user.phoneVerified,
-      emailVerified: user.emailVerified,
-    };
-
-    const duration = Date.now() - startTime;
-    logger.info('express', `GET /api/users/:id 200 in ${duration}ms :: User data retrieved`);
-    res.json(safeUserData);
-    
+    // Return 204 No Content for successful idempotent update
+    return res.status(204).send();
   } catch (error) {
-    const duration = Date.now() - startTime;
-    logger.error('express', `GET /api/users/:id 500 in ${duration}ms :: Error retrieving user`, error);
-    res.status(500).json({ 
+    logger.error('USER_ROUTES', 'Error updating Instagram handle:', error);
+    return res.status(500).json({
       message: "Internal server error",
-      error: process.env.NODE_ENV === "development" ? error : undefined 
+      error: error instanceof Error ? error.message : "Unknown error"
     });
   }
 });

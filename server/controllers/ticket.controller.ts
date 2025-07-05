@@ -284,6 +284,16 @@ export class TicketController {
         return res.status(401).json({ message: "Authentication required" });
       }
 
+      // Check if user has Instagram handle - MISSION CRITICAL GATE
+      const user = await storage.getUser(req.user.id);
+      if (!user || !user.instagram) {
+        return res.status(403).json({ 
+          message: "Instagram handle required", 
+          error: "INSTAGRAM_HANDLE_REQUIRED",
+          requiresInstagram: true 
+        });
+      }
+
       // Define schema for the event data with venue coordinates
       const ticketWithEventSchema = z.object({
         // Event details

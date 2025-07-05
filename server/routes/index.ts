@@ -4,6 +4,7 @@ import { createServer } from "http";
 import { setupAuth } from "../auth";
 import authRoutes from "./auth.routes";
 import ticketRoutes from "./ticket.routes";
+import userRoutes from "./user.routes";
 import emailRoutes from "./email.routes";
 import emailDebugRoutes from "./email-debug.routes";
 
@@ -18,6 +19,7 @@ import aiVerificationRoutes from "./ai-verification.routes";
 export {
   authRoutes,
   ticketRoutes,
+  userRoutes,
 };
 
 export async function registerRoutes(app: Express) {
@@ -29,6 +31,7 @@ export async function registerRoutes(app: Express) {
   // Register API routes
   app.use("/api/auth", authRoutes);
   app.use("/api/tickets", ticketRoutes);
+  app.use("/api/users", userRoutes);
   app.use("/api/email", emailRoutes);
   app.use("/api/email-debug", emailDebugRoutes);
 
