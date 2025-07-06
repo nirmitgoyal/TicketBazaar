@@ -561,6 +561,150 @@ export function TicketDetailModal({
               </div>
             )}
           </div>
+
+          {/* Scrollable Content */}
+          <div className="px-6 pb-6 space-y-6 max-h-[60vh] overflow-y-auto">
+            {/* Event Description */}
+            {firstTicket?.eventDescription && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Info className="h-5 w-5 text-primary" />
+                    Event Description
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-textSecondary leading-relaxed">
+                    {firstTicket.eventDescription}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Popularity Metrics */}
+            {eventId && popularityMetrics && (
+              <PopularityMetrics
+                metrics={popularityMetrics}
+                className="border rounded-lg"
+              />
+            )}
+
+            {/* Available Tickets */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Package className="h-5 w-5 text-primary" />
+                    Available Tickets
+                  </div>
+                  <Badge variant="secondary" className="ml-2">
+                    {uniqueTickets.length} {uniqueTickets.length === 1 ? 'Listing' : 'Listings'}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {uniqueTickets.map((ticket) => (
+                  <motion.div
+                    key={ticket.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="border border-border rounded-xl p-5 hover:border-primary/30 transition-all duration-200 bg-card"
+                  >
+                    {/* Ticket Header */}
+                    <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
+                      <div>
+                        <h4 className="font-semibold text-lg flex items-center gap-2">
+                          {ticket.title}
+                          {ticket.isVerified && (
+                            <CheckCircle className="h-5 w-5 text-green-500" />
+                          )}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-1 text-sm text-textSecondary">
+                          <MapPin className="h-4 w-4" />
+                          <span>
+                            Section {ticket.section}
+                            {ticket.row && `, Row ${ticket.row}`}
+                            {ticket.seat && `, Seat ${ticket.seat}`}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-primary">
+                          ${Number(ticket.price).toFixed(2)}
+                        </div>
+                        <div className="text-sm text-textSecondary">
+                          per ticket
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Ticket Details */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-textSecondary" />
+                        <span>
+                          <span className="font-medium">{ticket.quantity}</span>{" "}
+                          {ticket.quantity === 1 ? "ticket" : "tickets"} available
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="h-4 w-4 text-textSecondary" />
+                        <span>{ticket.transferMethod || "Mobile Transfer"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="h-4 w-4 text-textSecondary" />
+                        <span>
+                          {ticket.isTransferrable
+                            ? "Transferrable"
+                            : "Non-transferrable"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Additional Info */}
+                    {ticket.additionalInfo && (
+                      <div className="mt-4 p-3 bg-secondary/50 rounded-lg">
+                        <p className="text-sm text-textSecondary">
+                          <span className="font-medium">Note:</span>{" "}
+                          {ticket.additionalInfo}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Contact Button */}
+                    <div className="mt-4 flex justify-end">
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleContactSeller(ticket);
+                        }}
+                        className="gap-2"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                        Contact Seller
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Verification Section */}
+            {firstTicket && (
+              <TicketVerificationSection ticket={firstTicket} />
+            )}
+
+            {/* Social Share */}
+            {firstTicket && (
+              <div className="flex justify-center pt-4">
+                <SocialShare
+                  title={firstTicket.eventTitle}
+                  description={`Check out tickets for ${firstTicket.eventTitle} at ${firstTicket.venue}`}
+                  url={window.location.href}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
