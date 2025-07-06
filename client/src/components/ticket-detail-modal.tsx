@@ -526,22 +526,19 @@ export function TicketDetailModal({
 
             {/* Seller Information */}
             {firstTicket && (
-              <div className="mt-4 p-4 bg-secondary/20 rounded-lg border border-border">
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage 
-                        src={seller ? `https://api.dicebear.com/7.x/initials/svg?seed=${seller.fullName}` : undefined} 
-                      />
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        {seller ? seller.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : <UserIcon className="h-5 w-5" />}
+                    <Avatar className="h-12 w-12">
+                      <AvatarFallback className="bg-[#E55346] text-white text-base font-semibold">
+                        {seller ? seller.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : "S"}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-medium">
+                      <p className="font-semibold text-base">
                         {seller ? seller.fullName : "Seller"}
                       </p>
-                      <p className="text-sm text-textSecondary">
+                      <p className="text-sm text-gray-600">
                         {seller?.instagram ? `@${seller.instagram.replace("@", "")}` : `Seller ID: ${firstTicket.sellerId}`}
                       </p>
                     </div>
@@ -549,14 +546,14 @@ export function TicketDetailModal({
                   {seller?.instagram && (
                     <Button
                       variant="outline"
-                      size="sm"
+                      size="default"
                       onClick={() => {
                         const instagramHandle = seller.instagram?.replace("@", "");
                         window.open(`https://instagram.com/${instagramHandle}`, "_blank");
                       }}
-                      className="flex items-center gap-2 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-colors"
+                      className="flex items-center gap-2 font-medium border-gray-300"
                     >
-                      <Instagram className="h-4 w-4" />
+                      <Instagram className="h-5 w-5" />
                       <span>View Profile</span>
                     </Button>
                   )}
