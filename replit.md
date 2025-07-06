@@ -311,3 +311,11 @@ Changelog:
 Preferred communication style: Simple, everyday language.
 Do not document work done in changelog (from July 4, 2025 onwards).
 ```
+
+## Recent Technical Updates
+
+### Google OAuth Redirect Fix (July 6, 2025)
+- Fixed issue where users were always redirected to homepage after Google authentication
+- Now properly preserves and redirects to the original route user was trying to access
+- Solution: Store returnTo parameter in session before OAuth flow and preserve it through authentication process
+- Handles session regeneration during new user creation flows
