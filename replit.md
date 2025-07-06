@@ -32,7 +32,10 @@ TicketBazaar is a comprehensive peer-to-peer ticket marketplace platform designe
 
 ### Authentication & Security
 - **Google OAuth**: Exclusive authentication through Google accounts (no email/password)
-- **Instagram Handle Gate**: Required Instagram handle (max 20 chars) for all ticket listings
+- **Instagram Handle Gate**: Mandatory Instagram handle capture immediately after Google login (cannot be skipped)
+  - Blocking modal that prevents app usage until handle is provided
+  - Validates handles using regex: `^[\w](?!.*?\.{2})[\w.]{1,28}[\w]$`
+  - Required for all users before accessing any app features
 - **Session Management**: Secure session handling with configurable cookie settings
 - **Rate Limiting**: Comprehensive rate limiting across all endpoints
 - **Fraud Detection**: AI-powered verification and risk assessment
