@@ -36,6 +36,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Ticket, User } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
 import { TicketVerificationSection } from "./ticket-verification-section";
@@ -528,15 +529,21 @@ export function TicketDetailModal({
               <div className="mt-4 p-4 bg-secondary/20 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <UserIcon className="h-5 w-5 text-primary" />
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage 
+                        src={seller ? `https://api.dicebear.com/7.x/initials/svg?seed=${seller.fullName}` : undefined} 
+                      />
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {seller ? seller.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : <UserIcon className="h-5 w-5" />}
+                      </AvatarFallback>
+                    </Avatar>
                     <div>
-                      <p className="text-sm text-textSecondary">Posted by</p>
-                      <p className="font-semibold text-base">
+                      <p className="font-medium">
                         {seller ? seller.fullName : "Seller"}
                       </p>
-                      {!seller && sellerError && (
-                        <p className="text-xs text-textSecondary">Seller ID: {firstTicket.sellerId}</p>
-                      )}
+                      <p className="text-sm text-textSecondary">
+                        {seller?.instagram ? `@${seller.instagram.replace("@", "")}` : `Seller ID: ${firstTicket.sellerId}`}
+                      </p>
                     </div>
                   </div>
                   {seller?.instagram && (
@@ -550,7 +557,7 @@ export function TicketDetailModal({
                       className="flex items-center gap-2 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-colors"
                     >
                       <Instagram className="h-4 w-4" />
-                      <span>{seller.instagram}</span>
+                      <span>View Profile</span>
                     </Button>
                   )}
                 </div>
