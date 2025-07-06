@@ -87,9 +87,10 @@ export function TicketDetailModal({
   const firstTicket = tickets?.[0];
 
   // Fetch seller data for the first ticket
-  const { data: seller } = useQuery<User>({
+  const { data: seller, error: sellerError } = useQuery<User>({
     queryKey: [`/api/auth/users/${firstTicket?.sellerId}`],
     enabled: !!firstTicket?.sellerId && isOpen,
+    retry: false, // Don't retry if seller not found
   });
 
   // Function to handle venue click with device-specific behavior
@@ -523,17 +524,22 @@ export function TicketDetailModal({
             </DialogHeader>
 
             {/* Seller Information */}
-            {seller && (
+            {firstTicket && (
               <div className="mt-4 p-4 bg-secondary/20 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <UserIcon className="h-5 w-5 text-primary" />
                     <div>
                       <p className="text-sm text-textSecondary">Posted by</p>
-                      <p className="font-semibold text-base">{seller.fullName}</p>
+                      <p className="font-semibold text-base">
+                        {seller ? seller.fullName : "Seller"}
+                      </p>
+                      {!seller && sellerError && (
+                        <p className="text-xs text-textSecondary">Seller ID: {firstTicket.sellerId}</p>
+                      )}
                     </div>
                   </div>
-                  {seller.instagram && (
+                  {seller?.instagram && (
                     <Button
                       variant="outline"
                       size="sm"
