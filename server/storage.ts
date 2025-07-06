@@ -52,6 +52,7 @@ export interface IStorage {
     userId: number,
     instagram: string,
   ): Promise<User | undefined>;
+  updateUserProfilePicture(userId: number, profilePicture: string): Promise<User | undefined>;
 
   // Ticket operations (events are embedded in tickets)
   getTicket(id: number): Promise<Ticket | undefined>;
@@ -216,6 +217,26 @@ export class DatabaseStorage implements IStorage {
       return user || undefined;
     } catch (error) {
       console.error('Error updating user Instagram:', error);
+      return undefined;
+    }
+  }
+
+  async updateUserProfilePicture(
+    userId: number,
+    profilePicture: string,
+  ): Promise<User | undefined> {
+    try {
+      const [user] = await db
+        .update(users)
+        .set({ profilePicture } as any)
+        .where(eq(users.id, userId))
+        .returning();
+      
+      // Clear cache after update
+      this.userCache.delete(userId);
+      return user || undefined;
+    } catch (error) {
+      console.error('Error updating user profile picture:', error);
       return undefined;
     }
   }

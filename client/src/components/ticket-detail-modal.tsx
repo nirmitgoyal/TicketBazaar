@@ -527,7 +527,30 @@ export function TicketDetailModal({
               <div className="mt-4 p-4 bg-secondary/20 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <UserIcon className="h-5 w-5 text-primary" />
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                      {seller.profilePicture ? (
+                        <img
+                          src={seller.profilePicture}
+                          alt={seller.fullName || "Seller"}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                          }}
+                        />
+                      ) : seller.instagram ? (
+                        <img
+                          src={`https://unavatar.io/instagram/${seller.instagram}`}
+                          alt={seller.fullName || "Seller"}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                          }}
+                        />
+                      ) : null}
+                      <UserIcon className={`h-5 w-5 text-primary ${seller.profilePicture || seller.instagram ? "hidden" : "block"}`} />
+                    </div>
                     <div>
                       <p className="text-sm text-textSecondary">Posted by</p>
                       <p className="font-semibold text-base">{seller.fullName}</p>

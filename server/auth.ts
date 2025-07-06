@@ -89,6 +89,9 @@ export function setupAuth(app: Express) {
         },
         async (req, accessToken, refreshToken, profile, done) => {
           try {
+            // Extract profile picture URL from Google profile
+            const profilePicture = profile._json?.picture || profile.photos?.[0]?.value || '';
+            
             // Check if user exists with this Google ID
             let user = await storage.getUserByGoogleId(profile.id);
 
@@ -99,12 +102,17 @@ export function setupAuth(app: Express) {
               if (user) {
                 // Update existing user with Google ID
                 user = await storage.updateUserGoogleId(user.id, profile.id);
+                // Update profile picture if available
+                if (profilePicture) {
+                  user = await storage.updateUserProfilePicture(user.id, profilePicture) || user;
+                }
               } else {
                 // Create new user
                 console.log('Creating new user with Google profile:', {
                   googleId: profile.id,
                   email: profile.emails?.[0]?.value || '',
                   fullName: profile.displayName || 'User',
+                  profilePicture: profilePicture,
                 });
                 
                 user = await storage.createUser({
@@ -112,7 +120,13 @@ export function setupAuth(app: Express) {
                   email: profile.emails?.[0]?.value || '',
                   fullName: profile.displayName || 'User',
                   country: "IN", // Default to India since it's an Indian platform
+                  profilePicture: profilePicture,
                 });
+              }
+            } else {
+              // Update profile picture for existing Google users on each login
+              if (profilePicture && user.profilePicture !== profilePicture) {
+                user = await storage.updateUserProfilePicture(user.id, profilePicture) || user;
               }
             }
 

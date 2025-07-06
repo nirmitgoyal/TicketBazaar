@@ -24,6 +24,7 @@ export const users = pgTable("users", {
   whatsapp: text("whatsapp"), // WhatsApp number for direct contact
   instagram: text("instagram"), // Instagram handle (optional, but required for ticket listing) - max 20 chars
   googleId: text("google_id").unique(), // Google OAuth ID
+  profilePicture: text("profile_picture"), // URL to user's profile picture from Google OAuth
 
   preferredContactMethod: text("preferred_contact_method").default("email"), // email, whatsapp, phone
   country: text("country").notNull().default("US"), // ISO 3166-1 alpha-2 country code

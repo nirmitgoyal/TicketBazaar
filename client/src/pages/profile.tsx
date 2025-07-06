@@ -236,8 +236,31 @@ export default function Profile() {
           <Card>
             <CardHeader className="text-center">
               <div className="flex justify-center mb-4">
-                <div className="h-24 w-24 bg-primary/10 rounded-full flex items-center justify-center">
-                  <User className="h-12 w-12 text-primary" />
+                <div className="h-24 w-24 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                  {user?.profilePicture ? (
+                    <img
+                      src={user.profilePicture}
+                      alt={user.fullName || "User"}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = "none";
+                      }}
+                    />
+                  ) : user?.instagram ? (
+                    <img
+                      src={`https://unavatar.io/instagram/${user.instagram}`}
+                      alt={user.fullName || "User"}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = "none";
+                      }}
+                    />
+                  ) : null}
+                  <div className={`${user?.profilePicture || user?.instagram ? "hidden" : "flex"} items-center justify-center`}>
+                    <User className="h-12 w-12 text-primary" />
+                  </div>
                 </div>
               </div>
               <CardTitle>{user?.fullName}</CardTitle>

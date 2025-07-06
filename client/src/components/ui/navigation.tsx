@@ -274,7 +274,17 @@ export function Navigation() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  {user?.instagram ? (
+                  {user?.profilePicture ? (
+                    <img
+                      src={user.profilePicture}
+                      alt={user.fullName || "User"}
+                      className="w-full h-full object-cover rounded-full"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = "none";
+                      }}
+                    />
+                  ) : user?.instagram ? (
                     <img
                       src={`https://unavatar.io/instagram/${user.instagram}`}
                       alt={user.fullName || "User"}
@@ -286,7 +296,7 @@ export function Navigation() {
                     />
                   ) : null}
                   <span
-                    className={`w-full h-full flex items-center justify-center ${user?.instagram ? "hidden" : "flex"}`}
+                    className={`w-full h-full flex items-center justify-center ${user?.profilePicture || user?.instagram ? "hidden" : "flex"}`}
                   >
                     {user?.fullName?.charAt(0).toUpperCase() || "U"}
                   </span>
