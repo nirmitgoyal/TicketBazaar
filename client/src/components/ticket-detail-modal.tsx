@@ -598,12 +598,12 @@ export function TicketDetailModal({
                     Available Tickets
                   </div>
                   <Badge variant="secondary" className="ml-2">
-                    {uniqueTickets.length} {uniqueTickets.length === 1 ? 'Listing' : 'Listings'}
+                    {tickets?.length || 0} {tickets?.length === 1 ? 'Listing' : 'Listings'}
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {uniqueTickets.map((ticket) => (
+                {tickets?.map((ticket) => (
                   <motion.div
                     key={ticket.id}
                     initial={{ opacity: 0, y: 10 }}
