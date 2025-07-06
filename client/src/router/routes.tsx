@@ -138,7 +138,7 @@ export function AppRoutes() {
       <LazyRoute path="/complete-profile" component={CompleteProfile} />
       
       {/* Ticket management */}
-      <LazyRoute path="/list-ticket" component={ListTicket} />
+      <LazyProtectedRoute path="/list-ticket" component={ListTicket} />
       <LazyProtectedRoute path="/my-tickets" component={MyTickets} />
       
       {/* Verification */}
