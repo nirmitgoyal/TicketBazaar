@@ -39,11 +39,35 @@ if (isGoogleOAuthEnabled) {
       // Store returnTo value before authentication to prevent loss during session regeneration
       const sessionReturnTo = req.session.returnTo;
       console.log("[AUTH] Google callback received, session returnTo:", sessionReturnTo);
+      console.log("[AUTH] Google callback query params:", req.query);
+      console.log("[AUTH] Session ID:", req.sessionID);
       
       passport.authenticate("google", (err, user, info) => {
-        if (err || !user) {
-          // Authentication failed
-          console.log("[AUTH] Authentication failed:", err || "No user");
+        if (err) {
+          // Authentication error
+          console.error("[AUTH] Authentication error:", err);
+          console.error("[AUTH] Error message:", err.message);
+          console.error("[AUTH] Error stack:", err.stack);
+          console.error("[AUTH] Error info:", info);
+          console.error("[AUTH] Error name:", err.name);
+          
+          // Log specific OAuth errors
+          if (err.name === 'TokenError') {
+            console.error("[AUTH] Token exchange failed - likely invalid/expired authorization code");
+          } else if (err.name === 'InternalOAuthError') {
+            console.error("[AUTH] OAuth internal error:", err.oauthError);
+          }
+          
+          const failureRedirect = sessionReturnTo 
+            ? `/login?returnTo=${encodeURIComponent(sessionReturnTo)}&error=authentication_failed`
+            : '/login?error=authentication_failed';
+          return res.redirect(failureRedirect);
+        }
+        
+        if (!user) {
+          // No user returned
+          console.log("[AUTH] No user returned from authentication");
+          console.log("[AUTH] Info:", info);
           const failureRedirect = sessionReturnTo 
             ? `/login?returnTo=${encodeURIComponent(sessionReturnTo)}&error=authentication_failed`
             : '/login?error=authentication_failed';

@@ -77,22 +77,30 @@ export function setupAuth(app: Express) {
   const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
   
   if (googleClientId && googleClientSecret) {
+    const callbackURL = process.env.GOOGLE_CALLBACK_URL || "/api/auth/google/callback";
     console.log('Setting up Google OAuth strategy');
+    console.log('Google OAuth Callback URL:', callbackURL);
+    console.log('Using proxy:', true);
+    
     passport.use(
       new GoogleStrategy(
         {
           clientID: googleClientId,
           clientSecret: googleClientSecret,
-          callbackURL: "/api/auth/google/callback",
+          callbackURL: callbackURL,
           proxy: true,
           passReqToCallback: true
         },
         async (req, accessToken, refreshToken, profile, done) => {
           try {
+            console.log('[GOOGLE OAUTH] Starting authentication for profile:', profile.id);
+            console.log('[GOOGLE OAUTH] Access token received:', accessToken ? 'Yes' : 'No');
+            console.log('[GOOGLE OAUTH] Profile data available:', !!profile);
+            
             // Extract profile picture URL from Google profile
             const profilePicture = profile._json?.picture || profile.photos?.[0]?.value || '';
             
-            console.log('Google OAuth Profile Data:', {
+            console.log('[GOOGLE OAUTH] Profile Data:', {
               id: profile.id,
               displayName: profile.displayName,
               email: profile.emails?.[0]?.value,
@@ -102,49 +110,64 @@ export function setupAuth(app: Express) {
             });
             
             // Check if user exists with this Google ID
+            console.log('[GOOGLE OAUTH] Checking for existing user with Google ID:', profile.id);
             let user = await storage.getUserByGoogleId(profile.id);
 
             if (!user) {
               // Check if user exists with this email
-              user = await storage.getUserByEmail(profile.emails?.[0]?.value || '');
+              const email = profile.emails?.[0]?.value || '';
+              console.log('[GOOGLE OAUTH] No user found with Google ID, checking email:', email);
+              user = await storage.getUserByEmail(email);
 
               if (user) {
                 // Update existing user with Google ID
+                console.log('[GOOGLE OAUTH] Updating existing user with Google ID. User ID:', user.id);
                 user = await storage.updateUserGoogleId(user.id, profile.id);
                 // Update profile picture if available
                 if (profilePicture) {
+                  console.log('[GOOGLE OAUTH] Updating profile picture for user:', user.id);
                   user = await storage.updateUserProfilePicture(user.id, profilePicture) || user;
                 }
               } else {
                 // Create new user
-                console.log('Creating new user with Google profile:', {
+                console.log('[GOOGLE OAUTH] Creating new user with Google profile:', {
                   googleId: profile.id,
                   email: profile.emails?.[0]?.value || '',
                   fullName: profile.displayName || 'User',
                   profilePicture: profilePicture,
                 });
                 
-                user = await storage.createUser({
-                  googleId: profile.id,
-                  email: profile.emails?.[0]?.value || '',
-                  fullName: profile.displayName || 'User',
-                  country: "IN", // Default to India since it's an Indian platform
-                  profilePicture: profilePicture,
-                });
+                try {
+                  user = await storage.createUser({
+                    googleId: profile.id,
+                    email: profile.emails?.[0]?.value || '',
+                    fullName: profile.displayName || 'User',
+                    country: "IN", // Default to India since it's an Indian platform
+                    profilePicture: profilePicture,
+                  });
+                  console.log('[GOOGLE OAUTH] New user created successfully:', user.id);
+                } catch (createError) {
+                  console.error('[GOOGLE OAUTH] Error creating new user:', createError);
+                  throw createError;
+                }
               }
             } else {
               // Update profile picture for existing Google users on each login
+              console.log('[GOOGLE OAUTH] Existing Google user found:', user.id);
               if (profilePicture && user.profilePicture !== profilePicture) {
+                console.log('[GOOGLE OAUTH] Updating profile picture for existing user:', user.id);
                 user = await storage.updateUserProfilePicture(user.id, profilePicture) || user;
               }
             }
 
             // Remove password from user object for security
             const { password, ...userWithoutPassword } = user;
+            console.log('[GOOGLE OAUTH] Authentication successful for user:', user.id);
             return done(null, userWithoutPassword as any);
           } catch (error) {
-            console.error('Google OAuth error:', error);
-            console.error('Error details:', JSON.stringify(error, null, 2));
+            console.error('[GOOGLE OAUTH] Error during authentication:', error);
+            console.error('[GOOGLE OAUTH] Error details:', JSON.stringify(error, null, 2));
+            console.error('[GOOGLE OAUTH] Error stack:', error.stack);
             return done(error as Error, false);
           }
         }
