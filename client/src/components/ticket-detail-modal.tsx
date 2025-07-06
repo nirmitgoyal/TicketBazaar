@@ -92,6 +92,11 @@ export function TicketDetailModal({
     enabled: !!firstTicket?.sellerId && isOpen,
   });
 
+  // Debug seller data
+  console.log('Seller data:', seller);
+  console.log('Seller profile picture:', seller?.profilePicture);
+  console.log('Seller instagram:', seller?.instagram);
+
   // Function to handle venue click with device-specific behavior
   const handleVenueClick = () => {
     if (!firstTicket?.venue) return;
