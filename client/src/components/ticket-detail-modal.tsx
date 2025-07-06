@@ -46,12 +46,70 @@ import {
   usePopularityMetrics,
 } from "@/hooks/use-popularity-tracking";
 import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 
 interface TicketDetailModalProps {
   eventId: number;
   isOpen: boolean;
   onClose: () => void;
   onOpenSellerModal?: (ticket: Ticket) => void;
+}
+
+// Component to handle profile picture with proper fallback hierarchy
+function SellerProfilePicture({ seller }: { seller: User }) {
+  const [googleImageFailed, setGoogleImageFailed] = useState(false);
+  const [instagramImageFailed, setInstagramImageFailed] = useState(false);
+
+  // Get user initials for fallback
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((part) => part.charAt(0))
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  // Try Google profile picture first
+  if (seller.profilePicture && !googleImageFailed) {
+    return (
+      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+        <img
+          src={seller.profilePicture}
+          alt={seller.fullName || "Seller"}
+          className="w-full h-full object-cover"
+          onError={() => setGoogleImageFailed(true)}
+        />
+      </div>
+    );
+  }
+
+  // Fallback to Instagram avatar if Google profile picture failed
+  if (seller.instagram && !instagramImageFailed) {
+    return (
+      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+        <img
+          src={`https://unavatar.io/instagram/${seller.instagram}`}
+          alt={seller.fullName || "Seller"}
+          className="w-full h-full object-cover"
+          onError={() => setInstagramImageFailed(true)}
+        />
+      </div>
+    );
+  }
+
+  // Final fallback to user initials
+  return (
+    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+      {seller.fullName ? (
+        <span className="text-sm font-semibold text-primary">
+          {getInitials(seller.fullName)}
+        </span>
+      ) : (
+        <UserIcon className="h-5 w-5 text-primary" />
+      )}
+    </div>
+  );
 }
 
 // Helper function to extract meaningful street information
@@ -91,11 +149,6 @@ export function TicketDetailModal({
     queryKey: [`/api/auth/users/${firstTicket?.sellerId}`],
     enabled: !!firstTicket?.sellerId && isOpen,
   });
-
-  // Debug seller data
-  console.log('Seller data:', seller);
-  console.log('Seller profile picture:', seller?.profilePicture);
-  console.log('Seller instagram:', seller?.instagram);
 
   // Function to handle venue click with device-specific behavior
   const handleVenueClick = () => {
@@ -532,30 +585,7 @@ export function TicketDetailModal({
               <div className="mt-4 p-4 bg-secondary/20 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
-                      {seller.profilePicture ? (
-                        <img
-                          src={seller.profilePicture}
-                          alt={seller.fullName || "Seller"}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
-                          }}
-                        />
-                      ) : seller.instagram ? (
-                        <img
-                          src={`https://unavatar.io/instagram/${seller.instagram}`}
-                          alt={seller.fullName || "Seller"}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
-                          }}
-                        />
-                      ) : null}
-                      <UserIcon className={`h-5 w-5 text-primary ${seller.profilePicture || seller.instagram ? "hidden" : "block"}`} />
-                    </div>
+                    <SellerProfilePicture seller={seller} /></div>
                     <div>
                       <p className="text-sm text-textSecondary">Posted by</p>
                       <p className="font-semibold text-base">{seller.fullName}</p>
