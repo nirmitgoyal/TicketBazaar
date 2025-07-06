@@ -585,7 +585,7 @@ export function TicketDetailModal({
               <div className="mt-4 p-4 bg-secondary/20 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <SellerProfilePicture seller={seller} /></div>
+                    <SellerProfilePicture seller={seller} />
                     <div>
                       <p className="text-sm text-textSecondary">Posted by</p>
                       <p className="font-semibold text-base">{seller.fullName}</p>
