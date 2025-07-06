@@ -36,15 +36,16 @@ if (isGoogleOAuthEnabled) {
   // Google OAuth callback route (only if configured)
   router.get("/google/callback",
     (req, res, next) => {
-      console.log("[AUTH] Google callback received, session returnTo:", req.session.returnTo);
+      // Store returnTo value before authentication to prevent loss during session regeneration
+      const sessionReturnTo = req.session.returnTo;
+      console.log("[AUTH] Google callback received, session returnTo:", sessionReturnTo);
       
       passport.authenticate("google", (err, user, info) => {
         if (err || !user) {
           // Authentication failed
           console.log("[AUTH] Authentication failed:", err || "No user");
-          const returnTo = req.session.returnTo;
-          const failureRedirect = returnTo 
-            ? `/login?returnTo=${encodeURIComponent(returnTo)}&error=authentication_failed`
+          const failureRedirect = sessionReturnTo 
+            ? `/login?returnTo=${encodeURIComponent(sessionReturnTo)}&error=authentication_failed`
             : '/login?error=authentication_failed';
           return res.redirect(failureRedirect);
         }
@@ -56,9 +57,10 @@ if (isGoogleOAuthEnabled) {
             return next(err);
           }
           
-          // Check for returnTo in session
-          const returnTo = req.session.returnTo || '/';
+          // Use the stored returnTo value (session might have been regenerated)
+          const returnTo = sessionReturnTo || req.session.returnTo || '/';
           console.log("[AUTH] Login successful, redirecting to:", returnTo);
+          console.log("[AUTH] Session returnTo after login:", req.session.returnTo);
           
           // Clear the returnTo from session after use
           delete req.session.returnTo;
