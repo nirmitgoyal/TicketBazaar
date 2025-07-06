@@ -31,27 +31,44 @@ export function setupAuth(app: Express) {
   
   // Create session store with database connection
   // For production environments (like Heroku), we need to configure SSL properly
-  const sessionStoreConfig: any = {
-    conString: process.env.DATABASE_URL,
-    tableName: 'session',
-    createTableIfMissing: true,
-    pruneSessionInterval: 24 * 60 * 60, // Prune expired sessions every 24 hours
-    errorLog: console.error.bind(console)
-  };
+  console.log('[AUTH] Environment:', process.env.NODE_ENV);
+  console.log('[AUTH] Database URL exists:', !!process.env.DATABASE_URL);
   
-  // Add SSL configuration for production (Heroku PostgreSQL uses self-signed certificates)
-  if (process.env.NODE_ENV === 'production') {
-    sessionStoreConfig.conObject = {
-      connectionString: process.env.DATABASE_URL,
-      ssl: {
-        rejectUnauthorized: false
-      }
-    };
-    // Remove conString when using conObject
-    delete sessionStoreConfig.conString;
+  let sessionStore;
+  
+  // Check if we're on Heroku (production) - multiple ways to detect
+  const isProduction = process.env.NODE_ENV === 'production' || 
+                      process.env.DYNO || 
+                      process.env.DATABASE_URL?.includes('amazonaws.com');
+  
+  console.log('[AUTH] Is Production:', isProduction);
+  
+  if (isProduction) {
+    // Production configuration with SSL for Heroku
+    console.log('[AUTH] Using production session store configuration with SSL');
+    sessionStore = new PgSessionStore({
+      conObject: {
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false
+        }
+      },
+      tableName: 'session',
+      createTableIfMissing: true,
+      pruneSessionInterval: 24 * 60 * 60, // Prune expired sessions every 24 hours
+      errorLog: console.error.bind(console)
+    });
+  } else {
+    // Development configuration without SSL
+    console.log('[AUTH] Using development session store configuration');
+    sessionStore = new PgSessionStore({
+      conString: process.env.DATABASE_URL,
+      tableName: 'session',
+      createTableIfMissing: true,
+      pruneSessionInterval: 24 * 60 * 60, // Prune expired sessions every 24 hours
+      errorLog: console.error.bind(console)
+    });
   }
-  
-  const sessionStore = new PgSessionStore(sessionStoreConfig);
 
   // Configure session settings
   let sessionSecret = process.env.SESSION_SECRET;

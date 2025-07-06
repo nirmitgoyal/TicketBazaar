@@ -1,4 +1,7 @@
 
+// Production environment setup MUST come first
+import "./production-setup";
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes/index";
 import { setupProduction } from "./production";

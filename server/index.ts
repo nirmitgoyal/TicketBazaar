@@ -1,3 +1,6 @@
+// Production environment setup MUST come first
+import "./production-setup";
+
 import express, { type Request, Response, NextFunction } from "express";
 import { config } from "dotenv";
 import { createServer } from "http";
