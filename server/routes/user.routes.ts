@@ -14,6 +14,15 @@ const instagramHandleSchema = z.object({
     .regex(/^[a-zA-Z0-9_.]+$/, "Instagram handle can only contain letters, numbers, dots, and underscores")
 });
 
+// Instagram handle schema - max 20 chars as per spec
+const instagramHandleSchemaNew = z.object({
+  instagram: z
+    .string()
+    .min(1, "Instagram handle is required")
+    .max(30, "Instagram handle must be 30 characters or less")
+    .regex(/^[\w](?!.*?\.{2})[\w.]{1,28}[\w]$/, "Invalid Instagram handle format")
+});
+
 // PUT /api/users/:id/instagram - Idempotent Instagram handle update
 router.put("/:id/instagram", isAuthenticated, async (req, res) => {
   try {
@@ -46,6 +55,50 @@ router.put("/:id/instagram", isAuthenticated, async (req, res) => {
 
     // Return 204 No Content for successful idempotent update
     return res.status(204).send();
+  } catch (error) {
+    logger.error('USER_ROUTES', 'Error updating Instagram handle:', error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
+// PATCH /api/users/:id/instagram - Instagram handle update (for modal)
+router.patch("/:id/instagram", isAuthenticated, async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const currentUserId = (req.user as any).id;
+
+    // Ensure users can only update their own Instagram handle
+    if (userId !== currentUserId) {
+      return res.status(403).json({ message: "Forbidden: Cannot update another user's Instagram handle" });
+    }
+
+    // Validate request body
+    const validationResult = instagramHandleSchemaNew.safeParse(req.body);
+    if (!validationResult.success) {
+      return res.status(400).json({
+        message: "Validation error",
+        errors: validationResult.error.errors
+      });
+    }
+
+    const { instagram } = validationResult.data;
+
+    // Update user's Instagram handle
+    const { storage } = await import("../storage");
+    const updatedUser = await storage.updateUserInstagram(userId, instagram);
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return updated user
+    return res.status(200).json({ 
+      message: "Instagram handle updated successfully",
+      user: updatedUser 
+    });
   } catch (error) {
     logger.error('USER_ROUTES', 'Error updating Instagram handle:', error);
     return res.status(500).json({

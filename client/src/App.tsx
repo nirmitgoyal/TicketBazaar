@@ -16,6 +16,7 @@ import { SEOConsolidated } from "@/components/seo-consolidated";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { performanceMonitor } from "@/utils/performance";
 import ScrollNavigation from "@/components/scroll-navigation";
+import { InstagramHandleCheck } from "@/components/instagram-handle-check";
 import "@/utils/error-recovery"; // Initialize global error handling
 import "@/utils/console-cleaner"; // Clean up console noise
 import "@/utils/performance-optimizer"; // Optimize performance
@@ -81,31 +82,33 @@ function App() {
               <AnalyticsProvider>
                 <AtmosphereProvider>
                   <HelmetProvider>
-                    <SEOConsolidated />
-                    <CanonicalUrlManager />
-                    <div className="min-h-screen flex flex-col safe-area-top prevent-horizontal-overflow">
-                      <ErrorBoundary fallback={
-                        <div className="bg-red-50 border border-red-200 p-4 m-4 rounded">
-                          <p className="text-red-800">Navigation temporarily unavailable</p>
-                        </div>
-                      }>
-                        <Navigation />
-                      </ErrorBoundary>
-                      
-                      <main className="flex-grow container mx-auto mobile-container py-3 sm:py-6 pt-20 sm:pt-24">
-                        <AppRoutes />
-                      </main>
-                      
-                      <ErrorBoundary fallback={
-                        <div className="bg-gray-100 p-4 text-center text-gray-600">
-                          <p>Footer content unavailable</p>
-                        </div>
-                      }>
-                        <Footer />
-                      </ErrorBoundary>
-                    </div>
-                    <ScrollNavigation />
-                    <Toaster />
+                    <InstagramHandleCheck>
+                      <SEOConsolidated />
+                      <CanonicalUrlManager />
+                      <div className="min-h-screen flex flex-col safe-area-top prevent-horizontal-overflow">
+                        <ErrorBoundary fallback={
+                          <div className="bg-red-50 border border-red-200 p-4 m-4 rounded">
+                            <p className="text-red-800">Navigation temporarily unavailable</p>
+                          </div>
+                        }>
+                          <Navigation />
+                        </ErrorBoundary>
+                        
+                        <main className="flex-grow container mx-auto mobile-container py-3 sm:py-6 pt-20 sm:pt-24">
+                          <AppRoutes />
+                        </main>
+                        
+                        <ErrorBoundary fallback={
+                          <div className="bg-gray-100 p-4 text-center text-gray-600">
+                            <p>Footer content unavailable</p>
+                          </div>
+                        }>
+                          <Footer />
+                        </ErrorBoundary>
+                      </div>
+                      <ScrollNavigation />
+                      <Toaster />
+                    </InstagramHandleCheck>
                   </HelmetProvider>
                 </AtmosphereProvider>
               </AnalyticsProvider>
