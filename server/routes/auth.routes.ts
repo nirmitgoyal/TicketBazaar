@@ -15,19 +15,33 @@ if (isGoogleOAuthEnabled) {
   router.get("/google", (req, res, next) => {
     // Store the returnTo parameter in session before initiating OAuth
     const returnTo = req.query.returnTo as string;
+    console.log("[AUTH] Google OAuth initiated with returnTo:", returnTo);
+    
     if (returnTo) {
       req.session.returnTo = returnTo;
+      // Force session save before redirect
+      req.session.save((err) => {
+        if (err) {
+          console.error("[AUTH] Failed to save session:", err);
+        } else {
+          console.log("[AUTH] Session saved with returnTo:", returnTo);
+        }
+        passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
+      });
+    } else {
+      passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
     }
-    
-    passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
   });
 
   // Google OAuth callback route (only if configured)
   router.get("/google/callback",
     (req, res, next) => {
+      console.log("[AUTH] Google callback received, session returnTo:", req.session.returnTo);
+      
       passport.authenticate("google", (err, user, info) => {
         if (err || !user) {
           // Authentication failed
+          console.log("[AUTH] Authentication failed:", err || "No user");
           const returnTo = req.session.returnTo;
           const failureRedirect = returnTo 
             ? `/login?returnTo=${encodeURIComponent(returnTo)}&error=authentication_failed`
@@ -38,17 +52,25 @@ if (isGoogleOAuthEnabled) {
         // Authentication succeeded, log in the user
         req.logIn(user, (err) => {
           if (err) {
+            console.error("[AUTH] Login failed:", err);
             return next(err);
           }
           
           // Check for returnTo in session
           const returnTo = req.session.returnTo || '/';
+          console.log("[AUTH] Login successful, redirecting to:", returnTo);
           
           // Clear the returnTo from session after use
           delete req.session.returnTo;
           
-          // Successful authentication, redirect to original route
-          res.redirect(returnTo);
+          // Save session before redirect
+          req.session.save((err) => {
+            if (err) {
+              console.error("[AUTH] Failed to save session after clearing returnTo:", err);
+            }
+            // Successful authentication, redirect to original route
+            res.redirect(returnTo);
+          });
         });
       })(req, res, next);
     }
