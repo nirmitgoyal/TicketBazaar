@@ -92,6 +92,15 @@ export function setupAuth(app: Express) {
             // Extract profile picture URL from Google profile
             const profilePicture = profile._json?.picture || profile.photos?.[0]?.value || '';
             
+            console.log('Google OAuth Profile Data:', {
+              id: profile.id,
+              displayName: profile.displayName,
+              email: profile.emails?.[0]?.value,
+              profilePicture: profilePicture,
+              photos: profile.photos,
+              _json: profile._json
+            });
+            
             // Check if user exists with this Google ID
             let user = await storage.getUserByGoogleId(profile.id);
 
