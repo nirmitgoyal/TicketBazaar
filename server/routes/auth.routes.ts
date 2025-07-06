@@ -52,15 +52,22 @@ if (isGoogleOAuthEnabled) {
           console.error("[AUTH] Error name:", err.name);
           
           // Log specific OAuth errors
+          let errorType = 'authentication_failed';
+          let errorMessage = 'Authentication failed';
+          
           if (err.name === 'TokenError') {
             console.error("[AUTH] Token exchange failed - likely invalid/expired authorization code");
+            if (err.code === 'invalid_grant') {
+              errorType = 'invalid_code';
+              errorMessage = 'Authorization code is invalid or expired. Please try logging in again.';
+            }
           } else if (err.name === 'InternalOAuthError') {
             console.error("[AUTH] OAuth internal error:", err.oauthError);
           }
           
           const failureRedirect = sessionReturnTo 
-            ? `/login?returnTo=${encodeURIComponent(sessionReturnTo)}&error=authentication_failed`
-            : '/login?error=authentication_failed';
+            ? `/login?returnTo=${encodeURIComponent(sessionReturnTo)}&error=${errorType}&message=${encodeURIComponent(errorMessage)}`
+            : `/login?error=${errorType}&message=${encodeURIComponent(errorMessage)}`;
           return res.redirect(failureRedirect);
         }
         

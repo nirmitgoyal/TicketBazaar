@@ -14,7 +14,9 @@ export default function Login() {
   // Check for authentication errors in URL params
   const urlParams = new URLSearchParams(window.location.search);
   const error = urlParams.get("error");
+  const errorMessage = urlParams.get("message");
   const hasAuthError = error === "authentication_failed";
+  const hasInvalidCode = error === "invalid_code";
 
   // Redirect if already logged in
   useEffect(() => {
@@ -56,7 +58,17 @@ export default function Login() {
             <Alert className="border-red-200 bg-red-50">
               <AlertCircle className="h-4 w-4 text-red-600" />
               <AlertDescription className="text-sm text-red-800">
-                Authentication failed. Please try again.
+                {errorMessage || "Authentication failed. Please try again."}
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {/* Show invalid code error if present */}
+          {hasInvalidCode && (
+            <Alert className="border-orange-200 bg-orange-50">
+              <AlertCircle className="h-4 w-4 text-orange-600" />
+              <AlertDescription className="text-sm text-orange-800">
+                {errorMessage || "Authorization code is invalid or expired. Please try logging in again."}
               </AlertDescription>
             </Alert>
           )}

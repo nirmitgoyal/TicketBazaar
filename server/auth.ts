@@ -104,7 +104,9 @@ export function setupAuth(app: Express) {
           clientSecret: googleClientSecret,
           callbackURL: callbackURL,
           proxy: true,
-          passReqToCallback: true
+          passReqToCallback: true,
+          state: true, // Enable state parameter for CSRF protection
+          scope: ['profile', 'email'] // Explicitly set required scopes
         },
         async (req, accessToken, refreshToken, profile, done) => {
           try {
