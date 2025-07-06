@@ -12,16 +12,45 @@ const isGoogleOAuthEnabled = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOG
 
 // Google OAuth login route (only if configured)
 if (isGoogleOAuthEnabled) {
-  router.get("/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
-  );
+  router.get("/google", (req, res, next) => {
+    // Store the returnTo parameter in session before initiating OAuth
+    const returnTo = req.query.returnTo as string;
+    if (returnTo) {
+      req.session.returnTo = returnTo;
+    }
+    
+    passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
+  });
 
   // Google OAuth callback route (only if configured)
   router.get("/google/callback",
-    passport.authenticate("google", { failureRedirect: "/" }),
-    (req, res) => {
-      // Successful authentication, redirect to home page
-      res.redirect("/");
+    (req, res, next) => {
+      passport.authenticate("google", (err, user, info) => {
+        if (err || !user) {
+          // Authentication failed
+          const returnTo = req.session.returnTo;
+          const failureRedirect = returnTo 
+            ? `/login?returnTo=${encodeURIComponent(returnTo)}&error=authentication_failed`
+            : '/login?error=authentication_failed';
+          return res.redirect(failureRedirect);
+        }
+        
+        // Authentication succeeded, log in the user
+        req.logIn(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+          
+          // Check for returnTo in session
+          const returnTo = req.session.returnTo || '/';
+          
+          // Clear the returnTo from session after use
+          delete req.session.returnTo;
+          
+          // Successful authentication, redirect to original route
+          res.redirect(returnTo);
+        });
+      })(req, res, next);
     }
   );
 } else {

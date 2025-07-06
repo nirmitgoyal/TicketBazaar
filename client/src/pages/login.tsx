@@ -5,24 +5,34 @@ import SEO from "@/components/seo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Info } from "lucide-react";
+import { Info, AlertCircle } from "lucide-react";
 
 export default function Login() {
   const { isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
 
+  // Check for authentication errors in URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const error = urlParams.get("error");
+  const hasAuthError = error === "authentication_failed";
+
   // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {
       // Check if there's a return URL in the query params
-      const urlParams = new URLSearchParams(window.location.search);
       const returnTo = urlParams.get("returnTo") || "/";
       navigate(returnTo);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, urlParams]);
 
   const handleGoogleSignIn = () => {
-    window.location.href = "/api/auth/google";
+    // Preserve the returnTo parameter in the Google OAuth flow
+    const urlParams = new URLSearchParams(window.location.search);
+    const returnTo = urlParams.get("returnTo");
+    const googleAuthUrl = returnTo 
+      ? `/api/auth/google?returnTo=${encodeURIComponent(returnTo)}`
+      : "/api/auth/google";
+    window.location.href = googleAuthUrl;
   };
 
   return (
@@ -41,6 +51,16 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Show authentication error if present */}
+          {hasAuthError && (
+            <Alert className="border-red-200 bg-red-50">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-sm text-red-800">
+                Authentication failed. Please try again.
+              </AlertDescription>
+            </Alert>
+          )}
+          
           {/* Information about requirements */}
           <Alert className="border-blue-200 bg-blue-50">
             <Info className="h-4 w-4 text-blue-600" />
