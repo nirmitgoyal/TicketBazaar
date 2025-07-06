@@ -30,13 +30,28 @@ export function setupAuth(app: Express) {
   }
   
   // Create session store with database connection
-  const sessionStore = new PgSessionStore({
+  // For production environments (like Heroku), we need to configure SSL properly
+  const sessionStoreConfig: any = {
     conString: process.env.DATABASE_URL,
     tableName: 'session',
     createTableIfMissing: true,
     pruneSessionInterval: 24 * 60 * 60, // Prune expired sessions every 24 hours
     errorLog: console.error.bind(console)
-  });
+  };
+  
+  // Add SSL configuration for production (Heroku PostgreSQL uses self-signed certificates)
+  if (process.env.NODE_ENV === 'production') {
+    sessionStoreConfig.conObject = {
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false
+      }
+    };
+    // Remove conString when using conObject
+    delete sessionStoreConfig.conString;
+  }
+  
+  const sessionStore = new PgSessionStore(sessionStoreConfig);
 
   // Configure session settings
   let sessionSecret = process.env.SESSION_SECRET;

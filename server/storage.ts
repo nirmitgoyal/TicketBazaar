@@ -128,10 +128,26 @@ export class DatabaseStorage implements IStorage {
 
   constructor() {
     const PostgresSessionStore = connectPg(session);
-    this.sessionStore = new PostgresSessionStore({
+    
+    // Configure session store with proper SSL settings for production
+    const sessionStoreConfig: any = {
       conString: process.env.DATABASE_URL,
       createTableIfMissing: true,
-    });
+    };
+    
+    // Add SSL configuration for production (Heroku PostgreSQL uses self-signed certificates)
+    if (process.env.NODE_ENV === 'production') {
+      sessionStoreConfig.conObject = {
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false
+        }
+      };
+      // Remove conString when using conObject
+      delete sessionStoreConfig.conString;
+    }
+    
+    this.sessionStore = new PostgresSessionStore(sessionStoreConfig);
   }
 
   private isValidCacheEntry(timestamp: number): boolean {
