@@ -9,6 +9,7 @@ import {
   doublePrecision,
   primaryKey,
   index,
+  json,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
@@ -422,3 +423,12 @@ export const userReviewSchema = z.object({
   contactRequestId: z.number().optional(),
   reviewType: z.enum(["buyer_review_seller", "seller_review_buyer"]),
 });
+
+// Sessions table for persistent session storage
+export const sessions = pgTable("session", {
+  sid: text("sid").primaryKey(),
+  sess: json("sess").notNull(),
+  expire: timestamp("expire").notNull()
+}, (table) => ({
+  expireIdx: index("IDX_session_expire").on(table.expire)
+}));

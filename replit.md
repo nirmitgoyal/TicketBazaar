@@ -19,7 +19,7 @@ TicketBazaar is a comprehensive peer-to-peer ticket marketplace platform designe
 - **Language**: TypeScript throughout the stack
 - **Database**: PostgreSQL with Drizzle ORM
 - **Authentication**: Passport.js with local strategy and session management
-- **Session Storage**: Memory store for development, configurable for production
+- **Session Storage**: PostgreSQL persistent sessions using connect-pg-simple (survives deployments)
 - **Real-time**: WebSocket integration for live notifications
 
 ### Database Design

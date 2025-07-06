@@ -4,7 +4,8 @@ import { Express, Request, Response } from "express";
 import session from "express-session";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
-import MemoryStore from "memorystore";
+import connectPgSimple from "connect-pg-simple";
+import { db } from "./db";
 
 /**
  * Extend Express User interface with our User type
@@ -20,8 +21,22 @@ declare global {
  * This function configures session management, passport strategies, and serialization
  */
 export function setupAuth(app: Express) {
-  // Use memory store for development to avoid SSL certificate issues
-  const SessionStore = MemoryStore(session);
+  // Use PostgreSQL for persistent session storage
+  const PgSessionStore = connectPgSimple(session);
+  
+  // For non-production environments, allow self-signed certificates
+  if (process.env.NODE_ENV !== 'production') {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  }
+  
+  // Create session store with database connection
+  const sessionStore = new PgSessionStore({
+    conString: process.env.DATABASE_URL,
+    tableName: 'session',
+    createTableIfMissing: true,
+    pruneSessionInterval: 24 * 60 * 60, // Prune expired sessions every 24 hours
+    errorLog: console.error.bind(console)
+  });
 
   // Configure session settings
   let sessionSecret = process.env.SESSION_SECRET;
@@ -40,15 +55,15 @@ export function setupAuth(app: Express) {
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
-    store: new SessionStore({
-      checkPeriod: 86400000 // prune expired entries every 24h
-    }),
+    store: sessionStore,
     cookie: {
-      secure: false, // Set to false for development
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
       sameSite: "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      httpOnly: true
+      httpOnly: true,
+      domain: process.env.NODE_ENV === 'production' ? '.ticketbazaar.co.in' : undefined
     },
+    name: 'tb.sid', // Custom session cookie name
   };
 
   // Set up session middleware
