@@ -54,6 +54,11 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
+    // Skip WebSocket connection in test/CI environments
+    if (process.env.NODE_ENV === 'test' || process.env.CI) {
+      return;
+    }
+
     const connectWebSocket = () => {
       try {
         // Get a reliable host (handle both development and production)
@@ -63,7 +68,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
         // Construct WebSocket URL with the /ws path
         const wsUrl = `${protocol}//${host}/ws`;
 
-        console.log(`Attempting WebSocket connection to: ${wsUrl}`);
+        // Only log in development
+        if (import.meta.env.DEV) {
+          console.log(`Attempting WebSocket connection to: ${wsUrl}`);
+        }
 
         // Create a new connection with backoff retry logic
         const socket = new WebSocket(wsUrl);
@@ -71,7 +79,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
         return socket;
       } catch (error) {
-        console.error("Failed to create WebSocket connection:", error);
+        // Silently fail in production
+        if (import.meta.env.DEV) {
+          console.error("Failed to create WebSocket connection:", error);
+        }
         return null;
       }
     };
@@ -82,15 +93,17 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Implement reconnection logic with exponential backoff
     let reconnectAttempts = 0;
-    const maxReconnectAttempts = 2; // Reduce attempts for production
+    const maxReconnectAttempts = 1; // Minimize reconnection attempts to reduce log spam
 
     // Function to handle reconnection with backoff
     const reconnect = () => {
       if (reconnectAttempts < maxReconnectAttempts) {
-        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 10000); // Shorter max delay
+        const delay = 5000; // Fixed 5 second delay
         reconnectAttempts++;
 
-        console.log(`WebSocket reconnection attempt ${reconnectAttempts}/${maxReconnectAttempts} in ${delay}ms`);
+        if (import.meta.env.DEV) {
+          console.log(`WebSocket reconnection attempt ${reconnectAttempts}/${maxReconnectAttempts} in ${delay}ms`);
+        }
 
         setTimeout(() => {
           if (user) {
@@ -116,7 +129,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Connection opened
     socket.addEventListener("open", () => {
-      console.log("WebSocket connection established successfully");
+      if (import.meta.env.DEV) {
+        console.log("WebSocket connection established successfully");
+      }
       setIsConnected(true);
       reconnectAttempts = 0; // Reset attempts on successful connection
 
@@ -135,7 +150,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     socket.addEventListener("message", (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log("WebSocket message received:", data);
+        if (import.meta.env.DEV) {
+          console.log("WebSocket message received:", data);
+        }
         setLastMessage(data);
 
         // Handle notifications
@@ -146,13 +163,17 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
           });
         }
       } catch (error) {
-        console.error("Error parsing WebSocket message:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error parsing WebSocket message:", error);
+        }
       }
     });
 
     // Connection closed
     socket.addEventListener("close", (event) => {
-      console.log("WebSocket connection closed", event.code, event.reason);
+      if (import.meta.env.DEV) {
+        console.log("WebSocket connection closed", event.code, event.reason);
+      }
       setIsConnected(false);
 
       // Handle different close codes appropriately
@@ -163,16 +184,22 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       
       // Don't attempt reconnection in production for normal closures or authentication failures
       if (event.code === 1000 || event.code === 1001 || event.code === 4001) {
-        console.log("WebSocket closed normally, not attempting reconnection");
+        if (import.meta.env.DEV) {
+          console.log("WebSocket closed normally, not attempting reconnection");
+        }
         return;
       }
 
       // For abnormal closures, attempt limited reconnection
       if (reconnectAttempts < maxReconnectAttempts) {
-        console.log(`WebSocket abnormal closure (code: ${event.code}), attempting reconnection ${reconnectAttempts + 1}/${maxReconnectAttempts}`);
+        if (import.meta.env.DEV) {
+          console.log(`WebSocket abnormal closure (code: ${event.code}), attempting reconnection ${reconnectAttempts + 1}/${maxReconnectAttempts}`);
+        }
         reconnect();
       } else {
-        console.log("Max WebSocket reconnection attempts reached");
+        if (import.meta.env.DEV) {
+          console.log("Max WebSocket reconnection attempts reached");
+        }
       }
     });
 
@@ -189,7 +216,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Cleanup on unmount
     return () => {
-      console.log("Closing WebSocket connection");
+      if (import.meta.env.DEV) {
+        console.log("Closing WebSocket connection");
+      }
       if (
         socketRef.current &&
         socketRef.current.readyState === WebSocket.OPEN

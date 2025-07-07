@@ -29,6 +29,9 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
 
+  // Check if there's a session cookie present to avoid unnecessary API calls
+  const hasSessionCookie = document.cookie.includes('tb.sid');
+
   // Fetch the current authenticated user
   const {
     data: user,
@@ -38,6 +41,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<SelectUser | null>({
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
+      // Skip the API call if there's no session cookie
+      if (!hasSessionCookie) {
+        return null;
+      }
+      
       try {
         const res = await fetch("/api/auth/user", {
           credentials: "include",
@@ -56,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     retry: false,
     throwOnError: false,
+    enabled: hasSessionCookie, // Only run query if session cookie exists
   });
 
 

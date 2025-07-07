@@ -83,17 +83,21 @@ export function setupAuth(app: Express) {
     throw new Error("SESSION_SECRET environment variable is required for security");
   }
   
+  // Determine if we're in production (deployed on ticketbazaar.co.in)
+  const isProductionDomain = process.env.REPLIT_DOMAINS?.includes('ticketbazaar.co.in') || 
+                             process.env.NODE_ENV === 'production' && !process.env.REPL_ID;
+
   const sessionSettings: session.SessionOptions = {
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      secure: isProductionDomain, // Only use secure cookies on actual production domain
       sameSite: "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      domain: process.env.NODE_ENV === 'production' ? '.ticketbazaar.co.in' : undefined
+      domain: isProductionDomain ? '.ticketbazaar.co.in' : undefined // Only set domain on production
     },
     name: 'tb.sid', // Custom session cookie name
   };
