@@ -84,8 +84,11 @@ export function setupAuth(app: Express) {
   }
   
   // Determine if we're in production (deployed on ticketbazaar.co.in)
+  // Check multiple ways to detect production domain
   const isProductionDomain = process.env.REPLIT_DOMAINS?.includes('ticketbazaar.co.in') || 
-                             process.env.NODE_ENV === 'production' && !process.env.REPL_ID;
+                             process.env.NODE_ENV === 'production' && !process.env.REPL_ID ||
+                             process.env.DOMAIN === 'ticketbazaar.co.in' ||
+                             process.env.PRODUCTION_DOMAIN === 'ticketbazaar.co.in';
 
   const sessionSettings: session.SessionOptions = {
     secret: sessionSecret,
@@ -93,13 +96,14 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: isProductionDomain, // Only use secure cookies on actual production domain
-      sameSite: "lax",
+      secure: isProductionDomain || process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: isProductionDomain ? "none" : "lax", // Allow cross-origin for OAuth in production
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
       domain: isProductionDomain ? '.ticketbazaar.co.in' : undefined // Only set domain on production
     },
     name: 'tb.sid', // Custom session cookie name
+    proxy: true // Trust proxy headers for secure cookies
   };
 
   // Set up session middleware
@@ -113,12 +117,25 @@ export function setupAuth(app: Express) {
   const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
   
   if (googleClientId && googleClientSecret) {
-    // Use relative callback URL for development flexibility
-    // This allows the same OAuth config to work across different domains
-    const callbackURL = "/api/auth/google/callback";
+    // Determine the correct callback URL based on environment
+    let callbackURL;
+    
+    // For production domain, use absolute URL to ensure Google OAuth works correctly
+    if (isProductionDomain || process.env.NODE_ENV === 'production') {
+      const productionDomain = process.env.PRODUCTION_DOMAIN || 'ticketbazaar.co.in';
+      callbackURL = `https://${productionDomain}/api/auth/google/callback`;
+      console.log('[AUTH] Using production callback URL:', callbackURL);
+    } else {
+      // For development, use relative callback URL for flexibility
+      callbackURL = "/api/auth/google/callback";
+      console.log('[AUTH] Using development callback URL:', callbackURL);
+    }
+    
     console.log('Setting up Google OAuth strategy');
     console.log('Google OAuth Callback URL:', callbackURL);
     console.log('Using proxy:', true);
+    console.log('Is Production Domain:', isProductionDomain);
+    console.log('NODE_ENV:', process.env.NODE_ENV);
     
     passport.use(
       new GoogleStrategy(
@@ -129,13 +146,18 @@ export function setupAuth(app: Express) {
           proxy: true,
           passReqToCallback: true,
           state: true, // Enable state parameter for CSRF protection
-          scope: ['profile', 'email'] // Explicitly set required scopes
+          scope: ['profile', 'email'], // Explicitly set required scopes
+          skipUserProfile: false // Ensure we get the user profile
         },
         async (req, accessToken, refreshToken, profile, done) => {
           try {
             console.log('[GOOGLE OAUTH] Starting authentication for profile:', profile.id);
             console.log('[GOOGLE OAUTH] Access token received:', accessToken ? 'Yes' : 'No');
             console.log('[GOOGLE OAUTH] Profile data available:', !!profile);
+            console.log('[GOOGLE OAUTH] Callback URL used:', req.url);
+            console.log('[GOOGLE OAUTH] Request headers - host:', req.get('host'));
+            console.log('[GOOGLE OAUTH] Request headers - x-forwarded-proto:', req.get('x-forwarded-proto'));
+            console.log('[GOOGLE OAUTH] Request headers - x-forwarded-host:', req.get('x-forwarded-host'));
             
             // Extract profile picture URL from Google profile
             const profilePicture = profile._json?.picture || profile.photos?.[0]?.value || '';
@@ -213,6 +235,17 @@ export function setupAuth(app: Express) {
         }
       )
     );
+    
+    // Log OAuth configuration for debugging
+    console.log('[AUTH] Google OAuth Strategy configured successfully');
+    console.log('[AUTH] Production Domain Detection:', {
+      isProductionDomain,
+      NODE_ENV: process.env.NODE_ENV,
+      REPLIT_DOMAINS: process.env.REPLIT_DOMAINS,
+      PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,
+      DOMAIN: process.env.DOMAIN,
+      callbackURL
+    });
   } else {
     console.log('Google OAuth credentials not provided, skipping Google authentication setup');
   }
