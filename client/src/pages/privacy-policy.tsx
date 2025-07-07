@@ -50,7 +50,7 @@ export default function PrivacyPolicy() {
             </div>
           </div>
           <CardDescription>
-            {language === 'english' ? 'Last Updated: June 3, 2025' : 'अंतिम अपडेट: 3 जून 2025'}
+            {language === 'english' ? 'Last Updated: July 3, 2025' : 'अंतिम अपडेट: 3 जून 2025'}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6 pb-10 space-y-6">
@@ -651,7 +651,7 @@ export default function PrivacyPolicy() {
 
             <div className="mt-6 p-4 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground">
-                <strong>Effective Date:</strong> This Privacy Policy is effective as of June 3, 2025, and governs all data processing activities from this date forward. Previous versions of our privacy policy remain available upon request.
+                <strong>Effective Date:</strong> This Privacy Policy is effective as of July 3, 2025, and governs all data processing activities from this date forward. Previous versions of our privacy policy remain available upon request.
               </p>
             </div>
           </section>
