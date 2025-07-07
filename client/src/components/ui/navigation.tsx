@@ -143,19 +143,6 @@ export function Navigation() {
               Map View
             </motion.button>
 
-            <motion.button
-              className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
-                location === "/popularity"
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:text-primary hover:bg-accent"
-              }`}
-              onClick={() => handleNavigation("/popularity")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Popular
-            </motion.button>
-
             {isAuthenticated && (
               <>
                 <motion.button
@@ -169,21 +156,6 @@ export function Navigation() {
                   whileTap={{ scale: 0.95 }}
                 >
                   My Tickets
-                </motion.button>
-
-
-
-                <motion.button
-                  className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
-                    location === "/enhanced-verification"
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:text-primary hover:bg-accent"
-                  }`}
-                  onClick={() => handleNavigation("/enhanced-verification")}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Verification
                 </motion.button>
 
                 <motion.button
@@ -382,15 +354,6 @@ export function Navigation() {
                     >
                       <Map className="h-4 w-4" />
                       Map View
-                    </button>
-                  </motion.div>
-
-                  <motion.div variants={listItem}>
-                    <button
-                      className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/popularity" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
-                      onClick={() => handleNavigation("/popularity")}
-                    >
-                      Popular Tickets
                     </button>
                   </motion.div>
 
