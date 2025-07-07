@@ -77,7 +77,7 @@ export default function Login() {
           <Alert className="border-blue-200 bg-blue-50">
             <Info className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-sm text-blue-800">
-              To view seller details, you need to sign in with Google and add your Instagram handle to your profile.
+              To Sell your tickets OR to view seller details, you need to sign in with Google and add your Instagram handle to your profile.
             </AlertDescription>
           </Alert>
           

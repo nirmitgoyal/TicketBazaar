@@ -173,16 +173,16 @@ export function Navigation() {
                 </motion.button>
 
                 <motion.button
-                  className="text-muted-foreground hover:text-primary hover:bg-accent px-4 py-2 rounded-lg transition-all duration-200 touch-target"
-                  onClick={() => {
-                    logoutMutation.mutate(undefined, {
-                      onSuccess: () => setLocation("/"),
-                    });
-                  }}
+                  className={`px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
+                    location === "/list-ticket"
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-muted-foreground hover:text-primary hover:bg-accent"
+                  }`}
+                  onClick={() => handleNavigation("/list-ticket")}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Logout
+                  Sell Tickets
                 </motion.button>
               </>
             )}
@@ -388,17 +388,10 @@ export function Navigation() {
 
                       <motion.div variants={listItem}>
                         <button
-                          className="py-3 px-2 text-muted-foreground cursor-pointer block w-full text-left touch-target rounded-md transition-colors hover:bg-accent"
-                          onClick={() => {
-                            logoutMutation.mutate(undefined, {
-                              onSuccess: () => {
-                                setLocation("/");
-                                setIsMenuOpen(false);
-                              },
-                            });
-                          }}
+                          className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/list-ticket" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
+                          onClick={() => handleNavigation("/list-ticket")}
                         >
-                          Logout
+                          Sell Tickets
                         </button>
                       </motion.div>
                     </>
