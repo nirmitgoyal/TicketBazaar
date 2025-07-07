@@ -109,7 +109,9 @@ export function setupAuth(app: Express) {
   const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
   
   if (googleClientId && googleClientSecret) {
-    const callbackURL = process.env.GOOGLE_CALLBACK_URL || "/api/auth/google/callback";
+    // Use relative callback URL for development flexibility
+    // This allows the same OAuth config to work across different domains
+    const callbackURL = "/api/auth/google/callback";
     console.log('Setting up Google OAuth strategy');
     console.log('Google OAuth Callback URL:', callbackURL);
     console.log('Using proxy:', true);
