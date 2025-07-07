@@ -24,7 +24,8 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "wait-for-db": "node -e \"console.log('Database ready')\"",
-    "heroku-postbuild": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist"
+    "heroku-postbuild": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "diagnose:oauth": "tsx scripts/diagnose-oauth.ts"
   },
   "dependencies": {
     "@honeybadger-io/js": "^6.11.0",
