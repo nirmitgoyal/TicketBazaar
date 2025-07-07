@@ -508,48 +508,68 @@ export function TicketDetailModal({
               {/* Event Meta Info */}
               <div className="space-y-2">
                 {firstTicket?.eventDate && (
-                  <div className="flex items-center gap-2 text-textSecondary">
-                    <Calendar className="h-4 w-4" />
-                    <span className="font-medium">
-                      {new Date(firstTicket.eventDate).toLocaleDateString(
-                        "en-US",
-                        {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        },
-                      )}
-                    </span>
-                    <Clock className="h-4 w-4 ml-2" />
-                    <span>
-                      {new Date(firstTicket.eventDate).toLocaleTimeString(
-                        "en-US",
-                        {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        },
-                      )}
-                    </span>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-textSecondary text-sm sm:text-base">
+                    {/* Date - Full format on desktop, short on mobile */}
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 flex-shrink-0" />
+                      {/* Mobile: Short format */}
+                      <span className="font-medium sm:hidden">
+                        {new Date(firstTicket.eventDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          },
+                        )}
+                      </span>
+                      {/* Desktop: Full format */}
+                      <span className="font-medium hidden sm:inline">
+                        {new Date(firstTicket.eventDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          },
+                        )}
+                      </span>
+                    </div>
+                    {/* Time */}
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 flex-shrink-0" />
+                      <span className="whitespace-nowrap">
+                        {new Date(firstTicket.eventDate).toLocaleTimeString(
+                          "en-US",
+                          {
+                            hour: "numeric",
+                            minute: "2-digit",
+                          },
+                        )}
+                      </span>
+                    </div>
                   </div>
                 )}
 
                 {firstTicket?.venue && (
                   <button
                     onClick={handleVenueClick}
-                    className="flex items-center gap-2 text-left hover:text-primary transition-colors cursor-pointer group"
+                    className="flex flex-wrap items-center gap-2 text-left hover:text-primary transition-colors cursor-pointer group w-full sm:w-auto"
                     title="Open in maps"
                   >
-                    <SiGooglemaps className="h-8 w-8 text-primary" />
-                    <span className="font-medium group-hover:underline">
-                      {firstTicket.venue}
-                    </span>
-                    {firstTicket.venueAddress && (
-                      <span className="text-textSecondary">
-                        • {getSimplifiedAddress(firstTicket.venueAddress)}
+                    <SiGooglemaps className="h-6 w-6 sm:h-8 sm:w-8 text-primary flex-shrink-0" />
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 flex-1 min-w-0">
+                      <span className="font-medium group-hover:underline break-words">
+                        {firstTicket.venue}
                       </span>
-                    )}
-                    <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100" />
+                      {firstTicket.venueAddress && (
+                        <span className="text-textSecondary text-sm sm:text-base break-words">
+                          • {getSimplifiedAddress(firstTicket.venueAddress)}
+                        </span>
+                      )}
+                    </div>
+                    <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100 flex-shrink-0 ml-auto sm:ml-0" />
                   </button>
                 )}
 
