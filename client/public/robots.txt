@@ -8,23 +8,6 @@ Allow: /sell-ticket
 Allow: /resell-tickets
 Allow: /buy-second-hand-tickets
 
-# Category pages
-Allow: /concerts
-Allow: /sports
-Allow: /festivals
-Allow: /theatre
-Allow: /comedy
-
-# City pages
-Allow: /mumbai
-Allow: /delhi
-Allow: /bangalore
-Allow: /chennai
-Allow: /hyderabad
-Allow: /pune
-Allow: /kolkata
-Allow: /ahmedabad
-
 # Important pages
 Allow: /faq
 Allow: /how-to-sell-tickets

@@ -7,7 +7,7 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  
+
   <!-- Key pages for ticket resale SEO -->
   <url>
     <loc>https://ticketbazaar.co.in/list-ticket</loc>
@@ -15,150 +15,28 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  
+
   <url>
     <loc>https://ticketbazaar.co.in/sell-ticket</loc>
     <lastmod>2025-06-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  
+
   <url>
     <loc>https://ticketbazaar.co.in/resell-tickets</loc>
     <lastmod>2025-06-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  
+
   <url>
     <loc>https://ticketbazaar.co.in/buy-second-hand-tickets</loc>
     <lastmod>2025-06-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  
-  <!-- Category pages -->
-  <url>
-    <loc>https://ticketbazaar.co.in/concerts</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/sports</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/festivals</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/theatre</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/comedy</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Major city pages -->
-  <url>
-    <loc>https://ticketbazaar.co.in/mumbai</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/delhi</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/bangalore</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/chennai</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/hyderabad</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/pune</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/kolkata</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/ahmedabad</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- SEO-optimized combination pages -->
-  <url>
-    <loc>https://ticketbazaar.co.in/sell-concert-tickets</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/sell-sports-tickets</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/resell-concert-tickets</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/second-hand-concert-tickets</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
+
   <!-- Important utility pages -->
   <url>
     <loc>https://ticketbazaar.co.in/faq</loc>
@@ -166,28 +44,22 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-  
+
   <url>
     <loc>https://ticketbazaar.co.in/how-to-sell-tickets</loc>
     <lastmod>2025-06-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-  
-  <url>
-    <loc>https://ticketbazaar.co.in/safety-tips</loc>
-    <lastmod>2025-06-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
+
+
   <url>
     <loc>https://ticketbazaar.co.in/terms-of-service</loc>
     <lastmod>2025-06-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
-  
+
   <url>
     <loc>https://ticketbazaar.co.in/privacy-policy</loc>
     <lastmod>2025-06-13</lastmod>
