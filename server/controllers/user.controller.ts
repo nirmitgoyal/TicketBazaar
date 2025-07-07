@@ -19,6 +19,12 @@ export class UserController {
    * Get the currently authenticated user
    */
   getCurrentUser = (req: Request, res: Response) => {
+    console.log("[AUTH] getCurrentUser called");
+    console.log("[AUTH] Session ID:", req.sessionID);
+    console.log("[AUTH] Session:", req.session);
+    console.log("[AUTH] isAuthenticated:", req.isAuthenticated());
+    console.log("[AUTH] req.user:", req.user);
+    
     // If not authenticated, return 401
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Not authenticated" });

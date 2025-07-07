@@ -90,15 +90,23 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: isProduction, // Use secure cookies only in true production
+      secure: isProduction && !process.env.REPL_SLUG, // Use secure cookies only in true production (not Replit)
       sameSite: "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      domain: isProduction ? '.ticketbazaar.co.in' : undefined // Only set domain in production
+      domain: isProduction && !process.env.REPL_SLUG ? '.ticketbazaar.co.in' : undefined // Only set domain in production (not Replit)
     },
     name: 'tb.sid', // Custom session cookie name
   };
 
+  // Log the final session settings
+  console.log('[AUTH] Session cookie settings:', {
+    secure: sessionSettings.cookie?.secure,
+    domain: sessionSettings.cookie?.domain,
+    sameSite: sessionSettings.cookie?.sameSite,
+    name: sessionSettings.name
+  });
+  
   // Set up session middleware
   app.set("trust proxy", 1);
   app.use(session(sessionSettings));

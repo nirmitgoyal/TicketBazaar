@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Check if there's a session cookie present to avoid unnecessary API calls
   const hasSessionCookie = document.cookie.includes('tb.sid');
+  console.log('[AUTH] Session cookie check:', { hasSessionCookie, cookies: document.cookie });
 
   // Fetch the current authenticated user
   const {
