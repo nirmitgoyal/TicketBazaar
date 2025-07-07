@@ -317,6 +317,10 @@ Do not document work done in changelog (from July 4, 2025 onwards).
 
 ## Recent Technical Updates
 
+### Navigation UI Update (July 7, 2025)
+- Removed Profile button from desktop navigation menu per user request
+- Profile functionality still accessible via user avatar button
+
 ### Google OAuth Redirect Fix (July 6, 2025)
 - Fixed issue where users were always redirected to homepage after Google authentication
 - Now properly preserves and redirects to the original route user was trying to access
