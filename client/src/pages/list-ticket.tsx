@@ -6,6 +6,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { debugAuthFlow } from "@/utils/auth-debug";
 import {
   Card,
   CardContent,
@@ -131,6 +132,15 @@ export default function ListTicket() {
       showContactInfo: false,
     },
   });
+
+  // Debug component mount
+  useEffect(() => {
+    debugAuthFlow("ListTicket page mounted", {
+      user: user?.email,
+      isAuthenticated: !!user,
+      hasInstagram: !!user?.instagram
+    });
+  }, [user]);
 
   // Reset verification when key fields change
   useEffect(() => {

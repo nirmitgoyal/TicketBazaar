@@ -17,6 +17,9 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { performanceMonitor } from "@/utils/performance";
 import ScrollNavigation from "@/components/scroll-navigation";
 import { InstagramHandleCheck } from "@/components/instagram-handle-check";
+import { AuthRedirectDebug } from "@/components/auth-redirect-debug";
+import { OAuthRedirectHandler } from "@/components/oauth-redirect-handler";
+import { debugAuthFlow } from "@/utils/auth-debug";
 import "@/utils/error-recovery"; // Initialize global error handling
 import "@/utils/console-cleaner"; // Clean up console noise
 import "@/utils/performance-optimizer"; // Optimize performance
@@ -27,6 +30,13 @@ function App() {
   const [location] = useLocation();
 
   useEffect(() => {
+    // Debug route changes
+    debugAuthFlow("Route changed in App", { 
+      location,
+      referrer: document.referrer,
+      hash: window.location.hash
+    });
+    
     // Reset scroll position to top when route changes
     window.scrollTo(0, 0);
     
@@ -82,6 +92,8 @@ function App() {
               <AnalyticsProvider>
                 <AtmosphereProvider>
                   <HelmetProvider>
+                    <AuthRedirectDebug />
+                    <OAuthRedirectHandler />
                     <InstagramHandleCheck>
                       <SEOConsolidated />
                       <CanonicalUrlManager />

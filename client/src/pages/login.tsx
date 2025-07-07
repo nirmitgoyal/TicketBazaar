@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info, AlertCircle } from "lucide-react";
+import { debugAuthFlow } from "@/utils/auth-debug";
 
 export default function Login() {
   const { isAuthenticated } = useAuth();
@@ -20,9 +21,16 @@ export default function Login() {
 
   // Redirect if already logged in
   useEffect(() => {
+    debugAuthFlow("Login page useEffect triggered", {
+      isAuthenticated,
+      returnTo: urlParams.get("returnTo"),
+      error: urlParams.get("error")
+    });
+    
     if (isAuthenticated) {
       // Check if there's a return URL in the query params
       const returnTo = urlParams.get("returnTo") || "/";
+      debugAuthFlow("User authenticated, navigating to:", { returnTo });
       navigate(returnTo);
     }
   }, [isAuthenticated, navigate, urlParams]);
@@ -31,6 +39,14 @@ export default function Login() {
     // Preserve the returnTo parameter in the Google OAuth flow
     const urlParams = new URLSearchParams(window.location.search);
     const returnTo = urlParams.get("returnTo");
+    
+    // Store OAuth redirect info in session storage
+    debugAuthFlow("Initiating Google OAuth", { returnTo });
+    if (returnTo) {
+      sessionStorage.setItem("oauth-intended-destination", returnTo);
+      sessionStorage.setItem("oauth-redirect-pending", "true");
+    }
+    
     const googleAuthUrl = returnTo 
       ? `/api/auth/google?returnTo=${encodeURIComponent(returnTo)}`
       : "/api/auth/google";
