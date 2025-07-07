@@ -16,19 +16,25 @@ if (isGoogleOAuthEnabled) {
     // Store the returnTo parameter in session before initiating OAuth
     const returnTo = req.query.returnTo as string;
     console.log("[AUTH] Google OAuth initiated with returnTo:", returnTo);
+    console.log("[AUTH] Session ID before OAuth:", req.sessionID);
+    console.log("[AUTH] Full query params:", req.query);
     
     if (returnTo) {
       req.session.returnTo = returnTo;
+      console.log("[AUTH] Setting session.returnTo to:", req.session.returnTo);
       // Force session save before redirect
       req.session.save((err) => {
         if (err) {
           console.error("[AUTH] Failed to save session:", err);
         } else {
-          console.log("[AUTH] Session saved with returnTo:", returnTo);
+          console.log("[AUTH] Session saved successfully");
+          console.log("[AUTH] Session ID after save:", req.sessionID);
+          console.log("[AUTH] Verified session.returnTo:", req.session.returnTo);
         }
         passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
       });
     } else {
+      console.log("[AUTH] No returnTo parameter provided, redirecting to home after login");
       passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
     }
   });
@@ -88,12 +94,21 @@ if (isGoogleOAuthEnabled) {
             return next(err);
           }
           
-          // Use the stored returnTo value (session might have been regenerated)
-          const returnTo = sessionReturnTo || req.session.returnTo || '/';
-          console.log("[AUTH] Login successful, redirecting to:", returnTo);
+          // Important: Store the returnTo value before session operations
+          // Session regeneration during login might lose the returnTo value
+          const finalReturnTo = sessionReturnTo || req.session.returnTo || '/';
+          console.log("[AUTH] Login successful, preparing redirect to:", finalReturnTo);
+          console.log("[AUTH] Session ID after login:", req.sessionID);
           console.log("[AUTH] Session returnTo after login:", req.session.returnTo);
           
-          // Clear the returnTo from session after use
+          // If sessionReturnTo exists but req.session.returnTo is lost, restore it
+          if (sessionReturnTo && !req.session.returnTo) {
+            console.log("[AUTH] Restoring lost returnTo value:", sessionReturnTo);
+            req.session.returnTo = sessionReturnTo;
+          }
+          
+          // Clear the returnTo from session after capturing it
+          const redirectUrl = req.session.returnTo || finalReturnTo;
           delete req.session.returnTo;
           
           // Save session before redirect
@@ -101,8 +116,9 @@ if (isGoogleOAuthEnabled) {
             if (err) {
               console.error("[AUTH] Failed to save session after clearing returnTo:", err);
             }
+            console.log("[AUTH] Final redirect URL:", redirectUrl);
             // Successful authentication, redirect to original route
-            res.redirect(returnTo);
+            res.redirect(redirectUrl);
           });
         });
       })(req, res, next);
