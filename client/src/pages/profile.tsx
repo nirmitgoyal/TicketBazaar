@@ -418,6 +418,18 @@ export default function Profile() {
                     <Separator />
                     <div className="flex items-center justify-between">
                       <div>
+                        <p className="font-medium">SMS Notifications</p>
+                        <p className="text-sm text-textSecondary">
+                          Receive text messages for important updates
+                        </p>
+                      </div>
+                      <div className="h-6 w-12 bg-gray-300 rounded-full relative cursor-pointer">
+                        <div className="h-5 w-5 absolute left-1 top-0.5 rounded-full bg-white"></div>
+                      </div>
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between">
+                      <div>
                         <p className="font-medium">Marketing Communications</p>
                         <p className="text-sm text-textSecondary">
                           Receive updates about promotions and events
