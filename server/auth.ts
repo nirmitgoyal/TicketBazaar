@@ -37,9 +37,9 @@ export function setupAuth(app: Express) {
   let sessionStore;
   
   // Check if we're on Heroku (production) - multiple ways to detect
-  const isProduction = process.env.NODE_ENV === 'production' || 
-                      process.env.DYNO || 
-                      process.env.DATABASE_URL?.includes('amazonaws.com');
+  const isProduction = process.env.NODE_ENV === 'production' && 
+                      !process.env.REPL_SLUG && // Not on Replit
+                      (process.env.DYNO || process.env.DATABASE_URL?.includes('amazonaws.com'));
   
   console.log('[AUTH] Is Production:', isProduction);
   
@@ -89,11 +89,11 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      secure: isProduction, // Use secure cookies only in true production
       sameSite: "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      domain: process.env.NODE_ENV === 'production' ? '.ticketbazaar.co.in' : undefined
+      domain: isProduction ? '.ticketbazaar.co.in' : undefined // Only set domain in production
     },
     name: 'tb.sid', // Custom session cookie name
   };
@@ -109,7 +109,14 @@ export function setupAuth(app: Express) {
   const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
   
   if (googleClientId && googleClientSecret) {
-    const callbackURL = process.env.GOOGLE_CALLBACK_URL || "/api/auth/google/callback";
+    // Use dynamic callback URL based on environment
+    let callbackURL = "/api/auth/google/callback";
+    
+    // If we have a hardcoded callback URL and we're NOT on Replit, use it
+    if (process.env.GOOGLE_CALLBACK_URL && !process.env.REPL_SLUG) {
+      callbackURL = process.env.GOOGLE_CALLBACK_URL;
+    }
+    
     console.log('Setting up Google OAuth strategy');
     console.log('Google OAuth Callback URL:', callbackURL);
     console.log('Using proxy:', true);
