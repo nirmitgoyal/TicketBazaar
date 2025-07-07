@@ -288,7 +288,7 @@ export default function TermsOfService() {
               <div className="space-y-2 text-gray-700 dark:text-gray-200 text-sm">
                 <p><strong>Company Name:</strong> Ticket Bazaar</p>
                 {/* <p><strong>CIN:</strong> [To be updated upon incorporation]</p> */}
-                <p><strong>GSTIN: 09BLFPG9572A1Z3</strong> [To be updated upon registration]</p>
+                <p><strong>GSTIN:</strong> 09BLFPG9572A1Z3</p>
                 <div>
                   <p><strong>Registered Office:</strong></p>
                   <div className="ml-4 mt-1">

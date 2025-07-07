@@ -408,15 +408,6 @@ export function Navigation() {
                     <>
                       <motion.div variants={listItem}>
                         <button
-                          className="py-3 px-2 block font-medium text-primary text-left w-full touch-target rounded-md transition-colors hover:bg-primary/5"
-                          onClick={() => handleNavigation("/list-ticket")}
-                        >
-                          Start Selling
-                        </button>
-                      </motion.div>
-
-                      <motion.div variants={listItem}>
-                        <button
                           className="py-3 px-2 flex items-center gap-2 text-primary font-medium w-full text-left touch-target rounded-md transition-colors hover:bg-primary/5"
                           onClick={() => handleNavigation("/login")}
                         >

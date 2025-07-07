@@ -365,34 +365,6 @@ export default function Profile() {
                   <p className="text-sm text-textSecondary">Email ID</p>
                   <p className="font-medium">{user?.email}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-textSecondary">Seller Rating</p>
-                  <div className="flex items-center mt-1">
-                    <div className="flex items-center">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <svg
-                          key={star}
-                          className={`h-4 w-4 ${
-                            star <= Math.round(user?.rating || 0)
-                              ? "text-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 15.934l-6.18 3.254 1.18-6.875-5-4.867 6.904-1.003L10 0l3.095 6.443 6.905 1.003-5 4.867 1.18 6.875L10 15.934z"
-                          />
-                        </svg>
-                      ))}
-                    </div>
-                    <span className="ml-2 text-sm">
-                      {user?.rating ? user.rating.toFixed(1) : "0.0"} (
-                      {user?.ratingsCount || 0} ratings)
-                    </span>
-                  </div>
-                </div>
               </div>
             </CardContent>
             <CardFooter>
@@ -427,12 +399,10 @@ export default function Profile() {
             <CardContent>
               <Tabs defaultValue="notifications">
                 <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="notifications">Notifications</TabsTrigger>
-                  <TabsTrigger value="payment">Payment Methods</TabsTrigger>
-                  <TabsTrigger value="security">Security</TabsTrigger>
+                  {/* <TabsTrigger value="notifications">Notifications</TabsTrigger> */}
                   <TabsTrigger value="privacy">Privacy & Data</TabsTrigger>
                 </TabsList>
-                <TabsContent value="notifications" className="p-4">
+                {/* <TabsContent value="notifications" className="p-4">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
@@ -470,25 +440,7 @@ export default function Profile() {
                       </div>
                     </div>
                   </div>
-                </TabsContent>
-                <TabsContent value="payment" className="p-4">
-                  <div className="text-center py-6">
-                    <p className="text-textSecondary">
-                      You have no payment methods saved yet.
-                    </p>
-                    <Button className="mt-4">Add Payment Method</Button>
-                  </div>
-                </TabsContent>
-                <TabsContent value="security" className="p-4">
-                  <div className="space-y-4">
-                    <Button variant="outline" className="w-full">
-                      Change Password
-                    </Button>
-                    <Button variant="outline" className="w-full">
-                      Two-factor Authentication
-                    </Button>
-                  </div>
-                </TabsContent>
+                </TabsContent> */}
                 <TabsContent value="privacy" className="p-4">
                   <div className="space-y-6">
                     {/* Data Export Section */}

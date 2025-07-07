@@ -61,7 +61,7 @@ export default function Register() {
           
           <div className="text-center text-sm text-gray-600">
             By signing up, you agree to our{" "}
-            <a href="/terms" className="text-primary hover:underline">
+            <a href="/terms-of-service" className="text-primary hover:underline">
               Terms of Service
             </a>{" "}
             and{" "}
