@@ -101,14 +101,11 @@ if (isGoogleOAuthEnabled) {
           console.log("[AUTH] Session ID after login:", req.sessionID);
           console.log("[AUTH] Session returnTo after login:", req.session.returnTo);
           
-          // If sessionReturnTo exists but req.session.returnTo is lost, restore it
-          if (sessionReturnTo && !req.session.returnTo) {
-            console.log("[AUTH] Restoring lost returnTo value:", sessionReturnTo);
-            req.session.returnTo = sessionReturnTo;
-          }
+          // Use the sessionReturnTo (captured before authentication) as priority
+          const redirectUrl = sessionReturnTo || finalReturnTo || req.session.returnTo || "/";
+          console.log("[AUTH] Final redirect URL:", redirectUrl);
           
           // Clear the returnTo from session after capturing it
-          const redirectUrl = req.session.returnTo || finalReturnTo;
           delete req.session.returnTo;
           
           // Save session before redirect
@@ -116,7 +113,6 @@ if (isGoogleOAuthEnabled) {
             if (err) {
               console.error("[AUTH] Failed to save session after clearing returnTo:", err);
             }
-            console.log("[AUTH] Final redirect URL:", redirectUrl);
             // Successful authentication, redirect to original route
             res.redirect(redirectUrl);
           });

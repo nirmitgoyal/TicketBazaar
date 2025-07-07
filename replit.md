@@ -317,12 +317,11 @@ Do not document work done in changelog (from July 4, 2025 onwards).
 
 ## Recent Technical Updates
 
-### Google OAuth Redirect Fix (July 7, 2025)
-- Fixed issue where users were always redirected to homepage after Google authentication
-- Now properly preserves and redirects to the original route user was trying to access
-- Solution: Store returnTo parameter in session before OAuth flow and preserve it through authentication process
-- Handles session regeneration during new user creation flows
-- Fixed Instagram handle modal appearing immediately after login, blocking the redirect page
-- Added 1.5 second delay before showing Instagram handle modal to let users see successful redirect
-- Added welcome toast notification to acknowledge successful login before requesting Instagram handle
-- Modal now only shows once per session to avoid repeatedly blocking users
+### Google OAuth Production Fix (July 7, 2025)
+- Fixed authentication not working on production domain ticketbazaar.co.in
+- Updated environment detection to properly identify production based on GOOGLE_CALLBACK_URL
+- Simplified callback URL handling to use environment variable when set
+- Fixed session returnTo preservation by prioritizing pre-auth stored value
+- Server now correctly shows "Using production session store configuration with SSL" in production
+- OAuth callback URL properly uses https://ticketbazaar.co.in/api/auth/google/callback
+- Session cookies configured with proper domain and secure settings for production

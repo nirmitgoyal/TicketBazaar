@@ -36,10 +36,11 @@ export function setupAuth(app: Express) {
   
   let sessionStore;
   
-  // Check if we're on Heroku (production) - multiple ways to detect
-  const isProduction = process.env.NODE_ENV === 'production' && 
-                      !process.env.REPL_SLUG && // Not on Replit
-                      (process.env.DYNO || process.env.DATABASE_URL?.includes('amazonaws.com'));
+  // Check if we're on production (ticketbazaar.co.in)
+  const isProduction = process.env.NODE_ENV === 'production' || 
+                      process.env.DYNO || 
+                      process.env.DATABASE_URL?.includes('amazonaws.com') ||
+                      process.env.GOOGLE_CALLBACK_URL?.includes('ticketbazaar.co.in');
   
   console.log('[AUTH] Is Production:', isProduction);
   
@@ -109,13 +110,8 @@ export function setupAuth(app: Express) {
   const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
   
   if (googleClientId && googleClientSecret) {
-    // Use dynamic callback URL based on environment
-    let callbackURL = "/api/auth/google/callback";
-    
-    // If we have a hardcoded callback URL and we're NOT on Replit, use it
-    if (process.env.GOOGLE_CALLBACK_URL && !process.env.REPL_SLUG) {
-      callbackURL = process.env.GOOGLE_CALLBACK_URL;
-    }
+    // Use environment variable if set, otherwise use relative URL
+    const callbackURL = process.env.GOOGLE_CALLBACK_URL || "/api/auth/google/callback";
     
     console.log('Setting up Google OAuth strategy');
     console.log('Google OAuth Callback URL:', callbackURL);
