@@ -397,7 +397,7 @@ export default function Profile() {
               <CardDescription>Manage your account preferences</CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="notifications">
+              <Tabs defaultValue="privacy">
                 <TabsList className="grid w-full grid-cols-4">
                   {/* <TabsTrigger value="notifications">Notifications</TabsTrigger> */}
                   <TabsTrigger value="privacy">Privacy & Data</TabsTrigger>
