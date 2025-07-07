@@ -37,10 +37,12 @@ export function setupAuth(app: Express) {
   let sessionStore;
   
   // Check if we're on production (ticketbazaar.co.in)
-  const isProduction = process.env.NODE_ENV === 'production' || 
+  // In Replit, we should always use development settings
+  const isReplit = process.env.REPL_ID || process.env.REPLIT_DB_URL;
+  const isProduction = !isReplit && (
+                      process.env.NODE_ENV === 'production' || 
                       process.env.DYNO || 
-                      process.env.DATABASE_URL?.includes('amazonaws.com') ||
-                      process.env.GOOGLE_CALLBACK_URL?.includes('ticketbazaar.co.in');
+                      process.env.DATABASE_URL?.includes('amazonaws.com'));
   
   console.log('[AUTH] Is Production:', isProduction);
   
@@ -118,10 +120,20 @@ export function setupAuth(app: Express) {
   const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
   
   if (googleClientId && googleClientSecret) {
-    // Use environment variable if set, otherwise use relative URL
-    const callbackURL = process.env.GOOGLE_CALLBACK_URL || "/api/auth/google/callback";
+    // In Replit, use the Replit domain for callback
+    let callbackURL;
+    if (isReplit) {
+      // Get the Replit domain from the REPLIT_DEV_DOMAIN or construct it
+      const replitDomain = process.env.REPLIT_DEV_DOMAIN || 
+                          `${process.env.REPL_SLUG}-${process.env.REPL_OWNER}.repl.co`;
+      callbackURL = `https://${replitDomain}/api/auth/google/callback`;
+    } else {
+      // Use environment variable if set
+      callbackURL = process.env.GOOGLE_CALLBACK_URL || "/api/auth/google/callback";
+    }
     
     console.log('Setting up Google OAuth strategy');
+    console.log('Is Replit:', isReplit);
     console.log('Google OAuth Callback URL:', callbackURL);
     console.log('Using proxy:', true);
     
