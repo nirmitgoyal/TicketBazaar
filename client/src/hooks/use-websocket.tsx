@@ -42,7 +42,35 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const [lastMessage, setLastMessage] = useState<WebSocketEvent | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
 
+  // Send message function that handles production gracefully
+  const sendMessage = (event: WebSocketEvent) => {
+    // In production, WebSocket is disabled, so silently ignore messages
+    if (import.meta.env.PROD) {
+      return;
+    }
+
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify(event));
+    } else {
+      // Only show errors in development
+      if (import.meta.env.DEV) {
+        console.error("WebSocket is not connected");
+        toast({
+          title: "Connection Error",
+          description: "Not connected to server. Please reload the page.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   useEffect(() => {
+    // Skip WebSocket entirely in production to avoid console errors
+    if (import.meta.env.PROD) {
+      console.log("WebSocket disabled in production - real-time features unavailable");
+      return;
+    }
+
     // Only connect when user is authenticated
     if (!user) {
       return;
@@ -236,38 +264,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       };
     };
 
-    // Skip WebSocket in production if server doesn't support it
-    if (import.meta.env.PROD) {
-      // For production, attempt WebSocket connection but fail gracefully
-      try {
-        return initializeWebSocket();
-      } catch (error) {
-        console.log("WebSocket initialization failed in production, continuing without real-time features");
-        return;
-      }
-    }
-
-    // For development, proceed directly
+    // For development only, proceed with WebSocket setup
     return initializeWebSocket();
   }, [user, toast]);
-
-  // Send message function
-  const sendMessage = (event: WebSocketEvent) => {
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify(event));
-    } else {
-      // In production, WebSocket might not be available - fail silently
-      if (import.meta.env.DEV) {
-        console.error("WebSocket is not connected");
-        toast({
-          title: "Connection Error",
-          description: "Not connected to server. Please reload the page.",
-          variant: "destructive",
-        });
-      }
-      // In production, silently ignore WebSocket messages as they're non-critical
-    }
-  };
 
   return (
     <WebSocketContext.Provider

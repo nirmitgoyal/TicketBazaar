@@ -2,5 +2,7 @@
     "github-actions.workflows.pinned.workflows": [],
     "githubPullRequests.ignoredPullRequestBranches": [
         "main"
-    ]
+    ],
+    "githubPullRequests.experimental.chat": true,
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true
 }

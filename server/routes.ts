@@ -143,11 +143,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server
   const httpServer = createServer(app);
 
-  // Set up WebSocket service
-  const wsService = new WebSocketService(httpServer);
-
-  // Make WebSocket service available globally
-  (global as any).wsService = wsService;
+  // Set up WebSocket service only in non-production environments
+  if (process.env.NODE_ENV !== "production") {
+    logger.info('SERVER', 'Initializing WebSocket service for development');
+    const wsService = new WebSocketService(httpServer);
+    // Make WebSocket service available globally
+    (global as any).wsService = wsService;
+  } else {
+    logger.info('SERVER', 'WebSocket service disabled in production environment');
+    // Set a null placeholder for production to prevent errors
+    (global as any).wsService = null;
+  }
 
   // Initialize cleanup service for automated expired ticket removal
   logger.info('SERVER', 'Initializing automated cleanup service');

@@ -32,6 +32,7 @@
 - Use `helmet`, `cors`, rate-limiting middleware.
 
 ## 💬 Copilot Interaction Guidelines
+- If any error or failure occurs, retry yourself.
 - Annotate functions/components with intent before prompting.
 - Use inline comments or `// TODO:` placeholders for Copilot suggestions.
 - Ask Copilot to refactor complex functions into smaller units.

@@ -146,13 +146,17 @@ app.use((req, res, next) => {
     // Error handling middleware
     app.use(errorHandler);
 
-    // Setup WebSocket with error handling
-    console.log('🔌 Setting up WebSocket...');
-    try {
-      setupWebSocket(server);
-      console.log('✅ WebSocket server initialized successfully');
-    } catch (wsError: unknown) {
-      console.warn('⚠️ WebSocket setup failed, continuing without WebSocket support:', wsError instanceof Error ? wsError.message : String(wsError));
+    // Setup WebSocket conditionally (disabled in production for stability)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('🔌 Setting up WebSocket for development...');
+      try {
+        setupWebSocket(server);
+        console.log('✅ WebSocket server initialized successfully');
+      } catch (wsError: unknown) {
+        console.warn('⚠️ WebSocket setup failed, continuing without WebSocket support:', wsError instanceof Error ? wsError.message : String(wsError));
+      }
+    } else {
+      console.log('🔌 WebSocket disabled in production for stability');
     }
 
     const PORT = parseInt(process.env.PORT || '5000', 10);

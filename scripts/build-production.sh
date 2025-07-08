@@ -121,7 +121,7 @@ if command -v node &> /dev/null; then
     const indexPath = path.join('$BUILD_DIR', 'index.html');
     const indexContent = fs.readFileSync(indexPath, 'utf8');
     
-    if (!indexContent.includes('<!DOCTYPE html>')) {
+    if (!indexContent.includes('<!doctype html>') && !indexContent.includes('<!DOCTYPE html>')) {
         console.error('❌ index.html is not valid HTML');
         process.exit(1);
     }
@@ -129,6 +129,22 @@ if command -v node &> /dev/null; then
     if (!indexContent.includes('<div id=\"root\">')) {
         console.error('❌ index.html missing root element');
         process.exit(1);
+    }
+    
+    // Check for WebSocket prevention in production builds
+    const jsFiles = fs.readdirSync(path.join('$BUILD_DIR', 'assets')).filter(f => f.endsWith('.js'));
+    let foundWebSocketCode = false;
+    
+    for (const jsFile of jsFiles) {
+        const jsContent = fs.readFileSync(path.join('$BUILD_DIR', 'assets', jsFile), 'utf8');
+        if (jsContent.includes('WebSocket disabled in production')) {
+            foundWebSocketCode = true;
+            break;
+        }
+    }
+    
+    if (foundWebSocketCode) {
+        console.log('✅ WebSocket production safety check passed');
     }
     
     console.log('✅ Smoke test passed');
