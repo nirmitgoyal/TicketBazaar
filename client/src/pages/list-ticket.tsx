@@ -555,9 +555,6 @@ export default function ListTicket() {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
           <div className="md:col-span-3">
             <Card>
-              <CardHeader>
-                <CardTitle>List Your Ticket</CardTitle>
-              </CardHeader>
               <CardContent>
                 <Form {...form}>
                   <form
@@ -723,7 +720,7 @@ export default function ListTicket() {
                         name="category"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Event Category</FormLabel>
+                            <FormLabel>Category</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
                               <FormControl>
                                 <SelectTrigger>
