@@ -189,7 +189,7 @@ export default function ListTicket() {
   const handleVenueSearch = useCallback((query: string) => {
     setVenueInputValue(query);
     form.setValue("venue", query);
-    
+
     // Clear previous selection when user starts typing again
     if (selectedPlace && query !== selectedPlace.name) {
       setSelectedPlace(null);
@@ -197,13 +197,13 @@ export default function ListTicket() {
       form.setValue("latitude", undefined);
       form.setValue("longitude", undefined);
     }
-    
+
     if (query.length < 2) {
       setSearchResults([]);
       setShowResults(false);
       return;
     }
-    
+
     // Use Google Places API to search for venues
     if (window.google && window.google.maps && window.google.maps.places) {
       try {
@@ -304,7 +304,7 @@ export default function ListTicket() {
       form.setValue("latitude", lat);
       form.setValue("longitude", lng);
     }
-    
+
     setVenueInputValue(venue);
     setShowResults(false);
     setSearchResults([]);
@@ -324,7 +324,7 @@ export default function ListTicket() {
   // Verify ticket listing using Perplexity AI
   const verifyTicket = async () => {
     const values = form.getValues();
-    
+
     if (!values.title || !values.eventDate || !values.venue || !values.category) {
       toast({
         title: "Missing Information",
@@ -335,7 +335,7 @@ export default function ListTicket() {
     }
 
     setIsVerifying(true);
-    
+
     try {
       const response = await apiRequest("POST", "/api/ticket-verification/check", {
         listingTitle: values.title,
@@ -348,10 +348,10 @@ export default function ListTicket() {
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         setVerificationResult(result.data);
-        
+
         // Show toast based on legitimacy
         const toastConfig = {
           legit: {
@@ -369,7 +369,7 @@ export default function ListTicket() {
             variant: "destructive" as const,
           }
         };
-        
+
         const config = toastConfig[result.data.legitimacy];
         toast(config);
       } else {
@@ -394,7 +394,7 @@ export default function ListTicket() {
     mutationFn: async (data: TicketWithEventForm) => {
       // Convert form data to match the ticket schema
       const eventDateTime = new Date(`${data.eventDate}T${data.eventTime}`);
-      
+
       const ticketData = {
         title: data.title,
         eventTitle: data.title, // Use title as eventTitle since we removed the separate field
@@ -426,7 +426,7 @@ export default function ListTicket() {
       };
 
       const response = await apiRequest("POST", "/api/tickets", ticketData);
-      
+
       // Check for Instagram handle required error
       if (response.status === 403) {
         const errorData = await response.json();
@@ -435,12 +435,12 @@ export default function ListTicket() {
         }
         throw new Error(errorData.message || "Failed to create ticket");
       }
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to create ticket");
       }
-      
+
       return await response.json();
     },
     onSuccess: (data) => {
@@ -451,17 +451,17 @@ export default function ListTicket() {
       });
       queryClient.invalidateQueries({ queryKey: ["/api/tickets"] });
       queryClient.invalidateQueries({ queryKey: [`/api/tickets/seller/${user?.id}`] });
-      
+
       // Clear the form
       form.reset();
       setSelectedPlace(null);
       setVenueInputValue("");
-      
+
       navigate("/my-tickets");
     },
     onError: (error: any) => {
       console.error("Ticket creation error:", error);
-      
+
       // Check if Instagram handle is required
       if (error.message === "INSTAGRAM_HANDLE_REQUIRED") {
         setShowInstagramModal(true);
@@ -470,16 +470,16 @@ export default function ListTicket() {
         setPendingTicketData(formData);
         return;
       }
-      
+
       let errorMessage = "Failed to list ticket";
-      
+
       // Parse detailed error message if available
       if (error.message && error.message.includes("Validation error")) {
         errorMessage = "Please check all required fields and try again";
       } else if (error.message) {
         errorMessage = error.message.replace(/^\d+:\s*/, ''); // Remove status code prefix
       }
-      
+
       toast({
         variant: "destructive",
         title: "Unable to List Ticket",
@@ -490,7 +490,7 @@ export default function ListTicket() {
 
   const onSubmit = (data: TicketWithEventForm) => {
 
-    
+
     if (!isAuthenticated) {
       toast({
         title: "Authentication Required",
@@ -499,7 +499,7 @@ export default function ListTicket() {
       });
       return;
     }
-    
+
     // Clear any previous error states
     createTicketMutation.reset();
     createTicketMutation.mutate(data);
@@ -507,7 +507,7 @@ export default function ListTicket() {
 
   const handleInstagramModalSuccess = () => {
     setShowInstagramModal(false);
-    
+
     // If there's pending ticket data, retry the submission
     if (pendingTicketData) {
       createTicketMutation.mutate(pendingTicketData);
@@ -553,51 +553,165 @@ export default function ListTicket() {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <div className="md:col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>List Your Ticket</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form
-                  data-testid="ticket-listing-form"
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-6"
-                >
-                  {/* Event Details Section */}
-                  <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
-                    <h3 className="font-medium text-lg">Event Details</h3>
+          <div className="md:col-span-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>List Your Ticket</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form
+                    data-testid="ticket-listing-form"
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
+                  >
+                    {/* Event Details Section */}
+                    <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
+                      <h3 className="font-medium text-lg">Event Details</h3>
 
-                    <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Listing Title</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="e.g., 2 VIP tickets for Arijit Singh concert"
-                              maxLength={100}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
-                        name="eventDate"
+                        name="title"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Event Date</FormLabel>
+                            <FormLabel>Listing Title</FormLabel>
                             <FormControl>
-                              <Input type="date" {...field} />
+                              <Input
+                                placeholder="e.g., 2 VIP tickets for Arijit Singh concert"
+                                maxLength={100}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="eventDate"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Event Date</FormLabel>
+                              <FormControl>
+                                <Input type="date" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="eventTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Event Time</FormLabel>
+                              <FormControl>
+                                <Input type="time" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name="venue"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4" />
+                              Venue Location
+                            </FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Input
+                                  placeholder="Search for venue (e.g., Phoenix Marketcity, Mumbai)"
+                                  value={venueInputValue}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    setVenueInputValue(value);
+                                    field.onChange(value);
+                                    handleVenueSearch(value);
+                                  }}
+                                  onFocus={() => {
+                                    if (searchResults.length > 0) {
+                                      setShowResults(true);
+                                    }
+                                  }}
+                                  onBlur={(e) => {
+                                    // Delay hiding results to allow clicks on dropdown items
+                                    setTimeout(() => {
+                                      setShowResults(false);
+                                    }, 200);
+                                    field.onBlur();
+                                  }}
+                                  name={field.name}
+                                  ref={field.ref}
+                                />
+
+                                {/* Clear button */}
+                                {(venueInputValue || selectedPlace) && (
+                                  <button
+                                    type="button"
+                                    onClick={handleClearVenue}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                    aria-label="Clear venue selection"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </button>
+                                )}
+
+                                {/* Search Results Dropdown */}
+                                {showResults && searchResults.length > 0 && (
+                                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                                    {searchResults.map((place, index) => (
+                                      <button
+                                        key={place.place_id || index}
+                                        type="button"
+                                        className="w-full text-left p-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                                        onClick={() => handleSelectVenue(place)}
+                                      >
+                                        <div className="flex items-start gap-2">
+                                          <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                                          <div className="min-w-0 flex-1">
+                                            <p className="font-medium text-sm text-gray-900 line-clamp-1">
+                                              {place.name}
+                                            </p>
+                                            <p className="text-xs text-gray-500 line-clamp-2 mt-0.5">
+                                              {place.formatted_address}
+                                            </p>
+                                            {place.types && (
+                                              <div className="flex flex-wrap gap-1 mt-1">
+                                                {place.types.slice(0, 2).map((type) => (
+                                                  <span
+                                                    key={type}
+                                                    className="inline-block px-1.5 py-0.5 text-xs bg-blue-50 text-blue-600 rounded capitalize"
+                                                  >
+                                                    {type.replace(/_/g, ' ')}
+                                                  </span>
+                                                ))}
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </button>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {selectedPlace && (
+                                  <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm">
+                                    <p className="font-medium text-green-800">{selectedPlace.name}</p>
+                                    <p className="text-green-600">{selectedPlace.formatted_address}</p>
+                                  </div>
+                                )}
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -606,12 +720,81 @@ export default function ListTicket() {
 
                       <FormField
                         control={form.control}
-                        name="eventTime"
+                        name="category"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Event Time</FormLabel>
+                            <FormLabel>Event Category</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select a category" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="concerts">Music & Concerts</SelectItem>
+                                <SelectItem value="fitness">Cult.fit</SelectItem>
+                                <SelectItem value="accomodation">Zostel/Any Other Hotel</SelectItem>
+                                <SelectItem value="sports">Sports</SelectItem>
+                                <SelectItem value="comedy">Comedy</SelectItem>
+                                <SelectItem value="festivals">Festivals</SelectItem>
+                                <SelectItem value="conferences">Conferences & Events</SelectItem>
+                                <SelectItem value="exhibitions">Exhibitions</SelectItem>
+                                <SelectItem value="movies">Movies</SelectItem>
+                                <SelectItem value="dance">Dance</SelectItem>
+                                <SelectItem value="nightlife">Nightlife</SelectItem>
+                                <SelectItem value="education">Education</SelectItem>
+                                <SelectItem value="networking">Networking</SelectItem>
+                                <SelectItem value="others">Others</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Listing Details Section */}
+                    <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
+                      <h3 className="font-medium text-lg">Listing Details</h3>
+
+
+
+                      <FormField
+                        control={form.control}
+                        name="quantity"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Number of Tickets</FormLabel>
                             <FormControl>
-                              <Input type="time" {...field} />
+                              <Input
+                                type="number"
+                                min="1"
+                                max="8"
+                                placeholder="1"
+                                {...field}
+                                onChange={(e) => field.onChange(Number(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="additionalInfo"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Additional Information (Optional)</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                data-testid="ticket-description"
+                                placeholder="Any additional details about the tickets, seating information, or other relevant details..."
+                                className="resize-none"
+                                rows={3}
+                                maxLength={200}
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -619,354 +802,152 @@ export default function ListTicket() {
                       />
                     </div>
 
-                    <FormField
-                      control={form.control}
-                      name="venue"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4" />
-                            Venue Location
-                          </FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Input
-                                placeholder="Search for venue (e.g., Phoenix Marketcity, Mumbai)"
-                                value={venueInputValue}
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  setVenueInputValue(value);
-                                  field.onChange(value);
-                                  handleVenueSearch(value);
-                                }}
-                                onFocus={() => {
-                                  if (searchResults.length > 0) {
-                                    setShowResults(true);
-                                  }
-                                }}
-                                onBlur={(e) => {
-                                  // Delay hiding results to allow clicks on dropdown items
-                                  setTimeout(() => {
-                                    setShowResults(false);
-                                  }, 200);
-                                  field.onBlur();
-                                }}
-                                name={field.name}
-                                ref={field.ref}
-                              />
-                              
-                              {/* Clear button */}
-                              {(venueInputValue || selectedPlace) && (
-                                <button
-                                  type="button"
-                                  onClick={handleClearVenue}
-                                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                                  aria-label="Clear venue selection"
-                                >
-                                  <X className="h-4 w-4" />
-                                </button>
-                              )}
-                              
-                              {/* Search Results Dropdown */}
-                              {showResults && searchResults.length > 0 && (
-                                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
-                                  {searchResults.map((place, index) => (
-                                    <button
-                                      key={place.place_id || index}
-                                      type="button"
-                                      className="w-full text-left p-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
-                                      onClick={() => handleSelectVenue(place)}
-                                    >
-                                      <div className="flex items-start gap-2">
-                                        <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                                        <div className="min-w-0 flex-1">
-                                          <p className="font-medium text-sm text-gray-900 line-clamp-1">
-                                            {place.name}
-                                          </p>
-                                          <p className="text-xs text-gray-500 line-clamp-2 mt-0.5">
-                                            {place.formatted_address}
-                                          </p>
-                                          {place.types && (
-                                            <div className="flex flex-wrap gap-1 mt-1">
-                                              {place.types.slice(0, 2).map((type) => (
-                                                <span
-                                                  key={type}
-                                                  className="inline-block px-1.5 py-0.5 text-xs bg-blue-50 text-blue-600 rounded capitalize"
-                                                >
-                                                  {type.replace(/_/g, ' ')}
-                                                </span>
-                                              ))}
-                                            </div>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </button>
-                                  ))}
+                    {/* Verification Section */}
+                    <div className="space-y-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        disabled={isVerifying}
+                        onClick={verifyTicket}
+                      >
+                        <Shield className="mr-2 h-4 w-4" />
+                        {isVerifying ? "Verifying..." : "Verify Listing"}
+                      </Button>
+
+                      {verificationResult && (
+                        <Alert className={
+                          verificationResult.legitimacy === 'legit'
+                            ? "border-green-200 bg-green-50"
+                            : verificationResult.legitimacy === 'suspicious'
+                              ? "border-yellow-200 bg-yellow-50"
+                              : "border-red-200 bg-red-50"
+                        }>
+                          <div className="flex items-start gap-3">
+                            <span className="text-2xl mt-[-4px]">
+                              {verificationResult.legitimacyEmoji}
+                            </span>
+                            <div className="flex-1">
+                              <AlertTitle className="text-base">
+                                {verificationResult.legitimacy === 'legit'
+                                  ? "Ticket Verified"
+                                  : verificationResult.legitimacy === 'suspicious'
+                                    ? "Verification Warning"
+                                    : "Verification Failed"}
+                              </AlertTitle>
+                              <AlertDescription className="mt-1">
+                                {verificationResult.explanation}
+                              </AlertDescription>
+                              <div className="mt-3 space-y-1 text-sm">
+                                <div className="flex items-center gap-2">
+                                  {verificationResult.checkDetails.eventExists ? (
+                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                  ) : (
+                                    <XCircle className="h-4 w-4 text-red-600" />
+                                  )}
+                                  <span>Event exists</span>
                                 </div>
-                              )}
-                              
-                              {selectedPlace && (
-                                <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm">
-                                  <p className="font-medium text-green-800">{selectedPlace.name}</p>
-                                  <p className="text-green-600">{selectedPlace.formatted_address}</p>
+                                <div className="flex items-center gap-2">
+                                  {verificationResult.checkDetails.venueValid ? (
+                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                  ) : (
+                                    <XCircle className="h-4 w-4 text-red-600" />
+                                  )}
+                                  <span>Venue is valid</span>
                                 </div>
-                              )}
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="category"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Event Category</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a category" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="concerts">Music & Concerts</SelectItem>
-                              <SelectItem value="fitness">Cult.fit</SelectItem>
-                              <SelectItem value="accomodation">Zostel/Any Other Hotel</SelectItem>
-                              <SelectItem value="sports">Sports</SelectItem>
-                              <SelectItem value="comedy">Comedy</SelectItem>
-                              <SelectItem value="festivals">Festivals</SelectItem>
-                              <SelectItem value="conferences">Conferences & Events</SelectItem>
-                              <SelectItem value="exhibitions">Exhibitions</SelectItem>
-                              <SelectItem value="movies">Movies</SelectItem>
-                              <SelectItem value="dance">Dance</SelectItem>
-                              <SelectItem value="nightlife">Nightlife</SelectItem>
-                              <SelectItem value="education">Education</SelectItem>
-                              <SelectItem value="networking">Networking</SelectItem>
-                              <SelectItem value="others">Others</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Listing Details Section */}
-                  <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
-                    <h3 className="font-medium text-lg">Listing Details</h3>
-
-
-
-                    <FormField
-                      control={form.control}
-                      name="quantity"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Number of Tickets</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              min="1"
-                              max="8"
-                              placeholder="1"
-                              {...field}
-                              onChange={(e) => field.onChange(Number(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="additionalInfo"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Additional Information (Optional)</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              data-testid="ticket-description"
-                              placeholder="Any additional details about the tickets, seating information, or other relevant details..."
-                              className="resize-none"
-                              rows={3}
-                              maxLength={200}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Verification Section */}
-                  <div className="space-y-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full"
-                      disabled={isVerifying}
-                      onClick={verifyTicket}
-                    >
-                      <Shield className="mr-2 h-4 w-4" />
-                      {isVerifying ? "Verifying..." : "Verify Listing"}
-                    </Button>
-
-                    {verificationResult && (
-                      <Alert className={
-                        verificationResult.legitimacy === 'legit' 
-                          ? "border-green-200 bg-green-50" 
-                          : verificationResult.legitimacy === 'suspicious'
-                          ? "border-yellow-200 bg-yellow-50"
-                          : "border-red-200 bg-red-50"
-                      }>
-                        <div className="flex items-start gap-3">
-                          <span className="text-2xl mt-[-4px]">
-                            {verificationResult.legitimacyEmoji}
-                          </span>
-                          <div className="flex-1">
-                            <AlertTitle className="text-base">
-                              {verificationResult.legitimacy === 'legit' 
-                                ? "Ticket Verified" 
-                                : verificationResult.legitimacy === 'suspicious'
-                                ? "Verification Warning"
-                                : "Verification Failed"}
-                            </AlertTitle>
-                            <AlertDescription className="mt-1">
-                              {verificationResult.explanation}
-                            </AlertDescription>
-                            <div className="mt-3 space-y-1 text-sm">
-                              <div className="flex items-center gap-2">
-                                {verificationResult.checkDetails.eventExists ? (
-                                  <CheckCircle className="h-4 w-4 text-green-600" />
-                                ) : (
-                                  <XCircle className="h-4 w-4 text-red-600" />
-                                )}
-                                <span>Event exists</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                {verificationResult.checkDetails.venueValid ? (
-                                  <CheckCircle className="h-4 w-4 text-green-600" />
-                                ) : (
-                                  <XCircle className="h-4 w-4 text-red-600" />
-                                )}
-                                <span>Venue is valid</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                {verificationResult.checkDetails.dateValid ? (
-                                  <CheckCircle className="h-4 w-4 text-green-600" />
-                                ) : (
-                                  <XCircle className="h-4 w-4 text-red-600" />
-                                )}
-                                <span>Date is valid</span>
+                                <div className="flex items-center gap-2">
+                                  {verificationResult.checkDetails.dateValid ? (
+                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                  ) : (
+                                    <XCircle className="h-4 w-4 text-red-600" />
+                                  )}
+                                  <span>Date is valid</span>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </Alert>
+                        </Alert>
+                      )}
+                    </div>
+
+                    <Button
+                      data-testid="submit-button"
+                      type="submit"
+                      className="w-full"
+                      disabled={createTicketMutation.isPending || !verificationResult || verificationResult.legitimacy !== 'legit'}
+                      onClick={() => {
+
+                      }}
+                    >
+                      {createTicketMutation.isPending
+                        ? "Creating your listing..."
+                        : verificationResult && verificationResult.legitimacy !== 'legit'
+                          ? "Verification Required"
+                          : "List Ticket"}
+                    </Button>
+
+                    {createTicketMutation.isSuccess && (
+                      <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md text-green-800 text-sm">
+                        ✓ Ticket listed successfully! Redirecting to your tickets...
+                      </div>
                     )}
-                  </div>
 
-                  <Button
-                    data-testid="submit-button"
-                    type="submit"
-                    className="w-full"
-                    disabled={createTicketMutation.isPending || !verificationResult || verificationResult.legitimacy !== 'legit'}
-                    onClick={() => {
+                    {createTicketMutation.isError && (
+                      <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
+                        Failed to create listing. Please check your information and try again.
+                      </div>
+                    )}
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          </div>
 
-                    }}
-                  >
-                    {createTicketMutation.isPending
-                      ? "Creating your listing..."
-                      : verificationResult && verificationResult.legitimacy !== 'legit'
-                      ? "Verification Required"
-                      : "List Ticket"}
-                  </Button>
-                  
-                  {createTicketMutation.isSuccess && (
-                    <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md text-green-800 text-sm">
-                      ✓ Ticket listed successfully! Redirecting to your tickets...
-                    </div>
-                  )}
-                  
-                  {createTicketMutation.isError && (
-                    <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
-                      Failed to create listing. Please check your information and try again.
-                    </div>
-                  )}
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
-        </div>
+          {/* Sidebar with guidelines */}
+          <div className="md:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Selling Guidelines</CardTitle>
+                <CardDescription>
+                  Important information about selling tickets
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
 
-        {/* Platform Disclaimer */}
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-blue-800 mb-1">Platform Information</h3>
-              <p className="text-sm text-blue-700">
-                Ticket Bazaar is not a reseller or broker. We do not handle ticket payments, hold inventory, or facilitate transactions. 
-                We are a discovery and contact platform ensuring full legal compliance while improving trust in peer-to-peer ticket transfers. 
-                All transactions occur directly between users.
-              </p>
-            </div>
+                <div className="space-y-3">
+                  <h3 className="font-medium">Instagram Profile</h3>
+                  <p className="text-sm text-textSecondary">
+                    Your Instagram profile will be displayed to buyers (ONLY for the Instagram logged-in users) to help
+                    build trust, verify your identity and to contact you on DM.
+                  </p>
+                </div>
+
+                <Separator />
+                <div className="space-y-3">
+                  <h3 className="font-medium">No Platform Fees</h3>
+                  <p className="text-sm text-textSecondary">
+                    Ticket Bazaar does not charge any fees for listing or selling
+                    tickets. We simply connect buyers and sellers - all
+                    transactions (exchange of tickets & payment) happen directly between users.
+                  </p>
+                </div>
+                <Separator />
+
+                <div className="space-y-3">
+                  <h3 className="font-medium">Instant Listing</h3>
+                  <p className="text-sm text-textSecondary">
+                    Your tickets will be available for buyers immediately after
+                    completing your listing.
+                  </p>
+                </div>
+
+
+              </CardContent>
+            </Card>
           </div>
         </div>
-
-        {/* Sidebar with guidelines */}
-        <div className="md:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Selling Guidelines</CardTitle>
-              <CardDescription>
-                Important information about selling tickets
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              
-              <div className="space-y-3">
-                <h3 className="font-medium">Instagram Profile</h3>
-                <p className="text-sm text-textSecondary">
-                  Your Instagram profile will be displayed to buyers (ONLY for the Instagram logged-in users) to help
-                  build trust, verify your identity and to contact you on DM.
-                </p>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-3">
-                <h3 className="font-medium">Instant Listing</h3>
-                <p className="text-sm text-textSecondary">
-                  Your tickets will be available for buyers immediately after
-                  completing your listing.
-                </p>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-3">
-                <h3 className="font-medium">No Platform Fees</h3>
-                <p className="text-sm text-textSecondary">
-                  Ticket Bazaar does not charge any fees for listing or selling
-                  tickets. We simply connect buyers and sellers - all
-                  transactions happen directly between users.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        </div>
       </div>
-      
+
       {/* Instagram Handle Modal */}
       <InstagramHandleModal
         isOpen={showInstagramModal}
