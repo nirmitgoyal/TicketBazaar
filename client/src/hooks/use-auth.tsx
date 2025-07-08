@@ -29,9 +29,9 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
 
-  // Check if there's a session cookie present to avoid unnecessary API calls
-  const hasSessionCookie = document.cookie.includes('tb.sid');
-  console.log('[AUTH] Session cookie check:', { hasSessionCookie, cookies: document.cookie });
+  // Note: We can't check for httpOnly cookies via JavaScript, so we always
+  // attempt to fetch user data and let the server validate the session
+  console.log('[AUTH] Initializing auth provider');
 
   // Fetch the current authenticated user
   const {
@@ -42,11 +42,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<SelectUser | null>({
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
-      // Skip the API call if there's no session cookie
-      if (!hasSessionCookie) {
-        return null;
-      }
-      
       try {
         const res = await fetch("/api/auth/user", {
           credentials: "include",
@@ -65,7 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     retry: false,
     throwOnError: false,
-    enabled: hasSessionCookie, // Only run query if session cookie exists
+    staleTime: 5 * 60 * 1000, // Consider data stale after 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
 
 

@@ -325,3 +325,11 @@ Do not document work done in changelog (from July 4, 2025 onwards).
 - Server now correctly shows "Using production session store configuration with SSL" in production
 - OAuth callback URL properly uses https://ticketbazaar.co.in/api/auth/google/callback
 - Session cookies configured with proper domain and secure settings for production
+
+### Session Persistence Fix (July 8, 2025)
+- Fixed webapp not recognizing authenticated users despite valid session cookies
+- Identified httpOnly cookie issue - JavaScript cannot read httpOnly cookies for security
+- Updated auth hook to always attempt API calls instead of checking for cookie existence
+- Removed cookie detection logic that was preventing auth state from loading
+- Added staleTime and gcTime configurations for better cache management
+- Authentication now properly persists across page refreshes
