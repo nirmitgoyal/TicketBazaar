@@ -123,19 +123,17 @@ export function setupAuth(app: Express) {
     // Determine callback URL based on environment
     let callbackURL;
     
-    // Check if we're running in production (ticketbazaar.co.in)
-    const isProductionDomain = process.env.GOOGLE_CALLBACK_URL?.includes('ticketbazaar.co.in');
-    
-    if (isReplit && !isProductionDomain) {
-      // In Replit development, use the Replit domain
+    // Always use Replit domain when running in Replit, regardless of GOOGLE_CALLBACK_URL
+    if (isReplit) {
+      // In Replit, always use the Replit domain
       const replitDomain = process.env.REPLIT_DEV_DOMAIN || 
                           `${process.env.REPL_SLUG}-${process.env.REPL_OWNER}.repl.co`;
       callbackURL = `https://${replitDomain}/api/auth/google/callback`;
       console.log('[GOOGLE OAUTH] Using Replit development callback URL');
     } else if (process.env.GOOGLE_CALLBACK_URL) {
-      // Use the explicitly set callback URL (for production)
+      // Use the explicitly set callback URL only when NOT in Replit
       callbackURL = process.env.GOOGLE_CALLBACK_URL;
-      console.log('[GOOGLE OAUTH] Using production callback URL from GOOGLE_CALLBACK_URL env var');
+      console.log('[GOOGLE OAUTH] Using callback URL from GOOGLE_CALLBACK_URL env var');
     } else {
       // Fallback to relative URL
       callbackURL = "/api/auth/google/callback";
