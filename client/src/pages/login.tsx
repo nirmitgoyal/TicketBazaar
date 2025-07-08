@@ -63,10 +63,9 @@ export default function Login() {
       
       <Card>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
-          <CardDescription className="text-center">
+          {/* <CardDescription className="text-center">
             Sign in to your account to continue
-          </CardDescription>
+          </CardDescription> */}
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Show authentication error if present */}
@@ -93,7 +92,7 @@ export default function Login() {
           <Alert className="border-blue-200 bg-blue-50">
             <Info className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-sm text-blue-800">
-              To Sell your tickets OR to view seller details, you need to sign in with Google and add your Instagram handle to your profile.
+              To Sell your tickets OR to View seller details, you need to sign in with Google and add your Instagram handle to your profile.
             </AlertDescription>
           </Alert>
           
