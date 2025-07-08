@@ -31,6 +31,7 @@ const HowToSellTickets = createResilientLazyComponent(() => import("@/pages/how-
 const EmailTest = createResilientLazyComponent(() => import("@/pages/EmailTest"), "email-test");
 const SendGridSetup = createResilientLazyComponent(() => import("@/pages/SendGridSetup"), "sendgrid-setup");
 const PrivacySettings = createResilientLazyComponent(() => import("@/pages/privacy-settings"), "privacy-settings");
+const OAuthTest = createResilientLazyComponent(() => import("@/pages/oauth-test"), "oauth-test");
 
 // Dashboard components with resilient loading
 const VerificationReport = createResilientLazyComponent(() => import("@/pages/verification-report"), "verification-report");
@@ -172,6 +173,9 @@ export function AppRoutes() {
       {/* Email Testing */}
       <LazyRoute path="/email-test" component={EmailTest} />
       <LazyRoute path="/sendgrid-setup" component={SendGridSetup} />
+      
+      {/* OAuth Testing */}
+      <LazyRoute path="/oauth-test" component={OAuthTest} />
       
       {/* Redirect route */}
       <Route path="/map-to-home" component={() => {
