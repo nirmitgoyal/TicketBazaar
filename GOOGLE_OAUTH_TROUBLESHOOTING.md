@@ -129,7 +129,7 @@ NODE_ENV=production
    npm run dev
    
    # In another terminal, test endpoints
-   curl http://localhost:3000/api/auth/me
+   curl http://localhost:3000/api/auth/user
    ```
 
 4. **Monitor Browser Network Tab**

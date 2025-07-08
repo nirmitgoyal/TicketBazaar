@@ -99,7 +99,7 @@ export default function OAuthTest() {
     setIsTestingAuth(true);
     
     try {
-      const response = await fetch('/api/auth/me', {
+      const response = await fetch('/api/auth/user', {
         credentials: 'include',
         headers: {
           'Accept': 'application/json',
