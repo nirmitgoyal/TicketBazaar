@@ -13,7 +13,7 @@ export function setupProduction(app: Express) {
     );
   }
 
-  // Configure static file serving with proper MIME types
+  // Configure static file serving with proper MIME types and fallback handling
   app.use(express.static(distPath, {
     setHeaders: (res, path) => {
       // Set correct MIME types for JavaScript modules
@@ -50,6 +50,23 @@ export function setupProduction(app: Express) {
       }
     }
   }));
+
+  // Handle favicon requests specifically
+  app.get('/favicon.ico', (req, res) => {
+    const faviconPath = path.resolve(distPath, 'favicon.ico');
+    if (fs.existsSync(faviconPath)) {
+      res.sendFile(faviconPath);
+    } else {
+      // Send a 204 No Content response instead of 404 to avoid console errors
+      res.status(204).end();
+    }
+  });
+
+  // Handle missing assets gracefully
+  app.use('/assets/*', (req, res) => {
+    log(`Missing asset requested: ${req.path}`);
+    res.status(404).json({ error: 'Asset not found' });
+  });
 
   // Only serve index.html for routes that don't match static assets
   app.get("*", (req, res) => {

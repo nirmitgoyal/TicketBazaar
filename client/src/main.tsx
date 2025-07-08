@@ -2,17 +2,10 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./lib/socket-fix";
 import "./index.css";
+import { initializeGlobalErrorHandlers } from "./utils/error-handler";
 
-// Add global error handlers to prevent unhandled rejections from causing overlays
-window.addEventListener('unhandledrejection', (event) => {
-  console.warn('Unhandled promise rejection:', event.reason);
-  event.preventDefault(); // Prevent the default behavior (console error)
-});
-
-window.addEventListener('error', (event) => {
-  console.warn('Global error:', event.error);
-  event.preventDefault(); // Prevent error overlay from showing
-});
+// Initialize comprehensive global error handlers
+initializeGlobalErrorHandlers();
 
 // Override Vite's error overlay behavior in development
 if (import.meta.env.DEV) {

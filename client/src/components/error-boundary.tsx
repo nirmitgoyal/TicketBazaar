@@ -32,8 +32,28 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ error, errorInfo });
     
-    // Log error to monitoring service
-    console.error('Error Boundary caught an error:', error, errorInfo);
+    // Log error to monitoring service with production safety
+    if (import.meta.env.DEV) {
+      console.error('Error Boundary caught an error:', error, errorInfo);
+    } else {
+      // In production, log minimal error info
+      console.error('Application error occurred:', error.message);
+    }
+    
+    // Handle specific error types
+    if (error.message.includes('childElementCount')) {
+      console.warn('DOM manipulation error detected, likely safe to retry');
+    }
+    
+    if (error.message.includes('QuotaExceededError')) {
+      console.warn('Storage quota exceeded, clearing local storage');
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+      } catch (e) {
+        console.warn('Failed to clear storage:', e);
+      }
+    }
     
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
@@ -66,16 +86,27 @@ export class ErrorBoundary extends Component<Props, State> {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {import.meta.env.DEV && this.state.error && (
                 <details className="text-xs bg-gray-100 p-3 rounded border">
                   <summary className="cursor-pointer font-medium mb-2">
                     Error Details (Development Only)
                   </summary>
-                  <pre className="whitespace-pre-wrap text-red-700">
+                  <pre className="whitespace-pre-wrap text-red-700 max-h-40 overflow-auto">
                     {this.state.error.toString()}
                     {this.state.errorInfo?.componentStack}
                   </pre>
                 </details>
+              )}
+              
+              {import.meta.env.PROD && (
+                <div className="text-sm text-gray-600">
+                  <p>If this problem persists, please try:</p>
+                  <ul className="list-disc ml-5 mt-2 space-y-1">
+                    <li>Refreshing the page</li>
+                    <li>Clearing your browser cache</li>
+                    <li>Checking your internet connection</li>
+                  </ul>
+                </div>
               )}
               
               <div className="flex gap-2">

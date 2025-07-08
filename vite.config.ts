@@ -40,8 +40,18 @@ export default defineConfig({
           'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
           'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge'],
         },
+        // Stable chunk names for better caching
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
     chunkSizeWarningLimit: 600, // Increase warning threshold slightly
+    // Ensure proper source maps for production debugging
+    sourcemap: process.env.NODE_ENV === 'production' ? false : true,
+    // Optimize dependencies
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
   },
 });
