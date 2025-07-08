@@ -19,7 +19,7 @@ interface SEOConsolidatedProps {
  * Handles meta tags, structured data, canonical URLs, and internationalization
  */
 export function SEOConsolidated({
-  title = "Ticket Bazaar - Global Second-Hand Ticket Marketplace",
+  title = "Ticket Bazaar - Second-Hand Ticket Marketplace",
   description = "Buy and sell authentic second-hand tickets worldwide. Concert, sports, theatre, comedy and festival tickets with verified sellers.",
   keywords = ["tickets", "resale", "concerts", "sports", "events", "marketplace"],
   image = "/logo.svg",
