@@ -93,7 +93,15 @@ config();
 
   // Add general 404 handler for any non-matching routes (both API and frontend)
   // This will be reached only if the Vite middleware doesn't handle the request
-  app.use((_req: Request, res: Response) => {
+  // In production, static assets are handled by the production setup
+  app.use((req: Request, res: Response) => {
+    // In production, don't interfere with static asset 404s - let production.ts handle them
+    if (process.env.NODE_ENV === "production" && 
+        (req.path.startsWith('/assets/') || 
+         req.path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/))) {
+      return res.status(404).send('Asset not found');
+    }
+    
     res.status(404).json({
       success: false,
       message: "Route not found",
