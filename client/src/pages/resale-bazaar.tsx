@@ -14,7 +14,7 @@ import {
   Search,
   Filter
 } from "lucide-react";
-import { generateLandingPageSEO } from "@/utils/unified-seo-utils";
+import { generateLandingPageSEO } from "@/utils/seo-utils";
 
 /**
  * ResaleBazaar landing page - targeting "resale bazaar", "ticket resale marketplace", "resale tickets india"

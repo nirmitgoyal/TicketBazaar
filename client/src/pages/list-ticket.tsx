@@ -36,7 +36,7 @@ import { AlertCircle, Info, MapPin, X, Globe, Shield, CheckCircle, XCircle } fro
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
-import { UnifiedSEO } from "@/components/unified-seo-component";
+import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
@@ -541,13 +541,13 @@ export default function ListTicket() {
       loadingElement={<div>Loading Maps...</div>}
     >
       <div className="container mx-auto px-4 py-8">
-        <UnifiedSEO
+        <SEOManager
           title="Sell Your Event Tickets | List Tickets for Sale - Ticket Bazaar"
           description="Sell your unused event tickets safely and securely on Ticket Bazaar. List tickets for concerts, sports events, and festivals with our transparent pricing policy and secure payment system."
-          canonical="https://ticketbazaar.co.in/list-ticket"
+          canonicalUrl="https://ticketbazaar.co.in/list-ticket"
         >
           <UnifiedSchema />
-        </UnifiedSEO>
+        </SEOManager>
         <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
           List Your Ticket
         </h1>

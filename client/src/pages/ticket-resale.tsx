@@ -1,4 +1,4 @@
-import { UnifiedSEO } from "@/components/unified-seo-component";
+import { SEOManager } from "@/components/helmet-manager";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,7 @@ import {
   DollarSign
 } from "lucide-react";
 import { Link } from "wouter";
-import { generateLandingPageSEO } from "@/utils/unified-seo-utils";
+import { generateLandingPageSEO } from "@/utils/seo-utils";
 
 /**
  * TicketResale landing page - targeting "ticket resale", "resale tickets", "resell tickets"
@@ -77,11 +77,11 @@ export default function TicketResale() {
 
   return (
     <>
-      <UnifiedSEO 
+      <SEOManager 
         title={seoData.title}
         description={seoData.description}
         keywords={seoData.keywords}
-        canonical="https://ticketbazaar.co.in/ticket-resale"
+        canonicalUrl="https://ticketbazaar.co.in/ticket-resale"
         ogImage="https://ticketbazaar.co.in/images/ticket-resale-og.jpg"
       />
       
