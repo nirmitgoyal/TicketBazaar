@@ -28,6 +28,12 @@ const SellerPolicy = createResilientLazyComponent(() => import("@/pages/SellerPo
 const CityEvents = createResilientLazyComponent(() => import("@/pages/city-events"), "city-events");
 const GlobalCities = createResilientLazyComponent(() => import("@/pages/global-cities"), "global-cities");
 const HowToSellTickets = createResilientLazyComponent(() => import("@/pages/how-to-sell-tickets"), "how-to-sell-tickets");
+const SellPage = createResilientLazyComponent(() => import("@/pages/sell"), "sell");
+const WhereToSellTicketsPage = createResilientLazyComponent(() => import("@/pages/where-to-sell-tickets"), "where-to-sell-tickets");
+const ResaleBazaar = createResilientLazyComponent(() => import("@/pages/resale-bazaar"), "resale-bazaar");
+const TicketResale = createResilientLazyComponent(() => import("@/pages/ticket-resale"), "ticket-resale");
+const SecondHandTickets = createResilientLazyComponent(() => import("@/pages/second-hand-tickets"), "second-hand-tickets");
+const ConcertTicketsOnline = createResilientLazyComponent(() => import("@/pages/concert-tickets-online"), "concert-tickets-online");
 const EmailTest = createResilientLazyComponent(() => import("@/pages/EmailTest"), "email-test");
 const SendGridSetup = createResilientLazyComponent(() => import("@/pages/SendGridSetup"), "sendgrid-setup");
 const PrivacySettings = createResilientLazyComponent(() => import("@/pages/privacy-settings"), "privacy-settings");
@@ -154,10 +160,13 @@ export function AppRoutes() {
       <LazyProtectedRoute path="/privacy-settings" component={PrivacySettings} />
       
       {/* Information pages */}
+      <LazyRoute path="/sell" component={SellPage} />
+      <LazyRoute path="/where-to-sell-tickets" component={WhereToSellTicketsPage} />
       <LazyRoute path="/how-to-sell-tickets" component={HowToSellTickets} />
-      <LazyRoute path="/sell-ticket" component={HowToSellTickets} />
-      <LazyRoute path="/resell-tickets" component={HowToSellTickets} />
-      <LazyRoute path="/buy-second-hand-tickets" component={Home} />
+      <LazyRoute path="/resale-bazaar" component={ResaleBazaar} />
+      <LazyRoute path="/ticket-resale" component={TicketResale} />
+      <LazyRoute path="/second-hand-tickets" component={SecondHandTickets} />
+      <LazyRoute path="/concert-tickets-online" component={ConcertTicketsOnline} />
       
       {/* Legal pages */}
       <LazyRoute path="/terms-of-service" component={TermsOfService} />

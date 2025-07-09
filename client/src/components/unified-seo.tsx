@@ -1,19 +1,35 @@
 /**
  * Unified SEO Component
  * Consolidates all SEO functionality into a single, comprehensive component
- * Replaces: enhanced-seo.tsx, international-seo.tsx, seo-consolidated.tsx, seo.tsx
+ * Replaces: enhanced-seo.tsx, seo-consolidated.tsx, seo.tsx, helmet-manager.tsx
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Helmet } from 'react-helmet';
 import { useLocation } from 'wouter';
+import {
+  generateCanonicalUrl,
+  generateMetaDescription,
+  generatePageTitle,
+  generateKeywords,
+  generateOrganizationStructuredData,
+  generateBreadcrumbStructuredData,
+  generateFAQStructuredData,
+  generateHreflangLinks,
+  type BreadcrumbItem,
+  type SEOPageData
+} from '@/utils/unified-seo-utils';
 
-export interface SEOProps {
+export interface UnifiedSEOProps {
   // Basic meta tags
   title?: string;
   description?: string;
   keywords?: string;
   author?: string;
+  
+  // Content type for auto-generation
+  type?: "event" | "search" | "category" | "general" | "selling" | "how-to" | "global-homepage" | "global-category" | "global-city";
+  data?: any; // Data for dynamic content generation
   
   // Open Graph
   ogTitle?: string;
@@ -32,10 +48,13 @@ export interface SEOProps {
   twitterImage?: string;
   
   // Structured Data
-  structuredData?: any;
+  structuredData?: any[];
+  breadcrumbs?: BreadcrumbItem[];
+  faqs?: Array<{ question: string; answer: string }>;
   
   // Internationalization
   lang?: string;
+  isGlobal?: boolean;
   alternateLanguages?: Array<{
     lang: string;
     href: string;
@@ -46,8 +65,17 @@ export interface SEOProps {
   canonical?: string;
   viewport?: string;
   themeColor?: string;
+  noIndex?: boolean;
   
   // Custom meta tags
+  customMeta?: Array<{
+    name?: string;
+    property?: string;
+    content: string;
+  }>;
+  
+  children?: React.ReactNode;
+}
   customMeta?: Array<{
     name?: string;
     property?: string;

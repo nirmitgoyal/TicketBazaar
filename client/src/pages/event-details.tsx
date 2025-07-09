@@ -10,7 +10,7 @@ import { TicketComparison } from "@/components/ticket-comparison";
 import { Link } from "wouter";
 import { Ticket } from "@shared/schema";
 import { useAnalytics } from "@/hooks/use-analytics";
-import EnhancedSEO from "@/components/enhanced-seo";
+import { EventSEO } from "@/components/unified-seo-component";
 import { generateEventStructuredData, generateBreadcrumbStructuredData, generateOrganizationStructuredData } from "@/utils/seo-utils";
 import { SocialShare } from "@/components/social-share";
 
@@ -157,17 +157,17 @@ export default function EventDetails() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <EnhancedSEO
-        type="event"
-        data={{
+      <EventSEO
+        event={{
           title: event.eventTitle || event.title,
+          description: event.eventDescription || `${event.eventTitle} at ${event.venue}`,
+          date: typeof event.eventDate === 'string' ? event.eventDate : event.eventDate.toISOString(),
           venue: event.venue,
-          city: event.city || event.venue.split(',').pop()?.trim() || 'India'
+          city: event.city || event.venue.split(',').pop()?.trim() || 'India',
+          imageUrl: event.eventImageUrl,
+          category: event.category
         }}
-        canonicalUrl={`https://ticketbazaar.co.in/event/${id}`}
-        ogType="event"
-        ogImage={event.eventImageUrl || undefined}
-        structuredData={[eventStructuredData, breadcrumbStructuredData, organizationStructuredData]}
+        ticketCount={availableTickets.length}
       />
       
       <Link href="/">

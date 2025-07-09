@@ -730,7 +730,7 @@ export default function ListTicket() {
                               <SelectContent>
                                 <SelectItem value="concerts">Music & Concerts</SelectItem>
                                 <SelectItem value="fitness">Cult.fit</SelectItem>
-                                <SelectItem value="accomodation">Zostel/Any Other Hotel</SelectItem>
+                                <SelectItem value="accommodation">Zostel/Any Other Hotel</SelectItem>
                                 <SelectItem value="sports">Sports</SelectItem>
                                 <SelectItem value="comedy">Comedy</SelectItem>
                                 <SelectItem value="festivals">Festivals</SelectItem>

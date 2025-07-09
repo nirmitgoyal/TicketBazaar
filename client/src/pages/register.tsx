@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import SEO from "@/components/seo";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -25,7 +25,7 @@ export default function Register() {
 
   return (
     <div className="container max-w-md mx-auto px-4 py-8">
-      <SEO
+      <UnifiedSEO
         title="Sign Up | Create Account - Ticket Bazaar"
         description="Join Ticket Bazaar to buy and sell verified tickets for concerts, sports events, and festivals across India."
         keywords="sign up, register, create account, ticket bazaar"

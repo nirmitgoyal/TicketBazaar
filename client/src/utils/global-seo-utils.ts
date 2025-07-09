@@ -33,33 +33,84 @@ export interface LocationSEOData {
 export const GLOBAL_EVENT_CATEGORIES = {
   concerts: {
     name: "Concerts",
-    keywords: ["concert tickets", "music events", "live music", "music festivals", "artist concerts"],
-    description: "Discover concert tickets for live music events, festivals, and artist performances worldwide"
+    keywords: [
+      "concert tickets", 
+      "music events", 
+      "live music", 
+      "music festivals", 
+      "artist concerts",
+      "sell concert tickets",
+      "sell concert tickets online",
+      "buy concert tickets",
+      "resell concert tickets",
+      "concert tickets online"
+    ],
+    description: "Sell concert tickets online or buy from verified sellers for live music events, festivals, and artist performances worldwide"
   },
   comedy: {
     name: "Comedy Shows",
-    keywords: ["comedy show tickets", "stand-up comedy", "comedy events", "comedian tickets", "comedy festivals"],
-    description: "Find comedy show tickets for stand-up performances, comedy festivals, and entertainment events globally"
+    keywords: [
+      "comedy show tickets", 
+      "stand-up comedy", 
+      "comedy events", 
+      "comedian tickets", 
+      "comedy festivals",
+      "sell comedy tickets",
+      "buy comedy show tickets"
+    ],
+    description: "Sell comedy show tickets or buy from trusted sellers for stand-up performances, comedy festivals, and entertainment events globally"
   },
   sports: {
     name: "Sports Events",
-    keywords: ["sports tickets", "football tickets", "basketball tickets", "soccer tickets", "sports events"],
-    description: "Connect with sports ticket sellers for football, basketball, soccer, and other sporting events worldwide"
+    keywords: [
+      "sports tickets", 
+      "football tickets", 
+      "basketball tickets", 
+      "soccer tickets", 
+      "sports events",
+      "sell sports tickets",
+      "sell football tickets",
+      "how to sell football tickets",
+      "resell sports tickets"
+    ],
+    description: "Sell sports tickets online or buy from verified sellers for football, basketball, soccer, and other sporting events worldwide"
   },
   travel: {
     name: "Travel Experiences",
-    keywords: ["travel experience tickets", "tourist attractions", "sightseeing tickets", "tour tickets", "travel events"],
-    description: "Discover tickets for travel experiences, tourist attractions, tours, and unique travel events globally"
+    keywords: [
+      "travel experience tickets", 
+      "tourist attractions", 
+      "sightseeing tickets", 
+      "tour tickets", 
+      "travel events",
+      "sell travel tickets"
+    ],
+    description: "Sell travel experience tickets or buy from trusted sellers for tourist attractions, tours, and unique travel events globally"
   },
   movies: {
     name: "Movies & Premieres",
-    keywords: ["movie tickets", "film premieres", "cinema tickets", "movie events", "film festivals"],
-    description: "Find movie tickets, film premiere passes, and cinema event tickets in cities worldwide"
+    keywords: [
+      "movie tickets", 
+      "film premieres", 
+      "cinema tickets", 
+      "movie events", 
+      "film festivals",
+      "sell movie tickets"
+    ],
+    description: "Sell movie tickets or buy from verified sellers for film premieres, cinema events, and film festivals in cities worldwide"
   },
   festivals: {
     name: "Festivals",
-    keywords: ["festival tickets", "music festivals", "cultural festivals", "food festivals", "art festivals"],
-    description: "Explore festival tickets for music, cultural, food, art, and entertainment festivals globally"
+    keywords: [
+      "festival tickets", 
+      "music festivals", 
+      "cultural festivals", 
+      "food festivals", 
+      "art festivals",
+      "sell festival tickets",
+      "buy festival tickets"
+    ],
+    description: "Sell festival tickets online or buy from trusted sellers for music, cultural, food, art, and entertainment festivals globally"
   }
 };
 
@@ -152,23 +203,28 @@ export const GLOBAL_CITIES = {
  */
 export function generateHomepageSEO(): GlobalSEOData {
   return {
-    title: "Ticket Bazaar: Global Ticket Discovery & Contact Platform | Connect Buyers & Sellers Worldwide",
-    description: "Discover and connect with ticket buyers and sellers worldwide for concerts, comedy shows, sports events, travel experiences, movies, and festivals. Global marketplace with multi-currency support across 50+ countries.",
+    title: "TicketBazaar: Sell Tickets Online | Buy Second Hand Tickets | Global Ticket Marketplace",
+    description: "Sell tickets online safely on TicketBazaar - the world's most trusted ticket resale marketplace. Buy second hand tickets for concerts, sports, comedy shows, and festivals. Secure transactions with verified sellers worldwide.",
     keywords: [
-      "global ticket discovery",
-      "worldwide ticket marketplace", 
-      "international event tickets",
-      "concert tickets worldwide",
-      "comedy show tickets global",
-      "sports tickets international",
-      "travel experience tickets",
-      "movie tickets global",
-      "festival tickets worldwide",
-      "multi-currency ticket platform",
+      "ticketbazaar",
+      "ticket bazaar",
+      "sell tickets online",
+      "sell concert tickets",
+      "buy second hand tickets",
+      "resell tickets",
+      "ticket resale",
+      "concert tickets online",
+      "sell my tickets",
+      "where to sell tickets",
+      "how to sell concert tickets",
+      "global ticket marketplace",
       "verified ticket sellers",
-      "global entertainment marketplace",
-      "cross-border ticket discovery",
-      "international ticket connection"
+      "secure ticket resale",
+      "sell tickets online india",
+      "resale bazaar",
+      "ticket selling platform",
+      "sell gig tickets",
+      "resell concert tickets online"
     ],
     canonicalUrl: "https://ticketbazaar.global",
     hreflang: {

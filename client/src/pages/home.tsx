@@ -13,7 +13,7 @@ import { AnimatedEmptyState, LoadingState } from "@/components/empty-states/anim
 import { FloatingBackground } from "@/components/empty-states/floating-elements";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -515,55 +515,72 @@ export default function Home() {
     Object.keys(selectedSearchFilters).length > 0 || searchQuery;
 
   const dynamicTitle = searchQuery
-    ? `${searchQuery} Second-Hand Tickets | Resale Marketplace | Ticket Bazaar`
+    ? `${searchQuery} Tickets | Sell ${searchQuery} Tickets Online | Resale Bazaar | TicketBazaar`
     : selectedCategory === "All"
-      ? "Second-Hand Ticket Discovery Platform | Buy & Sell Event Tickets Worldwide | Ticket Bazaar"
-      : `${selectedCategory} Resale Tickets | Second-Hand ${selectedCategory} Events | Ticket Bazaar`;
+      ? "TicketBazaar - Sell Tickets Online | Buy Second Hand Tickets | Resale Bazaar India"
+      : `${selectedCategory} Tickets | Sell ${selectedCategory} Tickets Online | Resale Tickets | TicketBazaar`;
 
   const dynamicDescription = searchQuery
-    ? `Find authentic ${searchQuery} resale tickets from verified sellers worldwide. Secure second-hand ticket marketplace with buyer protection across 50+ countries.`
-    : `Discover authentic resale tickets for concerts, sports, theatre, comedy shows & festivals. Connect with verified sellers globally in our secure second-hand ticket marketplace. Buy and sell tickets with confidence across 50+ countries.`;
+    ? `Find authentic ${searchQuery} resale tickets from verified sellers in India. Sell tickets online or buy second hand tickets on TicketBazaar - India's most trusted ticket resale marketplace.`
+    : `Sell tickets online safely on TicketBazaar - India's most trusted ticket resale marketplace. Buy second hand tickets for concerts, sports, theatre, comedy shows & festivals. Secure resale bazaar for all event tickets.`;
+
+  const dynamicKeywords = searchQuery
+    ? `${searchQuery} tickets, sell ${searchQuery} tickets, sell ${searchQuery} tickets online, resell ${searchQuery} tickets, ${searchQuery} resale tickets, buy ${searchQuery} tickets, second hand ${searchQuery} tickets, ${searchQuery} ticket resale, ${searchQuery} concert tickets online, ticketbazaar, ticket bazaar, resale bazaar`
+    : `ticketbazaar, ticket bazaar, sell tickets online, sell concert tickets, sell concert tickets online, buy second hand tickets, resale tickets, resale bazaar, ticket resale, concert tickets online, sell my tickets, where to sell tickets, how to sell concert tickets, resell tickets, resell tickets online, sell tickets online india, ticket selling, selling tickets online, bazaar ticket, ticketbazar, ticket bazar, the bazaar ticket`;
 
   return (
     <>
-      <SEOManager
+      <UnifiedSEO
+        type={selectedCategory === "All" ? "general" : "category"}
+        data={{ category: selectedCategory }}
         title={dynamicTitle}
         description={dynamicDescription}
-        keywords="second hand tickets, resale tickets, ticket marketplace, buy sell tickets, concert tickets resale, sports tickets secondhand, theatre tickets resale, festival tickets marketplace, verified ticket sellers, authentic resale tickets, ticket exchange platform, global ticket marketplace, event tickets worldwide, secure ticket resale, ticket buyer protection"
-        canonicalUrl={
+        keywords={dynamicKeywords}
+        canonical={
           selectedCategory === "All"
-            ? "https://ticketbazaar.global"
-            : `https://ticketbazaar.global/category/${selectedCategory.toLowerCase()}`
+            ? "https://ticketbazaar.co.in"
+            : `https://ticketbazaar.co.in/category/${selectedCategory.toLowerCase()}`
         }
       />
 
-      {/* Structured Data for SEO/GEO */}
+      {/* Structured Data for SEO */}
       <script type="application/ld+json">
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebApplication",
-          name: "Ticket Bazaar - Second-Hand Ticket Marketplace",
+          name: "TicketBazaar - India's Trusted Ticket Resale Platform",
           description:
-            "Global second-hand ticket marketplace for authentic resale tickets. Buy and sell concert, sports, theatre, comedy and festival tickets worldwide.",
-          url: "https://ticketbazaar.global",
+            "Sell tickets online safely on TicketBazaar - India's most trusted ticket resale marketplace. Buy second hand tickets for concerts, sports, theatre, comedy and festivals.",
+          url: "https://ticketbazaar.co.in",
           applicationCategory: "Marketplace",
           operatingSystem: "Web",
           offers: {
             "@type": "Offer",
             category: "Event Tickets",
             availability: "https://schema.org/InStock",
-            priceCurrency: "USD",
+            priceCurrency: "INR",
           },
           audience: {
             "@type": "Audience",
             audienceType: "Event Ticket Buyers and Sellers",
-            geographicArea: "Worldwide",
+            geographicArea: "India",
           },
           serviceArea: {
             "@type": "Place",
-            name: "Global",
-            description: "50+ countries worldwide",
+            name: "India",
+            description: "All major cities in India",
           },
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://ticketbazaar.co.in/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          },
+          provider: {
+            "@type": "Organization",
+            name: "TicketBazaar",
+            url: "https://ticketbazaar.co.in",
+            logo: "https://ticketbazaar.co.in/logo.svg"
+          }
         })}
       </script>
 

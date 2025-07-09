@@ -12,7 +12,7 @@ import { CanonicalUrlManager } from "@/components/canonical-url-manager";
 import { AppRoutes } from "@/router/routes";
 import { Navigation } from "@/components/ui/navigation";
 import { Footer } from "@/components/ui/footer";
-import { SEOConsolidated } from "@/components/seo-consolidated";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { performanceMonitor } from "@/utils/performance";
 import ScrollNavigation from "@/components/scroll-navigation";
@@ -95,7 +95,7 @@ function App() {
                     <AuthRedirectDebug />
                     <OAuthRedirectHandler />
                     <InstagramHandleCheck>
-                      <SEOConsolidated />
+                      <UnifiedSEO type="general" />
                       <CanonicalUrlManager />
                       <div className="min-h-screen flex flex-col safe-area-top prevent-horizontal-overflow">
                         <ErrorBoundary fallback={

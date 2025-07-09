@@ -3,52 +3,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Shield, Clock, Users, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
+import { generatePageTitle, generateMetaDescription, generateKeywords, generateSellingStructuredData, generateSellingFAQStructuredData } from "@/utils/seo-utils";
 
 export default function HowToSellTickets() {
+  const pageTitle = generatePageTitle("how-to");
+  const pageDescription = generateMetaDescription("how-to");
+  const pageKeywords = generateKeywords("how-to");
+  const structuredData = generateSellingStructuredData("how-to");
+  const faqStructuredData = generateSellingFAQStructuredData();
+
   return (
     <>
       <SEOManager
-        title="How to Sell Ticket Online Safely | Complete Guide to Resell Tickets - Ticket Bazaar"
-        description="Learn how to sell ticket online safely in India. Complete guide on where to resell tickets, sell concert tickets, sports tickets and buy second hand tickets securely."
-        keywords="how to sell ticket online, resell tickets safely, sell concert tickets, sell sports tickets, where to sell tickets, ticket reselling guide India, second hand ticket selling"
+        title={pageTitle}
+        description={pageDescription}
+        keywords={pageKeywords}
         canonicalUrl="https://ticketbazaar.co.in/how-to-sell-tickets"
       />
       
       <script type="application/ld+json">
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "HowTo",
-          "name": "How to Sell Ticket Online Safely",
-          "description": "Complete guide on how to sell ticket online, resell tickets and buy second hand tickets safely in India",
-          "image": "https://ticketbazaar.co.in/images/how-to-sell-tickets-guide.jpg",
-          "supply": [
-            {
-              "@type": "HowToSupply",
-              "name": "Event Tickets"
-            },
-            {
-              "@type": "HowToSupply", 
-              "name": "Ticket Bazaar Account"
-            }
-          ],
-          "step": [
-            {
-              "@type": "HowToStep",
-              "name": "Create Your Listing",
-              "text": "Sign up on Ticket Bazaar and create a detailed listing for your tickets with event information, seat details, and pricing."
-            },
-            {
-              "@type": "HowToStep",
-              "name": "Connect with Buyers",
-              "text": "Use our platform to connect with verified buyers who are looking for your specific event tickets."
-            },
-            {
-              "@type": "HowToStep",
-              "name": "Complete Safe Transaction",
-              "text": "Meet in public places or use secure transfer methods to complete your ticket sale safely."
-            }
-          ]
-        })}
+        {JSON.stringify(structuredData)}
+      </script>
+      
+      <script type="application/ld+json">
+        {JSON.stringify(faqStructuredData)}
       </script>
 
       <div className="min-h-screen bg-gray-50">
