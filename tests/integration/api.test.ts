@@ -4,8 +4,23 @@ const API_BASE_URL = 'http://localhost:5000/api';
 
 describe('API Integration Tests', () => {
   beforeAll(async () => {
-    // Wait for server to be ready
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const healthUrl = `${API_BASE_URL}/health`;
+    const timeout = 30000; // 30 seconds
+    const start = Date.now();
+
+    while (Date.now() - start < timeout) {
+      try {
+        const res = await fetch(healthUrl);
+        if (res.status === 200) {
+          return;
+        }
+      } catch {
+        // Ignore errors until timeout
+      }
+      await new Promise(r => setTimeout(r, 500));
+    }
+
+    throw new Error('Server failed to become ready within 30s');
   });
 
   describe('Authentication Endpoints', () => {
