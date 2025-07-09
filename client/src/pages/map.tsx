@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
 import { MapPin, Calendar, Users, Search, Navigation, Filter, Locate, AlertTriangle } from "lucide-react";
-import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { useToast } from "@/hooks/use-toast";
 
@@ -266,17 +266,17 @@ export default function MapPage() {
   // Render the map page content
   return (
     <div className="container mx-auto px-4 py-8">
-        <SEOManager
+        <UnifiedSEO
           title="Event Map - Find Second Hand Tickets Near You | Interactive Event Map | Ticket Bazaar"
           description="Discover events and second hand tickets near you with our interactive map. Find concerts, sports events, festivals and more across India. Real-time event locations with available 2nd hand tickets."
-          canonicalUrl="https://ticketbazaar.co.in/map"
+          canonical="https://ticketbazaar.co.in/map"
           keywords="event map, events near me, ticket map, second hand tickets map, event locations, interactive map, concerts near me, sports events map, festival map, India events map"
         >
           <UnifiedSchema breadcrumbs={[
             { name: "Home", url: "/" },
             { name: "Event Map", url: "/map" }
           ]} />
-        </SEOManager>
+        </UnifiedSEO>
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-2">
             Event Map

@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { Ticket } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 
 // ViewedTicketsSection component
@@ -382,13 +382,13 @@ export default function MyTickets() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <SEOManager
+      <UnifiedSEO
         title="My Tickets | Manage Your Purchases and Listings - Ticket Bazaar"
         description="View and manage all your purchased tickets and active ticket listings in one place. Access your ticket QR codes, transaction history, and update your listings."
-        canonicalUrl="https://ticketbazaar.co.in/my-tickets"
+        canonical="https://ticketbazaar.co.in/my-tickets"
       >
         <UnifiedSchema />
-      </SEOManager>
+      </UnifiedSEO>
       <h1 className="text-2xl md:text-3xl font-bold font-poppins mb-6">
         My Tickets
       </h1>

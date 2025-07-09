@@ -1,4 +1,4 @@
-import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,7 @@ import {
   Heart
 } from "lucide-react";
 import { Link } from "wouter";
-import { generateLandingPageSEO } from "@/utils/seo-utils";
+import { generateLandingPageSEO } from "@/utils/unified-seo-utils";
 
 /**
  * ConcertTicketsOnline landing page - targeting "concert tickets online", "buy concert tickets", "concert tickets India"
@@ -108,11 +108,11 @@ export default function ConcertTicketsOnline() {
 
   return (
     <>
-      <SEOManager 
+      <UnifiedSEO 
         title={seoData.title}
         description={seoData.description}
         keywords={seoData.keywords}
-        canonicalUrl="https://ticketbazaar.co.in/concert-tickets-online"
+        canonical="https://ticketbazaar.co.in/concert-tickets-online"
         ogImage="https://ticketbazaar.co.in/images/concert-tickets-online-og.jpg"
       />
       

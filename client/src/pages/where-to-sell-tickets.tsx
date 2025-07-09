@@ -1,9 +1,9 @@
-import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Shield, Clock, Users, ArrowRight, MapPin, Target, Award } from "lucide-react";
 import { Link } from "wouter";
-import { generateLandingPageSEO, generateSellingFAQStructuredData } from "@/utils/seo-utils";
+import { generateLandingPageSEO, generateSellingFAQStructuredData } from "@/utils/unified-seo-utils";
 
 export default function WhereToSellTicketsPage() {
   const seoData = generateLandingPageSEO("where-to-sell-tickets");
@@ -11,11 +11,11 @@ export default function WhereToSellTicketsPage() {
 
   return (
     <>
-      <SEOManager
+      <UnifiedSEO
         title={seoData.title}
         description={seoData.description}
         keywords={seoData.keywords}
-        canonicalUrl="https://ticketbazaar.co.in/where-to-sell-tickets"
+        canonical="https://ticketbazaar.co.in/where-to-sell-tickets"
       />
       
       <script type="application/ld+json">

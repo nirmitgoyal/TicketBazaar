@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -17,13 +17,13 @@ export default function PrivacyPolicy() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <SEOManager
+      <UnifiedSEO
         title="Privacy Policy | Ticket Bazaar"
         description="Learn about how Ticket Bazaar collects, uses, and protects your personal information. Our privacy policy explains your rights and our data practices."
-        canonicalUrl="https://ticketbazaar.co.in/privacy-policy"
+        canonical="https://ticketbazaar.co.in/privacy-policy"
       >
         <UnifiedSchema />
-      </SEOManager>
+      </UnifiedSEO>
       <Card className="w-full shadow-lg">
         <CardHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between mb-4">
