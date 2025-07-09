@@ -56,11 +56,17 @@ config();
       const duration = Date.now() - start;
       if (path.startsWith("/api")) {
         let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-        if (capturedJsonResponse) {
+        
+        // Skip logging response body for ticket endpoints to avoid huge logs
+        if (capturedJsonResponse && !path.includes("/api/ticket")) {
           logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        } else if (capturedJsonResponse && path.includes("/api/ticket")) {
+          // For ticket endpoints, only log summary info to avoid massive logs
+          const responseSize = JSON.stringify(capturedJsonResponse).length;
+          const itemCount = Array.isArray(capturedJsonResponse) ? capturedJsonResponse.length : 1;
+          logLine += ` :: [Response: ${itemCount} items, ${responseSize} bytes]`;
         }
 
-        // Remove character limit to show full logs
         log(logLine);
         console.log(); // Add extra blank line for readability
       }
