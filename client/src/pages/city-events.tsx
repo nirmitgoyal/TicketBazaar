@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
-import { UnifiedSEO } from "@/components/unified-seo-component";
+import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { SearchBar } from "@/components/search-bar";
 import { EventCard } from "@/components/event-card";
@@ -114,11 +114,11 @@ export default function CityEvents() {
 
   return (
     <>
-      <UnifiedSEO
+      <SEOManager
         title={seoData.title}
         description={seoData.description}
         keywords={seoData.keywords.join(", ")}
-        canonical={seoData.canonicalUrl}
+        canonicalUrl={seoData.canonicalUrl}
       />
       
       <UnifiedSchema

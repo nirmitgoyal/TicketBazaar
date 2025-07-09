@@ -7,19 +7,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { UnifiedSEO } from "@/components/unified-seo-component";
+import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 
 export default function TermsOfService() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <UnifiedSEO
+      <SEOManager
         title="Terms of Service | Ticket Bazaar"
         description="Read the Ticket Bazaar terms of service agreement. Learn about user rights and responsibilities, ticket resale policies, dispute resolution, and more."
-        canonical="https://ticketbazaar.co.in/terms-of-service"
+        canonicalUrl="https://ticketbazaar.co.in/terms-of-service"
       >
         <UnifiedSchema />
-      </UnifiedSEO>
+      </SEOManager>
       <Card className="w-full shadow-lg">
         <CardHeader className="border-b border-border pb-4">
           <div className="flex items-center gap-2">
