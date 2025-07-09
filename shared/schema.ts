@@ -282,7 +282,7 @@ export const insertTicketViewSchema = createInsertSchema(ticketViews);
 export const insertTicketPopularitySchema = createInsertSchema(ticketPopularity);
 
 // Types
-export type InsertUser = z.infer<typeof insertUserSchema>;
+export type InsertUser = Omit<z.infer<typeof insertUserSchema>, 'id'>;
 export type User = typeof users.$inferSelect;
 
 export type InsertTicket = z.infer<typeof insertTicketSchema>;

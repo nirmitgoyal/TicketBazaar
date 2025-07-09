@@ -70,14 +70,21 @@ export class OptimizedStorage {
   
   async createUser(insertUser: InsertUser): Promise<User> {
     try {
-      const [user] = await db.insert(users).values(insertUser).returning();
+      console.log('[OPTIMIZED STORAGE] Creating user with data:', insertUser);
+      
+      // Convert InsertUser to the format expected by drizzle insert
+      const userData = insertUser as any;
+      const [user] = await db.insert(users).values(userData).returning();
+      
       if (user) {
+        console.log('[OPTIMIZED STORAGE] User created successfully with ID:', user.id);
         CacheManager.setCacheWithTTL("users", user.id, user, 300000);
         return user;
       }
       throw new Error('Failed to create user');
     } catch (error) {
       logger.error('STORAGE', 'Error creating user:', error);
+      logger.error('STORAGE', 'User data that caused error:', insertUser);
       throw error;
     }
   }
@@ -185,7 +192,8 @@ export class OptimizedStorage {
   
   async createTicket(insertTicket: InsertTicket): Promise<Ticket> {
     try {
-      const [ticket] = await db.insert(tickets).values(insertTicket).returning();
+      const ticketData = insertTicket as any;
+      const [ticket] = await db.insert(tickets).values(ticketData).returning();
       if (ticket) {
         CacheManager.setCacheWithTTL("tickets", ticket.id, ticket, 180000);
         CacheManager.invalidateCache("events"); // Clear events cache
