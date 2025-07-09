@@ -1,4 +1,4 @@
-import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ import {
   Heart
 } from "lucide-react";
 import { Link } from "wouter";
-import { generateLandingPageSEO } from "@/utils/seo-utils";
+import { generateLandingPageSEO } from "@/utils/unified-seo-utils";
 
 /**
  * SecondHandTickets landing page - targeting "second hand tickets", "second-hand tickets", "used tickets"
@@ -112,11 +112,11 @@ export default function SecondHandTickets() {
 
   return (
     <>
-      <SEOManager 
+      <UnifiedSEO 
         title={seoData.title}
         description={seoData.description}
         keywords={seoData.keywords}
-        canonicalUrl="https://ticketbazaar.co.in/second-hand-tickets"
+        canonical="https://ticketbazaar.co.in/second-hand-tickets"
         ogImage="https://ticketbazaar.co.in/images/second-hand-tickets-og.jpg"
       />
       

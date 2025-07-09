@@ -8,7 +8,7 @@ import { TicketVerification } from "@/components/ticket-verification";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, TicketX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 
 export default function TicketVerificationPage() {
@@ -101,13 +101,13 @@ export default function TicketVerificationPage() {
 
   return (
     <div className="container max-w-4xl mx-auto py-10">
-      <SEOManager
+      <UnifiedSEO
         title="Ticket Verification | Verify Authenticity - Ticket Bazaar"
         description="Verify your ticket authenticity and access your QR code for event entry. Secure ticket verification system protects against fraud and ensures valid entry."
-        canonicalUrl={`https://ticketbazaar.co.in/ticket/verify/${ticket.id}`}
+        canonical={`https://ticketbazaar.co.in/ticket/verify/${ticket.id}`}
       >
         <UnifiedSchema />
-      </SEOManager>
+      </UnifiedSEO>
       <div className="flex items-center mb-8">
         <Button
           variant="outline"

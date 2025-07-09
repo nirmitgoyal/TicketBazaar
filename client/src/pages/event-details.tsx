@@ -11,7 +11,7 @@ import { Link } from "wouter";
 import { Ticket } from "@shared/schema";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { EventSEO } from "@/components/unified-seo-component";
-import { generateEventStructuredData, generateBreadcrumbStructuredData, generateOrganizationStructuredData } from "@/utils/seo-utils";
+import { generateEventStructuredData, generateBreadcrumbStructuredData, generateOrganizationStructuredData } from "@/utils/unified-seo-utils";
 import { SocialShare } from "@/components/social-share";
 
 export default function EventDetails() {

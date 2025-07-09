@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { PopularityMetrics } from "@/components/popularity-metrics";
 import { TicketCard } from "@/components/ticket-card";
-import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { 
   usePopularTickets, 
   useTrendingTickets, 
@@ -83,7 +83,7 @@ export function PopularityDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <SEOManager 
+      <UnifiedSEO 
         title="Popularity Dashboard | Ticket Bazaar"
         description="Discover the most popular and trending tickets based on real-time view analytics and user engagement metrics."
         keywords="popular tickets, trending events, ticket analytics, most viewed tickets"

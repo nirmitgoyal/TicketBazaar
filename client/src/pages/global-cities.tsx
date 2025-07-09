@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { SEOManager } from "@/components/helmet-manager";
+import { UnifiedSEO } from "@/components/unified-seo-component";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { SearchBar } from "@/components/search-bar";
 import { Button } from "@/components/ui/button";
@@ -73,11 +73,11 @@ export default function GlobalCities() {
 
   return (
     <>
-      <SEOManager
+      <UnifiedSEO
         title="Global Cities - Event Tickets Worldwide | Ticket Bazaar"
         description="Discover event tickets in major cities worldwide. Connect with verified sellers in New York, London, Tokyo, Sydney, Berlin, Toronto, Paris, and 50+ cities globally."
         keywords="global cities, worldwide events, international tickets, city events, global marketplace, multi-city tickets, international entertainment, worldwide venues"
-        canonicalUrl="https://ticketbazaar.global/cities"
+        canonical="https://ticketbazaar.global/cities"
       />
       
       <UnifiedSchema
