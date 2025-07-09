@@ -10,9 +10,9 @@ export class AdvancedRateLimiter {
   private suspiciousIPs = new Set<string>();
   
   private readonly WINDOW_MS = 15 * 60 * 1000; // 15 minutes
-  private readonly MAX_REQUESTS_PER_IP = 200;
-  private readonly MAX_REQUESTS_PER_USER = 300;
-  private readonly SUSPICIOUS_THRESHOLD = 500;
+  private readonly MAX_REQUESTS_PER_IP = 500; // Increased from 200
+  private readonly MAX_REQUESTS_PER_USER = 600; // Increased from 300
+  private readonly SUSPICIOUS_THRESHOLD = 800; // Increased from 500
 
   /**
    * Get client identifier (IP + User-Agent fingerprint)
