@@ -3,11 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Shield, Clock, Users, ArrowRight, DollarSign, Zap, Globe, Star } from "lucide-react";
 import { Link } from "wouter";
-import { generateLandingPageSEO, generateSellingFAQStructuredData } from "@/utils/seo-utils";
+import { generateLandingPageSEO, generateSellingStructuredData } from "@/utils/seo-utils";
 
 export default function SellPage() {
   const seoData = generateLandingPageSEO("sell-concert-tickets");
-  const faqStructuredData = generateSellingFAQStructuredData();
+  const faqStructuredData = generateSellingStructuredData("selling");
 
   return (
     <>

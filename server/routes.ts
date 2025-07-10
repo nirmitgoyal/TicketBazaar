@@ -116,8 +116,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const metricsRoutes = (await import("./routes/metrics")).default;
   apiRouter.use("/metrics", metricsRoutes);
 
-  // Import and register sitemap routes
-  const { generateSitemap, generateRobotsTxt } = await import("./routes/sitemap");
+  // Import and register GEO-optimized sitemap routes
+  const { generateSitemap, generateRobotsTxt, generateLLMsTxt } = await import("./routes/geo-optimized-sitemap");
   
   logger.info('SERVER', 'All API routes registered successfully');
 
@@ -132,6 +132,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Add dynamic robots.txt route
   app.get("/robots.txt", generateRobotsTxt);
+
+  // Add dynamic llms.txt route
+  app.get("/llms.txt", generateLLMsTxt);
 
   // IMPORTANT: Don't add notFoundHandler here
   // The frontend routes will be handled by the Vite middleware

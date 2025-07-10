@@ -42,6 +42,7 @@ const OAuthTest = createResilientLazyComponent(() => import("@/pages/oauth-test"
 // Dashboard components with resilient loading
 const VerificationReport = createResilientLazyComponent(() => import("@/pages/verification-report"), "verification-report");
 const PopularityDashboard = createResilientLazyComponent(() => import("@/pages/popularity-dashboard"), "popularity-dashboard");
+const GEOPerformanceDashboard = createResilientLazyComponent(() => import("@/pages/geo-performance-dashboard"), "geo-performance-dashboard");
 
 /**
  * Enhanced loading component with error boundary
@@ -146,7 +147,7 @@ export function AppRoutes() {
       
       {/* Ticket management */}
       <LazyProtectedRoute path="/list-ticket" component={ListTicket} />
-      <LazyProtectedRoute path="/my-tickets" component={MyTickets} />
+      <LazyProtectedRoute path="/my_tickets" component={MyTickets} />
       
       {/* Verification */}
       <LazyRoute path="/ticket-verification" component={TicketVerification} />
@@ -178,6 +179,7 @@ export function AppRoutes() {
       {/* Analytics */}
       <LazyRoute path="/popularity" component={PopularityDashboard} />
       <LazyRoute path="/analytics" component={PopularityDashboard} />
+      <LazyRoute path="/geo-performance" component={GEOPerformanceDashboard} />
       
       {/* Email Testing */}
       <LazyRoute path="/email-test" component={EmailTest} />
