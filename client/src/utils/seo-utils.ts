@@ -121,13 +121,65 @@ export function generateOrganizationStructuredData() {
 }
 
 /**
- * Generate FAQ structured data
+ * Generate FAQ structured data (consolidated to avoid duplicates)
  */
-export function generateFAQStructuredData(faqs: Array<{ question: string; answer: string }>) {
+export function generateFAQStructuredData(
+  faqs?: Array<{ question: string; answer: string }>,
+  includeSellingFAQs: boolean = false
+) {
+  const defaultFaqs = faqs || [];
+  
+  const sellingFaqs = [
+    {
+      question: "How do I sell concert tickets online safely?",
+      answer: "Use TicketBazaar's secure platform with escrow protection. List your tickets, connect with verified buyers, and complete transactions safely with our secure payment system. We provide a trusted resale bazaar for all event tickets."
+    },
+    {
+      question: "Where can I sell my tickets online?",
+      answer: "TicketBazaar is India's most trusted ticket resale marketplace. Sell concert tickets, sports tickets, and event tickets with verified buyers and secure transactions. Our platform is the best place to sell tickets online."
+    },
+    {
+      question: "How to sell tickets online in India?",
+      answer: "Register on TicketBazaar, list your tickets with photos and details, set your price, and connect with buyers. All transactions are protected with escrow for safety. We make it easy to sell tickets online India."
+    },
+    {
+      question: "What types of tickets can I sell?",
+      answer: "You can sell concert tickets, sports tickets, comedy show tickets, festival tickets, and other event tickets through TicketBazaar's secure platform. We accept all types of second hand tickets and resale tickets."
+    },
+    {
+      question: "Is it legal to resell tickets online?",
+      answer: "Yes, ticket resale is legal in India. TicketBazaar provides a secure, legitimate platform for buying and selling second-hand tickets with full legal compliance. Our ticket resale platform operates within all legal requirements."
+    },
+    {
+      question: "How to sell concert tickets online?",
+      answer: "To sell concert tickets online, create a listing on TicketBazaar, upload ticket details and photos, set your price, and wait for buyers to contact you. Our platform makes it simple to resell concert tickets online safely."
+    },
+    {
+      question: "Where to sell concert tickets?",
+      answer: "TicketBazaar is the best place to sell concert tickets online. Our secure resale bazaar connects you with verified buyers and ensures safe transactions for all your ticket selling needs."
+    },
+    {
+      question: "How do you sell concert tickets?",
+      answer: "Sell concert tickets by registering on TicketBazaar, creating detailed listings with photos and seat information, setting competitive prices, and connecting with interested buyers through our secure messaging system."
+    },
+    {
+      question: "How to sell football tickets?",
+      answer: "To sell football tickets, list them on TicketBazaar with event details, seat information, and photos. Our platform specializes in sports ticket resale and connects you with verified buyers looking for football tickets."
+    },
+    {
+      question: "What is a resale bazaar?",
+      answer: "A resale bazaar is a marketplace where people can buy and sell second hand tickets safely. TicketBazaar is India's premier resale bazaar for event tickets, offering secure transactions and verified users."
+    }
+  ];
+
+  const allFaqs = includeSellingFAQs 
+    ? [...defaultFaqs, ...sellingFaqs]
+    : defaultFaqs;
+
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map(faq => ({
+    "mainEntity": allFaqs.map(faq => ({
       "@type": "Question",
       "name": faq.question,
       "acceptedAnswer": {
@@ -483,67 +535,6 @@ export function generateSellingStructuredData(pageType: "selling" | "how-to") {
   }
 
   return baseData;
-}
-
-/**
- * Generate FAQ structured data for selling-related queries
- */
-export function generateSellingFAQStructuredData() {
-  const faqs = [
-    {
-      question: "How do I sell concert tickets online safely?",
-      answer: "Use TicketBazaar's secure platform with escrow protection. List your tickets, connect with verified buyers, and complete transactions safely with our secure payment system. We provide a trusted resale bazaar for all event tickets."
-    },
-    {
-      question: "Where can I sell my tickets online?",
-      answer: "TicketBazaar is India's most trusted ticket resale marketplace. Sell concert tickets, sports tickets, and event tickets with verified buyers and secure transactions. Our platform is the best place to sell tickets online."
-    },
-    {
-      question: "How to sell tickets online in India?",
-      answer: "Register on TicketBazaar, list your tickets with photos and details, set your price, and connect with buyers. All transactions are protected with escrow for safety. We make it easy to sell tickets online India."
-    },
-    {
-      question: "What types of tickets can I sell?",
-      answer: "You can sell concert tickets, sports tickets, comedy show tickets, festival tickets, and other event tickets through TicketBazaar's secure platform. We accept all types of second hand tickets and resale tickets."
-    },
-    {
-      question: "Is it legal to resell tickets online?",
-      answer: "Yes, ticket resale is legal in India. TicketBazaar provides a secure, legitimate platform for buying and selling second-hand tickets with full legal compliance. Our ticket resale platform operates within all legal requirements."
-    },
-    {
-      question: "How to sell concert tickets online?",
-      answer: "To sell concert tickets online, create a listing on TicketBazaar, upload ticket details and photos, set your price, and wait for buyers to contact you. Our platform makes it simple to resell concert tickets online safely."
-    },
-    {
-      question: "Where to sell concert tickets?",
-      answer: "TicketBazaar is the best place to sell concert tickets online. Our secure resale bazaar connects you with verified buyers and ensures safe transactions for all your ticket selling needs."
-    },
-    {
-      question: "How do you sell concert tickets?",
-      answer: "Sell concert tickets by registering on TicketBazaar, creating detailed listings with photos and seat information, setting competitive prices, and connecting with interested buyers through our secure messaging system."
-    },
-    {
-      question: "How to sell football tickets?",
-      answer: "To sell football tickets, list them on TicketBazaar with event details, seat information, and photos. Our platform specializes in sports ticket resale and connects you with verified buyers looking for football tickets."
-    },
-    {
-      question: "What is a resale bazaar?",
-      answer: "A resale bazaar is a marketplace where people can buy and sell second hand tickets safely. TicketBazaar is India's premier resale bazaar for event tickets, offering secure transactions and verified users."
-    }
-  ];
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqs.map(faq => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  };
 }
 
 /**
