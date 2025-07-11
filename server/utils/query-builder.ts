@@ -45,7 +45,7 @@ export class QueryBuilder {
     }
     
     if (filters.sellingFast) {
-      conditions.push(eq(tickets.sellingFast, true));
+      conditions.push(eq(tickets.trending, true));
     }
     
     if (filters.date) {

@@ -175,14 +175,7 @@ class NotificationService {
           break;
 
         case 'new_listing':
-          emailSent = await emailService.sendNewListingEmail(user.email, {
-            userName,
-            ticketTitle: notification.data?.ticketTitle || notification.message,
-            city: notification.data?.city,
-            category: notification.data?.category,
-            venue: notification.data?.venue,
-            eventDate: notification.data?.eventDate
-          });
+          emailSent = await emailService.sendWelcomeEmail(user.email, userName);
           break;
 
         default:

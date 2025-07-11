@@ -18,7 +18,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Event, Ticket } from "@shared/schema";
+import { Ticket } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -38,7 +38,6 @@ interface ContactRequestModalProps {
   isOpen: boolean;
   onClose: () => void;
   ticket: Ticket | null;
-  event: Event | undefined;
   onSubmit: (values: ContactFormValues) => void;
   isPending: boolean;
 }
@@ -47,7 +46,6 @@ export function ContactRequestModal({
   isOpen,
   onClose,
   ticket,
-  event,
   onSubmit,
   isPending,
 }: ContactRequestModalProps) {
@@ -55,14 +53,14 @@ export function ContactRequestModal({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
       message:
-        ticket && event
-          ? `I'm interested in your tickets for ${event.title}`
+        ticket
+          ? `I'm interested in your tickets for ${ticket.eventTitle}`
           : "",
       preferredContactMethod: "phone",
     },
   });
 
-  if (!ticket || !event) return null;
+  if (!ticket) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -70,7 +68,7 @@ export function ContactRequestModal({
         <DialogHeader>
           <DialogTitle>Contact Seller</DialogTitle>
           <DialogDescription>
-            Send a message to the seller about their tickets for {event.title}
+            Send a message to the seller about their tickets for {ticket.eventTitle}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>

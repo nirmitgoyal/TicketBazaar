@@ -100,13 +100,8 @@ export function SellerContactCard({
             <div className="flex items-center gap-1">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span className="text-sm font-medium">
-                {seller.rating?.toFixed(1) || "New"}
+                {seller.trustScore?.toFixed(1) || "New"}
               </span>
-              {seller.ratingsCount && seller.ratingsCount > 0 && (
-                <span className="text-xs text-textSecondary">
-                  ({seller.ratingsCount})
-                </span>
-              )}
             </div>
           </div>
         </CardHeader>

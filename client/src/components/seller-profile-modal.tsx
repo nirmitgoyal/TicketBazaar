@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Ticket, UserReview } from "@shared/schema";
+import { User, Ticket, UserFeedback } from "@shared/schema";
 import {
   Star,
   MessageCircle,
@@ -108,10 +108,10 @@ export function SellerProfileModal({
                   <div className="flex items-center gap-2">
                     <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                     <span className="font-semibold">
-                      {formatRating(seller.rating || 0)}
+                      {formatRating(seller.trustScore || 0)}
                     </span>
                     <span className="text-sm text-textSecondary">
-                      ({seller.ratingsCount || 0} reviews)
+                      (Trust Score)
                     </span>
                   </div>
                   <Badge

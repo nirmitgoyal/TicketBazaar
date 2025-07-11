@@ -1,5 +1,5 @@
 import React from "react";
-import { Event, Ticket } from "@shared/schema";
+import { Ticket } from "@shared/schema";
 
 interface FAQItem {
   question: string;

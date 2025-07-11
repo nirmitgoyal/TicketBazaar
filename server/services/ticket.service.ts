@@ -184,12 +184,8 @@ export class TicketService {
    */
   async deleteAllTickets(): Promise<boolean> {
     try {
-      // Get all tickets first
-      const events = await storage.getAllEvents();
-      let allTickets: any[] = [];
-
-      // Events are now tickets with embedded event data
-      allTickets = events;
+      // Get all tickets (events are now embedded in tickets)
+      const allTickets = await storage.getAllTickets();
 
       // Delete each ticket
       for (const ticket of allTickets) {

@@ -13,7 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { Event } from "@shared/schema";
+import { Ticket } from "@shared/schema";
 import { format } from "date-fns";
 import { Link } from "wouter";
 

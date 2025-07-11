@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Event } from "@shared/schema";
+import { Ticket } from "@shared/schema";
 
 interface EventAtmosphereProps {
-  event: Event | null;
+  event: Ticket | null;
   isActive: boolean;
 }
 
@@ -26,7 +26,7 @@ const getAtmosphereConfig = (event: Event | null): AtmosphereConfig => {
   }
 
   const eventType = event.category.toLowerCase();
-  const eventTitle = event.title.toLowerCase();
+  const eventTitle = event.eventTitle.toLowerCase();
 
   // Coldplay concert atmosphere
   if (eventTitle.includes("coldplay")) {
