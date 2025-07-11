@@ -1,11 +1,11 @@
 {
-  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
+  "include": ["client/src/**/*", "shared/**/*", "server/**/*", "packages/types/src/**/*"],
   "exclude": ["node_modules", "build", "dist", "**/*.test.ts", "tests/**/*", "**/*.spec.ts"],
   "compilerOptions": {
     "incremental": false,
     "noEmit": true,
     "module": "ESNext",
-    "strict": false,
+    "strict": true,
     "lib": ["esnext", "dom", "dom.iterable"],
     "jsx": "react-jsx",
     "esModuleInterop": true,
@@ -16,7 +16,9 @@
     "types": ["node", "vite/client"],
     "paths": {
       "@/*": ["./client/src/*"],
-      "@shared/*": ["./shared/*"]
+      "@shared/*": ["./shared/*"],
+      "@ticketbazaar/types": ["./packages/types/src/index.ts"],
+      "@ticketbazaar/types/*": ["./packages/types/src/*"]
     }
   }
 }

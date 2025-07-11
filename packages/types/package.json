@@ -1,0 +1,27 @@
+{
+  "name": "@ticketbazaar/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for TicketBazaar platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "typescript",
+    "types",
+    "ticketbazaar",
+    "shared"
+  ],
+  "author": "TicketBazaar",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "zod": "^3.23.8"
+  }
+}

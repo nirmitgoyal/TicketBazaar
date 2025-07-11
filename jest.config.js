@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
@@ -19,7 +19,6 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  setupFilesAfterEnv: ['<rootDir>/tests/fixtures/test-setup.ts'],
   testTimeout: 30000,
   moduleNameMapping: {
     '^@/(.*)$': '<rootDir>/client/src/$1',

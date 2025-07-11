@@ -22,6 +22,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
       "@shared": path.resolve(import.meta.dirname, "shared"),
+      "@ticketbazaar/types": path.resolve(import.meta.dirname, "packages", "types", "src"),
       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
     },
   },

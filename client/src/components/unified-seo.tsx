@@ -76,12 +76,6 @@ export interface UnifiedSEOProps {
   
   children?: React.ReactNode;
 }
-  customMeta?: Array<{
-    name?: string;
-    property?: string;
-    content: string;
-  }>;
-}
 
 const DEFAULT_SEO: SEOProps = {
   title: 'TicketBazaar - India\'s Most Trusted P2P Ticket Marketplace',
