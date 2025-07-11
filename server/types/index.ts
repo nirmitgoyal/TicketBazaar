@@ -8,12 +8,12 @@ import type {
   User, 
   Ticket, 
   ContactRequest, 
-  UserReview, 
+  UserFeedback, 
   TicketView,
   InsertUser,
   InsertTicket,
   InsertContactRequest,
-  InsertUserReview,
+  InsertUserFeedback,
   InsertTicketView
 } from '../../shared/schema';
 

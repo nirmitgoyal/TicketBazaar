@@ -8,7 +8,7 @@
 import { createContext, useContext, ReactNode, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { User } from '@shared/schema';
-import { AuthContextType, AuthState, LoginCredentials, RegisterCredentials } from '../types/auth.types';
+import { AuthContextType, LoginCredentials, RegisterCredentials } from '../types/auth.types';
 import { authService } from '../services/AuthService';
 import { useToast } from '@/hooks/use-toast';
 

@@ -64,6 +64,7 @@ export const tickets = pgTable("tickets", {
   category: text("category").notNull(),
   eventImageUrl: text("event_image_url"),
   trending: boolean("trending").default(false),
+  sellingFast: boolean("selling_fast").default(false),
   latitude: doublePrecision("latitude"),
   longitude: doublePrecision("longitude"),
   city: text("city"),
@@ -301,6 +302,29 @@ export type TicketView = typeof ticketViews.$inferSelect;
 
 export type InsertTicketPopularity = z.infer<typeof insertTicketPopularitySchema>;
 export type TicketPopularity = typeof ticketPopularity.$inferSelect;
+
+// Event type derived from ticket event fields for compatibility
+export type Event = {
+  id: number;
+  title: string;
+  eventTitle: string;
+  eventDescription?: string;
+  venue: string;
+  venueAddress?: string;
+  eventDate: Date;
+  category: string;
+  eventImageUrl?: string;
+  trending?: boolean;
+  sellingFast?: boolean;
+  latitude?: number;
+  longitude?: number;
+  city?: string;
+  country: string;
+  state?: string;
+  postalCode?: string;
+  eventTimezone?: string;
+  ageRestriction?: string;
+};
 
 // Events are now fully embedded in tickets - no separate events table needed
 
