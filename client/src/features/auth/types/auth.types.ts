@@ -4,7 +4,7 @@
  * This file contains all TypeScript types related to authentication.
  */
 
-import { User } from '@ticketbazaar/types';
+import { User } from '@shared/schema';
 
 export interface AuthState {
   user: User | null;

@@ -6,7 +6,7 @@
  * to real-time events.
  */
 
-import { WebSocketEvent, WebSocketEventType } from '@ticketbazaar/types';
+import { WebSocketEvent, WebSocketEventType } from '../services/websocket.service';
 
 export type WebSocketEventHandler = (event: WebSocketEvent) => void;
 

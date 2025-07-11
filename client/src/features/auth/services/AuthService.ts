@@ -4,7 +4,7 @@
  * This service handles all authentication-related API calls and business logic.
  */
 
-import { User } from '@ticketbazaar/types';
+import { User } from '@shared/schema';
 import { AuthServiceInterface, LoginCredentials, RegisterCredentials } from '../types/auth.types';
 
 export class AuthService implements AuthServiceInterface {

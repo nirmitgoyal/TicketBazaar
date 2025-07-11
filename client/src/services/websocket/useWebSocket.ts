@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useCallback, useState } from 'react';
-import { WebSocketEvent, WebSocketEventType } from '@ticketbazaar/types';
+import { WebSocketEvent, WebSocketEventType } from '@shared/unified-types';
 import { webSocketService, WebSocketEventHandler } from './WebSocketService';
 
 export interface UseWebSocketOptions {
