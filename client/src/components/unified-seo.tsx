@@ -76,14 +76,8 @@ export interface UnifiedSEOProps {
   
   children?: React.ReactNode;
 }
-  customMeta?: Array<{
-    name?: string;
-    property?: string;
-    content: string;
-  }>;
-}
 
-const DEFAULT_SEO: SEOProps = {
+const DEFAULT_SEO: UnifiedSEOProps = {
   title: 'TicketBazaar - India\'s Most Trusted P2P Ticket Marketplace',
   description: 'Buy and sell event tickets directly with verified users. No platform fees. Secure transactions. Find tickets for concerts, sports, theater, and more across India.',
   keywords: 'tickets, events, concerts, sports, theater, buy tickets, sell tickets, India, marketplace, P2P',
@@ -98,7 +92,7 @@ const DEFAULT_SEO: SEOProps = {
   lang: 'en'
 };
 
-export const UnifiedSEO: React.FC<SEOProps> = (props) => {
+export const UnifiedSEO: React.FC<UnifiedSEOProps> = (props) => {
   const [location] = useLocation();
   const baseUrl = 'https://ticketbazaar.co.in';
   
@@ -317,7 +311,7 @@ export const CategorySEO: React.FC<{
 };
 
 // Hook for dynamic SEO updates
-export const useDynamicSEO = (props: SEOProps) => {
+export const useDynamicSEO = (props: UnifiedSEOProps) => {
   React.useEffect(() => {
     // This ensures SEO updates when props change
   }, [props]);
