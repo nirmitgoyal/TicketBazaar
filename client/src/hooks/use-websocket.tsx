@@ -83,7 +83,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     // Skip WebSocket connection in test/CI environments
-    if (process.env.NODE_ENV === 'test' || process.env.CI) {
+    if (import.meta.env.MODE === 'test' || import.meta.env.VITE_CI) {
       return;
     }
 
