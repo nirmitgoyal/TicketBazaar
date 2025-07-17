@@ -5,6 +5,7 @@
 - Drizzle ORM with PostgreSQL.
 - WebSocket real‑time messaging.
 - Perplexity API, Google Analytics, Instagram verification.
+- GitHub Actions for CI/CD workflows.
 
 ## 📏 Coding Standards & Style
 - Use TypeScript types/interfaces everywhere.
@@ -19,24 +20,34 @@
 - Frontend: `src/{components,pages,hooks,utils}`
 - Backend: `server/{routes,controllers,services,middleware,utils}`
 - Match naming and folder structure exactly.
+- Shared types and validation: `shared/{schema.ts,unified-types.ts,unified-validation.ts}`
 
 ## 🧪 Testing & Quality Assurance
-<!-- - Always include visual + integration tests for new modules. -->
 - Enforce ESLint and Prettier.
 - Flag missing types, tests, or lint errors in PRs.
+- Use Playwright for E2E tests (see `playwright.config.ts`).
+- GitHub Actions triggers: Push to `main`/`develop`, Pull requests, Daily at 2 AM UTC.
+- Automated failure screenshots and regression testing.
 
 ## 🛡️ Security & Best Practices
 - Validate all external input with Zod.
 - Sanitize user-uploaded content before storage.
 - Do not hardcode secrets—use `process.env`.
 - Use `helmet`, `cors`, rate-limiting middleware.
+- Protect `main` and `develop` branches with required status checks.
+
+## 🔧 Developer Workflows
+- Build: `npm run build` (see `vite.config.ts`).
+- Test: `npm run test` or `npm run test:e2e`.
+- Debugging: Use `scripts/diagnose-oauth.ts` and `scripts/validate-deployment.js`.
+- Database setup: `scripts/init-db.ts` and `scripts/load-dummy-data.ts`.
+- Deployment: `deploy.sh` and `validate-deployment.sh`.
 
 ## 💬 Copilot Interaction Guidelines
 - If any error or failure occurs, retry yourself.
 - Annotate functions/components with intent before prompting.
 - Use inline comments or `// TODO:` placeholders for Copilot suggestions.
 - Ask Copilot to refactor complex functions into smaller units.
-<!-- - Request tests for any generated logic. -->
 - Prompt Copilot to explain code it generated if unclear.
 
 ---
