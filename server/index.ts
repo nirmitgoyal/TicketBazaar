@@ -8,6 +8,7 @@ import { registerRoutes } from "./routes";
 import { log } from "./utils";
 import { initHoneybadger, extractUserContext, getMiddleware, notifyError } from "./honeybadger";
 import { apiBypassMiddleware, apiNotFoundMiddleware } from "./middleware/api-bypass.middleware";
+import { uriValidationMiddleware } from "./middleware/uri-validation.middleware";
 
 // Load environment variables
 config();
@@ -21,6 +22,9 @@ config();
 
   // Add Honeybadger request handler BEFORE all other middleware
   app.use(requestHandler);
+
+  // Add URI validation middleware as the first middleware to catch malformed URIs
+  app.use(uriValidationMiddleware);
 
   // Add API bypass middleware before other middleware
   app.use(apiBypassMiddleware);
