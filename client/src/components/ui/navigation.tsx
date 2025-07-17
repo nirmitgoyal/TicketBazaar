@@ -385,15 +385,6 @@ export function Navigation() {
                           Profile
                         </button>
                       </motion.div>
-
-                      <motion.div variants={listItem}>
-                        <button
-                          className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/list-ticket" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
-                          onClick={() => handleNavigation("/list-ticket")}
-                        >
-                          Sell Tickets
-                        </button>
-                      </motion.div>
                     </>
                   )}
 
