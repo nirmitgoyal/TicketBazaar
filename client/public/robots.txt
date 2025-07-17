@@ -1,17 +1,14 @@
 User-agent: *
 Allow: /
 Allow: /sitemap.xml
+Allow: /ads.txt
 
 # Priority pages for ticket resale SEO
 Allow: /list-ticket
-Allow: /sell-ticket
-Allow: /resell-tickets
-Allow: /buy-second-hand-tickets
 
 # Important pages
 Allow: /faq
 Allow: /how-to-sell-tickets
-Allow: /safety-tips
 
 # Disallow admin and private areas
 Disallow: /admin
