@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { ArrowUp, ArrowDown, X } from "lucide-react";
 import { useScrollNavigation } from "@/hooks/use-scroll-navigation";
+import { useAdAwarePositioning } from "@/utils/ads-detection";
+import { CSSProperties } from "react";
 
 interface ScrollNavigationProps {
   /**
@@ -51,12 +53,23 @@ export function ScrollNavigation({
     persistPreference,
   });
 
-  // Position classes mapping
+  // Get ad-aware positioning offset
+  const adAwareOffset = useAdAwarePositioning(position);
+
+  // Position classes mapping with dynamic bottom offset
   const positionClasses = {
-    'bottom-right': 'fixed bottom-4 right-4',
-    'bottom-left': 'fixed bottom-4 left-4',
-    'top-right': 'fixed top-4 right-4',
-    'top-left': 'fixed top-4 left-4',
+    'bottom-right': `fixed right-4 z-50`,
+    'bottom-left': `fixed left-4 z-50`,
+    'top-right': 'fixed top-4 right-4 z-50',
+    'top-left': 'fixed top-4 left-4 z-50',
+  };
+
+  // Calculate dynamic bottom positioning for bottom positions
+  const getBottomStyle = (pos: string): CSSProperties => {
+    if (pos.indexOf('bottom') !== -1) {
+      return { bottom: `${adAwareOffset}px` };
+    }
+    return {};
   };
 
   // Tooltip position classes based on navigation position
@@ -70,7 +83,10 @@ export function ScrollNavigation({
   if (!showScrollTooltips) return null;
 
   return (
-    <div className={`${positionClasses[position]} flex flex-col space-y-2 z-50 ${className}`}>
+    <div 
+      className={`${positionClasses[position]} flex flex-col space-y-2 ${className}`}
+      style={getBottomStyle(position)}
+    >
       {/* Scroll to Top Button */}
       {showScrollToTop && (
         <div className="relative group">
