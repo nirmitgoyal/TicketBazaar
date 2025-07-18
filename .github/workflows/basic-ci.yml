@@ -42,13 +42,8 @@ jobs:
 
     - name: Run basic tests
       run: |
-        echo "Running basic tests..."
-        # Only run if Jest is configured and tests exist
-        if [ -d "tests/unit" ] || [ -f "jest.config.js" ] || [ -f "jest.config.ts" ]; then
-          npm test 2>/dev/null || echo "No unit tests found or Jest not configured"
-        else
-          echo "No unit test framework configured - skipping"
-        fi
+        echo "No unit tests configured - only E2E tests available"
+        echo "Unit tests have been removed from this project"
       continue-on-error: true
 
   e2e-test:
