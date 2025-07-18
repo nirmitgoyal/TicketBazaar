@@ -1,4 +1,4 @@
-import express, { type Express } from "express";
+import express, { type Express, type Request, type Response, type NextFunction } from "express";
 import fs from "fs";
 import path from "path";
 import { log } from "./utils";
@@ -50,6 +50,22 @@ export function setupProduction(app: Express) {
       }
     }
   }));
+
+  // Add middleware to handle Range Not Satisfiable errors from static file serving
+  app.use((err: Error & { status?: number; name?: string }, req: Request, res: Response, next: NextFunction) => {
+    // Handle Range Not Satisfiable errors specifically
+    if (err.name === 'RangeNotSatisfiableError' || err.status === 416) {
+      log(`Range Not Satisfiable error for ${req.path}: ${err.message}`);
+      return res.status(416).json({
+        error: 'Range Not Satisfiable',
+        message: 'The requested range cannot be satisfied',
+        status: 416
+      });
+    }
+    
+    // Pass other errors to the next error handler
+    next(err);
+  });
 
   // Handle favicon requests specifically
   app.get('/favicon.ico', (req, res) => {
