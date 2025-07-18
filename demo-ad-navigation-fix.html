@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdSense Navigation Test</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8712426072706283"
+         crossorigin="anonymous"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            height: 200vh; /* Make page scrollable */
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+        }
+        
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .mock-ad {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 90px;
+            background: #f39c12;
+            border-top: 2px solid #e67e22;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            z-index: 10;
+        }
+        
+        .navigation-buttons {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 50;
+        }
+        
+        .nav-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: #4F46E5;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+            transition: all 0.2s;
+        }
+        
+        .nav-button:hover {
+            background: #4338CA;
+            transform: scale(1.05);
+        }
+        
+        .nav-button:active {
+            transform: scale(0.95);
+        }
+        
+        .ad-aware-navigation {
+            bottom: 106px !important; /* 90px (ad height) + 16px (padding) */
+        }
+        
+        .demo-section {
+            margin: 40px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 10px;
+            border-left: 4px solid #ffc107;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>AdSense Navigation Arrows Fix - Demo</h1>
+        
+        <div class="demo-section">
+            <h2>Problem Demonstration</h2>
+            <p>This page demonstrates the issue where Google AdSense ads block navigation arrows.</p>
+            <div class="highlight">
+                <strong>Before Fix:</strong> Navigation arrows would be positioned at bottom: 16px, overlapping with the ad.
+            </div>
+            <div class="highlight">
+                <strong>After Fix:</strong> Navigation arrows are positioned at bottom: 106px (90px ad height + 16px padding), appearing above the ad.
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Implementation Details</h2>
+            <p>Our solution includes:</p>
+            <ul>
+                <li><strong>Ad Detection:</strong> Automatically detects AdSense ads using common selectors</li>
+                <li><strong>Dynamic Positioning:</strong> Calculates optimal position to place arrows above ads</li>
+                <li><strong>Real-time Monitoring:</strong> Watches for dynamically loaded ads</li>
+                <li><strong>Responsive Design:</strong> Works on all screen sizes</li>
+            </ul>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Technical Implementation</h2>
+            <p>The fix involves:</p>
+            <pre style="background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>// Detect AdSense ads
+const ads = detectAdSenseAds();
+
+// Calculate offset for navigation arrows
+const offset = calculateNavigationOffset('bottom-right');
+
+// Apply dynamic positioning
+style={{ bottom: `${offset}px` }}</code></pre>
+        </div>
+        
+        <p>Scroll down to see more content and test the navigation arrows...</p>
+        
+        <div style="height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #666;">
+            <p>More content here...<br>Keep scrolling to test navigation!</p>
+        </div>
+    </div>
+    
+    <!-- Mock AdSense Ad -->
+    <div class="mock-ad">
+        🎯 Mock AdSense Ad (Fixed Position at Bottom)
+    </div>
+    
+    <!-- Navigation Buttons with Ad-Aware Positioning -->
+    <div class="navigation-buttons ad-aware-navigation">
+        <button class="nav-button" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to Top">↑</button>
+        <button class="nav-button" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})" title="Scroll to Bottom">↓</button>
+    </div>
+    
+    <script>
+        // Simulate the ad detection functionality
+        function detectAdSenseAds() {
+            // In real implementation, this would scan for actual AdSense elements
+            const mockAd = document.querySelector('.mock-ad');
+            if (mockAd) {
+                const rect = mockAd.getBoundingClientRect();
+                return [{
+                    height: rect.height,
+                    width: rect.width,
+                    isVisible: true,
+                    isSticky: true,
+                    bottom: window.innerHeight - rect.bottom,
+                    right: window.innerWidth - rect.right
+                }];
+            }
+            return [];
+        }
+        
+        function calculateNavigationOffset(position) {
+            const ads = detectAdSenseAds();
+            const bottomAds = ads.filter(ad => ad.bottom < 100 && ad.isSticky);
+            
+            if (bottomAds.length === 0) {
+                return 16; // Default offset
+            }
+            
+            const highestAd = bottomAds.reduce((highest, current) => {
+                return current.bottom > highest.bottom ? current : highest;
+            });
+            
+            return highestAd.bottom + highestAd.height + 16;
+        }
+        
+        // Apply dynamic positioning
+        function updateNavigationPosition() {
+            const offset = calculateNavigationOffset('bottom-right');
+            const navButtons = document.querySelector('.navigation-buttons');
+            if (navButtons) {
+                navButtons.style.bottom = `${offset}px`;
+            }
+        }
+        
+        // Update position on page load and resize
+        window.addEventListener('load', updateNavigationPosition);
+        window.addEventListener('resize', updateNavigationPosition);
+        
+        // Log the positioning for debugging
+        console.log('Navigation offset calculated:', calculateNavigationOffset('bottom-right'));
+    </script>
+</body>
+</html>
