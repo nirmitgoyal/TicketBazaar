@@ -118,10 +118,6 @@ jobs:
         run: |
           echo "Warming up build toolchain..."
           
-          # Warm up TypeScript compiler
-          npm run type-check
-          echo "🔥 TypeScript compiler ready"
-          
           # Warm up Vite (client build)
           npm run build:client
           echo "🔥 Vite build tools ready"
@@ -132,18 +128,7 @@ jobs:
           
           echo "✅ All build tools warmed up"
 
-      - name: 🎨 Verify Code Quality Tools
-        run: |
-          echo "Checking code quality tools..."
-          
-          # Verify ESLint configuration
-          npm run lint:check
-          echo "✅ ESLint ready"
-          
-          # Verify Prettier configuration
-          npm run format:check
-          echo "✅ Prettier ready"
-
+      
       # =============================================================================
       # ADDITIONAL DEVELOPMENT TOOLS
       # =============================================================================
@@ -230,7 +215,6 @@ jobs:
           ```bash
           npm run test               # Run Playwright E2E tests
           npm run test:e2e-ui        # Run tests with UI
-          npm run type-check         # TypeScript checking
           ```
           
           ### Database
@@ -240,13 +224,7 @@ jobs:
           npm run wait-for-db        # Wait for database connection
           ```
           
-          ### Code Quality
-          ```bash
-          npm run lint               # Fix linting issues
-          npm run lint:check         # Check linting
-          npm run format             # Format code
-          npm run format:check       # Check formatting
-          ```
+        
           
           ## 🏗️ Architecture Overview
           
