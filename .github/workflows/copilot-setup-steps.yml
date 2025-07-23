@@ -128,24 +128,6 @@ jobs:
           
           echo "✅ All build tools warmed up"
 
-      
-      # =============================================================================
-      # ADDITIONAL DEVELOPMENT TOOLS
-      # =============================================================================
-      
-      - name: 🐍 Setup Python Tools
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: 'pip'
-
-      - name: 📦 Install Python Development Tools
-        run: |
-          echo "Installing Python development tools..."
-          python -m pip install --upgrade pip
-          pip install black isort flake8 mypy
-          echo "✅ Python tools installed"
-
       # =============================================================================
       # ENVIRONMENT VALIDATION & SUMMARY
       # =============================================================================
@@ -160,7 +142,6 @@ jobs:
           echo "📦 Runtime Environment:"
           echo "  • Node.js: $(node --version)"
           echo "  • npm: $(npm --version)"
-          echo "  • Python: $(python --version)"
           echo ""
           
           echo "🏗️ Build Tools:"
