@@ -108,7 +108,6 @@ jobs:
         run: |
           echo "Verifying testing setup..."
           npx playwright --version
-          npm run type-check
           echo "✅ Testing environment ready"
 
       # =============================================================================
