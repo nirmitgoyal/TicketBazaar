@@ -1,7 +1,7 @@
 name: "Copilot Setup Steps"
 
-# Automatically run the setup steps when they are changed to allow for easy validation, and
-# allow manual testing through the repository's "Actions" tab
+# This workflow is specifically designed for GitHub Copilot's Coding Agent
+# to preinstall tools and dependencies in the agent's environment
 on:
   workflow_dispatch:
   push:
@@ -11,33 +11,14 @@ on:
     paths:
       - .github/workflows/copilot-setup-steps.yml
 
-env:
-  # Environment Configuration for TicketBazaar
-  NODE_VERSION: '20'
-  PYTHON_VERSION: '3.11'
-  
-  # Tool Versions (pinned for consistency)
-  PLAYWRIGHT_VERSION: '1.52.0'
-  TYPESCRIPT_VERSION: '5.6.3'
-  ESBUILD_VERSION: '0.25.5'
-  VITE_VERSION: '5.4.19'
-  
-  # Database Configuration
-  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_test
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
-  POSTGRES_DB: ticketbazaar_test
-
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
-    name: � Setup TicketBazaar Development Environment
+    name: 🤖 Preinstall Tools for Copilot Coding Agent
     runs-on: ubuntu-latest
 
-    # Set the permissions to the lowest permissions possible needed for your steps.
-    # Copilot will be given its own token for its operations.
+    # Set minimal permissions as Copilot will be given its own token
     permissions:
-      # Needed to clone the repository and install dependencies
       contents: read
 
     # PostgreSQL service for database operations
@@ -56,55 +37,60 @@ jobs:
         ports:
           - 5432:5432
 
-    # You can define any steps you want, and they will run before the agent starts.
+    # Steps to prepare the environment for Copilot Coding Agent
     steps:
       # =============================================================================
-      # CORE SETUP
+      # CORE ENVIRONMENT SETUP
       # =============================================================================
       
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
 
-      - name: 🔍 Setup Node.js Runtime
+      - name: 🔍 Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: "20"
           cache: "npm"
-          cache-dependency-path: 'package-lock.json'
 
-      - name: 📦 Install JavaScript Dependencies
+      - name: 📦 Install Dependencies
         run: |
           npm ci --prefer-offline --no-audit
-          echo "✅ Node.js dependencies installed successfully"
+          echo "✅ Node.js dependencies installed"
 
-      - name: 🔧 Build TypeScript Types Package
+      - name: 🔧 Build TypeScript Types
         run: |
           npm run build:types
-          echo "✅ Types package built successfully"
+          echo "✅ TypeScript types package built"
 
       # =============================================================================
-      # DATABASE SETUP
+      # DATABASE PREPARATION
       # =============================================================================
       
-      - name: �️ Setup Database Schema
+      - name: 🗄️ Setup Database Environment
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_test
         run: |
-          # Wait for database to be ready
+          # Wait for PostgreSQL to be ready
+          echo "Waiting for database connection..."
           npm run wait-for-db
-          echo "✅ Database connection verified"
+          echo "✅ Database connection established"
           
-          # Initialize database schema using Drizzle
+          # Initialize database schema
+          echo "Setting up database schema..."
           npm run db:push
           echo "✅ Database schema initialized"
 
-      - name: 📊 Load Test Data (Optional)
+      - name: 📊 Load Development Data
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_test
         run: |
+          # Load test data if script exists
           if [ -f "scripts/init-test-db.ts" ]; then
+            echo "Loading test data..."
             npx tsx scripts/init-test-db.ts
-            echo "✅ Test data loaded successfully"
+            echo "✅ Test data loaded"
           else
-            echo "ℹ️ No test data script found, skipping"
+            echo "ℹ️ No test data script found"
           fi
         continue-on-error: true
 
@@ -114,166 +100,245 @@ jobs:
       
       - name: 🎭 Install Playwright Browsers
         run: |
-          # Install browsers for end-to-end testing
+          echo "Installing Playwright browsers..."
           npx playwright install chromium firefox webkit --with-deps
           echo "✅ Playwright browsers installed"
 
-      - name: 🧪 Verify Testing Configuration
+      - name: 🧪 Verify Testing Environment
         run: |
+          echo "Verifying testing setup..."
           npx playwright --version
           npm run type-check
-          echo "✅ Testing environment verified"
+          echo "✅ Testing environment ready"
 
       # =============================================================================
-      # BUILD TOOLS WARMUP
+      # BUILD TOOLS PREPARATION
       # =============================================================================
       
       - name: 🏗️ Warm Up Build Tools
         run: |
+          echo "Warming up build toolchain..."
+          
           # Warm up TypeScript compiler
-          echo "� Warming up TypeScript compiler..."
           npm run type-check
+          echo "🔥 TypeScript compiler ready"
           
-          # Test client build (Vite)
-          echo "� Warming up Vite build..."
+          # Warm up Vite (client build)
           npm run build:client
+          echo "🔥 Vite build tools ready"
           
-          # Test server build (ESBuild)
-          echo "🔥 Warming up ESBuild..."
+          # Warm up ESBuild (server build)
           npm run build:server
+          echo "🔥 ESBuild tools ready"
           
-          echo "✅ Build tools warmed up successfully"
+          echo "✅ All build tools warmed up"
 
-      # =============================================================================
-      # CODE QUALITY TOOLS
-      # =============================================================================
-      
       - name: 🎨 Verify Code Quality Tools
         run: |
-          # Test linting configuration
-          npm run lint:check
-          echo "✅ ESLint configuration verified"
+          echo "Checking code quality tools..."
           
-          # Test formatting configuration
+          # Verify ESLint configuration
+          npm run lint:check
+          echo "✅ ESLint ready"
+          
+          # Verify Prettier configuration
           npm run format:check
-          echo "✅ Prettier configuration verified"
+          echo "✅ Prettier ready"
 
       # =============================================================================
-      # PYTHON TOOLS (for auxiliary scripts)
+      # ADDITIONAL DEVELOPMENT TOOLS
       # =============================================================================
       
-      - name: 🐍 Setup Python Development Tools
+      - name: 🐍 Setup Python Tools
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: "3.11"
           cache: 'pip'
 
       - name: 📦 Install Python Development Tools
         run: |
+          echo "Installing Python development tools..."
           python -m pip install --upgrade pip
           pip install black isort flake8 mypy
-          echo "✅ Python development tools installed"
+          echo "✅ Python tools installed"
 
       # =============================================================================
-      # ENVIRONMENT VALIDATION
+      # ENVIRONMENT VALIDATION & SUMMARY
       # =============================================================================
       
-      - name: ✅ Environment Health Check
+      - name: ✅ Environment Readiness Check
         run: |
-          echo "=== 🤖 COPILOT CODING AGENT ENVIRONMENT READY ==="
+          echo "=================================================="
+          echo "🤖 GITHUB COPILOT CODING AGENT ENVIRONMENT READY"
+          echo "=================================================="
           echo ""
           
-          echo "📦 Node.js Environment:"
-          echo "  Node.js: $(node --version)"
-          echo "  npm: $(npm --version)"
+          echo "📦 Runtime Environment:"
+          echo "  • Node.js: $(node --version)"
+          echo "  • npm: $(npm --version)"
+          echo "  • Python: $(python --version)"
           echo ""
           
           echo "🏗️ Build Tools:"
-          echo "  TypeScript: $(npx tsc --version)"
-          echo "  Vite: $(npx vite --version)"
-          echo "  ESBuild: $(npx esbuild --version)"
+          echo "  • TypeScript: $(npx tsc --version)"
+          echo "  • Vite: $(npx vite --version)"
+          echo "  • ESBuild: $(npx esbuild --version)"
           echo ""
           
           echo "🧪 Testing Tools:"
-          echo "  Playwright: $(npx playwright --version)"
+          echo "  • Playwright: $(npx playwright --version)"
           echo ""
           
-          echo "🐍 Python Tools:"
-          echo "  Python: $(python --version)"
+          echo "🗄️ Database:"
+          echo "  • PostgreSQL 17.4 (running on localhost:5432)"
+          echo "  • Database: ticketbazaar_test"
+          echo "  • Schema: Initialized with Drizzle ORM"
           echo ""
           
-          echo "📊 Project Structure Verified:"
+          echo "📂 Project Structure:"
           find . -maxdepth 2 -type d -name "src" -o -name "server" -o -name "client" -o -name "scripts" | sort
           echo ""
           
-          echo "🎯 Key Project Components:"
+          echo "🎯 TicketBazaar Components Ready:"
           echo "  ✅ React + TypeScript Frontend (Vite)"
           echo "  ✅ Express.js + TypeScript Backend (ESBuild)"
-          echo "  ✅ PostgreSQL Database (Drizzle ORM)"
-          echo "  ✅ Playwright E2E Testing"
-          echo "  ✅ Tailwind CSS Styling"
-          echo "  ✅ Authentication (Passport.js)"
-          echo "  ✅ Payment Systems (Stripe, Razorpay)"
+          echo "  ✅ PostgreSQL Database + Drizzle ORM"
+          echo "  ✅ Playwright E2E Testing Framework"
+          echo "  ✅ Tailwind CSS Styling System"
+          echo "  ✅ Authentication System (Passport.js)"
+          echo "  ✅ Payment Integration (Stripe + Razorpay)"
+          echo "  ✅ Code Quality Tools (ESLint + Prettier)"
           echo ""
           
-          echo "🚀 Environment setup completed successfully!"
-          echo "🤖 Ready for GitHub Copilot Coding Agent development!"
+          echo "🚀 Environment setup complete!"
+          echo "🤖 GitHub Copilot Coding Agent is ready to work on TicketBazaar!"
 
-      - name: 📋 Generate Development Quick Reference
+      - name: 📚 Generate Copilot Development Guide
         run: |
-          cat > COPILOT_QUICK_REFERENCE.md << 'EOF'
-          # 🤖 Copilot Development Quick Reference
+          cat > COPILOT_DEVELOPMENT_GUIDE.md << 'EOF'
+          # 🤖 GitHub Copilot Development Guide for TicketBazaar
           
-          ## 🚀 Essential Commands
+          ## 🚀 Quick Start Commands
+          
+          ### Development
           ```bash
-          # Start development server
-          npm run dev
-          
-          # Build for production
-          npm run build
-          
-          # Run end-to-end tests
-          npm run test
-          
-          # Type checking
-          npm run type-check
-          
-          # Code formatting
-          npm run format
-          
-          # Database operations
-          npm run db:push        # Push schema changes
-          npm run db:migrate     # Run migrations
+          npm run dev                 # Start development server
+          npm run build              # Build for production
+          npm run start              # Start production server
           ```
           
-          ## 🏗️ Project Architecture
-          - **Frontend**: `client/src/` - React + TypeScript + Vite + Tailwind
-          - **Backend**: `server/` - Express.js + TypeScript + Node.js
-          - **Database**: PostgreSQL 17.4 + Drizzle ORM
-          - **Types**: `packages/types/` - Shared TypeScript definitions
-          - **Scripts**: `scripts/` - Database & utility scripts
-          - **Tests**: `tests/e2e/` - Playwright end-to-end tests
+          ### Testing
+          ```bash
+          npm run test               # Run Playwright E2E tests
+          npm run test:e2e-ui        # Run tests with UI
+          npm run type-check         # TypeScript checking
+          ```
           
-          ## � Development Notes
+          ### Database
+          ```bash
+          npm run db:push            # Push schema changes
+          npm run db:migrate         # Run migrations
+          npm run wait-for-db        # Wait for database connection
+          ```
+          
+          ### Code Quality
+          ```bash
+          npm run lint               # Fix linting issues
+          npm run lint:check         # Check linting
+          npm run format             # Format code
+          npm run format:check       # Check formatting
+          ```
+          
+          ## 🏗️ Architecture Overview
+          
+          ### Frontend (`client/`)
+          - **Framework**: React 18 + TypeScript
+          - **Build Tool**: Vite
+          - **Styling**: Tailwind CSS + Radix UI components
+          - **State Management**: React Query + Context
+          - **Routing**: Wouter
+          
+          ### Backend (`server/`)
+          - **Runtime**: Node.js 20 + Express.js
+          - **Language**: TypeScript
+          - **Build Tool**: ESBuild
+          - **Authentication**: Passport.js (Google OAuth + Local)
+          - **File Upload**: Multer
+          
+          ### Database
+          - **Engine**: PostgreSQL 17.4
+          - **ORM**: Drizzle ORM + Drizzle Kit
+          - **Schema**: `shared/schema.ts`
+          - **Migrations**: `migrations/` directory
+          
+          ### Testing
+          - **Framework**: Playwright
+          - **Tests**: `tests/e2e/` directory
+          - **Browsers**: Chromium, Firefox, WebKit
+          
+          ## 🔧 Key Configuration Files
+          
+          - `package.json` - Dependencies and scripts
+          - `tsconfig.json` - TypeScript configuration
+          - `vite.config.ts` - Vite build configuration
+          - `tailwind.config.ts` - Tailwind CSS configuration
+          - `drizzle.config.ts` - Database configuration
+          - `playwright.config.ts` - Test configuration
+          
+          ## 🎯 Main Features
+          
+          ### Event Management
+          - Event creation and editing
+          - Ticket generation with QR codes
+          - Event discovery with geo-location
+          - Real-time updates via WebSocket
+          
+          ### User System
+          - Google OAuth authentication
+          - Local email/password authentication
+          - User profiles and preferences
+          - Session management
+          
+          ### Payment Processing
+          - Stripe integration (primary)
+          - Razorpay integration (secondary)
+          - Secure payment handling
+          - Transaction tracking
+          
+          ### File Management
+          - Image uploads for events
+          - File storage optimization
+          - Image processing and resizing
+          
+          ## 🗄️ Database Schema Key Tables
+          
+          - `users` - User accounts and profiles
+          - `events` - Event information
+          - `tickets` - Ticket records
+          - `orders` - Purchase transactions
+          - `sessions` - User sessions
+          
+          ## 🌍 Environment Variables
+          
+          Check `.env.example` for required environment variables:
+          - `DATABASE_URL` - PostgreSQL connection
+          - `SESSION_SECRET` - Session encryption
+          - `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` - OAuth
+          - `VITE_GOOGLE_MAPS_API_KEY` - Maps integration
+          
+          ## 🚨 Development Notes
+          
           - Database URL: `postgresql://postgres:postgres@localhost:5432/ticketbazaar_test`
-          - Build outputs: `dist/` directory
-          - Environment variables: Check `.env` files
-          - API routes: `server/routes/`
-          - Components: `client/src/components/`
-          
-          ## 🎯 Key Features to Understand
-          - Multi-tenant event ticketing platform
-          - Google OAuth + Local authentication
-          - Stripe & Razorpay payment integration
-          - QR code ticket generation
-          - Geo-location based event discovery
-          - Real-time WebSocket updates
+          - Development server runs on port 5000 (configurable)
+          - Build outputs go to `dist/` directory
+          - All API routes are in `server/routes/`
+          - React components are in `client/src/components/`
           
           ---
-          *Generated for GitHub Copilot Coding Agent*
+          *Generated for GitHub Copilot Coding Agent Environment*
           EOF
           
-          echo "📋 Quick reference guide created: COPILOT_QUICK_REFERENCE.md"
+          echo "📚 Development guide created: COPILOT_DEVELOPMENT_GUIDE.md"
           echo ""
-          echo "🎉 All setup steps completed successfully!"
-          echo "🤖 GitHub Copilot Coding Agent can now work efficiently on this project!"
+          echo "🎉 Copilot environment preparation completed!"
+          echo "🤖 The coding agent now has all tools and context needed!"
