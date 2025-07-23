@@ -42,83 +42,11 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Where to Sell Tickets - Important landing page -->
-  <url>
-    <loc>https://ticketbazaar.co.in/where-to-sell-tickets</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
 
-  <!-- Ticket category pages for better SEO -->
-  <url>
-    <loc>https://ticketbazaar.co.in/concert-tickets-online</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://ticketbazaar.co.in/second-hand-tickets</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://ticketbazaar.co.in/ticket-resale</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://ticketbazaar.co.in/resale-bazaar</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- City-specific pages for local SEO -->
-  <url>
-    <loc>https://ticketbazaar.co.in/city-events</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://ticketbazaar.co.in/global-cities</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- User utility pages -->
-  <url>
-    <loc>https://ticketbazaar.co.in/map</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://ticketbazaar.co.in/ticket-verification</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
 
   <!-- Authentication pages -->
   <url>
     <loc>https://ticketbazaar.co.in/login</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://ticketbazaar.co.in/register</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
