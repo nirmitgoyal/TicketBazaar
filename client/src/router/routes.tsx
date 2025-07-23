@@ -89,7 +89,7 @@ function LazyProtectedRoute({
   component: Component 
 }: { 
   path: string; 
-  component: React.LazyExoticComponent<React.ComponentType<any>> 
+  component: React.LazyExoticComponent<React.ComponentType<Record<string, unknown>>> 
 }) {
   return (
     <ProtectedRoute
@@ -111,7 +111,7 @@ function LazyRoute({
   component: Component 
 }: { 
   path: string; 
-  component: React.LazyExoticComponent<React.ComponentType<any>> 
+  component: React.LazyExoticComponent<React.ComponentType<Record<string, unknown>>> 
 }) {
   return (
     <Route

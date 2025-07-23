@@ -80,7 +80,6 @@
     "@types/express-session": "^1.18.0",
     "@types/memoizee": "^0.4.12",
     "@types/multer": "^1.4.12",
-    "@types/node": "20.16.11",
     "@types/passport": "^1.0.16",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/passport-local": "^1.0.38",
@@ -153,6 +152,7 @@
     "bufferutil": "^4.0.8"
   },
   "devDependencies": {
+    "@types/node": "^20.16.11",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",

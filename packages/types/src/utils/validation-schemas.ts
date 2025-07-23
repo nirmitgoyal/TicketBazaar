@@ -14,7 +14,7 @@ export const dateRangeSchema = z.object({
   minDate: z.string().datetime().optional(),
   maxDate: z.string().datetime().optional()
 }).refine(
-  (data) => {
+  (data: { minDate?: string; maxDate?: string }) => {
     if (data.minDate && data.maxDate) {
       return new Date(data.minDate) <= new Date(data.maxDate);
     }
