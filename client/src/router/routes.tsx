@@ -22,6 +22,7 @@ const TermsOfService = createResilientLazyComponent(() => import("@/pages/terms-
 const PrivacyPolicy = createResilientLazyComponent(() => import("@/pages/privacy-policy"), "privacy-policy");
 const DataDeletion = createResilientLazyComponent(() => import("@/pages/data-deletion"), "data-deletion");
 const NotFound = createResilientLazyComponent(() => import("@/pages/not-found"), "not-found");
+const SEO404 = createResilientLazyComponent(() => import("@/pages/seo-404"), "seo-404");
 const VerificationDemo = createResilientLazyComponent(() => import("@/pages/verification-demo"), "verification-demo");
 const EnhancedVerificationPage = createResilientLazyComponent(() => import("@/pages/enhanced-verification"), "enhanced-verification");
 const FAQPage = createResilientLazyComponent(() => import("@/pages/FAQPage"), "faq");
@@ -208,7 +209,7 @@ export function AppRoutes() {
       {/* 404 fallback */}
       <Route path="*" component={() => (
         <PageLoader>
-          <NotFound />
+          <SEO404 />
         </PageLoader>
       )} />
     </Switch>
