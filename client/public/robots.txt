@@ -2,19 +2,60 @@ User-agent: *
 Allow: /
 Allow: /sitemap.xml
 Allow: /ads.txt
+Allow: /llms.txt
 
 # Priority pages for ticket resale SEO
 Allow: /list-ticket
-
-# Important pages
-Allow: /faq
 Allow: /how-to-sell-tickets
+Allow: /faq
+Allow: /sell
+
+# AI Crawlers - Enhanced Support
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Google-Extended
+Allow: /
+Crawl-delay: 1
+
+User-agent: ChatGPT-User
+Allow: /
+Crawl-delay: 1
+
+User-agent: CCBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: anthropic-ai
+Allow: /
+Crawl-delay: 1
+
+User-agent: Claude-Web
+Allow: /
+Crawl-delay: 1
+
+# Search Engine Crawlers
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
 
 # Disallow admin and private areas
 Disallow: /admin
 Disallow: /api/
 Disallow: /private/
 Disallow: /*.json$
+Disallow: /node_modules/
+Disallow: /dist/
+Disallow: /.git/
 
 # XML Sitemap
 Sitemap: https://ticketbazaar.co.in/sitemap.xml
