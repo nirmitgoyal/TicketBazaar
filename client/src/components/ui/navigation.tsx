@@ -1,18 +1,22 @@
 import { Link, useLocation } from "wouter";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { UserCircle, Menu, X, Map, Ticket } from "lucide-react";
+import { Menu, X, Map, Ticket } from "lucide-react";
+import { isFeatureEnabled, FeatureFlags } from "@/config/feature-flags";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { fadeInDown, listItem, staggerContainer } from "@/lib/animations";
+import { listItem, staggerContainer } from "@/lib/animations";
 
 
 
 export function Navigation() {
-  const { user, isAuthenticated, logoutMutation } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [location, setLocation] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  
+  // Check if map feature is enabled
+  const isMapFeatureEnabled = isFeatureEnabled(FeatureFlags.MAP_FEATURE);
 
   // Handle clicking outside the menu to close it
   useEffect(() => {
@@ -39,8 +43,8 @@ export function Navigation() {
     const currentUrl = new URL(window.location.href);
     const searchParams = currentUrl.searchParams;
     
-    // Only preserve search params for main navigation tabs
-    if (path === "/map" || path === "/popularity" || path === "/") {
+    // Only preserve search params for main navigation tabs (and only if map feature is enabled)
+    if ((path === "/map" && isMapFeatureEnabled) || path === "/popularity" || path === "/") {
       const newUrl = new URL(path, window.location.origin);
       
       // Copy relevant search parameters
@@ -117,7 +121,7 @@ export function Navigation() {
               data-testid="nav-home"
               onClick={() =>
                 handleNavigation(
-                  location === "/map" || location === "/events/map"
+                  (location === "/map" || location === "/events/map") && isMapFeatureEnabled
                     ? "/map-to-home"
                     : "/",
                 )
@@ -128,20 +132,23 @@ export function Navigation() {
               Home
             </motion.button>
 
-            <motion.button
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
-                location === "/events/map" || location === "/map"
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:text-primary hover:bg-accent"
-              }`}
-              data-testid="nav-map"
-              onClick={() => handleNavigation("/map")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Map className="h-4 w-4" />
-              Map View
-            </motion.button>
+            {/* Conditionally render Map navigation only if feature is enabled */}
+            {isMapFeatureEnabled && (
+              <motion.button
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 touch-target ${
+                  location === "/events/map" || location === "/map"
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-muted-foreground hover:text-primary hover:bg-accent"
+                }`}
+                data-testid="nav-map"
+                onClick={() => handleNavigation("/map")}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Map className="h-4 w-4" />
+                Map View
+              </motion.button>
+            )}
 
             {isAuthenticated && (
               <>
@@ -337,7 +344,7 @@ export function Navigation() {
                       className={`py-3 px-2 block text-left w-full touch-target rounded-md transition-colors ${location === "/" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
                       onClick={() =>
                         handleNavigation(
-                          location === "/map" || location === "/events/map"
+                          (location === "/map" || location === "/events/map") && isMapFeatureEnabled
                             ? "/map-to-home"
                             : "/",
                         )
@@ -347,15 +354,18 @@ export function Navigation() {
                     </button>
                   </motion.div>
 
-                  <motion.div variants={listItem}>
-                    <button
-                      className={`flex items-center gap-2 py-3 px-2 text-left w-full touch-target rounded-md transition-colors ${location === "/events/map" || location === "/map" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
-                      onClick={() => handleNavigation("/map")}
-                    >
-                      <Map className="h-4 w-4" />
-                      Map View
-                    </button>
-                  </motion.div>
+                  {/* Conditionally render Map navigation in mobile menu only if feature is enabled */}
+                  {isMapFeatureEnabled && (
+                    <motion.div variants={listItem}>
+                      <button
+                        className={`flex items-center gap-2 py-3 px-2 text-left w-full touch-target rounded-md transition-colors ${location === "/events/map" || location === "/map" ? "text-primary bg-primary/5" : "text-foreground hover:bg-accent"}`}
+                        onClick={() => handleNavigation("/map")}
+                      >
+                        <Map className="h-4 w-4" />
+                        Map View
+                      </button>
+                    </motion.div>
+                  )}
 
                   {isAuthenticated && (
                     <>

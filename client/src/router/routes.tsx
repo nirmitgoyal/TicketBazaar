@@ -1,9 +1,10 @@
-import { lazy, Suspense, ReactNode } from "react";
+import { Suspense, ReactNode } from "react";
 import { Switch, Route } from "wouter";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Loader2 } from "lucide-react";
 import { createResilientLazyComponent } from "@/utils/error-recovery";
+import { isFeatureEnabled, FeatureFlags } from "@/config/feature-flags";
 
 // Resilient lazy loaded pages with error recovery
 const Home = createResilientLazyComponent(() => import("@/pages/home"), "home");
@@ -88,7 +89,7 @@ function LazyProtectedRoute({
   component: Component 
 }: { 
   path: string; 
-  component: React.LazyExoticComponent<React.ComponentType<any>> 
+  component: React.LazyExoticComponent<React.ComponentType<Record<string, unknown>>> 
 }) {
   return (
     <ProtectedRoute
@@ -110,7 +111,7 @@ function LazyRoute({
   component: Component 
 }: { 
   path: string; 
-  component: React.LazyExoticComponent<React.ComponentType<any>> 
+  component: React.LazyExoticComponent<React.ComponentType<Record<string, unknown>>> 
 }) {
   return (
     <Route
@@ -128,13 +129,21 @@ function LazyRoute({
  * Main routing component with optimized lazy loading
  */
 export function AppRoutes() {
+  // Check if map feature is enabled
+  const isMapFeatureEnabled = isFeatureEnabled(FeatureFlags.MAP_FEATURE);
+
   return (
     <Switch>
       {/* Public routes */}
       <LazyRoute path="/" component={Home} />
       <LazyRoute path="/event/:id" component={EventDetails} />
       <LazyRoute path="/events/map" component={EventMap} />
-      <LazyRoute path="/map" component={MapPage} />
+      
+      {/* Conditional Map Route - only show if feature flag is enabled */}
+      {isMapFeatureEnabled && (
+        <LazyRoute path="/map" component={MapPage} />
+      )}
+      
       <LazyRoute path="/events/category/:category" component={Home} />
       <LazyRoute path="/cities" component={GlobalCities} />
       <LazyRoute path="/city/:citySlug" component={CityEvents} />
