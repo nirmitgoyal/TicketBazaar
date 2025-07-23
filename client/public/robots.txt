@@ -9,11 +9,6 @@ Allow: /list-ticket
 Allow: /how-to-sell-tickets
 Allow: /faq
 Allow: /sell
-Allow: /resale-bazaar
-Allow: /ticket-resale
-Allow: /second-hand-tickets
-Allow: /concert-tickets-online
-Allow: /where-to-sell-tickets
 
 # AI Crawlers - Enhanced Support
 User-agent: GPTBot
