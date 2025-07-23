@@ -25,10 +25,12 @@ const NotFound = createResilientLazyComponent(() => import("@/pages/not-found"),
 const VerificationDemo = createResilientLazyComponent(() => import("@/pages/verification-demo"), "verification-demo");
 const EnhancedVerificationPage = createResilientLazyComponent(() => import("@/pages/enhanced-verification"), "enhanced-verification");
 const FAQPage = createResilientLazyComponent(() => import("@/pages/FAQPage"), "faq");
+const EnhancedFAQPage = createResilientLazyComponent(() => import("@/pages/enhanced-faq"), "enhanced-faq");
 const SellerPolicy = createResilientLazyComponent(() => import("@/pages/SellerPolicy"), "seller-policy");
 const CityEvents = createResilientLazyComponent(() => import("@/pages/city-events"), "city-events");
 const GlobalCities = createResilientLazyComponent(() => import("@/pages/global-cities"), "global-cities");
 const HowToSellTickets = createResilientLazyComponent(() => import("@/pages/how-to-sell-tickets"), "how-to-sell-tickets");
+const EnhancedHowToSell = createResilientLazyComponent(() => import("@/pages/enhanced-how-to-sell"), "enhanced-how-to-sell");
 const SellPage = createResilientLazyComponent(() => import("@/pages/sell"), "sell");
 const WhereToSellTicketsPage = createResilientLazyComponent(() => import("@/pages/where-to-sell-tickets"), "where-to-sell-tickets");
 const ResaleBazaar = createResilientLazyComponent(() => import("@/pages/resale-bazaar"), "resale-bazaar");
@@ -172,7 +174,7 @@ export function AppRoutes() {
       {/* Information pages */}
       <LazyRoute path="/sell" component={SellPage} />
       <LazyRoute path="/where-to-sell-tickets" component={WhereToSellTicketsPage} />
-      <LazyRoute path="/how-to-sell-tickets" component={HowToSellTickets} />
+      <LazyRoute path="/how-to-sell-tickets" component={EnhancedHowToSell} />
       <LazyRoute path="/resale-bazaar" component={ResaleBazaar} />
       <LazyRoute path="/ticket-resale" component={TicketResale} />
       <LazyRoute path="/second-hand-tickets" component={SecondHandTickets} />
@@ -182,7 +184,7 @@ export function AppRoutes() {
       <LazyRoute path="/terms-of-service" component={TermsOfService} />
       <LazyRoute path="/privacy-policy" component={PrivacyPolicy} />
       <LazyRoute path="/data-deletion" component={DataDeletion} />
-      <LazyRoute path="/faq" component={FAQPage} />
+      <LazyRoute path="/faq" component={EnhancedFAQPage} />
       <LazyRoute path="/seller-policy" component={SellerPolicy} />
       
       {/* Analytics */}

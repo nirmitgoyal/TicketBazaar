@@ -3,9 +3,23 @@ import App from "./App";
 import "./lib/socket-fix";
 import "./index.css";
 import { initializeGlobalErrorHandlers } from "./utils/error-handler";
+import { initializePerformanceMonitoring } from "./utils/performance-monitor";
+import { initializeImageOptimization } from "./utils/image-optimization";
+import { initializeServiceWorker } from "./utils/service-worker";
 
 // Initialize comprehensive global error handlers
 initializeGlobalErrorHandlers();
+
+// Initialize performance monitoring for Core Web Vitals
+initializePerformanceMonitoring();
+
+// Initialize image optimization for better loading
+initializeImageOptimization();
+
+// Initialize service worker for caching and offline support
+if (process.env.NODE_ENV === 'production') {
+  initializeServiceWorker();
+}
 
 // Override Vite's error overlay behavior in development
 if (import.meta.env.DEV) {

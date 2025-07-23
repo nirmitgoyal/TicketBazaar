@@ -42,5 +42,10 @@
       "url": "/list-ticket",
       "icons": [{ "src": "/logo.svg", "sizes": "96x96" }]
     }
-  ]
+  ],
+  "serviceworker": {
+    "src": "/sw.js",
+    "scope": "/",
+    "update_via_cache": "none"
+  }
 }
