@@ -1,4 +1,4 @@
-import { lazy, Suspense, ReactNode } from "react";
+import { Suspense, ReactNode } from "react";
 import { Switch, Route } from "wouter";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { ErrorBoundary } from "@/components/error-boundary";

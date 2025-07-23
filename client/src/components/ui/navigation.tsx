@@ -1,16 +1,16 @@
 import { Link, useLocation } from "wouter";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { UserCircle, Menu, X, Map, Ticket } from "lucide-react";
+import { Menu, X, Map, Ticket } from "lucide-react";
 import { isFeatureEnabled, FeatureFlags } from "@/config/feature-flags";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { fadeInDown, listItem, staggerContainer } from "@/lib/animations";
+import { listItem, staggerContainer } from "@/lib/animations";
 
 
 
 export function Navigation() {
-  const { user, isAuthenticated, logoutMutation } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [location, setLocation] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
