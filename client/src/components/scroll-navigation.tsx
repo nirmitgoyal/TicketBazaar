@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowUp, ArrowDown, X } from "lucide-react";
 import { useScrollNavigation } from "@/hooks/use-scroll-navigation";
-import { useAdAwarePositioning } from "@/utils/ads-detection";
+import { useAdSenseLayout } from "@/hooks/use-adsense-layout";
 import { CSSProperties } from "react";
 
 interface ScrollNavigationProps {
@@ -53,8 +53,13 @@ export function ScrollNavigation({
     persistPreference,
   });
 
-  // Get ad-aware positioning offset
-  const adAwareOffset = useAdAwarePositioning(position);
+  // Get ad-aware positioning from AdSense layout hook
+  const { getNavigationOffset } = useAdSenseLayout({
+    navigationOffset: 0, // No additional offset needed for scroll navigation
+    basePadding: 16,
+  });
+  
+  const adAwareOffset = getNavigationOffset();
 
   // Position classes mapping with dynamic bottom offset
   const positionClasses = {
@@ -84,7 +89,7 @@ export function ScrollNavigation({
 
   return (
     <div 
-      className={`${positionClasses[position]} flex flex-col space-y-2 ${className}`}
+      className={`${positionClasses[position]} flex flex-col space-y-2 scroll-navigation-adsense-aware ${className}`}
       style={getBottomStyle(position)}
     >
       {/* Scroll to Top Button */}
