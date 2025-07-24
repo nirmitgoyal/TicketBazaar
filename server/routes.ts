@@ -88,10 +88,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const notificationRoutes = (await import("./routes/notifications")).default;
   apiRouter.use("/notifications", notificationRoutes);
 
-  // Import and register popularity tracking routes
-  const popularityRoutes = (await import("./routes/popularity.routes")).default;
-  apiRouter.use("/popularity", popularityRoutes);
-
   // Import and register seller trust routes
   const sellerTrustRoutes = (await import("./routes/seller-trust.routes")).default;
   apiRouter.use("/seller-trust", strictLimiter, sellerTrustRoutes);
@@ -99,18 +95,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Import and register email routes
   const emailRoutes = (await import("./routes/email.routes")).default;
   apiRouter.use("/email", emailRoutes);
-
-  // Import and register email debug routes
-  const emailDebugRoutes = (await import("./routes/email-debug.routes")).default;
-  apiRouter.use("/email-debug", emailDebugRoutes);
-
-  // Import and register email test routes (no authentication required)
-  const emailTestRoutes = (await import("./routes/email-test.routes")).default;
-  apiRouter.use("/email-test", emailTestRoutes);
-
-  // Import and register SendGrid setup routes
-  const sendgridSetupRoutes = (await import("./routes/sendgrid-setup.routes")).default;
-  apiRouter.use("/sendgrid-setup", sendgridSetupRoutes);
 
   // Import and register metrics routes  
   const metricsRoutes = (await import("./routes/metrics")).default;

@@ -11,7 +11,6 @@ export { EventCard } from './event-card';
 export { TicketCard } from './ticket-card';
 export { SearchBar } from './search-bar';
 export { FilterDropdown } from './filter-dropdown';
-export { VenueMap } from './venue-map';
 export { TicketVerification } from './ticket-verification';
 export { MobileNav } from './mobile-nav';
 export { PullToRefresh } from './pull-to-refresh';
