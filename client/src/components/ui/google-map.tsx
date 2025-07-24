@@ -5,7 +5,6 @@ import { Link } from "wouter";
 import { Loader2, MapPin, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EventListFallback from "./event-list-fallback";
-import SimpleMap from "./simple-map";
 import { 
   GOOGLE_MAPS_LIBRARIES, 
   GOOGLE_MAPS_OPTIONS, 
@@ -218,9 +217,10 @@ const EventMap: React.FC<EventMapProps> = ({ events, onViewportChange }) => {
             </details>
           )}
         </div>
-        <SimpleMap
+        <EventListFallback
           events={events}
-          onViewportChange={onViewportChange}
+          title="Events List"
+          description="Map is currently unavailable. Here are the events in list format."
         />
       </div>
     );
