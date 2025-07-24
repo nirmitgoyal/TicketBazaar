@@ -244,3 +244,197 @@
     display: block;
   }
 }
+
+/* ===== MOBILE ADSENSE ANCHOR AD STYLES ===== */
+
+/* AdSense Anchor Ad Wrapper - Mobile Optimized */
+.mobile-adsense-anchor-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  pointer-events: none;
+  contain: layout style;
+  will-change: transform;
+}
+
+/* AdSense Anchor Ad Background for Visual Blending */
+.adsense-anchor-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Dark mode support for anchor ad background */
+@media (prefers-color-scheme: dark) {
+  .adsense-anchor-background {
+    background: rgba(17, 24, 39, 0.95);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* AdSense Anchor Ad Content */
+.mobile-adsense-anchor-wrapper .adsbygoogle {
+  pointer-events: auto;
+  width: 100% !important;
+  display: block !important;
+  position: relative;
+  z-index: 1;
+  min-height: 50px;
+  max-height: 200px;
+}
+
+/* iOS Safe Area Handling for Anchor Ads */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .mobile-adsense-anchor-wrapper .adsbygoogle {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+  }
+}
+
+/* Android and other mobile devices */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .mobile-adsense-anchor-wrapper .adsbygoogle {
+    padding-bottom: 8px;
+  }
+}
+
+/* Landscape mode adjustments */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .mobile-adsense-anchor-wrapper {
+    /* Slightly reduce height in landscape for better visibility */
+    transform: scale(0.9);
+    transform-origin: bottom center;
+  }
+}
+
+/* AdSense Integration with App Layout */
+.app-with-anchor-ads {
+  /* Dynamic padding applied via JavaScript based on actual ad height */
+  padding-bottom: var(--adsense-total-offset, 0px);
+  transition: padding-bottom 0.3s ease-in-out;
+}
+
+/* Navigation Elements - AdSense Aware Positioning */
+.mobile-navigation-adsense-aware {
+  bottom: calc(var(--adsense-total-offset, 16px) + 16px);
+  transition: bottom 0.3s ease-in-out;
+}
+
+/* Floating Action Buttons - AdSense Aware */
+.floating-button-adsense-aware {
+  bottom: calc(var(--adsense-total-offset, 16px) + 16px);
+  transition: bottom 0.3s ease-in-out;
+}
+
+/* Scroll to Top Button - AdSense Aware */
+.scroll-navigation-adsense-aware {
+  bottom: calc(var(--adsense-total-offset, 16px) + 16px);
+  transition: bottom 0.3s ease-in-out;
+}
+
+/* Bottom Sheet/Modal Adjustments */
+.mobile-modal-adsense-aware {
+  bottom: var(--adsense-total-offset, 0px);
+  transition: bottom 0.3s ease-in-out;
+}
+
+/* AdSense Loading States */
+.adsense-anchor-loading {
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.5s ease-in-out;
+}
+
+.adsense-anchor-loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* AdSense Error State (Hidden) */
+.adsense-anchor-error {
+  display: none !important;
+}
+
+/* Prevent Content Overlap */
+.prevent-adsense-overlap {
+  margin-bottom: var(--adsense-anchor-height, 0px);
+  transition: margin-bottom 0.3s ease-in-out;
+}
+
+/* AdSense Responsive Breakpoints */
+@media (max-width: 320px) {
+  /* Ultra-small screens */
+  .mobile-adsense-anchor-wrapper .adsbygoogle {
+    min-height: 40px;
+    max-height: 80px;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Hide anchor ads on desktop/tablet */
+  .mobile-adsense-anchor-wrapper {
+    display: none !important;
+  }
+  
+  /* Remove mobile-specific padding on larger screens */
+  .app-with-anchor-ads {
+    padding-bottom: 0 !important;
+  }
+}
+
+/* Performance Optimizations for AdSense */
+.mobile-adsense-anchor-wrapper {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: contents;
+}
+
+/* Reduce Motion for Users with Preferences */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-adsense-anchor-wrapper,
+  .app-with-anchor-ads,
+  .mobile-navigation-adsense-aware,
+  .floating-button-adsense-aware,
+  .scroll-navigation-adsense-aware,
+  .mobile-modal-adsense-aware {
+    transition: none !important;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .adsense-anchor-background {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: white;
+    border-top: 2px solid #000;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .adsense-anchor-background {
+      background: #000;
+      border-top: 2px solid #fff;
+    }
+  }
+}
+
+/* Touch Interaction Improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Ensure AdSense ads are touch-friendly */
+  .mobile-adsense-anchor-wrapper .adsbygoogle {
+    touch-action: auto;
+    -webkit-touch-callout: default;
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+}

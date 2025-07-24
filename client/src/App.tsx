@@ -19,6 +19,7 @@ import ScrollNavigation from "@/components/scroll-navigation";
 import { InstagramHandleCheck } from "@/components/instagram-handle-check";
 import { AuthRedirectDebug } from "@/components/auth-redirect-debug";
 import { OAuthRedirectHandler } from "@/components/oauth-redirect-handler";
+import { MobileAdSenseAnchor } from "@/components/mobile-adsense-anchor";
 import { debugAuthFlow } from "@/utils/auth-debug";
 import "@/utils/error-recovery"; // Initialize global error handling
 import "@/utils/console-cleaner"; // Clean up console noise
@@ -97,7 +98,7 @@ function App() {
                     <InstagramHandleCheck>
                       <UnifiedSEO type="general" />
                       <CanonicalUrlManager />
-                      <div className="min-h-screen flex flex-col safe-area-top prevent-horizontal-overflow">
+                      <div className="min-h-screen flex flex-col safe-area-top prevent-horizontal-overflow app-with-anchor-ads">
                         <ErrorBoundary fallback={
                           <div className="bg-red-50 border border-red-200 p-4 m-4 rounded">
                             <p className="text-red-800">Navigation temporarily unavailable</p>
@@ -118,6 +119,22 @@ function App() {
                           <Footer />
                         </ErrorBoundary>
                       </div>
+                      
+                      {/* Mobile AdSense Anchor Ad Integration */}
+                      <ErrorBoundary fallback={null}>
+                        <MobileAdSenseAnchor
+                          adClient="ca-pub-8712426072706283"
+                          debug={process.env.NODE_ENV === 'development'}
+                          addVisualEffects={true}
+                          onAdLoad={() => {
+                            console.log('AdSense anchor ad loaded successfully');
+                          }}
+                          onAdError={(error) => {
+                            console.warn('AdSense anchor ad failed to load:', error.message);
+                          }}
+                        />
+                      </ErrorBoundary>
+                      
                       <ScrollNavigation />
                       <Toaster />
                     </InstagramHandleCheck>
