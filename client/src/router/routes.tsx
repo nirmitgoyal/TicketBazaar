@@ -4,13 +4,12 @@ import { ProtectedRoute } from "@/lib/protected-route";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Loader2 } from "lucide-react";
 import { createResilientLazyComponent } from "@/utils/error-recovery";
-import { isFeatureEnabled, FeatureFlags } from "@/config/feature-flags";
 
 // Resilient lazy loaded pages with error recovery
 const Home = createResilientLazyComponent(() => import("@/pages/home"), "home");
 const EventDetails = createResilientLazyComponent(() => import("@/pages/event-details"), "event-details");
 const EventMap = createResilientLazyComponent(() => import("@/pages/event-map"), "event-map");
-const MapPage = createResilientLazyComponent(() => import("@/pages/map"), "map");
+
 const ListTicket = createResilientLazyComponent(() => import("@/pages/list-ticket"), "list-ticket");
 const MyTickets = createResilientLazyComponent(() => import("@/pages/my-tickets"), "my-tickets");
 const TicketVerification = createResilientLazyComponent(() => import("@/pages/ticket-verification"), "ticket-verification");
@@ -22,8 +21,7 @@ const TermsOfService = createResilientLazyComponent(() => import("@/pages/terms-
 const PrivacyPolicy = createResilientLazyComponent(() => import("@/pages/privacy-policy"), "privacy-policy");
 const DataDeletion = createResilientLazyComponent(() => import("@/pages/data-deletion"), "data-deletion");
 const NotFound = createResilientLazyComponent(() => import("@/pages/not-found"), "not-found");
-const VerificationDemo = createResilientLazyComponent(() => import("@/pages/verification-demo"), "verification-demo");
-const EnhancedVerificationPage = createResilientLazyComponent(() => import("@/pages/enhanced-verification"), "enhanced-verification");
+
 const FAQPage = createResilientLazyComponent(() => import("@/pages/FAQPage"), "faq");
 const SellerPolicy = createResilientLazyComponent(() => import("@/pages/SellerPolicy"), "seller-policy");
 const CityEvents = createResilientLazyComponent(() => import("@/pages/city-events"), "city-events");
@@ -35,16 +33,11 @@ const ResaleBazaar = createResilientLazyComponent(() => import("@/pages/resale-b
 const TicketResale = createResilientLazyComponent(() => import("@/pages/ticket-resale"), "ticket-resale");
 const SecondHandTickets = createResilientLazyComponent(() => import("@/pages/second-hand-tickets"), "second-hand-tickets");
 const ConcertTicketsOnline = createResilientLazyComponent(() => import("@/pages/concert-tickets-online"), "concert-tickets-online");
-const EmailTest = createResilientLazyComponent(() => import("@/pages/EmailTest"), "email-test");
-const SendGridSetup = createResilientLazyComponent(() => import("@/pages/SendGridSetup"), "sendgrid-setup");
 const PrivacySettings = createResilientLazyComponent(() => import("@/pages/privacy-settings"), "privacy-settings");
-const OAuthTest = createResilientLazyComponent(() => import("@/pages/oauth-test"), "oauth-test");
+
 
 // Dashboard components with resilient loading
 const VerificationReport = createResilientLazyComponent(() => import("@/pages/verification-report"), "verification-report");
-const PopularityDashboard = createResilientLazyComponent(() => import("@/pages/popularity-dashboard"), "popularity-dashboard");
-const GEOPerformanceDashboard = createResilientLazyComponent(() => import("@/pages/geo-performance-dashboard"), "geo-performance-dashboard");
-const SEOPerformancePage = createResilientLazyComponent(() => import("@/pages/seo-performance"), "seo-performance");
 
 /**
  * Enhanced loading component with error boundary
@@ -130,20 +123,12 @@ function LazyRoute({
  * Main routing component with optimized lazy loading
  */
 export function AppRoutes() {
-  // Check if map feature is enabled
-  const isMapFeatureEnabled = isFeatureEnabled(FeatureFlags.MAP_FEATURE);
-
   return (
     <Switch>
       {/* Public routes */}
       <LazyRoute path="/" component={Home} />
       <LazyRoute path="/event/:id" component={EventDetails} />
       <LazyRoute path="/events/map" component={EventMap} />
-      
-      {/* Conditional Map Route - only show if feature flag is enabled */}
-      {isMapFeatureEnabled && (
-        <LazyRoute path="/map" component={MapPage} />
-      )}
       
       <LazyRoute path="/events/category/:category" component={Home} />
       <LazyRoute path="/cities" component={GlobalCities} />
@@ -161,9 +146,7 @@ export function AppRoutes() {
       
       {/* Verification */}
       <LazyRoute path="/ticket-verification" component={TicketVerification} />
-      <LazyRoute path="/verification-demo" component={VerificationDemo} />
       <LazyRoute path="/verification-report/:ticketId" component={VerificationReport} />
-      <LazyProtectedRoute path="/enhanced-verification" component={EnhancedVerificationPage} />
       <LazyProtectedRoute path="/ticket/verify/:ticketId" component={TicketVerification} />
       
       {/* User profile */}
@@ -186,19 +169,8 @@ export function AppRoutes() {
       <LazyRoute path="/faq" component={FAQPage} />
       <LazyRoute path="/seller-policy" component={SellerPolicy} />
       
-      {/* Analytics */}
-      <LazyRoute path="/popularity" component={PopularityDashboard} />
-      <LazyRoute path="/analytics" component={PopularityDashboard} />
-      <LazyRoute path="/geo-performance" component={GEOPerformanceDashboard} />
-      <LazyRoute path="/seo-performance" component={SEOPerformancePage} />
-      
-      {/* Email Testing */}
-      <LazyRoute path="/email-test" component={EmailTest} />
-      <LazyRoute path="/sendgrid-setup" component={SendGridSetup} />
-      
-      {/* OAuth Testing */}
-      <LazyRoute path="/oauth-test" component={OAuthTest} />
-      
+
+
       {/* Redirect route */}
       <Route path="/map-to-home" component={() => {
         window.location.href = '/';
