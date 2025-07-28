@@ -142,7 +142,7 @@ export function AppRoutes() {
       
       {/* Ticket management */}
       <LazyProtectedRoute path="/list-ticket" component={ListTicket} />
-      <LazyProtectedRoute path="/my_tickets" component={MyTickets} />
+      <LazyProtectedRoute path="/my-tickets" component={MyTickets} />
       
       {/* Verification */}
       <LazyRoute path="/ticket-verification" component={TicketVerification} />
