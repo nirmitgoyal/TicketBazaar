@@ -23,18 +23,12 @@ export default function NotFound() {
             </p>
           </div>
 
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col">
             <a
               href="/"
               className="w-full py-2 px-4 bg-primary text-white rounded-md text-center hover:bg-primary/90 transition-colors"
             >
               Return to Home
-            </a>
-            <a
-              href="/events/map"
-              className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-md text-center hover:bg-gray-50 transition-colors"
-            >
-              Explore Events Map
             </a>
           </div>
         </CardContent>
