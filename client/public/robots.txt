@@ -63,6 +63,3 @@ Disallow: /.git/
 
 # XML Sitemap
 Sitemap: https://ticketbazaar.co.in/sitemap.xml
-
-# Crawl delay for respectful crawling
-Crawl-delay: 1

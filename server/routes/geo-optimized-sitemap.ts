@@ -362,12 +362,7 @@ Allow: /manifest.json
 Sitemap: https://ticketbazaar.co.in/sitemap.xml
 
 # AI Training Data
-# LLMs.txt: https://ticketbazaar.co.in/llms.txt
-
-# Crawl optimization
-Request-rate: 1/10s
-Visit-time: 0200-0800
-Host: ticketbazaar.co.in`;
+# LLMs.txt: https://ticketbazaar.co.in/llms.txt`;
 
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 24 hours
