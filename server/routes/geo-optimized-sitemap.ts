@@ -238,6 +238,67 @@ export async function generateSitemap(req: Request, res: Response) {
  * Generate AI-optimized robots.txt with crawl directives
  */
 export function generateRobotsTxt(req: Request, res: Response) {
+  // Check if the request is coming from a herokuapp.com domain
+  const host = req.get('host') || '';
+  const isHerokuDomain = host.includes('herokuapp.com');
+
+  // If it's a Heroku domain, block all crawling
+  if (isHerokuDomain) {
+    const herokuRobotsTxt = `# Robots.txt for Heroku deployment - BLOCK ALL CRAWLING
+# This domain should not be indexed by search engines
+# Main site: https://ticketbazaar.co.in
+
+User-agent: *
+Disallow: /
+
+# Block all AI crawlers from herokuapp.com domain
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Bard
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+# Block all search engines
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+User-agent: Slurp
+Disallow: /
+
+# No sitemap for herokuapp domain
+# Please visit: https://ticketbazaar.co.in/sitemap.xml
+
+# Redirect to main domain
+# Main site: https://ticketbazaar.co.in`;
+
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 24 hours
+    res.send(herokuRobotsTxt);
+    return;
+  }
+
+  // Default robots.txt for main domain (ticketbazaar.co.in)
   const robotsTxt = `# Robots.txt for Ticket Bazaar - AI Crawler Optimized
 User-agent: *
 Allow: /
