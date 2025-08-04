@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { storage } from "../storage";
+import sanitizeHtml from "sanitize-html";
 
 /**
  * Middleware to check if user is authenticated
@@ -53,16 +54,44 @@ export function isAdmin(req: Request, res: Response, next: NextFunction) {
 
 /**
  * Middleware to sanitize user input and prevent XSS
+ * Uses sanitize-html library for robust XSS protection against various attack vectors
  */
 export function sanitizeInput(req: Request, res: Response, next: NextFunction) {
+  // Configure sanitize-html with a restrictive allowlist for ticket content
+  const sanitizeOptions = {
+    // Allow only safe HTML tags for ticket descriptions (if any HTML is needed)
+    allowedTags: ['b', 'i', 'em', 'strong', 'br', 'p'],
+    allowedAttributes: {},
+    // Remove all protocol handlers to prevent javascript:, data:, etc.
+    allowedSchemes: ['http', 'https'],
+    // Disallow all classes and IDs
+    allowedClasses: {},
+    // Decode HTML entities to catch encoded XSS attempts
+    decodeEntities: true,
+    // Remove any suspicious URLs
+    exclusiveFilter: (frame: any) => {
+      // Block any remaining javascript: or data: URLs
+      if (frame.attribs && frame.attribs.href && 
+          (frame.attribs.href.startsWith('javascript:') || 
+           frame.attribs.href.startsWith('data:'))) {
+        return true;
+      }
+      return false;
+    }
+  };
+
   const sanitizeString = (str: string): string => {
     if (typeof str !== 'string') return str;
-    // Remove script tags and dangerous HTML
-    return str
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-      .replace(/javascript:/gi, '')
-      .replace(/on\w+\s*=/gi, '')
+    
+    // Use sanitize-html for comprehensive XSS protection
+    // This will decode entities and remove dangerous HTML
+    const sanitized = sanitizeHtml(str, sanitizeOptions);
+    
+    // Additional cleanup for any remaining traces
+    return sanitized
+      .replace(/javascript:/gi, '')  // Extra protection against javascript: URLs
+      .replace(/data:text\/html/gi, '') // Block data: URLs with HTML content
+      .replace(/vbscript:/gi, '')    // Block VBScript
       .trim();
   };
 
