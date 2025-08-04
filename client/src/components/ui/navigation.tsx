@@ -194,7 +194,7 @@ export function Navigation() {
               </>
             )}
 
-            {!isAuthenticated && (
+            {!isAuthenticated && location !== "/login" && location !== "/auth" && (
               <motion.button
                 className="border-primary text-primary hover:bg-primary/10 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                 onClick={() => handleNavigation("/list-ticket")}
@@ -216,24 +216,26 @@ export function Navigation() {
             transition={{ duration: 0.3, delay: 0.2 }}
           >
 
-            <motion.div
-              className="flex items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-            >
+            {!isAuthenticated && location !== "/login" && location !== "/auth" && (
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="flex items-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
               >
-                <button
-                  className="border-primary text-primary hover:bg-primary/10 flex items-center justify-center gap-1 px-3 py-2 touch-target border border-input bg-background h-9 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                  onClick={() => handleNavigation("/list-ticket")}
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <span className="text-xs whitespace-nowrap">Sell</span>
-                </button>
+                  <button
+                    className="border-primary text-primary hover:bg-primary/10 flex items-center justify-center gap-1 px-3 py-2 touch-target border border-input bg-background h-9 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                    onClick={() => handleNavigation("/list-ticket")}
+                  >
+                    <span className="text-xs whitespace-nowrap">Sell</span>
+                  </button>
+                </motion.div>
               </motion.div>
-            </motion.div>
+            )}
 
             {isAuthenticated && (
               <motion.div
