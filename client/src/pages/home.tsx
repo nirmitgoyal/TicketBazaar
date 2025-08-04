@@ -623,7 +623,7 @@ export default function Home() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Search Ticket(or City)..."
+                  placeholder="Search Ticket/City..."
                   className="flex-1 p-2 pr-8 text-gray-900 placeholder-gray-500 border-none outline-none min-w-0"
                   aria-label="Search for event tickets by artist, team, venue, or event name"
                   value={searchQuery}
