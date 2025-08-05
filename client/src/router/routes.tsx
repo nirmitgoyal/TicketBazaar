@@ -35,6 +35,8 @@ const SecondHandTickets = createResilientLazyComponent(() => import("@/pages/sec
 const ConcertTicketsOnline = createResilientLazyComponent(() => import("@/pages/concert-tickets-online"), "concert-tickets-online");
 const PrivacySettings = createResilientLazyComponent(() => import("@/pages/privacy-settings"), "privacy-settings");
 
+// AEO (Answer Engine Optimization) pages
+const AEOOptimization = createResilientLazyComponent(() => import("@/pages/aeo-optimization"), "aeo-optimization");
 
 // Dashboard components with resilient loading
 const VerificationReport = createResilientLazyComponent(() => import("@/pages/verification-report"), "verification-report");
@@ -161,6 +163,10 @@ export function AppRoutes() {
       <LazyRoute path="/ticket-resale" component={TicketResale} />
       <LazyRoute path="/second-hand-tickets" component={SecondHandTickets} />
       <LazyRoute path="/concert-tickets-online" component={ConcertTicketsOnline} />
+      
+      {/* AEO (Answer Engine Optimization) Pages */}
+      <LazyRoute path="/aeo-optimization" component={AEOOptimization} />
+      <LazyRoute path="/knowledge-base" component={AEOOptimization} />
       
       {/* Legal pages */}
       <LazyRoute path="/terms-of-service" component={TermsOfService} />
