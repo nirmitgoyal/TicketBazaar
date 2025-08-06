@@ -127,9 +127,41 @@ async function testIntegration() {
     console.log(`   ❌ FAIL: Error - ${error.message}`);
   }
   
-  // Test 4: Production + ticketbazaar.co.in + non-API route = ALLOWED (200)
+  // Test 4: Production + ticketbazaar.co.in + /api/auth/google = ALLOWED (Exception)
   testsTotal++;
-  console.log('Test 4: Production + ticketbazaar.co.in + /test → Should return 200');
+  console.log('Test 4: Production + ticketbazaar.co.in + /api/auth/google → Should return 200');
+  try {
+    const result = await simulateRequest('/api/auth/google', 'ticketbazaar.co.in', 'production');
+    if (result.status === 200) {
+      console.log('   ✅ PASS: Google OAuth route correctly allowed (200)');
+      testsPassed++;
+    } else {
+      console.log(`   ❌ FAIL: Expected 200, got ${result.status}`);
+      console.log(`   Response:`, result);
+    }
+  } catch (error: any) {
+    console.log(`   ❌ FAIL: Error - ${error.message}`);
+  }
+  
+  // Test 5: Production + ticketbazaar.co.in + /api/auth/google/callback = ALLOWED (Exception)
+  testsTotal++;
+  console.log('Test 5: Production + ticketbazaar.co.in + /api/auth/google/callback → Should return 200');
+  try {
+    const result = await simulateRequest('/api/auth/google/callback', 'ticketbazaar.co.in', 'production');
+    if (result.status === 200) {
+      console.log('   ✅ PASS: Google OAuth callback route correctly allowed (200)');
+      testsPassed++;
+    } else {
+      console.log(`   ❌ FAIL: Expected 200, got ${result.status}`);
+      console.log(`   Response:`, result);
+    }
+  } catch (error: any) {
+    console.log(`   ❌ FAIL: Error - ${error.message}`);
+  }
+  
+  // Test 6: Production + ticketbazaar.co.in + non-API route = ALLOWED (200)
+  testsTotal++;
+  console.log('Test 6: Production + ticketbazaar.co.in + /test → Should return 200');
   try {
     const result = await simulateRequest('/test', 'ticketbazaar.co.in', 'production');
     if (result.status === 200) {

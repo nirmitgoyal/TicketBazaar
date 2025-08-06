@@ -135,9 +135,59 @@ function runTests() {
     console.log(`   ❌ FAIL: Error during test - ${error.message}`);
   }
   
-  // Test 4: Production + ticketbazaar.co.in + non-API route = ALLOWED
+  // Test 4: Production + ticketbazaar.co.in + /api/auth/google = ALLOWED (Exception)
   testsTotal++;
-  console.log('Test 4: Production + ticketbazaar.co.in + /dashboard → Should be ALLOWED');
+  console.log('Test 4: Production + ticketbazaar.co.in + /api/auth/google → Should be ALLOWED');
+  try {
+    const req = createMockReq('/api/auth/google', 'ticketbazaar.co.in', 'production');
+    const res = createMockRes();
+    const next = createMockNext();
+    
+    apiBypassMiddleware(req, res, next.next);
+    
+    // Should call next() for Google OAuth routes even in production
+    if (next.wasCalled() && !res.wasStatusCalled()) {
+      console.log('   ✅ PASS: Google OAuth route correctly allowed');
+      testsPassed++;
+    } else {
+      console.log('   ❌ FAIL: Google OAuth route was incorrectly blocked');
+      console.log(`      next() called: ${next.wasCalled()}, status called: ${res.wasStatusCalled()}`);
+    }
+    
+    // Restore environment
+    process.env.NODE_ENV = req.originalEnv;
+  } catch (error: any) {
+    console.log(`   ❌ FAIL: Error during test - ${error.message}`);
+  }
+  
+  // Test 5: Production + ticketbazaar.co.in + /api/auth/google/callback = ALLOWED (Exception)
+  testsTotal++;
+  console.log('Test 5: Production + ticketbazaar.co.in + /api/auth/google/callback → Should be ALLOWED');
+  try {
+    const req = createMockReq('/api/auth/google/callback', 'ticketbazaar.co.in', 'production');
+    const res = createMockRes();
+    const next = createMockNext();
+    
+    apiBypassMiddleware(req, res, next.next);
+    
+    // Should call next() for Google OAuth callback routes even in production
+    if (next.wasCalled() && !res.wasStatusCalled()) {
+      console.log('   ✅ PASS: Google OAuth callback route correctly allowed');
+      testsPassed++;
+    } else {
+      console.log('   ❌ FAIL: Google OAuth callback route was incorrectly blocked');
+      console.log(`      next() called: ${next.wasCalled()}, status called: ${res.wasStatusCalled()}`);
+    }
+    
+    // Restore environment
+    process.env.NODE_ENV = req.originalEnv;
+  } catch (error: any) {
+    console.log(`   ❌ FAIL: Error during test - ${error.message}`);
+  }
+  
+  // Test 6: Production + ticketbazaar.co.in + non-API route = ALLOWED
+  testsTotal++;
+  console.log('Test 6: Production + ticketbazaar.co.in + /dashboard → Should be ALLOWED');
   try {
     const req = createMockReq('/dashboard', 'ticketbazaar.co.in', 'production');
     const res = createMockRes();
