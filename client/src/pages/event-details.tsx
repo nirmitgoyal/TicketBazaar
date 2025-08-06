@@ -18,6 +18,20 @@ export default function EventDetails() {
   const { id } = useParams<{ id: string }>();
   const eventId = parseInt(id);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+  
+  // Check URL params to auto-open ticket modal
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const ticketParam = urlParams.get('ticket');
+    if (ticketParam) {
+      const ticketId = parseInt(ticketParam);
+      if (!isNaN(ticketId)) {
+        setSelectedTicketId(ticketId);
+        setIsModalOpen(true);
+      }
+    }
+  }, []);
 
   // Initialize analytics
   const { trackEvent, trackUserAction } = useAnalytics();
@@ -69,6 +83,14 @@ export default function EventDetails() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setSelectedTicketId(null);
+    
+    // Clean up URL parameters
+    const url = new URL(window.location.href);
+    url.searchParams.delete('ticket');
+    
+    // Update URL without causing a page reload
+    window.history.replaceState({}, '', url.toString());
   };
 
   if (eventLoading) {
@@ -290,6 +312,7 @@ export default function EventDetails() {
         eventId={eventId}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        selectedTicketId={selectedTicketId}
       />
     </div>
   );

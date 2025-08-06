@@ -53,6 +53,7 @@ interface TicketDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenSellerModal?: (ticket: Ticket) => void;
+  selectedTicketId?: number | null;
 }
 
 // Component to handle profile picture with proper fallback hierarchy
@@ -128,6 +129,7 @@ export function TicketDetailModal({
   isOpen,
   onClose,
   onOpenSellerModal,
+  selectedTicketId,
 }: TicketDetailModalProps) {
   // Auto-track view when modal opens (for the first ticket in the event)
   useAutoTrackView(eventId, { enabled: isOpen });
@@ -141,8 +143,11 @@ export function TicketDetailModal({
     enabled: !!eventId && isOpen,
   });
 
-  // Get event details from the first ticket (since events are embedded in tickets)
-  const firstTicket = tickets?.[0];
+  // Get event details from the selected ticket or first ticket
+  const selectedTicket = selectedTicketId 
+    ? tickets?.find(t => t.id === selectedTicketId)
+    : null;
+  const firstTicket = selectedTicket || tickets?.[0];
 
   // Fetch seller data for the first ticket
   const { data: seller } = useQuery<User>({

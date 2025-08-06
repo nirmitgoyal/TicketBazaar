@@ -100,6 +100,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const metricsRoutes = (await import("./routes/metrics")).default;
   apiRouter.use("/metrics", metricsRoutes);
 
+  // Import and register OG image generation routes
+  const ogImageRoutes = (await import("./routes/og-images.routes")).default;
+  apiRouter.use("/og", ogImageRoutes);
+
   // Import and register GEO-optimized sitemap routes
   const { generateSitemap, generateRobotsTxt, generateLLMsTxt } = await import("./routes/geo-optimized-sitemap");
   

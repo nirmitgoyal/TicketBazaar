@@ -2,6 +2,7 @@ import express, { type Express, type Request, type Response, type NextFunction }
 import fs from "fs";
 import path from "path";
 import { log } from "./utils";
+import { dynamicMetaTagsMiddleware } from "./middleware/dynamic-meta-tags.middleware";
 
 export function setupProduction(app: Express) {
   // In production, the built files are in dist/public
@@ -12,6 +13,9 @@ export function setupProduction(app: Express) {
       `Could not find the build directory: ${distPath}, make sure to build the client first`,
     );
   }
+
+  // Add dynamic meta tags middleware before static file serving
+  app.use(dynamicMetaTagsMiddleware);
 
   // Configure static file serving with proper MIME types and fallback handling
   app.use(express.static(distPath, {

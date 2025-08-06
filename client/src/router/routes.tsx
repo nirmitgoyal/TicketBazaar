@@ -9,6 +9,7 @@ import { createResilientLazyComponent } from "@/utils/error-recovery";
 const Home = createResilientLazyComponent(() => import("@/pages/home"), "home");
 const EventDetails = createResilientLazyComponent(() => import("@/pages/event-details"), "event-details");
 const EventMap = createResilientLazyComponent(() => import("@/pages/event-map"), "event-map");
+const TicketPage = createResilientLazyComponent(() => import("@/pages/ticket-page"), "ticket-page");
 
 const ListTicket = createResilientLazyComponent(() => import("@/pages/list-ticket"), "list-ticket");
 const MyTickets = createResilientLazyComponent(() => import("@/pages/my-tickets"), "my-tickets");
@@ -130,6 +131,8 @@ export function AppRoutes() {
       {/* Public routes */}
       <LazyRoute path="/" component={Home} />
       <LazyRoute path="/event/:id" component={EventDetails} />
+      <LazyRoute path="/events/:id" component={EventDetails} />
+      <LazyRoute path="/tickets/:id" component={TicketPage} />
       <LazyRoute path="/events/map" component={EventMap} />
       
       <LazyRoute path="/events/category/:category" component={Home} />
