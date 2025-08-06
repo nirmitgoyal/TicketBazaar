@@ -8,7 +8,8 @@ import { TicketCard } from "@/components/ticket-card";
 import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { SellerDetailsModal } from "@/components/seller-details-modal";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
-import { Loader2, AlertTriangle, MapPin, Search, X } from "lucide-react";
+import { SocialShare } from "@/components/social-share";
+import { Loader2, AlertTriangle, MapPin, Search, X, Share2 } from "lucide-react";
 import { AnimatedEmptyState, LoadingState } from "@/components/empty-states/animated-empty-state";
 import { FloatingBackground } from "@/components/empty-states/floating-elements";
 import { Badge } from "@/components/ui/badge";
@@ -472,6 +473,65 @@ export default function Home() {
     setSelectedEventId(null);
   };
 
+  const handleShareTicket = async (ticket: Ticket, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation(); // Prevent opening the modal
+    
+    const shareUrl = `${window.location.origin}/tickets/${ticket.id}`;
+    const shareText = `🎟️ ${ticket.eventTitle}\n📍 ${ticket.city}\n🗓️ ${new Date(ticket.eventDate).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long', 
+      day: 'numeric'
+    })}\n\nCheck it out on TicketBazaar!`;
+
+    // Try native Web Share API first
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: ticket.eventTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+        
+        trackUserAction("share", {
+          method: "native",
+          content_type: "ticket",
+          item_id: ticket.id.toString(),
+        });
+        return;
+      } catch (error) {
+        // User canceled or error occurred, fall back to copy
+      }
+    }
+
+    // Fallback to copying to clipboard
+    try {
+      await navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`);
+      toast({
+        title: "Link copied!",
+        description: "Ticket link has been copied to your clipboard.",
+      });
+      
+      trackUserAction("share", {
+        method: "copy",
+        content_type: "ticket", 
+        item_id: ticket.id.toString(),
+      });
+    } catch (error) {
+      // Final fallback - open WhatsApp
+      const whatsappMessage = `${shareText}\n\n${shareUrl}`;
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
+      window.open(whatsappUrl, '_blank');
+      
+      trackUserAction("share", {
+        method: "whatsapp",
+        content_type: "ticket",
+        item_id: ticket.id.toString(),
+      });
+    }
+  };
+
   const openSellerModal = (ticket: Ticket) => {
     // Check authentication before opening modal
     if (!isAuthenticated) {
@@ -749,9 +809,18 @@ export default function Home() {
                   .map((ticket) => (
                     <div
                       key={ticket.id}
-                      className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                      className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow relative"
                       onClick={() => openModal(ticket.id)}
                     >
+                      {/* Share icon in top-right corner */}
+                      <button
+                        onClick={(e) => handleShareTicket(ticket, e)}
+                        className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-gray-100 transition-colors z-10"
+                        aria-label="Share ticket"
+                      >
+                        <Share2 className="h-4 w-4 text-gray-600 hover:text-gray-800" />
+                      </button>
+                      
                       <div className="text-center">
                         <div className="text-2xl font-bold text-blue-600">
                           {String(
@@ -813,9 +882,18 @@ export default function Home() {
                 .map((ticket) => (
                   <div
                     key={ticket.id}
-                    className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                    className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow relative"
                     onClick={() => openModal(ticket.id)}
                   >
+                    {/* Share icon in top-right corner */}
+                    <button
+                      onClick={(e) => handleShareTicket(ticket, e)}
+                      className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-gray-100 transition-colors z-10"
+                      aria-label="Share ticket"
+                    >
+                      <Share2 className="h-4 w-4 text-gray-600 hover:text-gray-800" />
+                    </button>
+                    
                     <div className="text-center">
                       <div className="text-2xl font-bold text-blue-600">
                         {String(new Date(ticket.eventDate).getDate()).padStart(
@@ -941,9 +1019,18 @@ export default function Home() {
                     return (
                       <div
                         key={sampleTicket.id}
-                        className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                        className="bg-white rounded-lg border p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow relative"
                         onClick={() => openSellerModal(sampleTicket)}
                       >
+                        {/* Share icon in top-right corner */}
+                        <button
+                          onClick={(e) => handleShareTicket(sampleTicket, e)}
+                          className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-gray-100 transition-colors z-10"
+                          aria-label="Share ticket"
+                        >
+                          <Share2 className="h-4 w-4 text-gray-600 hover:text-gray-800" />
+                        </button>
+                        
                         <div className="text-center">
                           <div className="text-2xl font-bold text-blue-600">
                             {String(eventDate.getDate()).padStart(2, "0")}

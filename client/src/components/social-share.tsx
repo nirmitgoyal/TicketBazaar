@@ -61,7 +61,7 @@ export function SocialShare({
       return `${baseUrl}/tickets/${ticket.id}`;
     }
     if (event) {
-      return `${baseUrl}/events/${event.id}`;
+      return `${baseUrl}/event/${event.id}`;
     }
     return baseUrl;
   };
@@ -151,18 +151,20 @@ export function SocialShare({
 
   return (
     <div className="flex gap-1">
+      {/* Primary share button - Web Share API on supported devices */}
       {supportsWebShare && (
         <Button
           variant={variant}
           size="icon"
           className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-          title="Share via apps"
+          title="Share"
           onClick={shareViaWebAPI}
         >
           <Share2 className="h-3.5 w-3.5" />
         </Button>
       )}
       
+      {/* WhatsApp direct share - always available */}
       {showWhatsApp && (
         <Button
           variant={variant}
@@ -175,6 +177,7 @@ export function SocialShare({
         </Button>
       )}
       
+      {/* Copy link - universal fallback */}
       {showCopy && (
         <Button
           variant={variant}
@@ -186,8 +189,6 @@ export function SocialShare({
           <CopyLinkIcon className="h-3.5 w-3.5" />
         </Button>
       )}
-      
-      
     </div>
   );
 }

@@ -37,7 +37,6 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Ticket, User } from "@shared/schema";
-import { useQuery } from "@tanstack/react-query";
 import { TicketVerificationSection } from "./ticket-verification-section";
 import { PopularityMetrics } from "./popularity-metrics";
 import { SocialShare } from "./social-share";
@@ -46,7 +45,9 @@ import {
   usePopularityMetrics,
 } from "@/hooks/use-popularity-tracking";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 
 interface TicketDetailModalProps {
   eventId: number;
@@ -131,8 +132,48 @@ export function TicketDetailModal({
   onOpenSellerModal,
   selectedTicketId,
 }: TicketDetailModalProps) {
+  const [, setLocation] = useLocation();
+
   // Auto-track view when modal opens (for the first ticket in the event)
   useAutoTrackView(eventId, { enabled: isOpen });
+
+  // Handle URL updates when modal opens with a specific ticket
+  useEffect(() => {
+    if (isOpen && selectedTicketId) {
+      // Update URL to include ticket parameter
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('ticket', selectedTicketId.toString());
+      window.history.replaceState({}, '', currentUrl.toString());
+    }
+  }, [isOpen, selectedTicketId]);
+
+  // Handle browser back button
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handlePopState = (event: PopStateEvent) => {
+      // Check if we should close the modal based on URL
+      const currentUrl = new URL(window.location.href);
+      const ticketParam = currentUrl.searchParams.get('ticket');
+      
+      if (!ticketParam || !selectedTicketId) {
+        onClose();
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isOpen, selectedTicketId, onClose]);
+
+  // Enhanced onClose to handle URL cleanup
+  const handleClose = () => {
+    // Clean up URL parameters
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('ticket');
+    window.history.replaceState({}, '', currentUrl.toString());
+    
+    onClose();
+  };
 
   // Fetch availability metrics for the event
   const { data: popularityMetrics } = usePopularityMetrics(eventId);
@@ -235,7 +276,7 @@ export function TicketDetailModal({
 
   if (ticketsLoading) {
     return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto p-0 sm:m-6 m-4 sm:max-w-4xl max-w-[calc(100vw-32px)]">
           <DialogTitle className="sr-only">Loading Event Details</DialogTitle>
           <DialogDescription className="sr-only">
@@ -357,7 +398,7 @@ export function TicketDetailModal({
 
   if (!tickets || tickets.length === 0) {
     return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent
           className="max-w-4xl max-h-[85vh] overflow-y-auto p-0 sm:m-6 m-4 sm:max-w-4xl max-w-[calc(100vw-32px)]"
           data-testid="event-modal"
@@ -449,7 +490,7 @@ export function TicketDetailModal({
                 className="py-8"
               />
               <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
-                <Button variant="outline" onClick={onClose}>
+                <Button variant="outline" onClick={handleClose}>
                   Browse Other Events
                 </Button>
                 <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
@@ -465,7 +506,7 @@ export function TicketDetailModal({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
         className="max-w-4xl max-h-[85vh] overflow-y-auto p-0 sm:m-6 m-4 sm:max-w-4xl max-w-[calc(100vw-32px)]"
         data-testid="event-modal"

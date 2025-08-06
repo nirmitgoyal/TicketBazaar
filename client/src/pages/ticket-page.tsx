@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { MapPin, Calendar, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TicketDetailModal } from "@/components/ticket-detail-modal";
+import { SocialShare } from "@/components/social-share";
 import { Link } from "wouter";
 import { Ticket } from "@shared/schema";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -89,25 +90,15 @@ export default function TicketPage() {
     );
   }
 
-  // For direct ticket access, we'll redirect to the event page with the modal open
-  // This maintains consistency with existing UX while supporting direct URLs
-  useEffect(() => {
-    if (ticket) {
-      // Navigate to the event page and auto-open the ticket modal
-      setLocation(`/event/${ticket.id}?ticket=${ticketId}`);
-    }
-  }, [ticket, ticketId, setLocation]);
-
   // Generate SEO data for the ticket
   const eventData = {
-    id: ticket.id,
-    eventTitle: ticket.eventTitle,
-    eventDate: ticket.eventDate,
+    title: ticket.eventTitle,
+    description: `${ticket.eventTitle} at ${ticket.venue}, ${ticket.city || ''}. Section: ${ticket.section}${ticket.row ? `, Row: ${ticket.row}` : ''}${ticket.seat ? `, Seat: ${ticket.seat}` : ''}. Available on Ticket Bazaar.`,
+    date: ticket.eventDate.toISOString(),
     venue: ticket.venue,
-    city: ticket.city,
-    description: `${ticket.eventTitle} at ${ticket.venue}, ${ticket.city}. Section: ${ticket.section}${ticket.row ? `, Row: ${ticket.row}` : ''}${ticket.seat ? `, Seat: ${ticket.seat}` : ''}. Available on Ticket Bazaar.`,
-    price: ticket.price,
-    section: ticket.section
+    city: ticket.city || '',
+    category: ticket.category,
+    imageUrl: ticket.eventImageUrl || undefined
   };
 
   return (
@@ -115,30 +106,117 @@ export default function TicketPage() {
       {/* SEO Component for Ticket Page */}
       <EventSEO 
         event={eventData}
-        type="ticket"
-        ticketId={ticketId}
-        structuredData={{
-          event: generateEventStructuredData(eventData),
-          breadcrumb: generateBreadcrumbStructuredData([
-            { name: "Home", url: "/" },
-            { name: eventData.eventTitle, url: `/event/${ticket.id}` },
-            { name: "Ticket Details", url: `/tickets/${ticketId}` }
-          ]),
-          organization: generateOrganizationStructuredData()
-        }}
+        ticketCount={1}
       />
 
       <div className="container mx-auto px-4 py-8">
-        {/* Fallback content while redirecting */}
-        <div className="text-center">
-          <div className="animate-pulse">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              Loading ticket details...
-            </h1>
-            <p className="text-gray-600">
-              Redirecting to event page...
-            </p>
+        {/* Header with back navigation */}
+        <div className="mb-6">
+          <Link to={`/event/${ticket.id}`}>
+            <Button variant="ghost" className="mb-4">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Event
+            </Button>
+          </Link>
+          
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {ticket.eventTitle}
+              </h1>
+              <div className="flex items-center gap-4 text-gray-600 mb-4">
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-4 h-4" />
+                  <span>{formatDate(ticket.eventDate)}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <MapPin className="w-4 h-4" />
+                  <span>{ticket.venue}, {ticket.city}</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Share buttons for this specific ticket */}
+            <div className="flex items-center gap-2">
+              <SocialShare ticket={ticket} />
+            </div>
           </div>
+        </div>
+
+        {/* Ticket details card */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Ticket Details</h2>
+              <div className="space-y-3">
+                <div>
+                  <span className="font-medium text-gray-700">Section:</span>
+                  <span className="ml-2">{ticket.section}</span>
+                </div>
+                {ticket.row && (
+                  <div>
+                    <span className="font-medium text-gray-700">Row:</span>
+                    <span className="ml-2">{ticket.row}</span>
+                  </div>
+                )}
+                {ticket.seat && (
+                  <div>
+                    <span className="font-medium text-gray-700">Seat:</span>
+                    <span className="ml-2">{ticket.seat}</span>
+                  </div>
+                )}
+                <div>
+                  <span className="font-medium text-gray-700">Quantity:</span>
+                  <span className="ml-2">{ticket.quantity} ticket{ticket.quantity > 1 ? 's' : ''}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700">Transfer Method:</span>
+                  <span className="ml-2 capitalize">{ticket.transferMethod}</span>
+                </div>
+                {ticket.additionalInfo && (
+                  <div>
+                    <span className="font-medium text-gray-700">Additional Info:</span>
+                    <p className="ml-2 mt-1 text-gray-600">{ticket.additionalInfo}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Event Information</h2>
+              <div className="space-y-3">
+                <div>
+                  <span className="font-medium text-gray-700">Venue:</span>
+                  <span className="ml-2">{ticket.venue}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700">City:</span>
+                  <span className="ml-2">{ticket.city}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700">Category:</span>
+                  <span className="ml-2 capitalize">{ticket.category}</span>
+                </div>
+                {ticket.eventDescription && (
+                  <div>
+                    <span className="font-medium text-gray-700">Description:</span>
+                    <p className="ml-2 mt-1 text-gray-600">{ticket.eventDescription}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Call to action */}
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 text-center">
+          <h3 className="text-xl font-semibold mb-2">Interested in this ticket?</h3>
+          <p className="mb-4">Connect with the seller through our secure platform</p>
+          <Link to={`/event/${ticket.id}?ticket=${ticketId}`}>
+            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
+              View All Event Tickets
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

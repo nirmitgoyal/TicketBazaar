@@ -71,12 +71,27 @@ export default function EventDetails() {
     }
   };
 
-  const handleOpenModal = () => {
+    const handleOpenModal = (ticketId?: number) => {
     setIsModalOpen(true);
+    if (ticketId) {
+      setSelectedTicketId(ticketId);
+      // Update URL to include ticket parameter
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('ticket', ticketId.toString());
+      window.history.pushState({}, '', currentUrl.toString());
+    } else {
+      // Remove ticket parameter if opening without specific ticket
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.delete('ticket');
+      window.history.pushState({}, '', currentUrl.toString());
+    }
 
-    // Track when user views available tickets
+    // Track modal opening
     if (event) {
-      // Custom event tracking for ticket view
+      trackUserAction("view_item", {
+        eventId: event.id,
+        ticketId: ticketId || null,
+      });
       trackEvent("view_tickets", "Ticket Selection", event.title);
     }
   };
@@ -186,7 +201,7 @@ export default function EventDetails() {
           date: typeof event.eventDate === 'string' ? event.eventDate : event.eventDate.toISOString(),
           venue: event.venue,
           city: event.city || event.venue.split(',').pop()?.trim() || 'India',
-          imageUrl: event.eventImageUrl,
+          imageUrl: event.eventImageUrl || undefined,
           category: event.category
         }}
         ticketCount={availableTickets.length}
@@ -253,7 +268,7 @@ export default function EventDetails() {
                 <SocialShare event={event} variant="outline" />
 
                 <Button
-                  onClick={handleOpenModal}
+                  onClick={() => handleOpenModal()}
                   disabled={availableTickets.length === 0}
                 >
                   {availableTickets.length > 0
@@ -272,13 +287,25 @@ export default function EventDetails() {
           <h2 className="text-2xl font-bold mb-4">Compare Tickets</h2>
           <TicketComparison
             tickets={availableTickets}
-            event={event}
+            event={{
+              id: event.id,
+              title: event.title || event.eventTitle,
+              eventTitle: event.eventTitle,
+              eventDescription: event.eventDescription || undefined,
+              venue: event.venue,
+              venueAddress: event.venueAddress || undefined,
+              eventDate: event.eventDate,
+              category: event.category,
+              eventImageUrl: event.eventImageUrl || undefined,
+              city: event.city || undefined,
+              country: event.country || 'IN'
+            }}
             onSelectTicket={(ticket) => {
               trackUserAction("view_item", {
                 ticketId: ticket.id,
                 eventId: event.id,
               });
-              handleOpenModal();
+              handleOpenModal(ticket.id);
             }}
           />
         </div>
