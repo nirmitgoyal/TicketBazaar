@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { TicketService } from "../services/ticket.service";
 import { insertTicketSchema, ticketListingSchema } from "@shared/schema";
 import { storage } from "../storage";
+import { isSlugParam } from "@shared/utils/slug";
 import { z } from "zod";
 
 /**
@@ -76,12 +77,11 @@ export class TicketController {
    */
   getTicketById = async (req: Request, res: Response) => {
     try {
-      const ticketId = parseInt(req.params.id);
-      if (isNaN(ticketId) || ticketId <= 0) {
-        return res.status(400).json({ message: "Invalid ticket ID: must be a positive integer" });
-      }
-
-      const ticket = await this.ticketService.getTicketById(ticketId);
+      const param = req.params.id;
+      
+      // Use the new storage method that handles both IDs and slugs
+      const ticket = await storage.getTicketByIdOrSlug(param);
+      
       if (!ticket) {
         return res.status(404).json({ message: "Ticket not found" });
       }

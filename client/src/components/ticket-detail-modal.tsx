@@ -663,12 +663,12 @@ export function TicketDetailModal({
                       size="sm"
                       onClick={() => {
                         const instagramHandle = seller.instagram?.replace("@", "");
-                        window.open(`https://instagram.com/${instagramHandle}`, "_blank");
+                        window.open(`https://ig.me/m/${instagramHandle}`, "_blank");
                       }}
                       className="flex items-center gap-2 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-colors"
                     >
                       <Instagram className="h-4 w-4" />
-                      <span>{seller.instagram}</span>
+                      <span>Chat with {seller.instagram}</span>
                     </Button>
                   )}
                 </div>

@@ -92,7 +92,7 @@ export function SellerDetailsModal({ isOpen, onClose, ticket }: SellerDetailsMod
 
   const getInstagramUrl = (handle?: string) => {
     const cleanHandle = formatInstagramHandle(handle);
-    return cleanHandle ? `https://instagram.com/${cleanHandle}` : null;
+    return cleanHandle ? `https://ig.me/m/${cleanHandle}` : null;
   };
 
   return (

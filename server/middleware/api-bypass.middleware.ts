@@ -1,13 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
 
 /**
- * Middleware to ensure API routes bypass Vite development server
- * This prevents HTML responses for API endpoints
+ * Middleware to handle API access control and bypass Vite development server
+ * This prevents HTML responses for API endpoints and restricts access in production
  */
 export function apiBypassMiddleware(req: Request, res: Response, next: NextFunction) {
-  // Mark API requests to prevent Vite from intercepting them
+  // Check if this is an API request
   if (req.path.startsWith('/api/')) {
-    // Set headers to ensure JSON response
+    // In production, restrict API access on the ticketbazaar.co.in domain
+    const isProduction = process.env.NODE_ENV === 'production';
+    const host = req.get('host') || '';
+    const isProductionDomain = host.includes('ticketbazaar.co.in');
+    
+    if (isProduction && isProductionDomain) {
+      res.status(403).json({
+        success: false,
+        message: 'API access is restricted in production',
+        status: 403
+      });
+      return; // Don't call next() - stop the middleware chain
+    }
+    
+    // Set headers to ensure JSON response for allowed API requests
     res.setHeader('Content-Type', 'application/json');
     // Add flag to indicate this is an API request
     (req as any).isApiRequest = true;

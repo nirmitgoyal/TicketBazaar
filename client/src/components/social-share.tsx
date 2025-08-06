@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Ticket } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { CopyLinkIcon } from "@/components/ui/copy-link-icon";
-import { MessageCircle, Share2 } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
+import { Share2 } from "lucide-react";
 
 interface SocialShareProps {
   ticket?: Ticket;
@@ -58,7 +59,9 @@ export function SocialShare({
 
   const getShareUrl = () => {
     if (ticket) {
-      return `${baseUrl}/tickets/${ticket.id}`;
+      // Use slug if available, fallback to ID for backward compatibility
+      const urlParam = ticket.slug || ticket.id;
+      return `${baseUrl}/tickets/${urlParam}`;
     }
     if (event) {
       return `${baseUrl}/event/${event.id}`;
@@ -173,7 +176,7 @@ export function SocialShare({
           title="Share on WhatsApp"
           onClick={shareOnWhatsApp}
         >
-          <MessageCircle className="h-3.5 w-3.5" />
+          <WhatsAppIcon className="h-3.5 w-3.5" />
         </Button>
       )}
       

@@ -54,6 +54,7 @@ export const tickets = pgTable("tickets", {
   
   // Ticket details
   title: text("title").notNull(),
+  slug: text("slug").notNull().unique(), // URL-friendly slug generated from eventTitle
   
   // Event details embedded in tickets
   eventTitle: text("event_title").notNull(),
@@ -96,6 +97,7 @@ export const tickets = pgTable("tickets", {
 }, (table) => ({
   sellerIdx: index("tickets_seller_id_idx").on(table.sellerId),
   titleIdx: index("tickets_title_idx").on(table.title),
+  slugIdx: index("tickets_slug_idx").on(table.slug),
   eventTitleIdx: index("tickets_event_title_idx").on(table.eventTitle),
   categoryIdx: index("tickets_category_idx").on(table.category),
   eventDateIdx: index("tickets_event_date_idx").on(table.eventDate),
@@ -286,7 +288,9 @@ export const insertTicketPopularitySchema = createInsertSchema(ticketPopularity)
 export type InsertUser = Omit<z.infer<typeof insertUserSchema>, 'id'>;
 export type User = typeof users.$inferSelect;
 
-export type InsertTicket = z.infer<typeof insertTicketSchema>;
+export type InsertTicket = Omit<z.infer<typeof insertTicketSchema>, 'slug'> & {
+  slug?: string; // Slug is optional for inserts since it's auto-generated
+};
 export type Ticket = typeof tickets.$inferSelect;
 
 export type InsertContactRequest = z.infer<typeof insertContactRequestSchema>;
