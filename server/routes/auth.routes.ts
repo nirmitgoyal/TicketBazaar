@@ -43,10 +43,19 @@ if (isGoogleOAuthEnabled) {
   router.get("/google/callback",
     (req, res, next) => {
       // Store returnTo value before authentication to prevent loss during session regeneration
+      // Also store it in a backup location to handle session regeneration
       const sessionReturnTo = req.session.returnTo;
+      
+      // Store the returnTo in a temporary property on the request object
+      // This survives session regeneration since it's on the request, not session
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (req as any).__returnTo = sessionReturnTo;
+      
       console.log("[AUTH] Google callback received, session returnTo:", sessionReturnTo);
       console.log("[AUTH] Google callback query params:", req.query);
       console.log("[AUTH] Session ID:", req.sessionID);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console.log("[AUTH] Backup returnTo stored:", (req as any).__returnTo);
       
       passport.authenticate("google", (err, user, info) => {
         if (err) {
@@ -71,8 +80,11 @@ if (isGoogleOAuthEnabled) {
             console.error("[AUTH] OAuth internal error:", err.oauthError);
           }
           
-          const failureRedirect = sessionReturnTo 
-            ? `/login?returnTo=${encodeURIComponent(sessionReturnTo)}&error=${errorType}&message=${encodeURIComponent(errorMessage)}`
+          // Use backup returnTo if session returnTo is lost
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const finalReturnTo = sessionReturnTo || (req as any).__returnTo;
+          const failureRedirect = finalReturnTo 
+            ? `/login?returnTo=${encodeURIComponent(finalReturnTo)}&error=${errorType}&message=${encodeURIComponent(errorMessage)}`
             : `/login?error=${errorType}&message=${encodeURIComponent(errorMessage)}`;
           return res.redirect(failureRedirect);
         }
@@ -81,8 +93,12 @@ if (isGoogleOAuthEnabled) {
           // No user returned
           console.log("[AUTH] No user returned from authentication");
           console.log("[AUTH] Info:", info);
-          const failureRedirect = sessionReturnTo 
-            ? `/login?returnTo=${encodeURIComponent(sessionReturnTo)}&error=authentication_failed`
+          
+          // Use backup returnTo if session returnTo is lost
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const finalReturnTo = sessionReturnTo || (req as any).__returnTo;
+          const failureRedirect = finalReturnTo 
+            ? `/login?returnTo=${encodeURIComponent(finalReturnTo)}&error=authentication_failed`
             : '/login?error=authentication_failed';
           return res.redirect(failureRedirect);
         }
@@ -94,17 +110,29 @@ if (isGoogleOAuthEnabled) {
             return next(err);
           }
           
-          // Use the captured sessionReturnTo as the primary source of truth
-          // This was captured before session regeneration, so it's reliable
-          const redirectUrl = sessionReturnTo || "/";
+          // Use multiple fallback sources for returnTo
+          // 1. Captured sessionReturnTo (before any session regeneration)
+          // 2. Current session returnTo (might be lost due to regeneration)
+          // 3. Backup returnTo stored on request object
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const finalReturnTo = sessionReturnTo || req.session.returnTo || (req as any).__returnTo;
+          const redirectUrl = finalReturnTo || "/";
+          
           console.log("[AUTH] Login successful, preparing redirect to:", redirectUrl);
           console.log("[AUTH] Session ID after login:", req.sessionID);
           console.log("[AUTH] Session returnTo after login:", req.session.returnTo);
           console.log("[AUTH] Using captured sessionReturnTo:", sessionReturnTo);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          console.log("[AUTH] Backup returnTo:", (req as any).__returnTo);
+          console.log("[AUTH] Final returnTo resolved:", finalReturnTo);
           console.log("[AUTH] Final redirect URL:", redirectUrl);
           
           // Clear the returnTo from session after capturing it
           delete req.session.returnTo;
+          
+          // Clean up the backup returnTo
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          delete (req as any).__returnTo;
           
           // Save session before redirect
           req.session.save((err) => {
