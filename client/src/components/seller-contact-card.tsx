@@ -63,7 +63,7 @@ export function SellerContactCard({
   const handleInstagramClick = () => {
     if (seller.instagram) {
       const instagramHandle = seller.instagram.replace("@", "");
-      window.open(`https://instagram.com/${instagramHandle}`, "_blank");
+      window.open(`https://ig.me/m/${instagramHandle}`, "_blank");
     }
   };
 
@@ -141,7 +141,7 @@ export function SellerContactCard({
                 >
                   <Instagram className="h-4 w-4 text-pink-600" />
                   <div className="text-left">
-                    <div className="font-medium">View Instagram Profile</div>
+                    <div className="font-medium">Message on Instagram</div>
                     <div className="text-xs text-textSecondary">
                       @{seller.instagram?.replace("@", "")}
                     </div>

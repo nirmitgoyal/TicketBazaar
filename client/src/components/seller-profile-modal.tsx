@@ -53,7 +53,7 @@ export function SellerProfileModal({
   const handleInstagramClick = () => {
     if (seller?.instagram) {
       const instagramHandle = seller.instagram.replace("@", "");
-      window.open(`https://instagram.com/${instagramHandle}`, "_blank");
+      window.open(`https://ig.me/m/${instagramHandle}`, "_blank");
     }
   };
 
@@ -145,7 +145,7 @@ export function SellerProfileModal({
                         className="border-pink-200 hover:bg-pink-50 flex-1"
                       >
                         <Instagram className="h-4 w-4 mr-2 text-pink-600" />
-                        Instagram
+                        Message on Instagram
                       </Button>
                     )}
                   </div>

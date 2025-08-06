@@ -20,6 +20,7 @@ import {
   type InsertTicketView,
   type InsertTicketPopularity,
 } from "@shared/schema";
+import { generateSlug, generateUniqueSlug } from "@shared/utils/slug";
 import { db } from "./db";
 import { logger } from "./utils/logger";
 import { cacheService } from "./services/cache.service";
@@ -56,6 +57,8 @@ export interface IStorage {
 
   // Ticket operations (events are embedded in tickets)
   getTicket(id: number): Promise<Ticket | undefined>;
+  getTicketBySlug(slug: string): Promise<Ticket | undefined>;
+  getTicketByIdOrSlug(param: string): Promise<Ticket | undefined>;
   getTicketsByEvent(eventTitle: string): Promise<Ticket[]>;
   getTicketsBySeller(sellerId: number): Promise<Ticket[]>;
   getAllAvailableTickets(): Promise<Ticket[]>;
@@ -319,6 +322,22 @@ export class DatabaseStorage implements IStorage {
     return ticket || undefined;
   }
 
+  async getTicketBySlug(slug: string): Promise<Ticket | undefined> {
+    const [ticket] = await db.select().from(tickets).where(eq(tickets.slug, slug));
+    return ticket || undefined;
+  }
+
+  async getTicketByIdOrSlug(param: string): Promise<Ticket | undefined> {
+    // First, check if it's a numeric ID
+    const numericId = parseInt(param);
+    if (!isNaN(numericId) && param === numericId.toString()) {
+      return this.getTicket(numericId);
+    }
+    
+    // Otherwise, treat it as a slug
+    return this.getTicketBySlug(param);
+  }
+
   async getTicketsByEvent(eventTitle: string): Promise<Ticket[]> {
     return await db.select().from(tickets)
       .where(eq(tickets.eventTitle, eventTitle))
@@ -394,7 +413,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTicket(ticket: InsertTicket): Promise<Ticket> {
-    const [newTicket] = await db.insert(tickets).values(ticket as any).returning();
+    // Generate a unique slug from the event title
+    const baseSlug = generateSlug(ticket.eventTitle);
+    
+    // Get existing slugs to ensure uniqueness
+    const existingSlugs = await db
+      .select({ slug: tickets.slug })
+      .from(tickets)
+      .then(results => results.map(r => r.slug));
+    
+    const uniqueSlug = generateUniqueSlug(baseSlug, existingSlugs);
+    
+    // Add the slug to the ticket data
+    const ticketWithSlug = {
+      ...ticket,
+      slug: uniqueSlug
+    };
+    
+    const [newTicket] = await db.insert(tickets).values(ticketWithSlug as any).returning();
     return newTicket;
   }
 

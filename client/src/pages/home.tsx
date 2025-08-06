@@ -477,7 +477,9 @@ export default function Home() {
     e.preventDefault();
     e.stopPropagation(); // Prevent opening the modal
     
-    const shareUrl = `${window.location.origin}/tickets/${ticket.id}`;
+    // Use slug if available, fallback to ID for backward compatibility
+    const urlParam = ticket.slug || ticket.id;
+    const shareUrl = `${window.location.origin}/tickets/${urlParam}`;
     const shareText = `🎟️ ${ticket.eventTitle}\n📍 ${ticket.city}\n🗓️ ${new Date(ticket.eventDate).toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
