@@ -119,12 +119,8 @@ export const MobileAdSenseAnchor: React.FC<MobileAdSenseAnchorProps> = ({
         throw new Error('AdSense not initialized');
       }
 
-      // Enable anchor ads through AdSense API
-      window.adsbygoogle.push({
-        google_ad_client: adClient,
-        enable_page_level_ads: true,
-        tag_partner: "site_kit"
-      });
+      // AdSense auto-ads will now be controlled by portal settings only
+      // Removed manual enable_page_level_ads to prevent override of portal configuration
 
       // If specific slot provided, also push slot-based ad
       if (adSlot && adRef.current) {
