@@ -94,15 +94,13 @@ if (isGoogleOAuthEnabled) {
             return next(err);
           }
           
-          // Important: Store the returnTo value before session operations
-          // Session regeneration during login might lose the returnTo value
-          const finalReturnTo = sessionReturnTo || req.session.returnTo || '/';
-          console.log("[AUTH] Login successful, preparing redirect to:", finalReturnTo);
+          // Use the captured sessionReturnTo as the primary source of truth
+          // This was captured before session regeneration, so it's reliable
+          const redirectUrl = sessionReturnTo || "/";
+          console.log("[AUTH] Login successful, preparing redirect to:", redirectUrl);
           console.log("[AUTH] Session ID after login:", req.sessionID);
           console.log("[AUTH] Session returnTo after login:", req.session.returnTo);
-          
-          // Use the sessionReturnTo (captured before authentication) as priority
-          const redirectUrl = sessionReturnTo || finalReturnTo || req.session.returnTo || "/";
+          console.log("[AUTH] Using captured sessionReturnTo:", sessionReturnTo);
           console.log("[AUTH] Final redirect URL:", redirectUrl);
           
           // Clear the returnTo from session after capturing it
