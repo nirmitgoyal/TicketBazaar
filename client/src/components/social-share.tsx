@@ -117,10 +117,52 @@ export function SocialShare({
     }
   };
 
+  const shareViaWebAPI = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: ticket ? `${ticket.eventTitle} - Ticket` : event ? event.eventTitle : "TicketBazaar",
+          text: shareMessage,
+          url: shareUrl,
+        });
+        
+        toast({
+          title: "Shared!",
+          description: "Content shared successfully",
+          duration: 2000,
+        });
+      } catch (err) {
+        // User cancelled share or error occurred
+        if (err instanceof Error && err.name !== 'AbortError') {
+          console.warn('Share failed:', err);
+          // Fall back to copy link
+          copyToClipboard(e);
+        }
+      }
+    }
+  };
+
+  // Check if Web Share API is supported
+  const supportsWebShare = typeof navigator !== 'undefined' && 'share' in navigator;
+
   
 
   return (
     <div className="flex gap-1">
+      {supportsWebShare && (
+        <Button
+          variant={variant}
+          size="icon"
+          className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+          title="Share via apps"
+          onClick={shareViaWebAPI}
+        >
+          <Share2 className="h-3.5 w-3.5" />
+        </Button>
+      )}
+      
       {showWhatsApp && (
         <Button
           variant={variant}
@@ -129,7 +171,7 @@ export function SocialShare({
           title="Share on WhatsApp"
           onClick={shareOnWhatsApp}
         >
-          <Share2 className="h-3.5 w-3.5" />
+          <MessageCircle className="h-3.5 w-3.5" />
         </Button>
       )}
       
