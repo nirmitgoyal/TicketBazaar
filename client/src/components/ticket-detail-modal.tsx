@@ -663,12 +663,63 @@ export function TicketDetailModal({
                       size="sm"
                       onClick={() => {
                         const instagramHandle = seller.instagram?.replace("@", "");
-                        window.open(`https://ig.me/m/${instagramHandle}`, "_blank");
+                        
+                        // Detect if device is mobile
+                        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+                          navigator.userAgent
+                        ) || window.innerWidth <= 768;
+
+                        if (isMobile) {
+                          // Try to open Instagram app first
+                          const instagramAppUrl = `instagram://user?username=${instagramHandle}`;
+                          const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
+                          
+                          // Create a hidden iframe to test if the app opens
+                          const iframe = document.createElement('iframe');
+                          iframe.style.display = 'none';
+                          iframe.src = instagramAppUrl;
+                          document.body.appendChild(iframe);
+                          
+                          // Set a timeout to fallback to web version if app doesn't open
+                          let appOpened = false;
+                          const timeout = setTimeout(() => {
+                            if (!appOpened) {
+                              window.open(instagramWebUrl, '_blank');
+                            }
+                            document.body.removeChild(iframe);
+                          }, 1000);
+                          
+                          // If the page loses focus, the app likely opened
+                          const handleVisibilityChange = () => {
+                            if (document.hidden) {
+                              appOpened = true;
+                              clearTimeout(timeout);
+                              document.body.removeChild(iframe);
+                              document.removeEventListener('visibilitychange', handleVisibilityChange);
+                            }
+                          };
+                          
+                          document.addEventListener('visibilitychange', handleVisibilityChange);
+                          
+                          // Alternative method: try direct navigation for iOS
+                          if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                            try {
+                              window.location.href = instagramAppUrl;
+                            } catch (e) {
+                              // If direct navigation fails, the timeout will handle the fallback
+                            }
+                          }
+                        } else {
+                          // Desktop: Open Instagram profile in new tab
+                          const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
+                          window.open(instagramWebUrl, '_blank');
+                        }
                       }}
                       className="flex items-center gap-2 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-colors"
                     >
                       <Instagram className="h-4 w-4" />
-                      <span>Chat with {seller.instagram}</span>
+                      <span className="hidden sm:inline">Chat with {seller.instagram}</span>
+                      <span className="sm:hidden">Instagram</span>
                     </Button>
                   )}
                 </div>
