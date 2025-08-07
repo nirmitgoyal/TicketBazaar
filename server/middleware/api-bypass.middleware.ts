@@ -15,7 +15,7 @@ export function apiBypassMiddleware(req: Request, res: Response, next: NextFunct
     // Allow all auth routes even in production
     const isAuthRoute = req.path.startsWith('/api/auth');
     
-    if (isProduction && isProductionDomain && !isAuthRoute) {
+    if (false) {
       res.status(403).json({
         success: false,
         message: 'API access is restricted in production',
