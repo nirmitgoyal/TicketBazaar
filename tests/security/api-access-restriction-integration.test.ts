@@ -159,9 +159,41 @@ async function testIntegration() {
     console.log(`   ❌ FAIL: Error - ${error.message}`);
   }
   
-  // Test 6: Production + ticketbazaar.co.in + non-API route = ALLOWED (200)
+  // Test 6: Production + ticketbazaar.co.in + /api/auth/user = ALLOWED (Auth route exception)
   testsTotal++;
-  console.log('Test 6: Production + ticketbazaar.co.in + /test → Should return 200');
+  console.log('Test 6: Production + ticketbazaar.co.in + /api/auth/user → Should return 200');
+  try {
+    const result = await simulateRequest('/api/auth/user', 'ticketbazaar.co.in', 'production');
+    if (result.status === 200) {
+      console.log('   ✅ PASS: Auth user route correctly allowed (200)');
+      testsPassed++;
+    } else {
+      console.log(`   ❌ FAIL: Expected 200, got ${result.status}`);
+      console.log(`   Response:`, result);
+    }
+  } catch (error: any) {
+    console.log(`   ❌ FAIL: Error - ${error.message}`);
+  }
+  
+  // Test 7: Production + ticketbazaar.co.in + /api/auth/logout = ALLOWED (Auth route exception)
+  testsTotal++;
+  console.log('Test 7: Production + ticketbazaar.co.in + /api/auth/logout → Should return 200');
+  try {
+    const result = await simulateRequest('/api/auth/logout', 'ticketbazaar.co.in', 'production');
+    if (result.status === 200) {
+      console.log('   ✅ PASS: Auth logout route correctly allowed (200)');
+      testsPassed++;
+    } else {
+      console.log(`   ❌ FAIL: Expected 200, got ${result.status}`);
+      console.log(`   Response:`, result);
+    }
+  } catch (error: any) {
+    console.log(`   ❌ FAIL: Error - ${error.message}`);
+  }
+  
+  // Test 8: Production + ticketbazaar.co.in + non-API route = ALLOWED (200)
+  testsTotal++;
+  console.log('Test 8: Production + ticketbazaar.co.in + /test → Should return 200');
   try {
     const result = await simulateRequest('/test', 'ticketbazaar.co.in', 'production');
     if (result.status === 200) {

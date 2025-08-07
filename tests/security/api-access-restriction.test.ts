@@ -185,9 +185,59 @@ function runTests() {
     console.log(`   ❌ FAIL: Error during test - ${error.message}`);
   }
   
-  // Test 6: Production + ticketbazaar.co.in + non-API route = ALLOWED
+  // Test 6: Production + ticketbazaar.co.in + /api/auth/user = ALLOWED (Auth route exception)
   testsTotal++;
-  console.log('Test 6: Production + ticketbazaar.co.in + /dashboard → Should be ALLOWED');
+  console.log('Test 6: Production + ticketbazaar.co.in + /api/auth/user → Should be ALLOWED');
+  try {
+    const req = createMockReq('/api/auth/user', 'ticketbazaar.co.in', 'production');
+    const res = createMockRes();
+    const next = createMockNext();
+    
+    apiBypassMiddleware(req, res, next.next);
+    
+    // Should call next() for auth routes even in production
+    if (next.wasCalled() && !res.wasStatusCalled()) {
+      console.log('   ✅ PASS: Auth user route correctly allowed');
+      testsPassed++;
+    } else {
+      console.log('   ❌ FAIL: Auth user route was incorrectly blocked');
+      console.log(`      next() called: ${next.wasCalled()}, status called: ${res.wasStatusCalled()}`);
+    }
+    
+    // Restore environment
+    process.env.NODE_ENV = req.originalEnv;
+  } catch (error: any) {
+    console.log(`   ❌ FAIL: Error during test - ${error.message}`);
+  }
+  
+  // Test 7: Production + ticketbazaar.co.in + /api/auth/logout = ALLOWED (Auth route exception)
+  testsTotal++;
+  console.log('Test 7: Production + ticketbazaar.co.in + /api/auth/logout → Should be ALLOWED');
+  try {
+    const req = createMockReq('/api/auth/logout', 'ticketbazaar.co.in', 'production');
+    const res = createMockRes();
+    const next = createMockNext();
+    
+    apiBypassMiddleware(req, res, next.next);
+    
+    // Should call next() for auth routes even in production
+    if (next.wasCalled() && !res.wasStatusCalled()) {
+      console.log('   ✅ PASS: Auth logout route correctly allowed');
+      testsPassed++;
+    } else {
+      console.log('   ❌ FAIL: Auth logout route was incorrectly blocked');
+      console.log(`      next() called: ${next.wasCalled()}, status called: ${res.wasStatusCalled()}`);
+    }
+    
+    // Restore environment
+    process.env.NODE_ENV = req.originalEnv;
+  } catch (error: any) {
+    console.log(`   ❌ FAIL: Error during test - ${error.message}`);
+  }
+  
+  // Test 8: Production + ticketbazaar.co.in + non-API route = ALLOWED
+  testsTotal++;
+  console.log('Test 8: Production + ticketbazaar.co.in + /dashboard → Should be ALLOWED');
   try {
     const req = createMockReq('/dashboard', 'ticketbazaar.co.in', 'production');
     const res = createMockRes();
