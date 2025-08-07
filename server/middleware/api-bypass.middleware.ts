@@ -12,10 +12,10 @@ export function apiBypassMiddleware(req: Request, res: Response, next: NextFunct
     const host = req.get('host') || '';
     const isProductionDomain = host.includes('ticketbazaar.co.in');
     
-    // Allow Google OAuth routes even in production
-    const isGoogleAuthRoute = req.path.startsWith('/api/auth/google');
+    // Allow all auth routes even in production
+    const isAuthRoute = req.path.startsWith('/api/auth');
     
-    if (isProduction && isProductionDomain && !isGoogleAuthRoute) {
+    if (isProduction && isProductionDomain && !isAuthRoute) {
       res.status(403).json({
         success: false,
         message: 'API access is restricted in production',
