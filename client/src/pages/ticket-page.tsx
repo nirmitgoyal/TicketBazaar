@@ -139,6 +139,21 @@ export default function TicketPage() {
       />
 
       <div className="container mx-auto px-4 py-8">
+        {/* Event Image */}
+        {ticket.eventImageUrl && (
+          <div className="mb-8 rounded-lg overflow-hidden shadow-lg">
+            <img 
+              src={ticket.eventImageUrl} 
+              alt={`${ticket.eventTitle} event image`}
+              className="w-full h-64 md:h-80 object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-start justify-between">
