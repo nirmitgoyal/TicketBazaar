@@ -54,10 +54,6 @@ const ticketFormSchema = z.object({
   eventDate: z.string().min(1, "Event date is required"),
   eventTime: z.string().min(1, "Event time is required"),
   category: z.string().min(1, "Category is required"),
-  eventImageUrl: z.string()
-    .optional()
-    .refine((val) => !val || z.string().url().safeParse(val).success, "Invalid image URL")
-    .refine((val) => !val || /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i.test(val), "Image URL must be a valid image file"),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   city: z.string().optional(),
@@ -115,7 +111,6 @@ export default function ListTicket() {
       eventTime: "",
       venue: "",
       venueAddress: "",
-      eventImageUrl: "",
       latitude: undefined,
       longitude: undefined,
       category: "concerts",
@@ -424,7 +419,7 @@ export default function ListTicket() {
         additionalInfo: data.additionalInfo || '',
         trending: false,
         sellingFast: false,
-        eventImageUrl: data.eventImageUrl || '',
+        eventImageUrl: '',
         isTransferrable: data.isTransferrable,
         showContactInfo: data.showContactInfo,
         status: data.status
@@ -749,26 +744,6 @@ export default function ListTicket() {
                                 <SelectItem value="others">Others</SelectItem>
                               </SelectContent>
                             </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="eventImageUrl"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Event Image URL (Optional)</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="https://example.com/event-image.jpg"
-                                {...field}
-                              />
-                            </FormControl>
-                            <p className="text-sm text-gray-500">
-                              Provide a direct link to an image for your event. Supported formats: JPG, JPEG, PNG, WebP, GIF
-                            </p>
                             <FormMessage />
                           </FormItem>
                         )}
