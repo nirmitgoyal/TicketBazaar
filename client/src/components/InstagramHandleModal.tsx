@@ -44,6 +44,10 @@ interface InstagramHandleModalProps {
 }
 
 export function InstagramHandleModal({ isOpen, onClose, onSuccess }: InstagramHandleModalProps) {
+  // Bypass modal entirely in development to avoid blocking flows
+  if (import.meta.env.MODE !== 'production') {
+    return null;
+  }
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();

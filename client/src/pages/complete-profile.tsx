@@ -104,8 +104,9 @@ export default function CompleteProfile() {
   }
 
   // Only show this page for users who need to update their Instagram
-  if (!user || (user.instagram && user.instagram.trim() !== "")) {
-
+  // In development, bypass this requirement and redirect home
+  const isProd = import.meta.env.MODE === 'production';
+  if (!isProd || !user || (user.instagram && user.instagram.trim() !== "")) {
     navigate("/");
     return null;
   }

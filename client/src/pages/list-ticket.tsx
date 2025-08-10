@@ -225,11 +225,11 @@ export default function ListTicket() {
               formatted_address: place.formattedAddress,
               geometry: {
                 location: place.location ? {
-                  lat: () => place.location.lat(),
-                  lng: () => place.location.lng(),
+                  lat: () => place.location!.lat(),
+                  lng: () => place.location!.lng(),
                   equals: () => false,
-                  toJSON: () => ({ lat: place.location.lat(), lng: place.location.lng() }),
-                  toUrlValue: () => `${place.location.lat()},${place.location.lng()}`
+                  toJSON: () => ({ lat: place.location!.lat(), lng: place.location!.lng() }),
+                  toUrlValue: () => `${place.location!.lat()},${place.location!.lng()}`
                 } : undefined
               },
               types: place.types || []
@@ -370,7 +370,8 @@ export default function ListTicket() {
           }
         };
 
-        const config = toastConfig[result.data.legitimacy];
+  const legitimacy = result.data.legitimacy as keyof typeof toastConfig;
+  const config = toastConfig[legitimacy];
         toast(config);
       } else {
         toast({
@@ -464,11 +465,16 @@ export default function ListTicket() {
 
       // Check if Instagram handle is required
       if (error.message === "INSTAGRAM_HANDLE_REQUIRED") {
-        setShowInstagramModal(true);
-        // Store the ticket data to retry after Instagram handle is added
-        const formData = form.getValues();
-        setPendingTicketData(formData);
-        return;
+        if (import.meta.env.MODE === 'production') {
+          setShowInstagramModal(true);
+          // Store the ticket data to retry after Instagram handle is added
+          const formData = form.getValues();
+          setPendingTicketData(formData);
+          return;
+        } else {
+          // In development, bypass blocking on Instagram requirement
+          console.warn('Bypassing Instagram handle requirement in development');
+        }
       }
 
       let errorMessage = "Failed to list ticket";

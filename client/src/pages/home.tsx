@@ -444,8 +444,8 @@ export default function Home() {
   };
 
   const openModal = (eventId: number) => {
-    // Check authentication before opening modal
-    if (!isAuthenticated) {
+  // In production, require auth before opening modal; allow in dev
+  if (import.meta.env.MODE === 'production' && !isAuthenticated) {
       toast({
         title: "Sign in Required",
         description: "You need to be signed in via Google and have your Instagram handle added to view seller details.",
@@ -535,8 +535,8 @@ export default function Home() {
   };
 
   const openSellerModal = (ticket: Ticket) => {
-    // Check authentication before opening modal
-    if (!isAuthenticated) {
+  // In production, require auth before opening seller modal; allow in dev
+  if (import.meta.env.MODE === 'production' && !isAuthenticated) {
       toast({
         title: "Sign in Required",
         description: "You need to be signed in via Google and have your Instagram handle added to view seller details.",

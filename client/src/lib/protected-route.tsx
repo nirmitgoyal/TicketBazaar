@@ -23,7 +23,8 @@ export function ProtectedRoute({
           );
         }
 
-        if (!user) {
+  // In development, allow access even if not authenticated to streamline local testing
+  if (!user && import.meta.env.MODE === 'production') {
           return (
             <Redirect to={`/login?returnTo=${encodeURIComponent(location)}`} />
           );

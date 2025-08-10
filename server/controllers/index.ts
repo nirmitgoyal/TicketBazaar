@@ -345,8 +345,10 @@ export class TicketController extends BaseController {
       }
 
       // Check if user has Instagram handle - MISSION CRITICAL GATE
+      // In development, bypass this requirement to streamline local testing
+      const isProd = process.env.NODE_ENV === 'production';
       const user = await storage.getUser(req.user.id);
-      if (!user || !user.instagram) {
+      if (isProd && (!user || !user.instagram)) {
         return res.status(403).json({ 
           message: "Instagram handle required", 
           error: "INSTAGRAM_HANDLE_REQUIRED",

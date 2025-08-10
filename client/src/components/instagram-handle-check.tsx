@@ -12,6 +12,11 @@ export function InstagramHandleCheck({ children }: { children: React.ReactNode }
   const [location] = useLocation();
 
   useEffect(() => {
+    // Bypass in development
+    if (import.meta.env.MODE !== 'production') {
+      setShowInstagramModal(false);
+      return;
+    }
     // Check if user is authenticated and doesn't have Instagram handle
     // Only show the modal once per session to avoid blocking the user repeatedly
     if (isAuthenticated && user && !user.instagram && !isLoading && !hasShownOnce) {

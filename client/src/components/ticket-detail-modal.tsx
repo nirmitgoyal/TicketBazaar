@@ -406,18 +406,18 @@ export function TicketDetailModal({
           {/* Hero Section */}
           <div className="relative">
             {firstTicket?.eventImageUrl && (
-              <div className="h-48 md:h-64 overflow-hidden rounded-t-lg">
+              <div className="relative h-48 md:h-64 overflow-hidden rounded-t-lg">
                 <img
                   src={firstTicket.eventImageUrl}
                   alt={firstTicket.eventTitle}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
               </div>
             )}
 
             {/* Header Content */}
-            <div className="p-6 pb-4">
+            <div className="relative z-10 p-6 pb-4">
               <DialogHeader className="space-y-3">
                 <DialogTitle className="text-2xl md:text-3xl font-bold leading-tight">
                   {firstTicket?.eventTitle || "Event Details"}
@@ -521,13 +521,13 @@ export function TicketDetailModal({
         {/* Hero Section */}
         <div className="relative">
           {firstTicket?.eventImageUrl && (
-            <div className="h-48 md:h-64 overflow-hidden rounded-t-lg">
+            <div className="relative h-48 md:h-64 overflow-hidden rounded-t-lg">
               <img
                 src={firstTicket.eventImageUrl}
                 alt={firstTicket.eventTitle}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
             </div>
           )}
 
@@ -545,7 +545,7 @@ export function TicketDetailModal({
           </div>
 
           {/* Header Content */}
-          <div className="p-6 pb-4">
+          <div className="relative z-10 p-6 pb-4">
             <DialogHeader className="space-y-3">
               <DialogTitle className="text-2xl md:text-3xl font-bold leading-tight">
                 {firstTicket?.eventTitle || "Available Tickets"}
@@ -648,7 +648,7 @@ export function TicketDetailModal({
 
             {/* Seller Information */}
             {seller && (
-              <div className="mt-4 p-4 bg-secondary/20 rounded-lg border border-border">
+              <div className="relative z-10 mt-4 p-4 bg-secondary/20 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <SellerProfilePicture seller={seller} />
