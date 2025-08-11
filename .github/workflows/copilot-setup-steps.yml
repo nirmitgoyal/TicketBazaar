@@ -84,31 +84,8 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketbazaar_test
         run: |
-          # Load test data if script exists
-          if [ -f "scripts/init-test-db.ts" ]; then
-            echo "Loading test data..."
-            npx tsx scripts/init-test-db.ts
-            echo "✅ Test data loaded"
-          else
-            echo "ℹ️ No test data script found"
-          fi
+          echo "ℹ️ Test data loading has been removed - no test data scripts available"
         continue-on-error: true
-
-      # =============================================================================
-      # TESTING TOOLS SETUP
-      # =============================================================================
-      
-      - name: 🎭 Install Playwright Browsers
-        run: |
-          echo "Installing Playwright browsers..."
-          npx playwright install chromium firefox webkit --with-deps
-          echo "✅ Playwright browsers installed"
-
-      - name: 🧪 Verify Testing Environment
-        run: |
-          echo "Verifying testing setup..."
-          npx playwright --version
-          echo "✅ Testing environment ready"
 
       # =============================================================================
       # BUILD TOOLS PREPARATION
@@ -150,8 +127,8 @@ jobs:
           echo "  • ESBuild: $(npx esbuild --version)"
           echo ""
           
-          echo "🧪 Testing Tools:"
-          echo "  • Playwright: $(npx playwright --version)"
+          echo "🧪 Testing Infrastructure:"
+          echo "  • Testing has been removed from this project"
           echo ""
           
           echo "🗄️ Database:"
@@ -168,7 +145,6 @@ jobs:
           echo "  ✅ React + TypeScript Frontend (Vite)"
           echo "  ✅ Express.js + TypeScript Backend (ESBuild)"
           echo "  ✅ PostgreSQL Database + Drizzle ORM"
-          echo "  ✅ Playwright E2E Testing Framework"
           echo "  ✅ Tailwind CSS Styling System"
           echo "  ✅ Authentication System (Passport.js)"
           echo "  ✅ Payment Integration (Stripe + Razorpay)"
@@ -194,8 +170,8 @@ jobs:
           
           ### Testing
           ```bash
-          npm run test               # Run Playwright E2E tests
-          npm run test:e2e-ui        # Run tests with UI
+          # Testing infrastructure has been removed from this project
+          # No test commands available
           ```
           
           ### Database
@@ -230,9 +206,9 @@ jobs:
           - **Migrations**: `migrations/` directory
           
           ### Testing
-          - **Framework**: Playwright
-          - **Tests**: `tests/e2e/` directory
-          - **Browsers**: Chromium, Firefox, WebKit
+          - **Framework**: None (testing infrastructure removed)
+          - **Tests**: No test directory
+          - **Browsers**: N/A
           
           ## 🔧 Key Configuration Files
           
@@ -241,7 +217,6 @@ jobs:
           - `vite.config.ts` - Vite build configuration
           - `tailwind.config.ts` - Tailwind CSS configuration
           - `drizzle.config.ts` - Database configuration
-          - `playwright.config.ts` - Test configuration
           
           ## 🎯 Main Features
           
