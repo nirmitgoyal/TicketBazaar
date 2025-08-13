@@ -21,7 +21,7 @@ function createMockReq(path: string, host: string, nodeEnv = 'production') {
 function createMockRes() {
   let statusCode = 200;
   let jsonResponse: any = null;
-  let headers: any = {};
+  const headers: any = {};
   let statusCalled = false;
   
   return {

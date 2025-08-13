@@ -302,7 +302,7 @@ export function SearchBar({
       onSearch(query.trim(), filters);
       setIsSearching(false);
     } else {
-      let searchPath = "/?";
+      const searchPath = "/?";
       const params = new URLSearchParams();
 
       // Add params from filters

@@ -6,8 +6,69 @@ This implementation addresses the requirement to redirect users to Instagram DM 
 
 ## Problem Statement
 
-- **Current behavior**: Instagram DM button redirects to login page on Instagram's built-in browser
-- **Required behavior**: When clicked on mobile (especially Instagram browser), open Instagram app with pre-filled DM message including ticket details
+- **Previous behavior**: Instagram DM button used complex deep link detection that was unreliable on mobile browsers
+- **Issue reported**: Clicking DM button on mobile browsers (like Google Chrome App) opened Instagram app but didn't navigate to the seller's DM page
+- **Required behavior**: When clicked on mobile (especially Instagram browser), open Instagram app with pre-filled DM message including ticket details, or fallback gracefully to web DM
+
+## Solution Implementation
+
+### ✅ FIXED VERSION (v2.0)
+
+#### Key Changes Made:
+1. **Simplified Mobile Logic**: Removed complex iframe detection and timeout mechanisms
+2. **Reliable URL Format**: Use `ig.me` URLs which Instagram handles consistently
+3. **Consistent Behavior**: Both components now use the same simplified approach
+
+#### Components Updated:
+- `client/src/components/seller-contact-card.tsx`
+- `client/src/components/ticket-detail-modal.tsx`
+
+#### New Implementation Logic:
+
+**Mobile/Instagram Browser:**
+```typescript
+const igMeUrl = `https://ig.me/m/${instagramHandle}?text=${message}`;
+
+if (isInstagramBrowser) {
+  // Direct navigation for Instagram's built-in browser
+  try {
+    window.location.href = igMeUrl;
+  } catch (e) {
+    window.open(igMeUrl, '_blank');
+  }
+} else {
+  // For other mobile browsers - ig.me handles app/web redirection automatically
+  window.open(igMeUrl, '_blank');
+}
+```
+
+**Desktop:**
+```typescript
+// ticket-detail-modal.tsx: Opens Instagram profile
+window.open(`https://www.instagram.com/${instagramHandle}/`, '_blank', 'noopener');
+
+// seller-contact-card.tsx: Opens DM directly
+window.open(`https://ig.me/m/${instagramHandle}?text=${message}`, '_blank');
+```
+
+### 🔧 Why This Fix Works
+
+1. **`ig.me` URLs are more reliable**: Instagram's own URL shortener handles app detection automatically
+2. **No complex detection needed**: Instagram handles the app vs web decision internally
+3. **Consistent cross-platform**: Works the same way across different mobile browsers and Instagram versions
+4. **Simplified codebase**: Removed 50+ lines of complex detection logic per component
+
+### 📱 Expected Behavior After Fix
+
+**Mobile Chrome/Safari/Other browsers:**
+- Click DM button → Opens `ig.me` URL → Instagram detects app and opens DM in app, OR opens web DM if app not installed
+
+**Instagram's built-in browser:**
+- Click DM button → Direct navigation to `ig.me` → Opens DM in Instagram app seamlessly
+
+**Desktop:**
+- Click DM button in ticket modal → Opens seller's Instagram profile in new tab
+- Click DM button in seller card → Opens DM in new tab via `ig.me`
 
 ## Solution Implementation
 

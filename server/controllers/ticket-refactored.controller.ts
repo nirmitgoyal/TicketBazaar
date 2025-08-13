@@ -39,7 +39,7 @@ export class RefactoredTicketController extends BaseCrudController<Ticket> {
       const offset = (page - 1) * limit;
 
       // Build query with filters
-      let conditions = [];
+      const conditions = [];
       
       // Only show available tickets
       conditions.push(eq(tickets.status, 'available'));
