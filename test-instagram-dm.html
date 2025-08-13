@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram DM Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        button {
+            background: #E1306C;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 0;
+            display: block;
+            width: 100%;
+        }
+        button:hover {
+            background: #C13584;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Instagram DM Redirection Test</h1>
+    
+    <div class="info">
+        <strong>Test Instagram Handle:</strong> test_user<br>
+        <strong>Sample Ticket:</strong> Concert at Madison Square Garden<br>
+        <strong>User Agent:</strong> <span id="userAgent"></span><br>
+        <strong>Device Type:</strong> <span id="deviceType"></span><br>
+        <strong>Instagram Browser:</strong> <span id="instagramBrowser"></span>
+    </div>
+
+    <button onclick="testInstagramDM()">Test Instagram DM Redirection</button>
+    
+    <button onclick="simulateMobile()">Simulate Mobile User Agent</button>
+    
+    <button onclick="simulateInstagramBrowser()">Simulate Instagram Browser</button>
+    
+    <div id="log"></div>
+
+    <script>
+        // Initialize display
+        updateDeviceInfo();
+
+        function updateDeviceInfo() {
+            document.getElementById('userAgent').textContent = navigator.userAgent;
+            
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+            document.getElementById('deviceType').textContent = isMobile ? 'Mobile' : 'Desktop';
+            
+            const isInstagramBrowser = /Instagram/i.test(navigator.userAgent);
+            document.getElementById('instagramBrowser').textContent = isInstagramBrowser ? 'Yes' : 'No';
+        }
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += '<div class="info">' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function testInstagramDM() {
+            const instagramHandle = 'test_user';
+            
+            // Create pre-filled message with ticket information
+            const ticketUrl = window.location.href;
+            const message = encodeURIComponent(
+                `Hi! I'm interested in your ticket for "Concert at Madison Square Garden" on ${new Date().toLocaleDateString()}. Could you please share more details? ${ticketUrl}`
+            );
+            
+            log('Testing Instagram DM with handle: @' + instagramHandle);
+            log('Pre-filled message: ' + decodeURIComponent(message));
+            
+            // Detect if device is mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+                navigator.userAgent
+            ) || window.innerWidth <= 768;
+            
+            // Check if we're in Instagram's built-in browser
+            const isInstagramBrowser = /Instagram/i.test(navigator.userAgent);
+            
+            log('Mobile detected: ' + isMobile);
+            log('Instagram browser detected: ' + isInstagramBrowser);
+            
+            if (isMobile || isInstagramBrowser) {
+                log('Attempting mobile app opening...');
+                
+                const instagramDMAppUrl = `instagram://direct-message?recipient=${instagramHandle}&text=${message}`;
+                const igMeUrl = `https://ig.me/m/${instagramHandle}?text=${message}`;
+                
+                log('App URL: ' + instagramDMAppUrl);
+                log('Fallback URL: ' + igMeUrl);
+                
+                // Special handling for Instagram's built-in browser
+                if (isInstagramBrowser) {
+                    log('Using Instagram browser direct navigation...');
+                    try {
+                        window.location.href = instagramDMAppUrl;
+                        setTimeout(() => {
+                            log('Fallback to ig.me URL...');
+                            window.open(igMeUrl, '_blank');
+                        }, 1000);
+                    } catch (e) {
+                        log('Direct navigation failed, using fallback...');
+                        window.open(igMeUrl, '_blank');
+                    }
+                } else {
+                    log('Using iframe detection method...');
+                    
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = instagramDMAppUrl;
+                    document.body.appendChild(iframe);
+                    
+                    let appOpened = false;
+                    const timeout = setTimeout(() => {
+                        if (!appOpened) {
+                            log('App did not open, using fallback...');
+                            window.open(igMeUrl, '_blank');
+                        }
+                        document.body.removeChild(iframe);
+                    }, 1500);
+                    
+                    const handleVisibilityChange = () => {
+                        if (document.hidden) {
+                            appOpened = true;
+                            clearTimeout(timeout);
+                            log('App opened successfully!');
+                            document.body.removeChild(iframe);
+                            document.removeEventListener('visibilitychange', handleVisibilityChange);
+                        }
+                    };
+                    
+                    document.addEventListener('visibilitychange', handleVisibilityChange);
+                    
+                    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                        log('iOS detected, trying direct navigation...');
+                        try {
+                            window.location.href = instagramDMAppUrl;
+                        } catch (e) {
+                            log('iOS direct navigation failed: ' + e.message);
+                        }
+                    }
+                }
+            } else {
+                log('Desktop detected, opening ig.me URL...');
+                const desktopUrl = `https://ig.me/m/${instagramHandle}?text=${message}`;
+                log('Desktop URL: ' + desktopUrl);
+                window.open(desktopUrl, '_blank');
+            }
+        }
+
+        function simulateMobile() {
+            Object.defineProperty(navigator, 'userAgent', {
+                value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1',
+                configurable: true
+            });
+            updateDeviceInfo();
+            log('Simulated iPhone user agent');
+        }
+
+        function simulateInstagramBrowser() {
+            Object.defineProperty(navigator, 'userAgent', {
+                value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 239.1.0.10.109 (iPhone12,1; iOS 14_7_1; en_US; en-US; scale=2.00; 828x1792; 382468104)',
+                configurable: true
+            });
+            updateDeviceInfo();
+            log('Simulated Instagram in-app browser');
+        }
+    </script>
+</body>
+</html>

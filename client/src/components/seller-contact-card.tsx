@@ -63,7 +63,86 @@ export function SellerContactCard({
   const handleInstagramClick = () => {
     if (seller.instagram) {
       const instagramHandle = seller.instagram.replace("@", "");
-      window.open(`https://ig.me/m/${instagramHandle}`, "_blank");
+      
+      // Create pre-filled message with ticket information
+      const ticketUrl = `${window.location.origin}/tickets/${ticket.id}`;
+      const message = encodeURIComponent(
+        `Hi! I'm interested in your ticket for "${ticket.eventTitle}" on ${new Date(ticket.eventDate).toLocaleDateString()}. Could you please share more details? ${ticketUrl}`
+      );
+      
+      // Detect if device is mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || window.innerWidth <= 768;
+      
+      // Check if we're in Instagram's built-in browser
+      const isInstagramBrowser = /Instagram/i.test(navigator.userAgent);
+      
+      if (isMobile || isInstagramBrowser) {
+        // For mobile devices and Instagram's built-in browser, try to open Instagram app
+        const instagramAppUrl = `instagram://user?username=${instagramHandle}`;
+        const instagramDMAppUrl = `instagram://direct-message?recipient=${instagramHandle}&text=${message}`;
+        const igMeUrl = `https://ig.me/m/${instagramHandle}?text=${message}`;
+        const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
+        
+        // Function to attempt app opening with fallback
+        const tryOpenInstagramApp = () => {
+          // Create a hidden iframe to test app availability
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = instagramDMAppUrl;
+          document.body.appendChild(iframe);
+          
+          let appOpened = false;
+          const timeout = setTimeout(() => {
+            if (!appOpened) {
+              // Fallback: try ig.me URL which handles both app and web
+              window.open(igMeUrl, '_blank');
+            }
+            document.body.removeChild(iframe);
+          }, 1500);
+          
+          // Listen for visibility change (indicates app opened)
+          const handleVisibilityChange = () => {
+            if (document.hidden) {
+              appOpened = true;
+              clearTimeout(timeout);
+              document.body.removeChild(iframe);
+              document.removeEventListener('visibilitychange', handleVisibilityChange);
+            }
+          };
+          
+          document.addEventListener('visibilitychange', handleVisibilityChange);
+          
+          // For iOS, also try direct navigation
+          if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            try {
+              window.location.href = instagramDMAppUrl;
+            } catch (e) {
+              // Iframe method will handle the fallback
+            }
+          }
+        };
+        
+        // Special handling for Instagram's built-in browser
+        if (isInstagramBrowser) {
+          // In Instagram's built-in browser, direct navigation often works better
+          try {
+            window.location.href = instagramDMAppUrl;
+            // Set a fallback timer
+            setTimeout(() => {
+              window.open(igMeUrl, '_blank');
+            }, 1000);
+          } catch (e) {
+            window.open(igMeUrl, '_blank');
+          }
+        } else {
+          tryOpenInstagramApp();
+        }
+      } else {
+        // Desktop: Open ig.me URL which will redirect appropriately
+        window.open(`https://ig.me/m/${instagramHandle}?text=${message}`, '_blank');
+      }
     }
   };
 
