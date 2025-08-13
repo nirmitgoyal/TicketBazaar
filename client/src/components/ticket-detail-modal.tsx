@@ -738,8 +738,8 @@ export function TicketDetailModal({
                             tryOpenInstagramDM();
                           }
                         } else {
-                          // Desktop: Open ig.me URL with message which will redirect appropriately
-                          window.open(`https://ig.me/m/${instagramHandle}?text=${message}`, '_blank');
+                          // Desktop: Open seller's Instagram profile in a new tab
+                          window.open(`https://www.instagram.com/${instagramHandle}/`, '_blank', 'noopener');
                         }
                       }}
                       className="flex items-center gap-2 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-colors"
