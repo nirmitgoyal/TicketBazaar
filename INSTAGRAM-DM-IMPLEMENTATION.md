@@ -75,7 +75,7 @@ Pre-filled messages include:
 
 Example:
 ```
-Hi! I'm interested in your ticket for "Concert at Madison Square Garden" on 8/13/2025. Could you please share more details? https://ticketbazaar.com/event/123?ticket=456
+Hi! I'm interested in your ticket for "Concert at Madison Square Garden" on 8/13/2025. Could you please share more details? https://ticketbazaar.co.in/tickets/2-silver-ground-tickets-of-travis-scott-circus-maximus-tour-mumbai 
 ```
 
 ## Testing
