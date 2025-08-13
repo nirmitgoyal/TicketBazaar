@@ -679,63 +679,23 @@ export function TicketDetailModal({
                         const isInstagramBrowser = /Instagram/i.test(navigator.userAgent);
 
                         if (isMobile || isInstagramBrowser) {
-                          // For mobile devices and Instagram's built-in browser, try to open Instagram app for DM
-                          const instagramDMAppUrl = `instagram://direct-message?recipient=${instagramHandle}&text=${message}`;
+                          // For mobile devices and Instagram's built-in browser, use ig.me URL for reliable DM opening
                           const igMeUrl = `https://ig.me/m/${instagramHandle}?text=${message}`;
-                          
-                          // Function to attempt app opening with fallback
-                          const tryOpenInstagramDM = () => {
-                            // Create a hidden iframe to test app availability
-                            const iframe = document.createElement('iframe');
-                            iframe.style.display = 'none';
-                            iframe.src = instagramDMAppUrl;
-                            document.body.appendChild(iframe);
-                            
-                            let appOpened = false;
-                            const timeout = setTimeout(() => {
-                              if (!appOpened) {
-                                // Fallback: try ig.me URL which handles both app and web
-                                window.open(igMeUrl, '_blank');
-                              }
-                              document.body.removeChild(iframe);
-                            }, 1500);
-                            
-                            // Listen for visibility change (indicates app opened)
-                            const handleVisibilityChange = () => {
-                              if (document.hidden) {
-                                appOpened = true;
-                                clearTimeout(timeout);
-                                document.body.removeChild(iframe);
-                                document.removeEventListener('visibilitychange', handleVisibilityChange);
-                              }
-                            };
-                            
-                            document.addEventListener('visibilitychange', handleVisibilityChange);
-                            
-                            // For iOS, also try direct navigation
-                            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                              try {
-                                window.location.href = instagramDMAppUrl;
-                              } catch (e) {
-                                // Iframe method will handle the fallback
-                              }
-                            }
-                          };
                           
                           // Special handling for Instagram's built-in browser
                           if (isInstagramBrowser) {
-                            // In Instagram's built-in browser, direct navigation often works better
+                            // In Instagram's built-in browser, try direct navigation to ig.me
                             try {
-                              window.location.href = instagramDMAppUrl;
-                              // Set a fallback timer
-                              setTimeout(() => {
-                                window.open(igMeUrl, '_blank');
-                              }, 1000);
+                              window.location.href = igMeUrl;
                             } catch (e) {
                               window.open(igMeUrl, '_blank');
                             }
                           } else {
-                            tryOpenInstagramDM();
+                            // For other mobile browsers, use ig.me which Instagram will handle appropriately
+                            // This URL works reliably across different Instagram app versions and will:
+                            // 1. Open Instagram app with DM if app is installed
+                            // 2. Open Instagram web DM if app is not installed
+                            window.open(igMeUrl, '_blank');
                           }
                         } else {
                           // Desktop: Open seller's Instagram profile in a new tab

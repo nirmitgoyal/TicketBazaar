@@ -374,7 +374,7 @@ export class TicketController extends BaseController {
       }
 
       // Get the ticket
-      let ticket = await storage.getTicket(id);
+      const ticket = await storage.getTicket(id);
       if (!ticket) {
         return this.sendError(res, "Ticket not found", 404);
       }

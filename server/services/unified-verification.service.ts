@@ -486,7 +486,7 @@ class EnhancedVerificationStrategy extends BasicVerificationStrategy {
     // Analyze response times, communication quality, etc.
     // This is a simplified version
     const findings: string[] = [];
-    let score = 75;
+    const score = 75;
     
     // In a real implementation, analyze actual communication data
     findings.push('Communication analysis pending');
