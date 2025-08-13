@@ -664,62 +664,89 @@ export function TicketDetailModal({
                       onClick={() => {
                         const instagramHandle = seller.instagram?.replace("@", "");
                         
+                        // Create pre-filled message with ticket information
+                        const ticketUrl = `${window.location.origin}/event/${eventId}${selectedTicketId ? `?ticket=${selectedTicketId}` : ''}`;
+                        const message = encodeURIComponent(
+                          `Hi! I'm interested in your ticket for "${firstTicket?.eventTitle}" on ${firstTicket?.eventDate ? new Date(firstTicket.eventDate).toLocaleDateString() : 'the event date'}. Could you please share more details? ${ticketUrl}`
+                        );
+                        
                         // Detect if device is mobile
                         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
                           navigator.userAgent
                         ) || window.innerWidth <= 768;
+                        
+                        // Check if we're in Instagram's built-in browser
+                        const isInstagramBrowser = /Instagram/i.test(navigator.userAgent);
 
-                        if (isMobile) {
-                          // Try to open Instagram app first
-                          const instagramAppUrl = `instagram://user?username=${instagramHandle}`;
-                          const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
+                        if (isMobile || isInstagramBrowser) {
+                          // For mobile devices and Instagram's built-in browser, try to open Instagram app for DM
+                          const instagramDMAppUrl = `instagram://direct-message?recipient=${instagramHandle}&text=${message}`;
+                          const igMeUrl = `https://ig.me/m/${instagramHandle}?text=${message}`;
                           
-                          // Create a hidden iframe to test if the app opens
-                          const iframe = document.createElement('iframe');
-                          iframe.style.display = 'none';
-                          iframe.src = instagramAppUrl;
-                          document.body.appendChild(iframe);
-                          
-                          // Set a timeout to fallback to web version if app doesn't open
-                          let appOpened = false;
-                          const timeout = setTimeout(() => {
-                            if (!appOpened) {
-                              window.open(instagramWebUrl, '_blank');
-                            }
-                            document.body.removeChild(iframe);
-                          }, 1000);
-                          
-                          // If the page loses focus, the app likely opened
-                          const handleVisibilityChange = () => {
-                            if (document.hidden) {
-                              appOpened = true;
-                              clearTimeout(timeout);
+                          // Function to attempt app opening with fallback
+                          const tryOpenInstagramDM = () => {
+                            // Create a hidden iframe to test app availability
+                            const iframe = document.createElement('iframe');
+                            iframe.style.display = 'none';
+                            iframe.src = instagramDMAppUrl;
+                            document.body.appendChild(iframe);
+                            
+                            let appOpened = false;
+                            const timeout = setTimeout(() => {
+                              if (!appOpened) {
+                                // Fallback: try ig.me URL which handles both app and web
+                                window.open(igMeUrl, '_blank');
+                              }
                               document.body.removeChild(iframe);
-                              document.removeEventListener('visibilitychange', handleVisibilityChange);
+                            }, 1500);
+                            
+                            // Listen for visibility change (indicates app opened)
+                            const handleVisibilityChange = () => {
+                              if (document.hidden) {
+                                appOpened = true;
+                                clearTimeout(timeout);
+                                document.body.removeChild(iframe);
+                                document.removeEventListener('visibilitychange', handleVisibilityChange);
+                              }
+                            };
+                            
+                            document.addEventListener('visibilitychange', handleVisibilityChange);
+                            
+                            // For iOS, also try direct navigation
+                            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                              try {
+                                window.location.href = instagramDMAppUrl;
+                              } catch (e) {
+                                // Iframe method will handle the fallback
+                              }
                             }
                           };
                           
-                          document.addEventListener('visibilitychange', handleVisibilityChange);
-                          
-                          // Alternative method: try direct navigation for iOS
-                          if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                          // Special handling for Instagram's built-in browser
+                          if (isInstagramBrowser) {
+                            // In Instagram's built-in browser, direct navigation often works better
                             try {
-                              window.location.href = instagramAppUrl;
+                              window.location.href = instagramDMAppUrl;
+                              // Set a fallback timer
+                              setTimeout(() => {
+                                window.open(igMeUrl, '_blank');
+                              }, 1000);
                             } catch (e) {
-                              // If direct navigation fails, the timeout will handle the fallback
+                              window.open(igMeUrl, '_blank');
                             }
+                          } else {
+                            tryOpenInstagramDM();
                           }
                         } else {
-                          // Desktop: Open Instagram profile in new tab
-                          const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
-                          window.open(instagramWebUrl, '_blank');
+                          // Desktop: Open ig.me URL with message which will redirect appropriately
+                          window.open(`https://ig.me/m/${instagramHandle}?text=${message}`, '_blank');
                         }
                       }}
                       className="flex items-center gap-2 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-colors"
                     >
                       <Instagram className="h-4 w-4" />
-                      <span className="hidden sm:inline">Chat with {seller.instagram}</span>
-                      <span className="sm:hidden">Instagram</span>
+                      <span className="hidden sm:inline">Send DM to {seller.instagram}</span>
+                      <span className="sm:hidden">DM</span>
                     </Button>
                   )}
                 </div>
