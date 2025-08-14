@@ -12,13 +12,18 @@ This implementation addresses the requirement to redirect users to Instagram DM 
 
 ## Solution Implementation
 
-### ✅ FIXED VERSION (v3.0) - Deep Link Implementation
+### ✅ FIXED VERSION (v4.0) - Improved Deep Link Implementation
+
+#### Latest Issues Reported & Fixed:
+- **Instagram in-built browser**: Deep links were not working, causing login page redirects
+- **Mobile browsers**: Timeout approach caused double-opening issues and poor UX
+- **App detection**: Previous method was unreliable for detecting if Instagram app opened
 
 #### Key Changes Made:
-1. **Mobile Deep Link**: Updated to use `instagram://user?username=` deep link format for mobile browsers
-2. **Profile Focus**: Changed primary action from DM to opening seller's Instagram profile on mobile
-3. **Improved Fallback**: Better error handling and fallback to web version
-4. **Consistent Behavior**: Standardized behavior across both components
+1. **Instagram Browser Fix**: Direct web profile opening instead of deep link attempts
+2. **Improved App Detection**: Window blur event detection for mobile browsers
+3. **Reduced Timeout**: From 1000ms to 600ms for better user experience
+4. **Eliminated Double-Opening**: Smarter fallback prevents multiple tabs/apps opening
 
 #### Components Updated:
 - `client/src/components/seller-contact-card.tsx`
@@ -26,28 +31,39 @@ This implementation addresses the requirement to redirect users to Instagram DM 
 
 #### New Implementation Logic:
 
-**Mobile/Instagram Browser:**
+**Instagram Built-in Browser (FIXED):**
 ```typescript
-const sanitizedUsername = encodeURIComponent(instagramHandle);
-const instagramAppUrl = `instagram://user?username=${sanitizedUsername}`;
-const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
-
 if (isInstagramBrowser) {
-  // Direct navigation for Instagram's built-in browser
-  try {
-    window.location.href = instagramAppUrl;
-  } catch (e) {
-    window.open(instagramWebUrl, '_blank');
-  }
-} else {
-  // For other mobile browsers - try app, fallback to web
-  try {
-    window.location.href = instagramAppUrl;
-    setTimeout(() => {
+  // Instagram's built-in browser: Deep links don't work reliably, use web profile directly
+  window.open(instagramWebUrl, '_blank');
+}
+```
+
+**Mobile Browsers (IMPROVED):**
+```typescript
+else {
+  // Mobile browsers: Use improved app detection with window blur
+  let appOpened = false;
+  
+  const handleBlur = () => {
+    appOpened = true;
+    window.removeEventListener('blur', handleBlur);
+  };
+  
+  window.addEventListener('blur', handleBlur);
+  
+  // Try to open the Instagram app
+  window.location.href = instagramAppUrl;
+  
+  // Check if app opened after a short delay
+  setTimeout(() => {
+    window.removeEventListener('blur', handleBlur);
+    if (!appOpened) {
+      // App didn't open, fallback to web version
       window.open(instagramWebUrl, '_blank');
-    }, 1000);
-  } catch (e) {
-    window.open(instagramWebUrl, '_blank');
+    }
+  }, 600);
+}
   }
 }
 ```
@@ -64,20 +80,22 @@ window.open(`https://ig.me/m/${instagramHandle}?text=${message}`, '_blank');
 
 ### 🔧 Why This Fix Works
 
-1. **Direct App Deep Links**: Uses native Instagram deep link `instagram://user?username=` which directly opens user profiles
-2. **No DM Complexity**: Avoids DM-specific URLs that may redirect to login page on mobile browsers
-3. **Proper URL Encoding**: Ensures usernames with special characters are handled correctly
-4. **Reliable Fallback**: Falls back to web Instagram profile if app is not available
-5. **Timeout Mechanism**: Provides fallback after reasonable wait time for app detection
+1. **Instagram Browser Recognition**: Detects Instagram's WebView and handles it specially
+2. **Direct Web Profile for Instagram Browser**: Avoids deep link issues in Instagram's limited WebView
+3. **Window Blur Detection**: More reliable method to detect if mobile app actually opened
+4. **Reduced Timeout**: 600ms timeout prevents long waiting and improves UX
+5. **Event Cleanup**: Properly removes event listeners to prevent memory leaks
 
 ### 📱 Expected Behavior After Fix
 
 **Mobile Chrome/Safari/Other browsers:**
-- Click DM button → Attempts to open `instagram://user?username=` → Opens seller's profile in Instagram app
-- If Instagram app not available → Falls back to web profile after 1 second
+- Click DM button → Attempts to open Instagram app → Window blur detects success/failure
+- If app opens → User stays in Instagram app (success)
+- If app doesn't open → Web profile opens after 600ms (fallback)
 
-**Instagram's built-in browser:**
-- Click DM button → Direct navigation to deep link → Opens seller's profile in Instagram app seamlessly
+**Instagram's built-in browser (FIXED):**
+- Click DM button → Opens web profile directly in new tab
+- No more login page redirects or failed deep link attempts
 
 **Desktop:**
 - Click DM button in ticket modal → Opens seller's Instagram profile in new tab
