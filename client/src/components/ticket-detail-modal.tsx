@@ -677,31 +677,34 @@ export function TicketDetailModal({
                         const isInstagramBrowser = /Instagram/i.test(navigator.userAgent);
 
                         if (isMobile || isInstagramBrowser) {
-                          // For mobile devices and Instagram's built-in browser, use deep link to open seller's profile
                           const instagramAppUrl = `instagram://user?username=${sanitizedUsername}`;
                           const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
                           
-                          // Special handling for Instagram's built-in browser
                           if (isInstagramBrowser) {
-                            // In Instagram's built-in browser, try direct navigation to app URL
-                            try {
-                              window.location.href = instagramAppUrl;
-                            } catch (e) {
-                              // Fallback to web version
-                              window.open(instagramWebUrl, '_blank');
-                            }
+                            // Instagram's built-in browser: Deep links don't work reliably, use web profile directly
+                            window.open(instagramWebUrl, '_blank');
                           } else {
-                            // For other mobile browsers, try to open Instagram app, fallback to web
-                            try {
-                              window.location.href = instagramAppUrl;
-                              // Set a timeout to fallback to web version if app doesn't open
-                              setTimeout(() => {
+                            // Mobile browsers: Use improved app detection with window blur
+                            let appOpened = false;
+                            
+                            const handleBlur = () => {
+                              appOpened = true;
+                              window.removeEventListener('blur', handleBlur);
+                            };
+                            
+                            window.addEventListener('blur', handleBlur);
+                            
+                            // Try to open the Instagram app
+                            window.location.href = instagramAppUrl;
+                            
+                            // Check if app opened after a short delay
+                            setTimeout(() => {
+                              window.removeEventListener('blur', handleBlur);
+                              if (!appOpened) {
+                                // App didn't open, fallback to web version
                                 window.open(instagramWebUrl, '_blank');
-                              }, 1000);
-                            } catch (e) {
-                              // Immediate fallback to web version
-                              window.open(instagramWebUrl, '_blank');
-                            }
+                              }
+                            }, 600);
                           }
                         } else {
                           // Desktop: Open seller's Instagram profile in a new tab
