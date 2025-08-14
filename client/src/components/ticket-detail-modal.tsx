@@ -663,12 +663,10 @@ export function TicketDetailModal({
                       size="sm"
                       onClick={() => {
                         const instagramHandle = seller.instagram?.replace("@", "");
+                        if (!instagramHandle) return;
                         
-                        // Create pre-filled message with ticket information
-                        const ticketUrl = `${window.location.origin}/event/${eventId}${selectedTicketId ? `?ticket=${selectedTicketId}` : ''}`;
-                        const message = encodeURIComponent(
-                          `Hi! I'm interested in your ticket for "${firstTicket?.eventTitle}" on ${firstTicket?.eventDate ? new Date(firstTicket.eventDate).toLocaleDateString() : 'the event date'}. Could you please share more details? ${ticketUrl}`
-                        );
+                        // Sanitize username for URL encoding
+                        const sanitizedUsername = encodeURIComponent(instagramHandle);
                         
                         // Detect if device is mobile
                         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -679,23 +677,31 @@ export function TicketDetailModal({
                         const isInstagramBrowser = /Instagram/i.test(navigator.userAgent);
 
                         if (isMobile || isInstagramBrowser) {
-                          // For mobile devices and Instagram's built-in browser, use ig.me URL for reliable DM opening
-                          const igMeUrl = `https://ig.me/m/${instagramHandle}?text=${message}`;
+                          // For mobile devices and Instagram's built-in browser, use deep link to open seller's profile
+                          const instagramAppUrl = `instagram://user?username=${sanitizedUsername}`;
+                          const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
                           
                           // Special handling for Instagram's built-in browser
                           if (isInstagramBrowser) {
-                            // In Instagram's built-in browser, try direct navigation to ig.me
+                            // In Instagram's built-in browser, try direct navigation to app URL
                             try {
-                              window.location.href = igMeUrl;
+                              window.location.href = instagramAppUrl;
                             } catch (e) {
-                              window.open(igMeUrl, '_blank');
+                              // Fallback to web version
+                              window.open(instagramWebUrl, '_blank');
                             }
                           } else {
-                            // For other mobile browsers, use ig.me which Instagram will handle appropriately
-                            // This URL works reliably across different Instagram app versions and will:
-                            // 1. Open Instagram app with DM if app is installed
-                            // 2. Open Instagram web DM if app is not installed
-                            window.open(igMeUrl, '_blank');
+                            // For other mobile browsers, try to open Instagram app, fallback to web
+                            try {
+                              window.location.href = instagramAppUrl;
+                              // Set a timeout to fallback to web version if app doesn't open
+                              setTimeout(() => {
+                                window.open(instagramWebUrl, '_blank');
+                              }, 1000);
+                            } catch (e) {
+                              // Immediate fallback to web version
+                              window.open(instagramWebUrl, '_blank');
+                            }
                           }
                         } else {
                           // Desktop: Open seller's Instagram profile in a new tab

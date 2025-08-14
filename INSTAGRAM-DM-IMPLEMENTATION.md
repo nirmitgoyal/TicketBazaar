@@ -12,12 +12,13 @@ This implementation addresses the requirement to redirect users to Instagram DM 
 
 ## Solution Implementation
 
-### ✅ FIXED VERSION (v2.0)
+### ✅ FIXED VERSION (v3.0) - Deep Link Implementation
 
 #### Key Changes Made:
-1. **Simplified Mobile Logic**: Removed complex iframe detection and timeout mechanisms
-2. **Reliable URL Format**: Use `ig.me` URLs which Instagram handles consistently
-3. **Consistent Behavior**: Both components now use the same simplified approach
+1. **Mobile Deep Link**: Updated to use `instagram://user?username=` deep link format for mobile browsers
+2. **Profile Focus**: Changed primary action from DM to opening seller's Instagram profile on mobile
+3. **Improved Fallback**: Better error handling and fallback to web version
+4. **Consistent Behavior**: Standardized behavior across both components
 
 #### Components Updated:
 - `client/src/components/seller-contact-card.tsx`
@@ -27,18 +28,27 @@ This implementation addresses the requirement to redirect users to Instagram DM 
 
 **Mobile/Instagram Browser:**
 ```typescript
-const igMeUrl = `https://ig.me/m/${instagramHandle}?text=${message}`;
+const sanitizedUsername = encodeURIComponent(instagramHandle);
+const instagramAppUrl = `instagram://user?username=${sanitizedUsername}`;
+const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
 
 if (isInstagramBrowser) {
   // Direct navigation for Instagram's built-in browser
   try {
-    window.location.href = igMeUrl;
+    window.location.href = instagramAppUrl;
   } catch (e) {
-    window.open(igMeUrl, '_blank');
+    window.open(instagramWebUrl, '_blank');
   }
 } else {
-  // For other mobile browsers - ig.me handles app/web redirection automatically
-  window.open(igMeUrl, '_blank');
+  // For other mobile browsers - try app, fallback to web
+  try {
+    window.location.href = instagramAppUrl;
+    setTimeout(() => {
+      window.open(instagramWebUrl, '_blank');
+    }, 1000);
+  } catch (e) {
+    window.open(instagramWebUrl, '_blank');
+  }
 }
 ```
 
@@ -47,28 +57,31 @@ if (isInstagramBrowser) {
 // ticket-detail-modal.tsx: Opens Instagram profile
 window.open(`https://www.instagram.com/${instagramHandle}/`, '_blank', 'noopener');
 
-// seller-contact-card.tsx: Opens DM directly
+// seller-contact-card.tsx: Opens DM with pre-filled message
+const message = encodeURIComponent(`Hi! I'm interested in your ticket...`);
 window.open(`https://ig.me/m/${instagramHandle}?text=${message}`, '_blank');
 ```
 
 ### 🔧 Why This Fix Works
 
-1. **`ig.me` URLs are more reliable**: Instagram's own URL shortener handles app detection automatically
-2. **No complex detection needed**: Instagram handles the app vs web decision internally
-3. **Consistent cross-platform**: Works the same way across different mobile browsers and Instagram versions
-4. **Simplified codebase**: Removed 50+ lines of complex detection logic per component
+1. **Direct App Deep Links**: Uses native Instagram deep link `instagram://user?username=` which directly opens user profiles
+2. **No DM Complexity**: Avoids DM-specific URLs that may redirect to login page on mobile browsers
+3. **Proper URL Encoding**: Ensures usernames with special characters are handled correctly
+4. **Reliable Fallback**: Falls back to web Instagram profile if app is not available
+5. **Timeout Mechanism**: Provides fallback after reasonable wait time for app detection
 
 ### 📱 Expected Behavior After Fix
 
 **Mobile Chrome/Safari/Other browsers:**
-- Click DM button → Opens `ig.me` URL → Instagram detects app and opens DM in app, OR opens web DM if app not installed
+- Click DM button → Attempts to open `instagram://user?username=` → Opens seller's profile in Instagram app
+- If Instagram app not available → Falls back to web profile after 1 second
 
 **Instagram's built-in browser:**
-- Click DM button → Direct navigation to `ig.me` → Opens DM in Instagram app seamlessly
+- Click DM button → Direct navigation to deep link → Opens seller's profile in Instagram app seamlessly
 
 **Desktop:**
 - Click DM button in ticket modal → Opens seller's Instagram profile in new tab
-- Click DM button in seller card → Opens DM in new tab via `ig.me`
+- Click DM button in seller card → Opens DM in new tab via `ig.me` (maintains DM functionality)
 
 ## Solution Implementation
 
@@ -99,12 +112,17 @@ window.open(`https://ig.me/m/${instagramHandle}?text=${message}`, '_blank');
 
 ### 2. URL Formats Used
 
-#### Instagram App Deep Link:
+#### Instagram App Deep Link (NEW):
 ```
-instagram://direct-message?recipient=username&text=encoded_message
+instagram://user?username=encoded_username
 ```
 
-#### Web Fallback (ig.me):
+#### Web Fallback:
+```
+https://www.instagram.com/username/
+```
+
+#### Desktop DM (seller-contact-card only):
 ```
 https://ig.me/m/username?text=encoded_message
 ```
@@ -112,18 +130,18 @@ https://ig.me/m/username?text=encoded_message
 ### 3. Browser-Specific Handling
 
 #### Instagram Built-in Browser:
-- Uses direct navigation: `window.location.href = instagramDMAppUrl`
-- Immediate fallback with timer to `ig.me` URL
+- Uses direct navigation: `window.location.href = instagramAppUrl`
+- Immediate fallback to web profile if deep link fails
 - More reliable in Instagram's WebView environment
 
 #### Other Mobile Browsers:
-- Uses iframe detection method to test app availability
-- Listens for `visibilitychange` event to detect app opening
-- Falls back to web version after 1.5 seconds if app doesn't open
+- Attempts to open Instagram app with deep link
+- Uses timeout fallback to web version after 1 second
+- Graceful error handling for app detection failures
 
 #### Desktop:
-- Direct navigation to `ig.me` URL with pre-filled message
-- Opens in new tab/window
+- **ticket-detail-modal.tsx**: Direct navigation to Instagram profile in new tab
+- **seller-contact-card.tsx**: Opens `ig.me` DM URL with pre-filled message
 
 ### 4. Message Content
 
