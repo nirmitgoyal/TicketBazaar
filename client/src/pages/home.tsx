@@ -9,6 +9,7 @@ import { TicketDetailModal } from "@/components/ticket-detail-modal";
 import { SellerDetailsModal } from "@/components/seller-details-modal";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
 import { SocialShare } from "@/components/social-share";
+import { SearchFeedbackDisplay } from "@/components/search-feedback-display";
 import { Loader2, AlertTriangle, MapPin, Search, X, Share2 } from "lucide-react";
 import { AnimatedEmptyState, LoadingState } from "@/components/empty-states/animated-empty-state";
 import { FloatingBackground } from "@/components/empty-states/floating-elements";
@@ -18,6 +19,7 @@ import { UnifiedSEO } from "@/components/unified-seo-component";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { useSearchFeedback } from "@/hooks/use-search-feedback";
 
 import { Ticket } from "@shared/schema";
 
@@ -27,6 +29,7 @@ export default function Home() {
   const { trackEvent, trackUserAction } = useAnalytics();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const { feedback, getFeedback, clearFeedback, analyzeQuery } = useSearchFeedback();
   const [searchParams, setSearchParams] = useState<URLSearchParams | null>(
     null,
   );
@@ -41,6 +44,7 @@ export default function Home() {
   const [selectedSearchFilters, setSelectedSearchFilters] =
     useState<SearchFilters>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchFeedbackFromAPI, setSearchFeedbackFromAPI] = useState<any>(null);
 
   // Pagination state with localStorage persistence
   const TICKETS_PER_PAGE = 12;
@@ -223,10 +227,10 @@ export default function Home() {
 
   // Search tickets query - triggered by search input
   const {
-    data: searchResults = [],
+    data: searchResultsData,
     isLoading: searchLoading,
     error: searchError,
-  } = useQuery<Ticket[]>({
+  } = useQuery<any>({
     queryKey: ["/api/tickets/search", searchQuery],
     queryFn: async () => {
       const response = await fetch(
@@ -237,8 +241,18 @@ export default function Home() {
       }
       const data = await response.json();
 
+      // Handle new API response format with feedback
+      if (data.feedback) {
+        setSearchFeedbackFromAPI(data.feedback);
+      } else {
+        setSearchFeedbackFromAPI(null);
+      }
+
+      // Return tickets array (support both old and new format)
+      const tickets = data.tickets || data;
+
       // Sort search results by event date and time in ascending order
-      return data.sort(
+      return tickets.sort(
         (a: Ticket, b: Ticket) =>
           new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime(),
       );
@@ -246,6 +260,8 @@ export default function Home() {
     enabled: searchQuery.length >= 2, // Only search when user has typed at least 2 characters
     staleTime: 30000, // Cache results for 30 seconds
   });
+
+  const searchResults = searchResultsData || [];
 
   // Track search state to prevent data clearing during transitions
   useEffect(() => {
@@ -441,6 +457,30 @@ export default function Home() {
         );
       }
     }, 1500);
+  };
+
+  // Handle suggestion clicks from search feedback
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    clearFeedback();
+    
+    // Track suggestion click
+    trackEvent("search_suggestion_click", "search", suggestion);
+  };
+
+  // Handle search query changes and analyze for client-side feedback
+  const handleSearchQueryChange = (query: string) => {
+    setSearchQuery(query);
+    clearFeedback();
+    setSearchFeedbackFromAPI(null);
+    
+    // Only analyze and show feedback for problematic queries
+    if (query.length > 0) {
+      const analysis = analyzeQuery(query);
+      if (analysis.queryType !== 'normal') {
+        getFeedback(analysis);
+      }
+    }
   };
 
   const openModal = (eventId: number) => {
@@ -689,13 +729,17 @@ export default function Home() {
                   className="flex-1 p-2 pr-8 text-gray-900 placeholder-gray-500 border-none outline-none min-w-0"
                   aria-label="Search for event tickets by artist, team, venue, or event name"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearchQueryChange(e.target.value)}
                 />
                 {/* Clear button - only show when there's text */}
                 {searchQuery.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => setSearchQuery("")}
+                    onClick={() => {
+                      setSearchQuery("");
+                      clearFeedback();
+                      setSearchFeedbackFromAPI(null);
+                    }}
                     className="absolute right-2 p-1 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center"
                     aria-label="Clear search"
                   >
@@ -707,6 +751,20 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Client-side Search Feedback - show when user enters problematic queries */}
+      {feedback && searchQuery.length > 0 && (
+        <section className="py-4">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto">
+              <SearchFeedbackDisplay
+                feedback={feedback}
+                onSuggestionClick={handleSuggestionClick}
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Loading State */}
       {isLoading && (
@@ -861,14 +919,25 @@ export default function Home() {
                   ))}
               </div>
             ) : (
-              <FloatingBackground>
-                <AnimatedEmptyState
-                  icon={AlertTriangle}
-                  title="No tickets found"
-                  description={`No tickets match your search for "${searchQuery}". Try different keywords.`}
-                  animation="wiggle"
-                />
-              </FloatingBackground>
+              // Show search feedback instead of generic "no results" message
+              <div className="max-w-2xl mx-auto">
+                {searchFeedbackFromAPI ? (
+                  <SearchFeedbackDisplay
+                    feedback={searchFeedbackFromAPI}
+                    onSuggestionClick={handleSuggestionClick}
+                    className="mb-6"
+                  />
+                ) : (
+                  <FloatingBackground>
+                    <AnimatedEmptyState
+                      icon={AlertTriangle}
+                      title="No tickets found"
+                      description={`No tickets match your search for "${searchQuery}". Try different keywords.`}
+                      animation="wiggle"
+                    />
+                  </FloatingBackground>
+                )}
+              </div>
             )
           ) : // Show default tickets grid - use initialTickets or defaultTickets, prioritize real data
           ticketsLoading ? (

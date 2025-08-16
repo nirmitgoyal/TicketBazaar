@@ -55,15 +55,58 @@ export class TicketController {
   searchTickets = async (req: Request, res: Response) => {
     try {
       const query = req.query.q as string;
+      const searchAnalysis = (req as any).searchAnalysis;
 
       if (!query || query.trim().length === 0) {
         return res.status(400).json({
-          message: "Search query is required"
+          message: "Search query is required",
+          feedback: {
+            message: "Try searching by event, artist, or city name",
+            suggestions: [
+              "IPL matches",
+              "Bollywood concerts", 
+              "Comedy shows Mumbai",
+              "Music festivals",
+              "Cricket World Cup"
+            ],
+            type: "suggestion",
+            showPopularTickets: true
+          }
         });
       }
 
       const tickets = await storage.searchTickets(query);
-      res.status(200).json(tickets);
+      
+      // If no results found and we have search analysis, provide helpful feedback
+      if (tickets.length === 0 && searchAnalysis) {
+        const { searchFeedbackService } = await import("../services/search-feedback.service.js");
+        
+        const feedback = searchFeedbackService.getFeedback({
+          queryType: 'no_results',
+          originalQuery: searchAnalysis.originalQuery,
+          sanitizedQuery: searchAnalysis.sanitizedQuery,
+          resultCount: 0
+        });
+
+        return res.status(200).json({
+          tickets: [],
+          feedback,
+          meta: {
+            total: 0,
+            query: searchAnalysis.sanitizedQuery,
+            originalQuery: searchAnalysis.originalQuery
+          }
+        });
+      }
+      
+      res.status(200).json({
+        tickets,
+        meta: {
+          total: tickets.length,
+          query: searchAnalysis?.sanitizedQuery || query,
+          originalQuery: searchAnalysis?.originalQuery || query
+        }
+      });
     } catch (error) {
       res.status(500).json({
         message: "Error searching tickets",
