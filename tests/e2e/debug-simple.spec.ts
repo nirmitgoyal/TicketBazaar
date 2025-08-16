@@ -1,6 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 test('Debug list-ticket page', async ({ page }) => {
+  // Set test environment marker on the document
+  await page.addInitScript(() => {
+    document.documentElement.setAttribute('data-test-env', 'true');
+    window.__isTestEnvironment = true;
+  });
+  
   await page.goto('/list-ticket');
   
   // Wait a bit for the page to load

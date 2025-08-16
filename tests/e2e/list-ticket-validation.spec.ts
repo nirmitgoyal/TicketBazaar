@@ -2,6 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test.describe('List Ticket Form Validation', () => {
   test.beforeEach(async ({ page }) => {
+    // Set test environment marker on the document
+    await page.addInitScript(() => {
+      document.documentElement.setAttribute('data-test-env', 'true');
+      window.__isTestEnvironment = true;
+    });
+    
     // First, create a test user session by directly calling the auth API
     const sessionResponse = await page.request.post('/api/auth/test-login', {
       data: {

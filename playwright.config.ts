@@ -26,6 +26,10 @@ export default defineConfig({
     navigationTimeout: 15000,
     screenshot: "only-on-failure",
     ignoreHTTPSErrors: true,
+    // Set test environment marker to prevent external script loading
+    extraHTTPHeaders: {
+      'X-Test-Environment': 'true'
+    }
   },
 
   // Single browser project
@@ -35,6 +39,10 @@ export default defineConfig({
       use: { 
         ...devices["Desktop Chrome"],
         headless: true,
+        // Add test environment markers
+        extraHTTPHeaders: {
+          'X-Test-Environment': 'true'
+        }
       },
     },
   ],
