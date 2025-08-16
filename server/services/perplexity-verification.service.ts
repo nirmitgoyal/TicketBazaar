@@ -50,8 +50,8 @@ export class PerplexityVerificationService {
 
       const prompt = this.buildVerificationPrompt(data);
       const response = await this.callPerplexityAPI(prompt);
-      
-      return this.parseVerificationResponse(response);
+
+      return this.parseVerificationResponse(response, data);
     } catch (error) {
       logger.error('PERPLEXITY', `Verification failed: ${error}`);
       return this.generateDefaultResult('Verification service temporarily unavailable');
@@ -83,8 +83,10 @@ ONLY these are red flags:
 1. Event date is in the past (Current date: ${currentDate})
 2. Venue name contains words like "Scam", "Fake", "Test", "123", "XXX"
 3. Ticket quantity over 10,000
-4. Price is 0 or negative
-5. Event title is odd/nonsensical (e.g., random characters, gibberish, test data)
+4. Event title is odd/nonsensical (e.g., random characters, gibberish, test data)
+
+Notes:
+- Price may not be provided; IGNORE price completely.
 
 EVERYTHING ELSE IS LEGITIMATE:
 - Misspellings are FINE
@@ -97,7 +99,10 @@ If none of the 4 red flags above are present, ALWAYS return:
 legitimacy: "legit"
 confidence: 95
 
-IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before or after. Return exactly this structure:
+IMPORTANT OUTPUT CONTRACT:
+- You MUST output ONLY a valid JSON object WRAPPED between <JSON> and </JSON> tags.
+- Do NOT include analysis, <think>, or any other text outside the JSON.
+- Return exactly this structure (all keys required):
 {
   "legitimacy": "legit" | "suspicious" | "fake",
   "explanation": "2-3 sentence explanation",
@@ -106,7 +111,7 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
   "venueValid": true/false,
   "dateValid": true/false,
   "possibleDuplicate": true/false
-}`;
+}</JSON>`;
   }
 
   /**
@@ -118,7 +123,7 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
       messages: [
         {
           role: 'system',
-          content: 'You are a ticket verification assistant. DO NOT USE WEB SEARCH. Analyze only the provided information using logic. You must ALWAYS respond with ONLY valid JSON format, no other text. Be EXTREMELY LENIENT - mark tickets as "legit" unless there are OBVIOUS red flags like past dates or clearly fake venue names.'
+          content: 'You are a ticket verification assistant. DO NOT USE WEB SEARCH. Analyze only the provided information using logic. You must ALWAYS output ONLY JSON wrapped in <JSON>...</JSON> with the exact keys requested. Be EXTREMELY LENIENT - mark tickets as "legit" unless there are OBVIOUS red flags like past dates or clearly fake venue names.'
         },
         {
           role: 'user',
@@ -150,7 +155,7 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
     }
 
     const data = await response.json();
-    const content = data.choices[0].message.content;
+    const content = data.choices?.[0]?.message?.content ?? '';
     
     // Log the response for debugging
     logger.info('PERPLEXITY', `API Response (first 500 chars): ${content.substring(0, 500)}`);
@@ -163,91 +168,129 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
   /**
    * Parse verification response from Perplexity
    */
-  private parseVerificationResponse(response: string): TicketVerificationResult {
+  private parseVerificationResponse(response: string, data: TicketVerificationRequest): TicketVerificationResult {
     try {
-      // Simple approach: Look for key information in the response
-      const responseText = response.toLowerCase();
-      
-      // Determine legitimacy based on keywords
-      let legitimacy: 'legit' | 'suspicious' | 'fake' = 'suspicious';
-      let confidence = 50;
-      let explanation = 'Verification completed with limited information';
-      
-      // Look for legitimacy indicators
-      let legitMatch = null;
-      if (responseText.includes('"legitimacy"')) {
-        // Try to extract legitimacy value
-        legitMatch = response.match(/"legitimacy"\s*:\s*"(legit|suspicious|fake)"/i);
-        if (legitMatch) {
-          legitimacy = legitMatch[1].toLowerCase() as any;
-        }
-      }
-      
-      // Look for confidence
-      const confMatch = response.match(/"confidence"\s*:\s*(\d+)/);
-      if (confMatch) {
-        confidence = parseInt(confMatch[1]);
-      }
-      
-      // Look for explanation
-      const explMatch = response.match(/"explanation"\s*:\s*"([^"]+)"/);
-      if (explMatch) {
-        explanation = explMatch[1];
-      }
-      
-      // Simple boolean extraction
-      const eventExists = responseText.includes('"eventexists": true') || responseText.includes('"eventExists": true');
-      const venueValid = responseText.includes('"venuevalid": true') || responseText.includes('"venueValid": true');
-      const dateValid = responseText.includes('"datevalid": true') || responseText.includes('"dateValid": true');
-      
-      // If we couldn't find legitimacy, make a lenient decision based on content
-      if (!legitMatch) {
-        // Only mark as fake/suspicious for CLEAR red flags
-        if (responseText.includes('fake') || responseText.includes('fraudulent') || 
-            responseText.includes('scam') || responseText.includes('past date')) {
-          legitimacy = 'fake';
-          confidence = 20;
-        } else if (responseText.includes('does not exist') || responseText.includes('invalid venue') ||
-                   responseText.includes('no such venue')) {
-          legitimacy = 'suspicious';
-          confidence = 40;
+      // 1) Try to extract strict JSON between <JSON> ... </JSON>
+      let jsonBlock = '';
+      const startTag = '<JSON>';
+      const endTag = '</JSON>';
+      const startIdx = response.indexOf(startTag);
+      const endIdx = response.lastIndexOf(endTag);
+      if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+        jsonBlock = response.slice(startIdx + startTag.length, endIdx).trim();
+      } else {
+        // 2) Look for fenced ```json ... ```
+        const fenceMatch = response.match(/```json\s*([\s\S]*?)\s*```/i);
+        if (fenceMatch) {
+          jsonBlock = fenceMatch[1].trim();
         } else {
-          // Default to legit if no clear red flags found
-          legitimacy = 'legit';
-          confidence = 70;
-        }
-      }
-      
-      // Boost confidence if venue is valid (lenient approach)
-      if (venueValid && legitimacy !== 'fake') {
-        confidence = Math.max(confidence, 75);
-        if (legitimacy === 'suspicious') {
-          legitimacy = 'legit';
-        }
-      }
-      
-      // Create default explanation if none found (lenient approach)
-      if (!explMatch) {
-        if (legitimacy === 'legit') {
-          if (venueValid) {
-            explanation = 'The venue is verified as legitimate. Event details appear reasonable with no red flags detected.';
-          } else {
-            explanation = 'Event verification found no significant issues with this listing.';
+          // 3) Fallback: attempt to extract the last JSON object heuristically
+          const firstBrace = response.indexOf('{');
+          const lastBrace = response.lastIndexOf('}');
+          if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+            jsonBlock = response.slice(firstBrace, lastBrace + 1);
           }
-        } else if (legitimacy === 'fake') {
-          explanation = 'Event verification found clear red flags indicating this listing may be fraudulent.';
-        } else {
-          explanation = 'Some aspects of this listing could not be fully verified, but no major red flags were found.';
         }
       }
-      
-      const legitimacyMap = {
-        'legit': '✅' as const,
-        'suspicious': '⚠️' as const,
-        'fake': '❌' as const
+
+      let parsed: any | null = null;
+      if (jsonBlock) {
+        try {
+          logger.info('PERPLEXITY', `Extracted JSON block length: ${jsonBlock.length}`);
+          logger.info('PERPLEXITY', `Extracted JSON preview: ${jsonBlock.slice(0, 200)}`);
+        } catch {}
+        try {
+          parsed = JSON.parse(jsonBlock);
+        } catch {
+          // Try to clean trailing commas and parse again
+          const cleaned = jsonBlock
+            .replace(/,\s*([}\]])/g, '$1')
+            .replace(/\u201c|\u201d/g, '"');
+          try { parsed = JSON.parse(cleaned); } catch { parsed = null; }
+        }
+      }
+
+      // Define safe defaults
+      const defaults = {
+        legitimacy: 'suspicious' as const,
+        explanation: 'Verification completed with limited information',
+        confidence: 50,
+        eventExists: false,
+        venueValid: false,
+        dateValid: false,
+        possibleDuplicate: false,
       };
 
-      logger.info('PERPLEXITY', `Parsed result: legitimacy=${legitimacy}, confidence=${confidence}`);
+      // If parsed JSON present, normalize fields
+      if (parsed && typeof parsed === 'object') {
+        const legitimacy = ['legit', 'suspicious', 'fake'].includes((parsed.legitimacy || '').toLowerCase())
+          ? (parsed.legitimacy as 'legit' | 'suspicious' | 'fake')
+          : defaults.legitimacy;
+        const confidenceNum = Number.isFinite(parsed.confidence) ? Math.max(0, Math.min(100, Number(parsed.confidence))) : defaults.confidence;
+        const explanation = typeof parsed.explanation === 'string' && parsed.explanation.trim().length > 0
+          ? parsed.explanation.trim()
+          : defaults.explanation;
+        const eventExists = !!parsed.eventExists;
+        const venueValid = !!parsed.venueValid;
+        const dateValid = !!parsed.dateValid;
+        const possibleDuplicate = !!parsed.possibleDuplicate;
+
+        // Sanity override: if AI says "fake" with low confidence but our inputs show no red flags, downgrade to legit
+        const now = new Date();
+        const eventDate = new Date(data.eventDate);
+        const localDateValid = isFinite(eventDate.getTime()) && eventDate >= new Date(now.toISOString().split('T')[0]);
+        const forbiddenVenuePattern = /(scam|fake|test|\b123\b|xxx)/i;
+        const localVenueValid = !!data.venueLocation && !forbiddenVenuePattern.test(data.venueLocation);
+        const localQuantityOK = Number.isFinite(data.ticketQuantity) && data.ticketQuantity > 0 && data.ticketQuantity <= 10000;
+        const gibberishTitle = /[^\w\s\-.,'&()/]/.test(data.listingTitle) || /^[a-z]{1,2}\s?[a-z]{1,2}\s?[a-z]{1,2}$/i.test(data.listingTitle);
+        const noLocalRedFlags = localDateValid && localVenueValid && localQuantityOK && !gibberishTitle;
+
+        let finalLegitimacy = legitimacy;
+        let finalConfidence = confidenceNum;
+        let finalExplanation = explanation;
+        let finalEventExists = eventExists;
+        let finalVenueValid = venueValid || localVenueValid;
+        let finalDateValid = dateValid || localDateValid;
+
+        if (noLocalRedFlags && (legitimacy === 'fake' || legitimacy === 'suspicious') && confidenceNum <= 60) {
+          finalLegitimacy = 'legit';
+          finalConfidence = Math.max(90, confidenceNum);
+          finalExplanation = 'No red flags in date, venue, or quantity. Applying lenient policy per contract.';
+          finalEventExists = true;
+        }
+
+        const legitimacyMap = { 'legit': '✅' as const, 'suspicious': '⚠️' as const, 'fake': '❌' as const };
+        logger.info('PERPLEXITY', `Parsed result: legitimacy=${finalLegitimacy}, confidence=${finalConfidence}`);
+
+        return {
+          legitimacy: finalLegitimacy,
+          legitimacyEmoji: legitimacyMap[finalLegitimacy],
+          explanation: finalExplanation,
+          confidence: finalConfidence,
+          checkDetails: { eventExists: finalEventExists, venueValid: finalVenueValid, dateValid: finalDateValid, possibleDuplicate }
+        };
+      }
+
+      // 4) No parseable JSON: apply lenient, data-aware fallback (never key off narrative words like "fake")
+      const now = new Date();
+      const eventDate = new Date(data.eventDate);
+      const dateValid = isFinite(eventDate.getTime()) && eventDate >= new Date(now.toISOString().split('T')[0]);
+      const forbiddenVenuePattern = /(scam|fake|test|\b123\b|xxx)/i;
+      const venueValid = !!data.venueLocation && !forbiddenVenuePattern.test(data.venueLocation);
+      const quantityOK = Number.isFinite(data.ticketQuantity) && data.ticketQuantity > 0 && data.ticketQuantity <= 10000;
+      const gibberishTitle = /[^\w\s\-.,'&()/]/.test(data.listingTitle) || /^[a-z]{1,2}\s?[a-z]{1,2}\s?[a-z]{1,2}$/i.test(data.listingTitle);
+
+      let legitimacy: 'legit' | 'suspicious' | 'fake' = 'legit';
+      if (!dateValid || !venueValid || !quantityOK || gibberishTitle) {
+        legitimacy = (!dateValid && (venueValid && quantityOK) ? 'suspicious' : 'suspicious');
+      }
+      const confidence = legitimacy === 'legit' ? 90 : 60;
+      const explanation = legitimacy === 'legit'
+        ? 'No red flags detected based on date, venue, and quantity. Defaulting to legit due to missing structured AI output.'
+        : 'Some fields could not be confirmed; applying lenient fallback without clear fraud signals.';
+
+      const legitimacyMap = { 'legit': '✅' as const, 'suspicious': '⚠️' as const, 'fake': '❌' as const };
+      logger.info('PERPLEXITY', `Parsed result (fallback): legitimacy=${legitimacy}, confidence=${confidence}`);
 
       return {
         legitimacy,
@@ -255,7 +298,7 @@ IMPORTANT: You MUST respond with ONLY a valid JSON object, no other text before 
         explanation,
         confidence,
         checkDetails: {
-          eventExists,
+          eventExists: true, // cannot verify without web; assume true per lenient policy
           venueValid,
           dateValid,
           possibleDuplicate: false
