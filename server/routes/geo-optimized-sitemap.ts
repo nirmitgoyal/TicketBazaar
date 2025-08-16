@@ -2,6 +2,20 @@ import { Request, Response } from "express";
 import { storage } from "../storage";
 
 /**
+ * Escape XML entities to prevent parsing errors
+ */
+function escapeXml(input: string): string {
+  if (typeof input !== 'string') return '';
+  
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
+/**
  * Generate AI-optimized dynamic sitemap.xml with enhanced metadata
  */
 export async function generateSitemap(req: Request, res: Response) {
@@ -164,7 +178,7 @@ export async function generateSitemap(req: Request, res: Response) {
         <news:language>en</news:language>
       </news:publication>
       <news:publication_date>${currentDate}</news:publication_date>
-      <news:title>${page.title}</news:title>
+      <news:title>${escapeXml(page.title)}</news:title>
     </news:news>`;
       }
       
@@ -189,9 +203,9 @@ export async function generateSitemap(req: Request, res: Response) {
       if (event.eventImageUrl) {
         xml += `
     <image:image>
-      <image:loc>${event.eventImageUrl.startsWith('http') ? event.eventImageUrl : baseUrl + event.eventImageUrl}</image:loc>
-      <image:title>${event.title} Tickets</image:title>
-      <image:caption>Buy ${event.title} tickets safely on Ticket Bazaar</image:caption>
+      <image:loc>${escapeXml(event.eventImageUrl.startsWith('http') ? event.eventImageUrl : baseUrl + event.eventImageUrl)}</image:loc>
+      <image:title>${escapeXml(event.title)} Tickets</image:title>
+      <image:caption>Buy ${escapeXml(event.title)} tickets safely on Ticket Bazaar</image:caption>
     </image:image>`;
       }
       

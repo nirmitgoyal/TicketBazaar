@@ -2,6 +2,20 @@ import { Request, Response } from "express";
 import { storage } from "../storage";
 
 /**
+ * Escape XML entities to prevent parsing errors
+ */
+function escapeXml(input: string): string {
+  if (typeof input !== 'string') return '';
+  
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
+/**
  * Generate dynamic sitemap.xml based on current events and pages
  */
 export async function generateSitemap(req: Request, res: Response) {
@@ -68,9 +82,9 @@ export async function generateSitemap(req: Request, res: Response) {
       if (event.eventImageUrl) {
         xml += `
     <image:image>
-      <image:loc>${event.eventImageUrl.startsWith('http') ? event.eventImageUrl : baseUrl + event.eventImageUrl}</image:loc>
-      <image:title>${event.title}</image:title>
-      <image:caption>Event tickets for ${event.title}</image:caption>
+      <image:loc>${escapeXml(event.eventImageUrl.startsWith('http') ? event.eventImageUrl : baseUrl + event.eventImageUrl)}</image:loc>
+      <image:title>${escapeXml(event.title)}</image:title>
+      <image:caption>Event tickets for ${escapeXml(event.title)}</image:caption>
     </image:image>`;
       }
       
