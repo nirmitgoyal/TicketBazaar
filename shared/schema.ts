@@ -363,9 +363,9 @@ export const ticketListingSchema = z.object({
   eventDate: z.coerce.date()
     .refine((date) => date > new Date(), "Event date must be in the future"),
   category: z.enum([
-    "concerts", "sports", "theater", "comedy", "festivals", 
-    "conferences", "exhibitions", "movies", "dance", "opera",
-    "classical", "family", "nightlife", "education", "networking"
+  "concerts", "sports", "theater", "comedy", "festivals", 
+  "conferences", "exhibitions", "movies", "dance", "opera",
+  "classical", "family", "nightlife", "education", "networking", "others"
   ]),
   eventImageUrl: z.string()
     .max(2000, "URL too long")
@@ -384,10 +384,10 @@ export const ticketListingSchema = z.object({
     .max(180, "Invalid longitude")
     .optional(),
   city: z.string()
-    .min(1, "City is required")
     .max(100, "City name too long")
     .trim()
-    .refine((val) => /^[a-zA-Z\s\-'\.]+$/.test(val), "City contains invalid characters"),
+    .optional()
+    .refine((val) => !val || /^[a-zA-Z\s\-'\.]+$/.test(val), "City contains invalid characters"),
   country: z.string()
     .length(2, "Country must be 2-letter ISO code")
     .toUpperCase(),
