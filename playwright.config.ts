@@ -40,7 +40,19 @@ export default defineConfig({
   ],
 
   // Development server configuration
-  webServer: process.env.CI ? undefined : {
+  webServer: process.env.CI ? {
+    command: "npm run build && NODE_ENV=test PORT=5000 node dist/index.js",
+    url: "http://localhost:5000",
+    reuseExistingServer: true,
+    timeout: 120 * 1000,
+    env: {
+      NODE_ENV: "test",
+      DATABASE_URL: process.env.DATABASE_URL || "postgresql://test:test@localhost:5432/test",
+      SESSION_SECRET: process.env.SESSION_SECRET || "test-session-secret-for-ci",
+      VITE_GOOGLE_MAPS_API_KEY: process.env.VITE_GOOGLE_MAPS_API_KEY || "test-key",
+      PORT: "5000",
+    },
+  } : {
     command: "npm run dev",
     url: "http://localhost:5000",
     reuseExistingServer: true,

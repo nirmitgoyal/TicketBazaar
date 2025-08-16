@@ -2,8 +2,22 @@ import { test, expect } from '@playwright/test';
 
 test.describe('List Ticket Form Validation', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the list ticket page
-    await page.goto('/list-ticket');
+    // First, create a test user session by directly calling the auth API
+    const sessionResponse = await page.request.post('/api/auth/test-login', {
+      data: {
+        email: 'test@example.com',
+        name: 'Test User'
+      }
+    });
+    
+    if (sessionResponse.ok()) {
+      // Navigate to the list ticket page after authentication
+      await page.goto('/list-ticket');
+      // Wait for the page to fully load
+      await page.waitForLoadState('networkidle');
+    } else {
+      throw new Error('Failed to create test user session');
+    }
   });
 
   test('should show error for empty required fields', async ({ page }) => {
