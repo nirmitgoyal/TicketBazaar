@@ -50,6 +50,9 @@ export default defineConfig({
       DATABASE_URL: process.env.DATABASE_URL || "postgresql://test:test@localhost:5432/test",
       SESSION_SECRET: process.env.SESSION_SECRET || "test-session-secret-for-ci",
       VITE_GOOGLE_MAPS_API_KEY: process.env.VITE_GOOGLE_MAPS_API_KEY || "test-key",
+      SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || "test-key",
+      PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY || "test-key",
+      VITE_PUBLIC_BUILDER_KEY: process.env.VITE_PUBLIC_BUILDER_KEY || "test-key",
       PORT: "5000",
     },
   } : {

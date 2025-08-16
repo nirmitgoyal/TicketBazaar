@@ -21,16 +21,46 @@ test.describe('List Ticket Form Validation', () => {
   });
 
   test('should show error for empty required fields', async ({ page }) => {
-    // Try to submit without filling any fields
-    await page.click('[data-testid="submit-button"]');
+    // Debug what's on the page
+    await page.waitForTimeout(10000); // Wait for any loading to complete
     
-    // Check for validation errors
-    await expect(page.locator('[role="alert"]')).toBeVisible();
-    await expect(page.locator('text=Event title is required')).toBeVisible();
-    await expect(page.locator('text=Venue location is required')).toBeVisible();
-    await expect(page.locator('text=Event date is required')).toBeVisible();
-    await expect(page.locator('text=Event time is required')).toBeVisible();
-    await expect(page.locator('text=Event category is required')).toBeVisible();
+    // Take a screenshot to see what's actually rendered
+    await page.screenshot({ path: '/tmp/test-page-after-auth.png', fullPage: true });
+    
+    // Check what elements are visible
+    const body = await page.textContent('body');
+    console.log('Body text:', body?.substring(0, 500));
+    
+    // Look for any error messages
+    const errors = await page.locator('text=Error').count();
+    console.log('Error elements:', errors);
+    
+    // Look for the form
+    const forms = await page.locator('form').count();
+    console.log('Forms found:', forms);
+    
+    const h1 = await page.locator('h1').textContent();
+    console.log('Page heading:', h1);
+    
+    // Try to find the submit button with a more generous timeout
+    const submitButton = page.locator('[data-testid="submit-button"]');
+    const submitButtonExists = await submitButton.count();
+    console.log('Submit button found:', submitButtonExists);
+    
+    if (submitButtonExists > 0) {
+      // Try to submit without filling any fields
+      await page.click('[data-testid="submit-button"]');
+      
+      // Check for validation errors
+      await expect(page.locator('[role="alert"]')).toBeVisible();
+      await expect(page.locator('text=Event title is required')).toBeVisible();
+      await expect(page.locator('text=Venue location is required')).toBeVisible();
+      await expect(page.locator('text=Event date is required')).toBeVisible();
+      await expect(page.locator('text=Event time is required')).toBeVisible();
+      await expect(page.locator('text=Event category is required')).toBeVisible();
+    } else {
+      throw new Error('Submit button not found on page');
+    }
   });
 
   test('should show error for whitespace-only inputs', async ({ page }) => {
