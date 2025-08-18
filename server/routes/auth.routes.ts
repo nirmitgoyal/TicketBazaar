@@ -3,7 +3,6 @@ import passport from "passport";
 import { validateBody } from "../middleware/validation.middleware";
 import { UserController } from "../controllers/index";
 import { z } from "zod";
-import { sql } from "drizzle-orm";
 
 const router = Router();
 const userController = new UserController();
@@ -263,60 +262,5 @@ router.patch(
   validateBody(updatePhoneSchema),
   userController.updatePhone,
 );
-
-// Test login endpoint (only available in test environment)
-if (process.env.NODE_ENV === 'test') {
-  router.post("/test-login", async (req, res) => {
-    try {
-      const { email, name } = req.body;
-      
-      if (!email || !name) {
-        return res.status(400).json({ message: "Email and name are required" });
-      }
-
-      // Use raw postgres connection to avoid drizzle schema conflicts
-      const { db } = await import("../db");
-      
-      // Check if user exists using raw SQL
-      let users = await db.execute(sql`SELECT * FROM users WHERE email = ${email} LIMIT 1`);
-      
-      let user: any;
-      if (users.length === 0) {
-        // Create test user using raw SQL with only existing columns
-        const result = await db.execute(sql`
-          INSERT INTO users (email, name) 
-          VALUES (${email}, ${name}) 
-          RETURNING *
-        `);
-        user = result[0];
-      } else {
-        user = users[0];
-      }
-
-      if (!user) {
-        return res.status(500).json({ message: "Failed to create test user" });
-      }
-
-      // Log user in by setting session
-      req.login(user, (err) => {
-        if (err) {
-          console.error("[AUTH] Test login error:", err);
-          return res.status(500).json({ message: "Login failed" });
-        }
-        
-        res.status(200).json({ 
-          message: "Test login successful", 
-          user 
-        });
-      });
-    } catch (error) {
-      console.error("[AUTH] Test login error:", error);
-      res.status(500).json({ 
-        message: "Test login failed", 
-        error: error instanceof Error ? error.message : "Unknown error" 
-      });
-    }
-  });
-}
 
 export default router;

@@ -45,72 +45,19 @@ import { getAllCountries, getCountryInfo, detectUserCountry } from "@/lib/countr
 import { ticketListingSchema } from "@shared/schema";
 import { InstagramHandleModal } from "@/components/InstagramHandleModal";
 
-// Custom form schema for ticket listing with comprehensive validation
+// Custom form schema for ticket listing with string dates/times
 const ticketFormSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Event title is required")
-    .max(100, "Event title must be 100 characters or less")
-    .refine((val) => val.trim().length > 0, "Event title cannot be only whitespace")
-    .refine((val) => val.trim().length >= 3, "Event title must be at least 3 characters"),
-  
-  eventDescription: z
-    .string()
-    .optional()
-    .refine((val) => !val || val.length <= 1000, "Event description must be 1000 characters or less"),
-  
-  venue: z
-    .string()
-    .min(1, "Venue location is required")
-    .max(200, "Venue location must be 200 characters or less")
-    .refine((val) => val.trim().length > 0, "Venue location cannot be only whitespace")
-    .refine((val) => val.trim().length >= 3, "Venue location must be at least 3 characters"),
-  
-  venueAddress: z
-    .string()
-    .optional()
-    .refine((val) => !val || val.length <= 300, "Venue address must be 300 characters or less"),
-  
-  eventDate: z
-    .string()
-    .min(1, "Event date is required")
-    .refine((val) => {
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      return dateRegex.test(val);
-    }, "Event date must be in valid format (YYYY-MM-DD)")
-    .refine((val) => {
-      const eventDate = new Date(val);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return eventDate >= today;
-    }, "Event date must be today or in the future"),
-  
-  eventTime: z
-    .string()
-    .min(1, "Event time is required")
-    .refine((val) => {
-      const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
-      return timeRegex.test(val);
-    }, "Event time must be in valid format (HH:MM)"),
-  
-  category: z
-    .string()
-    .min(1, "Event category is required")
-    .refine((val) => {
-      const validCategories = ['concerts', 'sports', 'theater', 'comedy', 'festival', 'conference', 'other'];
-      return validCategories.includes(val.toLowerCase());
-    }, "Please select a valid event category"),
-  
+  title: z.string().min(1, "Title is required"),
+  eventDescription: z.string().optional(),
+  venue: z.string().min(1, "Venue is required"),
+  venueAddress: z.string().optional(),
+  eventDate: z.string().min(1, "Event date is required"),
+  eventTime: z.string().min(1, "Event time is required"),
+  category: z.string().min(1, "Category is required"),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   city: z.string().optional(),
-  
-  country: z
-    .string()
-    .min(1, "Country is required")
-    .max(2, "Country code must be 2 characters")
-    .refine((val) => /^[A-Z]{2}$/.test(val), "Country must be a valid 2-letter code"),
-  
+  country: z.string().min(1, "Country is required"),
   state: z.string().optional(),
   postalCode: z.string().optional(),
   eventTimezone: z.string().default("UTC"),
@@ -119,26 +66,9 @@ const ticketFormSchema = z.object({
   row: z.string().optional(),
   seat: z.string().optional(),
 
-  quantity: z
-    .number()
-    .min(1, "Quantity must be at least 1")
-    .max(20, "Quantity cannot exceed 20 tickets")
-    .int("Quantity must be a whole number"),
-  
-  transferMethod: z
-    .string()
-    .min(1, "Transfer method is required")
-    .refine((val) => {
-      const validMethods = ['electronic', 'physical', 'pickup'];
-      return validMethods.includes(val.toLowerCase());
-    }, "Please select a valid transfer method"),
-  
-  additionalInfo: z
-    .string()
-    .optional()
-    .refine((val) => !val || val.length <= 1000, "Additional information must be 1000 characters or less")
-    .refine((val) => !val || val.trim().length === 0 || val.trim().length >= 10, "Additional information must be at least 10 characters if provided"),
-  
+  quantity: z.number().min(1, "Quantity must be at least 1"),
+  transferMethod: z.string().min(1, "Transfer method is required"),
+  additionalInfo: z.string().optional(),
   isTransferrable: z.boolean().default(true),
   showContactInfo: z.boolean().default(false),
   status: z.string().default("available"),
@@ -171,8 +101,6 @@ export default function ListTicket() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [showInstagramModal, setShowInstagramModal] = useState(false);
   const [pendingTicketData, setPendingTicketData] = useState<TicketWithEventForm | null>(null);
-  const [formErrors, setFormErrors] = useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<TicketWithEventForm>({
     resolver: zodResolver(ticketFormSchema),
@@ -517,8 +445,6 @@ export default function ListTicket() {
       return await response.json();
     },
     onSuccess: (data) => {
-      setIsSubmitting(false);
-      setFormErrors([]);
 
       toast({
         title: "Ticket Listed Successfully!",
@@ -535,7 +461,6 @@ export default function ListTicket() {
       navigate("/my-tickets");
     },
     onError: (error: any) => {
-      setIsSubmitting(false);
       console.error("Ticket creation error:", error);
 
       // Check if Instagram handle is required
@@ -553,20 +478,13 @@ export default function ListTicket() {
       }
 
       let errorMessage = "Failed to list ticket";
-      const errors: string[] = [];
 
       // Parse detailed error message if available
       if (error.message && error.message.includes("Validation error")) {
         errorMessage = "Please check all required fields and try again";
-        errors.push("Form validation failed. Please check all fields and correct any errors.");
       } else if (error.message) {
         errorMessage = error.message.replace(/^\d+:\s*/, ''); // Remove status code prefix
-        errors.push(errorMessage);
-      } else {
-        errors.push("An unexpected error occurred. Please try again.");
       }
-
-      setFormErrors(errors);
 
       toast({
         variant: "destructive",
@@ -577,56 +495,14 @@ export default function ListTicket() {
   });
 
   const onSubmit = (data: TicketWithEventForm) => {
-    // Clear previous errors
-    setFormErrors([]);
-    setIsSubmitting(true);
+
 
     if (!isAuthenticated) {
-      const errorMsg = "Please log in to list a ticket.";
-      setFormErrors([errorMsg]);
       toast({
         title: "Authentication Required",
-        description: errorMsg,
+        description: "Please log in to list a ticket.",
         variant: "destructive",
       });
-      setIsSubmitting(false);
-      return;
-    }
-
-    // Client-side validation for additional edge cases
-    const errors: string[] = [];
-    
-    // Check for Instagram handle in production
-    if (import.meta.env.MODE === 'production' && !user?.instagram) {
-      errors.push("Instagram handle is required to list tickets.");
-    }
-
-    // Additional validation for edge cases
-    if (data.title && data.title.trim().length === 0) {
-      errors.push("Event title cannot be only whitespace.");
-    }
-    
-    if (data.venue && data.venue.trim().length === 0) {
-      errors.push("Venue location cannot be only whitespace.");
-    }
-
-    if (data.additionalInfo && data.additionalInfo.trim().length > 0 && data.additionalInfo.trim().length < 10) {
-      errors.push("Additional information must be at least 10 characters if provided.");
-    }
-
-    // Check for special characters in title that might cause issues
-    if (data.title && /[<>\"'&]/.test(data.title)) {
-      errors.push("Event title contains invalid characters. Please remove < > \" ' & symbols.");
-    }
-
-    if (errors.length > 0) {
-      setFormErrors(errors);
-      // Focus on first error field for accessibility
-      const firstErrorField = document.querySelector('[aria-invalid="true"]') as HTMLElement;
-      if (firstErrorField) {
-        firstErrorField.focus();
-      }
-      setIsSubmitting(false);
       return;
     }
 
@@ -640,7 +516,6 @@ export default function ListTicket() {
 
     // If there's pending ticket data, retry the submission
     if (pendingTicketData) {
-      setIsSubmitting(true);
       createTicketMutation.mutate(pendingTicketData);
       setPendingTicketData(null);
     }
@@ -688,43 +563,10 @@ export default function ListTicket() {
             <Card>
               <CardContent>
                 <Form {...form}>
-                  {/* ARIA live region for error announcements */}
-                  <div 
-                    aria-live="polite" 
-                    aria-atomic="true" 
-                    className="sr-only"
-                    id="form-errors-live-region"
-                  >
-                    {formErrors.length > 0 && (
-                      `Form validation errors: ${formErrors.join('. ')}`
-                    )}
-                  </div>
-
-                  {/* Error summary for accessibility */}
-                  {formErrors.length > 0 && (
-                    <div 
-                      role="alert"
-                      aria-labelledby="error-summary-title"
-                      className="mb-4 p-4 border border-red-200 bg-red-50 rounded-md"
-                    >
-                      <h3 id="error-summary-title" className="text-red-800 font-medium mb-2">
-                        Please correct the following errors:
-                      </h3>
-                      <ul className="text-red-700 space-y-1">
-                        {formErrors.map((error, index) => (
-                          <li key={index} className="text-sm">
-                            • {error}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
                   <form
                     data-testid="ticket-listing-form"
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-6"
-                    noValidate
                   >
                     {/* Event Details Section */}
                     <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
@@ -953,7 +795,7 @@ export default function ListTicket() {
                                 placeholder="Any additional details about the tickets, seating information, or other relevant details..."
                                 className="resize-none"
                                 rows={3}
-                                maxLength={1000}
+                                maxLength={200}
                                 {...field}
                               />
                             </FormControl>
@@ -1035,21 +877,16 @@ export default function ListTicket() {
                       data-testid="submit-button"
                       type="submit"
                       className="w-full"
-                      disabled={
-                        isSubmitting || 
-                        createTicketMutation.isPending || 
-                        (!verificationResult || verificationResult.legitimacy !== 'legit') ||
-                        formErrors.length > 0
-                      }
-                      aria-describedby={formErrors.length > 0 ? "form-errors-live-region" : undefined}
+                      disabled={createTicketMutation.isPending || !verificationResult || verificationResult.legitimacy !== 'legit'}
+                      onClick={() => {
+
+                      }}
                     >
-                      {isSubmitting || createTicketMutation.isPending
+                      {createTicketMutation.isPending
                         ? "Creating your listing..."
                         : verificationResult && verificationResult.legitimacy !== 'legit'
                           ? "Verification Required"
-                          : formErrors.length > 0
-                            ? "Please Fix Errors"
-                            : "List Ticket"}
+                          : "List Ticket"}
                     </Button>
 
                     {createTicketMutation.isSuccess && (
