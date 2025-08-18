@@ -24,10 +24,8 @@ export function setupAuth(app: Express) {
   // Use PostgreSQL for persistent session storage
   const PgSessionStore = connectPgSimple(session);
   
-  // For non-production environments, allow self-signed certificates
-  if (process.env.NODE_ENV !== 'production') {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-  }
+  // Note: Database SSL configuration is handled in server/db.ts with driver-specific settings
+  // We no longer set NODE_TLS_REJECT_UNAUTHORIZED globally for security reasons
   
   // Create session store with database connection
   // For production environments (like Heroku), we need to configure SSL properly
