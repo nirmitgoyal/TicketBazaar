@@ -88,12 +88,12 @@ config();
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV === "development") {
     // Dynamically import setupVite only in development
     const { setupVite } = await import("./vite");
     await setupVite(app, server);
   } else {
-    // In production, use a completely separate module to avoid Vite imports
+    // In production and test, use a completely separate module to avoid Vite imports
     const { setupProduction } = await import("./production");
     setupProduction(app);
   }
@@ -103,10 +103,10 @@ config();
 
   // Add general 404 handler for any non-matching routes (both API and frontend)
   // This will be reached only if the Vite middleware doesn't handle the request
-  // In production, static assets are handled by the production setup
+  // In production and test, static assets are handled by the production setup
   app.use((req: Request, res: Response) => {
-    // In production, don't interfere with static asset 404s - let production.ts handle them
-    if (process.env.NODE_ENV === "production" && 
+    // In production/test, don't interfere with static asset 404s - let production.ts handle them
+    if (process.env.NODE_ENV !== "development" && 
         (req.path.startsWith('/assets/') || 
          req.path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/))) {
       return res.status(404).send('Asset not found');
