@@ -2,6 +2,7 @@ import express, { type Express, Router } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
+import { setSecurityHeaders } from "./middleware/security-headers.middleware";
 import {
   generalApiLimiter,
   authLimiter,
@@ -31,6 +32,10 @@ const __dirname = path.dirname(__filename);
 
 export async function registerRoutes(app: Express): Promise<Server> {
   logger.info('SERVER', 'Starting route registration and middleware setup');
+  
+  // Apply security headers to all requests
+  app.use(setSecurityHeaders);
+  logger.info('SERVER', 'Security headers middleware configured');
   
   // Request logging is handled by individual route handlers
   
@@ -103,6 +108,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Import and register OG image generation routes
   const ogImageRoutes = (await import("./routes/og-images.routes")).default;
   apiRouter.use("/og", ogImageRoutes);
+
+  // Import and register debug routes (development only)
+  if (process.env.NODE_ENV === 'development') {
+    const debugRoutes = (await import("./routes/debug.routes")).default;
+    apiRouter.use("/debug", debugRoutes);
+    logger.info('SERVER', 'Debug routes registered for development');
+  }
 
   // Import and register GEO-optimized sitemap routes
   const { generateSitemap, generateRobotsTxt, generateLLMsTxt } = await import("./routes/geo-optimized-sitemap");

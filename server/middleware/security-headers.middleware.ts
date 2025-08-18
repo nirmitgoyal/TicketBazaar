@@ -4,8 +4,18 @@ import { Request, Response, NextFunction } from "express";
  * Set comprehensive security headers
  */
 export function setSecurityHeaders(req: Request, res: Response, next: NextFunction) {
-  // Prevent clickjacking
-  res.setHeader('X-Frame-Options', 'DENY');
+  // Prevent clickjacking - but allow Instagram's WebView
+  const userAgent = req.headers['user-agent'] || '';
+  const isInstagramWebView = /Instagram/i.test(userAgent);
+  
+  // Allow Instagram's WebView but deny other frames
+  if (isInstagramWebView) {
+    // For Instagram WebView, we'll omit X-Frame-Options to allow framing
+    // but add CSP frame-ancestors directive for better control
+    console.log('Instagram WebView detected, allowing frame embedding');
+  } else {
+    res.setHeader('X-Frame-Options', 'DENY');
+  }
   
   // Prevent MIME type sniffing
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -48,6 +58,11 @@ export function setSecurityHeaders(req: Request, res: Response, next: NextFuncti
     ? baseConnectSrc 
     : `${baseConnectSrc} https://maps.googleapis.com https://www.google-analytics.com`;
 
+  // CSP frame-ancestors for better clickjacking protection
+  const frameAncestors = isInstagramWebView 
+    ? "'self' https://*.instagram.com https://*.facebook.com" 
+    : "'none'";
+
   const cspPolicy = [
     "default-src 'self'",
     `script-src ${scriptSrc}`,
@@ -56,6 +71,7 @@ export function setSecurityHeaders(req: Request, res: Response, next: NextFuncti
     "img-src 'self' data: https: blob:",
     `connect-src ${connectSrc}`,
     "frame-src 'none'",
+    `frame-ancestors ${frameAncestors}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'"
