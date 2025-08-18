@@ -9,14 +9,6 @@ import { test, expect } from "@playwright/test";
  * Need to fix server startup issues in CI environment before re-enabling
  */
 test.describe("Basic Smoke Tests", () => {
-  test.beforeEach(async ({ page }) => {
-    // Set test environment marker on the document
-    await page.addInitScript(() => {
-      document.documentElement.setAttribute('data-test-env', 'true');
-      window.__isTestEnvironment = true;
-    });
-  });
-
   // test("should load home page successfully", async ({ page }) => {
   //   await page.goto("/");
   //   await page.waitForLoadState("networkidle");

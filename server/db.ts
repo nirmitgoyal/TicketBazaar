@@ -14,11 +14,8 @@ if (!process.env.DATABASE_URL) {
 
 // Use standard PostgreSQL driver with proper SSL configuration
 // For production (Heroku), configure SSL to handle self-signed certificates
-// For test environment, disable SSL entirely
 const sslConfig = process.env.NODE_ENV === 'production' 
   ? { rejectUnauthorized: false }
-  : process.env.NODE_ENV === 'test'
-  ? false
   : 'require';
 
 const queryClient = postgres(process.env.DATABASE_URL, {

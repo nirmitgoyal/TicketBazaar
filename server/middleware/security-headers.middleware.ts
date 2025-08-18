@@ -21,40 +21,14 @@ export function setSecurityHeaders(req: Request, res: Response, next: NextFuncti
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   }
   
-  // Content Security Policy - conditionally include Google domains
-  const isTestEnvironment = process.env.NODE_ENV === 'test' || 
-                            process.env.CI === 'true' || 
-                            req.headers['x-test-environment'] === 'true';
-  
-  const baseScriptSrc = "'self' 'unsafe-inline'";
-  const baseStyleSrc = "'self' 'unsafe-inline'";
-  const baseFontSrc = "'self'";
-  const baseConnectSrc = "'self'";
-  
-  // Only include Google domains in non-test environments
-  const scriptSrc = isTestEnvironment 
-    ? baseScriptSrc 
-    : `${baseScriptSrc} https://maps.googleapis.com https://www.googletagmanager.com https://pagead2.googlesyndication.com`;
-    
-  const styleSrc = isTestEnvironment 
-    ? baseStyleSrc 
-    : `${baseStyleSrc} https://fonts.googleapis.com`;
-    
-  const fontSrc = isTestEnvironment 
-    ? baseFontSrc 
-    : `${baseFontSrc} https://fonts.gstatic.com`;
-    
-  const connectSrc = isTestEnvironment 
-    ? baseConnectSrc 
-    : `${baseConnectSrc} https://maps.googleapis.com https://www.google-analytics.com`;
-
+  // Content Security Policy
   const cspPolicy = [
     "default-src 'self'",
-    `script-src ${scriptSrc}`,
-    `style-src ${styleSrc}`,
-    `font-src ${fontSrc}`,
+    "script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://www.googletagmanager.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
-    `connect-src ${connectSrc}`,
+    "connect-src 'self' https://maps.googleapis.com https://www.google-analytics.com",
     "frame-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",
