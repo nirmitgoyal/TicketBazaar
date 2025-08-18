@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -41,11 +42,14 @@ type InstagramHandleFormData = z.infer<typeof instagramHandleSchema>;
 
 interface InstagramHandleModalProps {
   isOpen: boolean;
-  userId: number;
+  onClose: () => void;
+  onSuccess: () => void;
 }
 
-export function InstagramHandleModal({ isOpen, userId }: InstagramHandleModalProps) {
+export function InstagramHandleModal({ isOpen, onClose, onSuccess }: InstagramHandleModalProps) {
+  const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<InstagramHandleFormData>({
@@ -58,7 +62,11 @@ export function InstagramHandleModal({ isOpen, userId }: InstagramHandleModalPro
   // Mutation to update user's Instagram handle
   const updateInstagramMutation = useMutation({
     mutationFn: async (data: InstagramHandleFormData) => {
-      const response = await apiRequest("PATCH", `/api/users/${userId}/instagram`, {
+      if (!user?.id) {
+        throw new Error("User not authenticated");
+      }
+      
+      const response = await apiRequest("PATCH", `/api/users/${user.id}/instagram`, {
         instagram: data.instagram,
       });
       
@@ -76,6 +84,8 @@ export function InstagramHandleModal({ isOpen, userId }: InstagramHandleModalPro
         title: "Instagram handle added!",
         description: "Your Instagram handle has been successfully added to your profile.",
       });
+      // Call the provided onSuccess callback
+      onSuccess();
     },
     onError: (error: Error) => {
       toast({
