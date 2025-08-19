@@ -39,23 +39,44 @@ export function setupAuth(app: Express) {
   // Check if we're on production (ticketbazaar.co.in)
   // In Replit, we should always use development settings
   const isReplit = process.env.REPL_ID || process.env.REPLIT_DB_URL;
+  const isAWSRDS = process.env.DATABASE_URL?.includes('amazonaws.com');
   const isProduction = !isReplit && (
                       process.env.NODE_ENV === 'production' || 
                       process.env.DYNO || 
-                      process.env.DATABASE_URL?.includes('amazonaws.com'));
+                      isAWSRDS);
   
   console.log('[AUTH] Is Production:', isProduction);
+  console.log('[AUTH] AWS RDS detected:', isAWSRDS);
   
   if (isProduction) {
-    // Production configuration with SSL for Heroku
+    // Production configuration with SSL for Heroku and AWS RDS
     console.log('[AUTH] Using production session store configuration with SSL');
-    sessionStore = new PgSessionStore({
-      conObject: {
-        connectionString: process.env.DATABASE_URL,
-        ssl: {
-          rejectUnauthorized: false
-        }
+    
+    const connectionConfig = isAWSRDS ? {
+      // AWS RDS optimized configuration
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false,
+        // AWS RDS connection optimization
+        requestCert: true,
+        checkServerIdentity: () => undefined // Skip hostname verification for AWS RDS
       },
+      connectionTimeoutMillis: 30000, // 30 second timeout for AWS RDS
+      idleTimeoutMillis: 60000, // 1 minute idle timeout
+      max: 15, // Larger pool for production
+    } : {
+      // Heroku configuration
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false
+      },
+      connectionTimeoutMillis: 20000, // 20 second timeout for Heroku
+      idleTimeoutMillis: 30000, // 30 second idle timeout
+      max: 10,
+    };
+    
+    sessionStore = new PgSessionStore({
+      conObject: connectionConfig,
       tableName: 'session',
       createTableIfMissing: true,
       pruneSessionInterval: 24 * 60 * 60, // Prune expired sessions every 24 hours

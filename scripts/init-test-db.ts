@@ -22,18 +22,30 @@ async function initTestDatabase() {
   let retries = 10;
   let client: any;
   
+  // Detect environment for better connection configuration
+  const isAWSRDS = databaseUrl.includes('amazonaws.com');
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}, AWS RDS: ${isAWSRDS}`);
+  
   while (retries > 0) {
     try {
       console.log(`Attempting database connection... (${11 - retries}/10)`);
       
-      // Create postgres client with connection options
-      client = postgres(databaseUrl, { 
+      // Create postgres client with improved connection options
+      const connectionConfig = {
         max: 1,
-        ssl: false,
+        ssl: isProduction ? { rejectUnauthorized: false } : false,
         prepare: false,
-        connect_timeout: 10,
-        idle_timeout: 20
-      });
+        connect_timeout: isAWSRDS ? 30 : (isProduction ? 20 : 10),
+        idle_timeout: isProduction ? 60 : 20,
+        onnotice: () => {}, // Suppress notices
+        transform: { undefined: null },
+      };
+      
+      console.log(`Using connection timeout: ${connectionConfig.connect_timeout}s`);
+      
+      client = postgres(databaseUrl, connectionConfig);
       
       // Test the connection
       await client`SELECT 1`;
