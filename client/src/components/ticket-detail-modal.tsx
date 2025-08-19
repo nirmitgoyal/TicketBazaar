@@ -48,6 +48,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
+import { handleInstagramLink, logInstagramWebViewInfo, isInstagramWebView } from "@/utils/instagram-webview";
 
 interface TicketDetailModalProps {
   eventId: number;
@@ -662,53 +663,14 @@ export function TicketDetailModal({
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        const instagramHandle = seller.instagram?.replace("@", "");
-                        if (!instagramHandle) return;
-                        
-                        // Sanitize username for URL encoding
-                        const sanitizedUsername = encodeURIComponent(instagramHandle);
-                        
-                        // Detect if device is mobile
-                        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-                          navigator.userAgent
-                        ) || window.innerWidth <= 768;
-                        
-                        // Check if we're in Instagram's built-in browser
-                        const isInstagramBrowser = /Instagram/i.test(navigator.userAgent);
-
-                        if (isMobile || isInstagramBrowser) {
-                          const instagramAppUrl = `instagram://user?username=${sanitizedUsername}`;
-                          const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
-                          
-                          if (isInstagramBrowser) {
-                            // Instagram's built-in browser: Deep links don't work reliably, use web profile directly
-                            window.open(instagramWebUrl, '_blank');
-                          } else {
-                            // Mobile browsers: Use improved app detection with window blur
-                            let appOpened = false;
-                            
-                            const handleBlur = () => {
-                              appOpened = true;
-                              window.removeEventListener('blur', handleBlur);
-                            };
-                            
-                            window.addEventListener('blur', handleBlur);
-                            
-                            // Try to open the Instagram app
-                            window.location.href = instagramAppUrl;
-                            
-                            // Check if app opened after a short delay
-                            setTimeout(() => {
-                              window.removeEventListener('blur', handleBlur);
-                              if (!appOpened) {
-                                // App didn't open, fallback to web version
-                                window.open(instagramWebUrl, '_blank');
-                              }
-                            }, 600);
-                          }
-                        } else {
-                          // Desktop: Open seller's Instagram profile in a new tab
-                          window.open(`https://www.instagram.com/${instagramHandle}/`, '_blank', 'noopener');
+                        if (seller.instagram) {
+                          handleInstagramLink(seller.instagram, {
+                            onError: (error) => {
+                              console.error('Instagram link failed in modal:', error);
+                              // Show user-friendly error message
+                              alert('Sorry, we had trouble opening Instagram. Please try again.');
+                            }
+                          });
                         }
                       }}
                       className="flex items-center gap-2 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-colors"

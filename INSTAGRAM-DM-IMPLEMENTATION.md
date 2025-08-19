@@ -245,3 +245,46 @@ This implementation successfully addresses the requirement by:
 5. Maintaining compatibility across all platforms
 
 The solution is production-ready and handles edge cases gracefully while providing an optimal user experience for ticket inquiries through Instagram DM.
+
+## Latest Fix (v5.0) - Instagram WebView Compatibility
+
+### Issue Resolved
+**Problem**: Users accessing the website through Instagram's built-in browser were experiencing loading issues due to security header restrictions.
+
+**Root Cause**: The `X-Frame-Options: DENY` header was preventing the website from loading in Instagram's WebView (which operates as an iframe/webview within the Instagram app).
+
+### Solution Implemented
+1. **Smart Security Headers**: Enhanced security middleware to detect Instagram WebView and conditionally apply frame restrictions
+2. **Instagram WebView Detection**: Added User-Agent based detection for Instagram's built-in browser
+3. **Selective Frame Policy**: Allow framing only for Instagram domains while maintaining security for other browsers
+4. **Enhanced Error Handling**: Centralized Instagram functionality with better error handling and debugging
+
+### Technical Implementation
+```typescript
+// Instagram WebView Detection
+const isInstagramWebView = /Instagram/i.test(navigator.userAgent);
+
+// Conditional Security Headers
+if (isInstagramWebView) {
+  // Allow Instagram WebView - omit X-Frame-Options
+  // Set CSP frame-ancestors to Instagram domains
+} else {
+  // Regular browsers - maintain clickjacking protection
+  res.setHeader('X-Frame-Options', 'DENY');
+}
+```
+
+### Files Modified
+- `server/middleware/security-headers.middleware.ts` - Smart security headers
+- `server/routes.ts` - Applied security middleware
+- `client/src/utils/instagram-webview.ts` - Centralized Instagram utilities
+- `client/src/components/seller-contact-card.tsx` - Updated Instagram handling
+- `client/src/components/ticket-detail-modal.tsx` - Updated Instagram handling
+- `server/routes/debug.routes.ts` - Debug endpoint for troubleshooting
+
+### Result
+✅ Instagram built-in browser now loads the website properly  
+✅ Maintains clickjacking protection for all other browsers  
+✅ Enhanced error handling and user feedback  
+✅ Better debugging and logging capabilities  
+✅ Centralized Instagram functionality across components

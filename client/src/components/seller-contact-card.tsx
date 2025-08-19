@@ -12,8 +12,9 @@ import {
   Instagram,
   User as UserIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SellerProfileModal } from "./seller-profile-modal";
+import { handleInstagramLink, logInstagramWebViewInfo, isInstagramWebView } from "@/utils/instagram-webview";
 
 interface SellerContactCardProps {
   seller: User;
@@ -30,6 +31,13 @@ export function SellerContactCard({
 }: SellerContactCardProps) {
   const [showFullContact, setShowFullContact] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+
+  // Log Instagram WebView info on mount for debugging
+  useEffect(() => {
+    if (isInstagramWebView()) {
+      logInstagramWebViewInfo();
+    }
+  }, []);
 
   const formatPhoneNumber = (phone: string) => {
     // Format Indian phone numbers nicely
@@ -62,57 +70,14 @@ export function SellerContactCard({
 
   const handleInstagramClick = () => {
     if (seller.instagram) {
-      const instagramHandle = seller.instagram.replace("@", "");
-      
-      // Sanitize username for URL encoding
-      const sanitizedUsername = encodeURIComponent(instagramHandle);
-      
-      // Detect if device is mobile
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      ) || window.innerWidth <= 768;
-      
-      // Check if we're in Instagram's built-in browser
-      const isInstagramBrowser = /Instagram/i.test(navigator.userAgent);
-      
-      if (isMobile || isInstagramBrowser) {
-        const instagramAppUrl = `instagram://user?username=${sanitizedUsername}`;
-        const instagramWebUrl = `https://www.instagram.com/${instagramHandle}/`;
-        
-        if (isInstagramBrowser) {
-          // Instagram's built-in browser: Deep links don't work reliably, use web profile directly
-          window.open(instagramWebUrl, '_blank');
-        } else {
-          // Mobile browsers: Use improved app detection with window blur
-          let appOpened = false;
-          
-          const handleBlur = () => {
-            appOpened = true;
-            window.removeEventListener('blur', handleBlur);
-          };
-          
-          window.addEventListener('blur', handleBlur);
-          
-          // Try to open the Instagram app
-          window.location.href = instagramAppUrl;
-          
-          // Check if app opened after a short delay
-          setTimeout(() => {
-            window.removeEventListener('blur', handleBlur);
-            if (!appOpened) {
-              // App didn't open, fallback to web version
-              window.open(instagramWebUrl, '_blank');
-            }
-          }, 600);
+      handleInstagramLink(seller.instagram, {
+        ticket,
+        onError: (error) => {
+          console.error('Instagram link failed:', error);
+          // Show user-friendly error message
+          alert('Sorry, we had trouble opening Instagram. Please try again.');
         }
-      } else {
-        // Desktop: Create pre-filled DM message and open ig.me URL
-        const ticketUrl = `${window.location.origin}/tickets/${ticket.id}`;
-        const message = encodeURIComponent(
-          `Hi! I'm interested in your ticket for "${ticket.eventTitle}" on ${new Date(ticket.eventDate).toLocaleDateString()}. Could you please share more details? ${ticketUrl}`
-        );
-        window.open(`https://ig.me/m/${instagramHandle}?text=${message}`, '_blank');
-      }
+      });
     }
   };
 
