@@ -42,6 +42,8 @@ const AEOOptimization = createResilientLazyComponent(() => import("@/pages/aeo-o
 // Dashboard components with resilient loading
 const VerificationReport = createResilientLazyComponent(() => import("@/pages/verification-report"), "verification-report");
 
+
+
 /**
  * Enhanced loading component with error boundary
  */
@@ -154,6 +156,7 @@ export function AppRoutes() {
       <LazyRoute path="/verification-report/:ticketId" component={VerificationReport} />
       <LazyProtectedRoute path="/ticket/verify/:ticketId" component={TicketVerification} />
       
+
       {/* User profile */}
       <LazyProtectedRoute path="/profile" component={Profile} />
       <LazyProtectedRoute path="/privacy-settings" component={PrivacySettings} />

@@ -173,6 +173,14 @@ export default function ListTicket() {
   const [pendingTicketData, setPendingTicketData] = useState<TicketWithEventForm | null>(null);
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Google Maps API state
+  const [mapsApiLoaded, setMapsApiLoaded] = useState(false);
+  const [mapsApiError, setMapsApiError] = useState<string | null>(null);
+
+  // Google Maps API configuration
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "demo";
+  const hasValidApiKey = googleMapsApiKey && googleMapsApiKey !== "demo" && googleMapsApiKey.length > 10;
 
   const form = useForm<TicketWithEventForm>({
     resolver: zodResolver(ticketFormSchema),
@@ -276,10 +284,18 @@ export default function ListTicket() {
       return;
     }
 
-    // Use Google Places API to search for venues
-    if (window.google && window.google.maps && window.google.maps.places) {
-      try {
-        // Use the new Place class instead of deprecated PlacesService
+    // Try to use Google Places API for venue search
+    // First check if Google Maps is available at all
+    if (!window.google || !window.google.maps || !window.google.maps.places) {
+      // Google Maps API not loaded - provide simple local suggestions
+      provideFallbackSuggestions(query);
+      return;
+    }
+
+    // Google Maps API is available - try to use it
+    try {
+      // First try the new Place API if available
+      if (window.google.maps.places.Place && window.google.maps.places.Place.searchByText) {
         const { Place } = window.google.maps.places;
         const request = {
           textQuery: query + " venue",
@@ -287,7 +303,6 @@ export default function ListTicket() {
           maxResultCount: 5,
         };
 
-        // Use the new searchByText method
         Place.searchByText(request).then((response) => {
           if (response.places && response.places.length > 0) {
             // Convert new Place format to old PlaceResult format for compatibility
@@ -309,47 +324,95 @@ export default function ListTicket() {
             setSearchResults(convertedResults);
             setShowResults(true);
           } else {
-            setSearchResults([]);
-            setShowResults(false);
+            // No results from new API, try fallback
+            tryDeprecatedPlacesAPI(query);
           }
         }).catch(() => {
-          // Fallback to deprecated API if new one fails
-          const service = new window.google.maps.places.PlacesService(document.createElement('div'));
-          const fallbackRequest = {
-            query: query + " venue",
-            fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
-          };
-
-          service.textSearch(fallbackRequest, (results, status) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-              setSearchResults(results.slice(0, 5));
-              setShowResults(true);
-            } else {
-              setSearchResults([]);
-              setShowResults(false);
-            }
-          });
+          // New API failed, try deprecated API
+          tryDeprecatedPlacesAPI(query);
         });
-      } catch (error) {
-        // Fallback to deprecated API if new API is not available
-        const service = new window.google.maps.places.PlacesService(document.createElement('div'));
-        const fallbackRequest = {
-          query: query + " venue",
-          fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
-        };
-
-        service.textSearch(fallbackRequest, (results, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-            setSearchResults(results.slice(0, 5));
-            setShowResults(true);
-          } else {
-            setSearchResults([]);
-            setShowResults(false);
-          }
-        });
+      } else {
+        // New API not available, use deprecated API directly
+        tryDeprecatedPlacesAPI(query);
       }
+    } catch (error) {
+      // Any error with Google Maps API, use fallback
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Google Maps Places API error, using fallback:', error);
+      }
+      provideFallbackSuggestions(query);
     }
   }, [form, selectedPlace]);
+
+  // Helper function to try the deprecated Places API
+  const tryDeprecatedPlacesAPI = (query: string) => {
+    try {
+      const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+      const fallbackRequest = {
+        query: query + " venue",
+        fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
+      };
+
+      service.textSearch(fallbackRequest, (results, status) => {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
+          setSearchResults(results.slice(0, 5));
+          setShowResults(true);
+        } else {
+          // Even deprecated API failed, use fallback
+          provideFallbackSuggestions(query);
+        }
+      });
+    } catch (error) {
+      // Deprecated API also failed, use fallback
+      provideFallbackSuggestions(query);
+    }
+  };
+
+  // Fallback suggestion provider when Google Maps is not available
+  const provideFallbackSuggestions = (query: string) => {
+    // Create simple venue suggestions based on common venue types and locations
+    const commonVenues = [
+      'Stadium', 'Arena', 'Convention Center', 'Concert Hall', 'Theater', 'Club', 'Park', 'Mall', 'Hotel', 'University'
+    ];
+    
+    const commonCities = [
+      'Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow'
+    ];
+
+    const suggestions: google.maps.places.PlaceResult[] = [];
+    const queryLower = query.toLowerCase();
+
+    // Generate suggestions based on query
+    commonVenues.forEach(venue => {
+      if (venue.toLowerCase().includes(queryLower) || queryLower.includes(venue.toLowerCase())) {
+        commonCities.slice(0, 3).forEach(city => {
+          suggestions.push({
+            place_id: `fallback_${venue}_${city}`,
+            name: `${venue}, ${city}`,
+            formatted_address: `${venue}, ${city}, India`,
+            types: ['establishment', 'point_of_interest'],
+            geometry: undefined // No location data for fallback
+          });
+        });
+      }
+    });
+
+    // Also add direct suggestions with the query
+    if (suggestions.length < 3) {
+      commonCities.slice(0, 3).forEach(city => {
+        suggestions.push({
+          place_id: `fallback_${query}_${city}`,
+          name: `${query}, ${city}`,
+          formatted_address: `${query}, ${city}, India`,
+          types: ['establishment'],
+          geometry: undefined
+        });
+      });
+    }
+
+    setSearchResults(suggestions.slice(0, 5));
+    setShowResults(suggestions.length > 0);
+  };
 
   const handleSelectVenue = useCallback((place: google.maps.places.PlaceResult) => {
     setSelectedPlace(place);
@@ -663,13 +726,26 @@ export default function ListTicket() {
     return null;
   }
 
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "demo";
-
   return (
     <LoadScript
       googleMapsApiKey={googleMapsApiKey}
       libraries={GOOGLE_MAPS_LIBRARIES}
       loadingElement={<div>Loading Maps...</div>}
+      onLoad={() => {
+        setMapsApiLoaded(true);
+        setMapsApiError(null);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Google Maps API loaded successfully');
+        }
+      }}
+      onError={(error) => {
+        setMapsApiLoaded(false);
+        setMapsApiError('Failed to load Google Maps API');
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Google Maps API loading error:', error);
+          console.error('API Key configured:', hasValidApiKey ? 'Yes (valid)' : 'No (demo/invalid)');
+        }
+      }}
     >
       <div className="container mx-auto px-4 py-8">
         <SEOManager
@@ -870,6 +946,24 @@ export default function ListTicket() {
                                   <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm">
                                     <p className="font-medium text-green-800">{selectedPlace.name}</p>
                                     <p className="text-green-600">{selectedPlace.formatted_address}</p>
+                                  </div>
+                                )}
+
+                                {/* Show helpful message when Maps API is not available */}
+                                {(!hasValidApiKey || mapsApiError) && (
+                                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded text-sm">
+                                    <div className="flex items-start gap-2">
+                                      <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                                      <div>
+                                        <p className="font-medium text-blue-800 mb-1">Using basic venue suggestions</p>
+                                        <p className="text-blue-700">
+                                          {!hasValidApiKey 
+                                            ? "Enhanced location features require a Google Maps API key. Basic venue suggestions are available."
+                                            : "Location services temporarily unavailable. Using fallback venue suggestions."
+                                          }
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
                                 )}
                               </div>
