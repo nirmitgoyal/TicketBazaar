@@ -278,7 +278,7 @@ if (process.env.NODE_ENV === 'test') {
       const { db } = await import("../db");
       
       // Check if user exists using raw SQL
-      let users = await db.execute(sql`SELECT * FROM users WHERE email = ${email} LIMIT 1`);
+      const users = await db.execute(sql`SELECT * FROM users WHERE email = ${email} LIMIT 1`);
       
       let user: any;
       if (users.length === 0) {
