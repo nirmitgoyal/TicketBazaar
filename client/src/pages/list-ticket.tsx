@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { useGoogleMaps, usePlacesSearch, PlaceSearchResult } from "@/hooks/use-google-maps";
 import { Button } from "@/components/ui/button";
 import { debugAuthFlow } from "@/utils/auth-debug";
 import {
@@ -38,8 +39,6 @@ import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 import { getAllCountries, getCountryInfo, detectUserCountry } from "@/lib/country-utils";
 
 import { ticketListingSchema } from "@shared/schema";
@@ -165,7 +164,7 @@ export default function ListTicket() {
   const queryClient = useQueryClient();
   const [, navigate] = useLocation();
 
-  const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<PlaceSearchResult | null>(null);
   const [venueInputValue, setVenueInputValue] = useState("");
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -173,6 +172,19 @@ export default function ListTicket() {
   const [pendingTicketData, setPendingTicketData] = useState<TicketWithEventForm | null>(null);
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchResults, setSearchResults] = useState<PlaceSearchResult[]>([]);
+  const [showResults, setShowResults] = useState(false);
+
+  // Google Maps integration
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "demo";
+  const { isLoaded: mapsApiLoaded, loadError: mapsApiError, isValidApiKey } = useGoogleMaps({
+    apiKey: googleMapsApiKey,
+    libraries: ["places"]
+  });
+  const { searchPlaces, isSearching, searchError } = usePlacesSearch({
+    isLoaded: mapsApiLoaded,
+    enabled: isValidApiKey
+  });
 
   const form = useForm<TicketWithEventForm>({
     resolver: zodResolver(ticketFormSchema),
@@ -255,9 +267,6 @@ export default function ListTicket() {
     }
   }, [selectedPlace, form]);
 
-  const [searchResults, setSearchResults] = useState<google.maps.places.PlaceResult[]>([]);
-  const [showResults, setShowResults] = useState(false);
-
   const handleVenueSearch = useCallback((query: string) => {
     setVenueInputValue(query);
     form.setValue("venue", query);
@@ -276,82 +285,18 @@ export default function ListTicket() {
       return;
     }
 
-    // Use Google Places API to search for venues
-    if (window.google && window.google.maps && window.google.maps.places) {
-      try {
-        // Use the new Place class instead of deprecated PlacesService
-        const { Place } = window.google.maps.places;
-        const request = {
-          textQuery: query + " venue",
-          fields: ['id', 'displayName', 'formattedAddress', 'location', 'types'],
-          maxResultCount: 5,
-        };
+    // Use the improved Places search hook
+    searchPlaces(query).then(results => {
+      setSearchResults(results);
+      setShowResults(results.length > 0);
+    }).catch(error => {
+      console.warn("Places search failed:", error);
+      setSearchResults([]);
+      setShowResults(false);
+    });
+  }, [form, selectedPlace, searchPlaces]);
 
-        // Use the new searchByText method
-        Place.searchByText(request).then((response) => {
-          if (response.places && response.places.length > 0) {
-            // Convert new Place format to old PlaceResult format for compatibility
-            const convertedResults = response.places.map(place => ({
-              place_id: place.id,
-              name: place.displayName,
-              formatted_address: place.formattedAddress,
-              geometry: {
-                location: place.location ? {
-                  lat: () => place.location!.lat(),
-                  lng: () => place.location!.lng(),
-                  equals: () => false,
-                  toJSON: () => ({ lat: place.location!.lat(), lng: place.location!.lng() }),
-                  toUrlValue: () => `${place.location!.lat()},${place.location!.lng()}`
-                } : undefined
-              },
-              types: place.types || []
-            })) as google.maps.places.PlaceResult[];
-            setSearchResults(convertedResults);
-            setShowResults(true);
-          } else {
-            setSearchResults([]);
-            setShowResults(false);
-          }
-        }).catch(() => {
-          // Fallback to deprecated API if new one fails
-          const service = new window.google.maps.places.PlacesService(document.createElement('div'));
-          const fallbackRequest = {
-            query: query + " venue",
-            fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
-          };
-
-          service.textSearch(fallbackRequest, (results, status) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-              setSearchResults(results.slice(0, 5));
-              setShowResults(true);
-            } else {
-              setSearchResults([]);
-              setShowResults(false);
-            }
-          });
-        });
-      } catch (error) {
-        // Fallback to deprecated API if new API is not available
-        const service = new window.google.maps.places.PlacesService(document.createElement('div'));
-        const fallbackRequest = {
-          query: query + " venue",
-          fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
-        };
-
-        service.textSearch(fallbackRequest, (results, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-            setSearchResults(results.slice(0, 5));
-            setShowResults(true);
-          } else {
-            setSearchResults([]);
-            setShowResults(false);
-          }
-        });
-      }
-    }
-  }, [form, selectedPlace]);
-
-  const handleSelectVenue = useCallback((place: google.maps.places.PlaceResult) => {
+  const handleSelectVenue = useCallback((place: PlaceSearchResult) => {
     setSelectedPlace(place);
     const venue = place.name || "";
     const address = place.formatted_address || "";
@@ -663,15 +608,11 @@ export default function ListTicket() {
     return null;
   }
 
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "demo";
+  // Check if we have a valid API key
+  const hasValidApiKey = googleMapsApiKey && googleMapsApiKey !== "demo" && googleMapsApiKey.length > 10;
 
   return (
-    <LoadScript
-      googleMapsApiKey={googleMapsApiKey}
-      libraries={GOOGLE_MAPS_LIBRARIES}
-      loadingElement={<div>Loading Maps...</div>}
-    >
-      <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
         <SEOManager
           title="Sell Your Event Tickets | List Tickets for Sale - Ticket Bazaar"
           description="Sell your unused event tickets safely and securely on Ticket Bazaar. List tickets for concerts, sports events, and festivals with our transparent pricing policy and secure payment system."
@@ -798,6 +739,7 @@ export default function ListTicket() {
                                     const value = e.target.value;
                                     setVenueInputValue(value);
                                     field.onChange(value);
+                                    // Handle search with debouncing
                                     handleVenueSearch(value);
                                   }}
                                   onFocus={() => {
@@ -870,6 +812,19 @@ export default function ListTicket() {
                                   <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm">
                                     <p className="font-medium text-green-800">{selectedPlace.name}</p>
                                     <p className="text-green-600">{selectedPlace.formatted_address}</p>
+                                  </div>
+                                )}
+
+                                {/* Maps API Error Message */}
+                                {(!isValidApiKey || mapsApiError || searchError) && (
+                                  <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm">
+                                    <p className="text-yellow-800">
+                                      <Info className="inline h-4 w-4 mr-1" />
+                                      {!isValidApiKey 
+                                        ? "Venue suggestions temporarily unavailable. Please type the complete venue name and address."
+                                        : searchError || "Unable to load venue suggestions. Please enter venue details manually."
+                                      }
+                                    </p>
                                   </div>
                                 )}
                               </div>
@@ -1120,6 +1075,6 @@ export default function ListTicket() {
         onClose={handleInstagramModalClose}
         onSuccess={handleInstagramModalSuccess}
       />
-    </LoadScript>
+    </div>
   );
 }
