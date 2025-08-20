@@ -119,7 +119,7 @@ IMPORTANT OUTPUT CONTRACT:
    */
   private async callPerplexityAPI(prompt: string): Promise<any> {
     const requestBody = {
-      model: 'r1-1776',
+      model: 'llama-3.1-sonar-large-128k-online',
       messages: [
         {
           role: 'system',
