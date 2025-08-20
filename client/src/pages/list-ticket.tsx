@@ -663,14 +663,28 @@ export default function ListTicket() {
     return null;
   }
 
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "demo";
+  // Resolve Google Maps key at runtime to avoid stale builds on platform env changes
+  const [googleMapsApiKey, setGoogleMapsApiKey] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const fallback = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "demo";
+    fetch("/api/config/maps-key")
+      .then((r) => (r.ok ? r.json() : { googleMapsApiKey: null }))
+      .then((d) => {
+        if (cancelled) return;
+        setGoogleMapsApiKey(d.googleMapsApiKey || fallback);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setGoogleMapsApiKey(fallback);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  return (
-    <LoadScript
-      googleMapsApiKey={googleMapsApiKey}
-      libraries={GOOGLE_MAPS_LIBRARIES}
-      loadingElement={<div>Loading Maps...</div>}
-    >
+  const pageContent = (
+    <>
       <div className="container mx-auto px-4 py-8">
         <SEOManager
           title="Sell Your Event Tickets | List Tickets for Sale - Ticket Bazaar"
@@ -1120,6 +1134,20 @@ export default function ListTicket() {
         onClose={handleInstagramModalClose}
         onSuccess={handleInstagramModalSuccess}
       />
-    </LoadScript>
+    </>
+  );
+
+  return (
+    googleMapsApiKey ? (
+      <LoadScript
+        googleMapsApiKey={googleMapsApiKey}
+        libraries={GOOGLE_MAPS_LIBRARIES}
+        loadingElement={<div>Loading Maps...</div>}
+      >
+        {pageContent}
+      </LoadScript>
+    ) : (
+      pageContent
+    )
   );
 }

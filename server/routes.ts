@@ -109,6 +109,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const ogImageRoutes = (await import("./routes/og-images.routes")).default;
   apiRouter.use("/og", ogImageRoutes);
 
+  // Runtime config: expose Google Maps API key for client (public referrer-restricted key only)
+  // This avoids needing a full rebuild when the env var changes on the server
+  apiRouter.get("/config/maps-key", (req, res) => {
+    const key = process.env.VITE_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY || null;
+    res.json({ googleMapsApiKey: key });
+  });
+
   // Import and register debug routes (development only)
   if (process.env.NODE_ENV === 'development') {
     const debugRoutes = (await import("./routes/debug.routes")).default;
