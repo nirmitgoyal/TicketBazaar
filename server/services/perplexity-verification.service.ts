@@ -119,7 +119,7 @@ IMPORTANT OUTPUT CONTRACT:
    */
   private async callPerplexityAPI(prompt: string): Promise<any> {
     const requestBody = {
-      model: 'r1-1776',
+      model: 'llama-3.1-sonar-large-128k-online',
       messages: [
         {
           role: 'system',
@@ -249,8 +249,8 @@ IMPORTANT OUTPUT CONTRACT:
         let finalConfidence = confidenceNum;
         let finalExplanation = explanation;
         let finalEventExists = eventExists;
-        let finalVenueValid = venueValid || localVenueValid;
-        let finalDateValid = dateValid || localDateValid;
+        const finalVenueValid = venueValid || localVenueValid;
+        const finalDateValid = dateValid || localDateValid;
 
         if (noLocalRedFlags && (legitimacy === 'fake' || legitimacy === 'suspicious') && confidenceNum <= 60) {
           finalLegitimacy = 'legit';
