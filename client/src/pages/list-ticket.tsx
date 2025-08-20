@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { useGoogleMaps, usePlacesSearch, PlaceSearchResult } from "@/hooks/use-google-maps";
 import { Button } from "@/components/ui/button";
 import { debugAuthFlow } from "@/utils/auth-debug";
 import {
@@ -39,6 +38,8 @@ import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 import { getAllCountries, getCountryInfo, detectUserCountry } from "@/lib/country-utils";
 
 import { ticketListingSchema } from "@shared/schema";
@@ -164,7 +165,7 @@ export default function ListTicket() {
   const queryClient = useQueryClient();
   const [, navigate] = useLocation();
 
-  const [selectedPlace, setSelectedPlace] = useState<PlaceSearchResult | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [venueInputValue, setVenueInputValue] = useState("");
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -172,19 +173,14 @@ export default function ListTicket() {
   const [pendingTicketData, setPendingTicketData] = useState<TicketWithEventForm | null>(null);
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [searchResults, setSearchResults] = useState<PlaceSearchResult[]>([]);
-  const [showResults, setShowResults] = useState(false);
+  
+  // Google Maps API state
+  const [mapsApiLoaded, setMapsApiLoaded] = useState(false);
+  const [mapsApiError, setMapsApiError] = useState<string | null>(null);
 
-  // Google Maps integration
+  // Google Maps API configuration
   const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "demo";
-  const { isLoaded: mapsApiLoaded, loadError: mapsApiError, isValidApiKey } = useGoogleMaps({
-    apiKey: googleMapsApiKey,
-    libraries: ["places"]
-  });
-  const { searchPlaces, isSearching, searchError } = usePlacesSearch({
-    isLoaded: mapsApiLoaded,
-    enabled: isValidApiKey
-  });
+  const hasValidApiKey = googleMapsApiKey && googleMapsApiKey !== "demo" && googleMapsApiKey.length > 10;
 
   const form = useForm<TicketWithEventForm>({
     resolver: zodResolver(ticketFormSchema),
@@ -267,6 +263,9 @@ export default function ListTicket() {
     }
   }, [selectedPlace, form]);
 
+  const [searchResults, setSearchResults] = useState<google.maps.places.PlaceResult[]>([]);
+  const [showResults, setShowResults] = useState(false);
+
   const handleVenueSearch = useCallback((query: string) => {
     setVenueInputValue(query);
     form.setValue("venue", query);
@@ -285,18 +284,96 @@ export default function ListTicket() {
       return;
     }
 
-    // Use the improved Places search hook
-    searchPlaces(query).then(results => {
-      setSearchResults(results);
-      setShowResults(results.length > 0);
-    }).catch(error => {
-      console.warn("Places search failed:", error);
-      setSearchResults([]);
-      setShowResults(false);
-    });
-  }, [form, selectedPlace, searchPlaces]);
+    // Use Google Places API to search for venues
+    // Check if Google Maps API is loaded and valid
+    if (!mapsApiLoaded || !hasValidApiKey || !window.google || !window.google.maps || !window.google.maps.places) {
+      // API not available - just return without showing any results
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Google Maps Places API not available for venue suggestions:', {
+          mapsApiLoaded,
+          hasValidApiKey,
+          googleMapsLoaded: !!window.google?.maps,
+          placesLoaded: !!window.google?.maps?.places
+        });
+      }
+      return;
+    }
 
-  const handleSelectVenue = useCallback((place: PlaceSearchResult) => {
+    if (window.google && window.google.maps && window.google.maps.places) {
+      try {
+        // Use the new Place class instead of deprecated PlacesService
+        const { Place } = window.google.maps.places;
+        const request = {
+          textQuery: query + " venue",
+          fields: ['id', 'displayName', 'formattedAddress', 'location', 'types'],
+          maxResultCount: 5,
+        };
+
+        // Use the new searchByText method
+        Place.searchByText(request).then((response) => {
+          if (response.places && response.places.length > 0) {
+            // Convert new Place format to old PlaceResult format for compatibility
+            const convertedResults = response.places.map(place => ({
+              place_id: place.id,
+              name: place.displayName,
+              formatted_address: place.formattedAddress,
+              geometry: {
+                location: place.location ? {
+                  lat: () => place.location!.lat(),
+                  lng: () => place.location!.lng(),
+                  equals: () => false,
+                  toJSON: () => ({ lat: place.location!.lat(), lng: place.location!.lng() }),
+                  toUrlValue: () => `${place.location!.lat()},${place.location!.lng()}`
+                } : undefined
+              },
+              types: place.types || []
+            })) as google.maps.places.PlaceResult[];
+            setSearchResults(convertedResults);
+            setShowResults(true);
+          } else {
+            setSearchResults([]);
+            setShowResults(false);
+          }
+        }).catch(() => {
+          // Fallback to deprecated API if new one fails
+          const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+          const fallbackRequest = {
+            query: query + " venue",
+            fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
+          };
+
+          service.textSearch(fallbackRequest, (results, status) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
+              setSearchResults(results.slice(0, 5));
+              setShowResults(true);
+            } else {
+              setSearchResults([]);
+              setShowResults(false);
+            }
+          });
+        });
+      } catch (error) {
+        // Fallback to deprecated API if new API is not available
+        const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+        const fallbackRequest = {
+          query: query + " venue",
+          fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
+        };
+
+        service.textSearch(fallbackRequest, (results, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
+            setSearchResults(results.slice(0, 5));
+            setShowResults(true);
+          } else {
+            setSearchResults([]);
+            setShowResults(false);
+          }
+        });
+      }
+    }
+  }, [form, selectedPlace, mapsApiLoaded, hasValidApiKey]);
+
+  const handleSelectVenue = useCallback((place: google.maps.places.PlaceResult) => {
     setSelectedPlace(place);
     const venue = place.name || "";
     const address = place.formatted_address || "";
@@ -608,11 +685,28 @@ export default function ListTicket() {
     return null;
   }
 
-  // Check if we have a valid API key
-  const hasValidApiKey = googleMapsApiKey && googleMapsApiKey !== "demo" && googleMapsApiKey.length > 10;
-
   return (
-    <div className="container mx-auto px-4 py-8">
+    <LoadScript
+      googleMapsApiKey={googleMapsApiKey}
+      libraries={GOOGLE_MAPS_LIBRARIES}
+      loadingElement={<div>Loading Maps...</div>}
+      onLoad={() => {
+        setMapsApiLoaded(true);
+        setMapsApiError(null);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Google Maps API loaded successfully');
+        }
+      }}
+      onError={(error) => {
+        setMapsApiLoaded(false);
+        setMapsApiError('Failed to load Google Maps API');
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Google Maps API loading error:', error);
+          console.error('API Key configured:', hasValidApiKey ? 'Yes (valid)' : 'No (demo/invalid)');
+        }
+      }}
+    >
+      <div className="container mx-auto px-4 py-8">
         <SEOManager
           title="Sell Your Event Tickets | List Tickets for Sale - Ticket Bazaar"
           description="Sell your unused event tickets safely and securely on Ticket Bazaar. List tickets for concerts, sports events, and festivals with our transparent pricing policy and secure payment system."
@@ -733,13 +827,16 @@ export default function ListTicket() {
                             <FormControl>
                               <div className="relative">
                                 <Input
-                                  placeholder="Search for venue (e.g., Phoenix Marketcity, Mumbai)"
+                                  placeholder={
+                                    hasValidApiKey && mapsApiLoaded 
+                                      ? "Search for venue (e.g., Phoenix Marketcity, Mumbai)"
+                                      : "Enter venue name and address (e.g., Phoenix Marketcity, Mumbai)"
+                                  }
                                   value={venueInputValue}
                                   onChange={(e) => {
                                     const value = e.target.value;
                                     setVenueInputValue(value);
                                     field.onChange(value);
-                                    // Handle search with debouncing
                                     handleVenueSearch(value);
                                   }}
                                   onFocus={() => {
@@ -815,16 +912,21 @@ export default function ListTicket() {
                                   </div>
                                 )}
 
-                                {/* Maps API Error Message */}
-                                {(!isValidApiKey || mapsApiError || searchError) && (
-                                  <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm">
-                                    <p className="text-yellow-800">
-                                      <Info className="inline h-4 w-4 mr-1" />
-                                      {!isValidApiKey 
-                                        ? "Venue suggestions temporarily unavailable. Please type the complete venue name and address."
-                                        : searchError || "Unable to load venue suggestions. Please enter venue details manually."
-                                      }
-                                    </p>
+                                {/* Show helpful message when Maps API is not available */}
+                                {(!hasValidApiKey || mapsApiError) && (
+                                  <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm">
+                                    <div className="flex items-start gap-2">
+                                      <Info className="h-4 w-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+                                      <div>
+                                        <p className="font-medium text-yellow-800 mb-1">Venue suggestions unavailable</p>
+                                        <p className="text-yellow-700">
+                                          {!hasValidApiKey 
+                                            ? "Please type the complete venue name and address manually."
+                                            : "Unable to load location services. Enter venue details manually."
+                                          }
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
                                 )}
                               </div>
@@ -1075,6 +1177,6 @@ export default function ListTicket() {
         onClose={handleInstagramModalClose}
         onSuccess={handleInstagramModalSuccess}
       />
-    </div>
+    </LoadScript>
   );
 }
