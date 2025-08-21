@@ -130,7 +130,7 @@ Format your response as a structured analysis with clear sections for each aspec
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-large-128k-online',
+        model: 'r1-1776',
         messages: [
           {
             role: 'system',
