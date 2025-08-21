@@ -276,78 +276,21 @@ export default function ListTicket() {
       return;
     }
 
-    // Use Google Places API to search for venues
-    if (window.google && window.google.maps && window.google.maps.places) {
-      try {
-        // Use the new Place class instead of deprecated PlacesService
-        const { Place } = window.google.maps.places;
-        const request = {
-          textQuery: query + " venue",
-          fields: ['id', 'displayName', 'formattedAddress', 'location', 'types'],
-          maxResultCount: 5,
-        };
-
-        // Use the new searchByText method
-        Place.searchByText(request).then((response) => {
-          if (response.places && response.places.length > 0) {
-            // Convert new Place format to old PlaceResult format for compatibility
-            const convertedResults = response.places.map(place => ({
-              place_id: place.id,
-              name: place.displayName,
-              formatted_address: place.formattedAddress,
-              geometry: {
-                location: place.location ? {
-                  lat: () => place.location!.lat(),
-                  lng: () => place.location!.lng(),
-                  equals: () => false,
-                  toJSON: () => ({ lat: place.location!.lat(), lng: place.location!.lng() }),
-                  toUrlValue: () => `${place.location!.lat()},${place.location!.lng()}`
-                } : undefined
-              },
-              types: place.types || []
-            })) as google.maps.places.PlaceResult[];
-            setSearchResults(convertedResults);
-            setShowResults(true);
-          } else {
-            setSearchResults([]);
-            setShowResults(false);
-          }
-        }).catch(() => {
-          // Fallback to deprecated API if new one fails
-          const service = new window.google.maps.places.PlacesService(document.createElement('div'));
-          const fallbackRequest = {
-            query: query + " venue",
-            fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
-          };
-
-          service.textSearch(fallbackRequest, (results, status) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-              setSearchResults(results.slice(0, 5));
-              setShowResults(true);
-            } else {
-              setSearchResults([]);
-              setShowResults(false);
-            }
-          });
-        });
-      } catch (error) {
-        // Fallback to deprecated API if new API is not available
-        const service = new window.google.maps.places.PlacesService(document.createElement('div'));
-        const fallbackRequest = {
-          query: query + " venue",
-          fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
-        };
-
-        service.textSearch(fallbackRequest, (results, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-            setSearchResults(results.slice(0, 5));
-            setShowResults(true);
-          } else {
-            setSearchResults([]);
-            setShowResults(false);
-          }
-        });
-      }
+    // Use stable PlacesService Text Search for broader compatibility
+    if (window.google?.maps?.places) {
+      const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+      const request: google.maps.places.TextSearchRequest = {
+        query: `${query} venue`,
+      };
+      service.textSearch(request, (results, status) => {
+        if (status === window.google!.maps.places.PlacesServiceStatus.OK && results) {
+          setSearchResults(results.slice(0, 5));
+          setShowResults(true);
+        } else {
+          setSearchResults([]);
+          setShowResults(false);
+        }
+      });
     }
   }, [form, selectedPlace]);
 

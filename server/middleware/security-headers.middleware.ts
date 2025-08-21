@@ -44,7 +44,7 @@ export function setSecurityHeaders(req: Request, res: Response, next: NextFuncti
   // Only include Google domains in non-test environments
   const scriptSrc = isTestEnvironment 
     ? baseScriptSrc 
-    : `${baseScriptSrc} https://maps.googleapis.com https://www.googletagmanager.com https://pagead2.googlesyndication.com`;
+    : `${baseScriptSrc} https://maps.googleapis.com https://maps.gstatic.com https://www.googletagmanager.com https://pagead2.googlesyndication.com`;
     
   const styleSrc = isTestEnvironment 
     ? baseStyleSrc 
@@ -56,7 +56,7 @@ export function setSecurityHeaders(req: Request, res: Response, next: NextFuncti
     
   const connectSrc = isTestEnvironment 
     ? baseConnectSrc 
-    : `${baseConnectSrc} https://maps.googleapis.com https://www.google-analytics.com`;
+    : `${baseConnectSrc} https://maps.googleapis.com https://maps.gstatic.com https://places.googleapis.com https://www.google-analytics.com`;
 
   // CSP frame-ancestors for better clickjacking protection
   const frameAncestors = isInstagramWebView 
