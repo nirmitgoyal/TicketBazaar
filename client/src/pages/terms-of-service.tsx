@@ -53,12 +53,12 @@ export default function TermsOfService() {
               TicketBazaar operates exclusively as a discovery and contact platform that enables users to find information about tickets that may be available from other users. We function solely as an intermediary information service under applicable safe harbor provisions.
             </p>
             <ul className="list-disc list-inside text-muted-foreground mb-3 space-y-2">
+              <li>We DO verify ticket authenticity, validity or ticket legitimacy using Perplexity's AI model</li>
               <li>We DO NOT sell, resell, or broker tickets</li>
               <li>We DO NOT process or handle any payments</li>
               <li>We DO NOT hold, store, or deliver tickets</li>
               <li>We DO NOT facilitate or execute transactions</li>
-              <li>We DO NOT verify ticket authenticity or validity</li>
-              <li>We DO NOT guarantee event occurrence or ticket legitimacy</li>
+              <li>We DO NOT guarantee event occurrence</li>
             </ul>
             <p className="text-muted-foreground">
               Our platform merely provides a space for users to post information about tickets they wish to sell and for other users to discover such listings. All negotiations, payments, and ticket transfers occur entirely outside our platform through direct user-to-user arrangements.
