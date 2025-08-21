@@ -468,7 +468,7 @@ Provide detailed evidence for all findings.`;
    */
   private async callAdvancedPerplexityAPI(prompt: string): Promise<string> {
     const requestBody = {
-      model: 'llama-3.1-sonar-large-128k-online',
+      model: 'sonar',
       messages: [
         {
           role: 'system',
