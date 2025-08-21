@@ -130,7 +130,7 @@ Format your response as a structured analysis with clear sections for each aspec
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'r1-1776',
+        model: 'sonar',
         messages: [
           {
             role: 'system',

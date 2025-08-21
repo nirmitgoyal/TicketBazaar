@@ -128,7 +128,7 @@ Be generous with trust scores for users who appear to be real people with authen
 
   private async callPerplexityAPI(prompt: string): Promise<string> {
     const requestBody = {
-      model: 'llama-3.1-sonar-small-128k-online',
+      model: 'sonar',
       messages: [
         {
           role: 'system',

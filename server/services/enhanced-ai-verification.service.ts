@@ -468,7 +468,7 @@ Provide detailed evidence for all findings.`;
    */
   private async callAdvancedPerplexityAPI(prompt: string): Promise<string> {
     const requestBody = {
-      model: 'r1-1776',
+      model: 'sonar',
       messages: [
         {
           role: 'system',

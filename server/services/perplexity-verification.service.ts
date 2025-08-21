@@ -119,7 +119,7 @@ IMPORTANT OUTPUT CONTRACT:
    */
   private async callPerplexityAPI(prompt: string): Promise<any> {
     const requestBody = {
-      model: 'r1-1776',
+      model: 'sonar',
       messages: [
         {
           role: 'system',
