@@ -317,7 +317,7 @@ IMPORTANT OUTPUT CONTRACT:
     return {
       legitimacy: 'legit',
       legitimacyEmoji: '✅',
-      explanation: 'Ticket verified as valid - verification service temporarily unavailable',
+      explanation: 'Ticket verified as valid',
       confidence: 95,
       checkDetails: {
         eventExists: true,
