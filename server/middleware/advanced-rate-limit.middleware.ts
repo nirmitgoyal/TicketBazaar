@@ -1,5 +1,6 @@
 import rateLimit from 'express-rate-limit';
 import { Request, Response } from 'express';
+import { securityConfig } from '../utils/environment.validation';
 
 /**
  * Advanced rate limiting with multiple detection methods
@@ -127,6 +128,11 @@ setInterval(() => advancedLimiter.cleanup(), 5 * 60 * 1000);
  * Advanced rate limiting middleware
  */
 export const advancedRateLimit = (req: Request, res: Response, next: Function) => {
+  // Check if rate limiting is disabled via configuration
+  if (securityConfig.rateLimit.disabled) {
+    return next();
+  }
+
   if (advancedLimiter.shouldBlock(req)) {
     return res.status(429).json({
       error: 'Rate limit exceeded',
