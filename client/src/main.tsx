@@ -1,5 +1,7 @@
 // CRITICAL: Global useQueryClient shim must be absolutely first
 // This prevents ReferenceError when stale compiled chunks reference useQueryClient
+// Note: All source code now uses queryClient singleton, but this shim handles any
+// residual references from cached browser assets or dynamic imports
 if (typeof window !== 'undefined') {
   // Provide immediate synchronous access to queryClient
   let queryClientInstance: any = null;
