@@ -161,6 +161,13 @@ interface VerificationResult {
 }
 
 export default function ListTicket() {
+  // Defensive: some stale compiled chunk still references useQueryClient; provide no-op shim to avoid ReferenceError
+  // (Will be removed after next full clean build)
+  // @ts-ignore
+  if (typeof window !== 'undefined' && typeof (globalThis as any).useQueryClient === 'undefined') {
+    // Minimal shim that returns the singleton so any late calls still work
+    (globalThis as any).useQueryClient = () => queryClient;
+  }
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -1080,17 +1087,19 @@ export default function ListTicket() {
     </>
   );
 
-  return (
-    googleMapsApiKey ? (
-      <LoadScript
-        googleMapsApiKey={googleMapsApiKey}
-        libraries={GOOGLE_MAPS_LIBRARIES}
-        loadingElement={<div>Loading Maps...</div>}
-      >
-        {pageContent}
-      </LoadScript>
-    ) : (
-      pageContent
-    )
+  // Avoid attempting to load Google Maps with a placeholder/demo key or if already present
+  const mapsAlreadyLoaded = typeof window !== 'undefined' && !!window.google?.maps?.places;
+  const isPlaceholderKey = !googleMapsApiKey || googleMapsApiKey === 'demo';
+
+  return mapsAlreadyLoaded || isPlaceholderKey ? (
+    pageContent
+  ) : (
+    <LoadScript
+      googleMapsApiKey={googleMapsApiKey}
+      libraries={GOOGLE_MAPS_LIBRARIES}
+      loadingElement={<div>Loading Maps...</div>}
+    >
+      {pageContent}
+    </LoadScript>
   );
 }
