@@ -6,6 +6,27 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
+    <!-- Build identifier (injected via VITE_BUILD_ID env). Used for fast stale detection before app JS loads. -->
+    <meta name="app-build" content="%VITE_BUILD_ID%" />
+    <script>
+      (function(){
+        try {
+          var meta = document.querySelector('meta[name="app-build"]');
+          if(!meta) return;
+          var buildId = meta.getAttribute('content') || '';
+          var KEY='__APP_BUILD_ID__';
+          var prev = localStorage.getItem(KEY);
+          if(prev && prev !== buildId){
+            localStorage.setItem(KEY, buildId);
+            var url = new URL(window.location.href);
+            url.searchParams.set('v', Date.now().toString());
+            window.location.replace(url.toString());
+            return;
+          }
+          if(!prev) localStorage.setItem(KEY, buildId);
+        } catch(e) {}
+      })();
+    </script>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     
