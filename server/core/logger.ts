@@ -113,11 +113,9 @@ class Logger {
         const duration = Date.now() - start;
         const { statusCode } = res;
         
-        const logLevel = statusCode >= 500 
+        const logLevel = statusCode >= 400 
           ? LogLevel.ERROR 
-          : statusCode >= 400 
-            ? LogLevel.WARN 
-            : LogLevel.INFO;
+          : LogLevel.INFO;
 
         this.log(logLevel, `${method} ${path} - ${statusCode} (${duration}ms)`, {
           statusCode,

@@ -174,9 +174,9 @@ function displayDiagnostics(diagnostics: OAuthDiagnostics) {
 
   // Errors
   if (diagnostics.errors.length > 0) {
-    console.log('\n❌ Errors Found:');
+    console.error('\n❌ Errors Found:');
     diagnostics.errors.forEach((error, index) => {
-      console.log(`  ${index + 1}. ${error}`);
+      console.error(`  ${index + 1}. ${error}`);
     });
   }
 

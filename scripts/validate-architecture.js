@@ -99,9 +99,9 @@ function validateBuild() {
     
     process.exit(0);
   } else {
-    console.log('❌ Architecture refactoring validation FAILED!');
-    console.log('\n🔥 Errors:');
-    errors.forEach(error => console.log(`   • ${error}`));
+    console.error('❌ Architecture refactoring validation FAILED!');
+    console.error('\n🔥 Errors:');
+    errors.forEach(error => console.error(`   • ${error}`));
     
     if (warnings.length > 0) {
       console.log('\n⚠️  Warnings:');

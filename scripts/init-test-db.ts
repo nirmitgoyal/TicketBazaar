@@ -53,7 +53,7 @@ async function initTestDatabase() {
       break;
       
     } catch (error: any) {
-      console.log(`Connection failed: ${error.message}`);
+      console.error(`Connection failed: ${error.message}`);
       retries--;
       
       if (retries === 0) {

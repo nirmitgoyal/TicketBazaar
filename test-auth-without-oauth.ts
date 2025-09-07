@@ -44,7 +44,7 @@ testAuthSetupWithoutGoogleOAuth()
       console.log('✅ All auth tests passed!');
       process.exit(0);
     } else {
-      console.log('❌ Auth tests failed!');
+      console.error('❌ Auth tests failed!');
       process.exit(1);
     }
   })
