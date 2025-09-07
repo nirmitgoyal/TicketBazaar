@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocation } from "wouter";
@@ -162,7 +163,6 @@ interface VerificationResult {
 export default function ListTicket() {
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [, navigate] = useLocation();
 
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
