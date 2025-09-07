@@ -50,10 +50,11 @@ export async function apiRequest(
     return res;
   } catch (error) {
     clearTimeout(timeoutId);
-    if (error.name === 'AbortError') {
+    const e: any = error;
+    if (e && e.name === 'AbortError') {
       throw new Error('Request timeout');
     }
-    throw error;
+    throw e;
   }
 }
 
@@ -92,3 +93,15 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+// Global defensive shim: some stale client chunks (or cached service worker assets)
+// still reference a bare `useQueryClient` identifier (not the imported symbol).
+// Expose a safe fallback that returns our singleton. This is idempotent.
+try {
+  if (typeof globalThis !== 'undefined' && typeof (globalThis as any).useQueryClient === 'undefined') {
+    (globalThis as any).useQueryClient = () => queryClient;
+  }
+  if (typeof window !== 'undefined' && typeof (window as any).useQueryClient === 'undefined') {
+    (window as any).useQueryClient = () => queryClient;
+  }
+} catch { /* no-op */ }
