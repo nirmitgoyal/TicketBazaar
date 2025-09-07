@@ -41,7 +41,6 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./lib/socket-fix";
 import "./index.css";
-import "./utils/version-check"; // Build/version polling & stale chunk recovery
 import { initializeGlobalErrorHandlers } from "./utils/error-handler";
 
 // Initialize comprehensive global error handlers
