@@ -10,7 +10,7 @@ import { SellerDetailsModal } from "@/components/seller-details-modal";
 import { SkeletonGrid } from "@/components/skeletons/skeleton-grid";
 import { SocialShare } from "@/components/social-share";
 import { SearchFeedbackDisplay } from "@/components/search-feedback-display";
-import { Loader2, AlertTriangle, MapPin, Search, X, Share2 } from "lucide-react";
+import { Loader2, AlertTriangle, MapPin, Search, X, Share2, Info } from "lucide-react";
 import { AnimatedEmptyState, LoadingState } from "@/components/empty-states/animated-empty-state";
 import { FloatingBackground } from "@/components/empty-states/floating-elements";
 import { Badge } from "@/components/ui/badge";
@@ -914,6 +914,16 @@ export default function Home() {
                             },
                           )}
                         </p>
+                        {ticket.additionalInfo && ticket.additionalInfo.trim() && (
+                          <div className="flex items-start gap-1 text-xs text-gray-600 bg-blue-50 p-2 rounded-md">
+                            <Info className="h-3 w-3 text-blue-600 mt-0.5 flex-shrink-0" />
+                            <p className="line-clamp-2 leading-relaxed">
+                              {ticket.additionalInfo.length > 80 
+                                ? `${ticket.additionalInfo.substring(0, 80)}...` 
+                                : ticket.additionalInfo}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -995,6 +1005,16 @@ export default function Home() {
                           { hour: "numeric", minute: "2-digit", hour12: true },
                         )}
                       </p>
+                      {ticket.additionalInfo && ticket.additionalInfo.trim() && (
+                        <div className="flex items-start gap-1 text-xs text-gray-600 bg-blue-50 p-2 rounded-md">
+                          <Info className="h-3 w-3 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <p className="line-clamp-2 leading-relaxed">
+                            {ticket.additionalInfo.length > 80 
+                              ? `${ticket.additionalInfo.substring(0, 80)}...` 
+                              : ticket.additionalInfo}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -1122,6 +1142,24 @@ export default function Home() {
                           <h3 className="font-semibold text-sm leading-tight">
                             {sampleTicket.eventTitle}
                           </h3>
+                          <p className="text-xs text-gray-500">{sampleTicket.city}</p>
+                          <p className="text-xs text-gray-500">
+                            {eventDate.toLocaleTimeString("en-US", {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
+                          </p>
+                          {sampleTicket.additionalInfo && sampleTicket.additionalInfo.trim() && (
+                            <div className="flex items-start gap-1 text-xs text-gray-600 bg-blue-50 p-2 rounded-md">
+                              <Info className="h-3 w-3 text-blue-600 mt-0.5 flex-shrink-0" />
+                              <p className="line-clamp-2 leading-relaxed">
+                                {sampleTicket.additionalInfo.length > 80 
+                                  ? `${sampleTicket.additionalInfo.substring(0, 80)}...` 
+                                  : sampleTicket.additionalInfo}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );

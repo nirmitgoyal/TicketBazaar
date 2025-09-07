@@ -3,7 +3,7 @@ import { useState } from "react";
 import { formatDistanceToNow, format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ticket as TicketIcon, MapPin, Calendar, Shield, Globe } from "lucide-react";
+import { Ticket as TicketIcon, MapPin, Calendar, Shield, Globe, Info } from "lucide-react";
 import { Ticket as TicketType } from "@shared/schema";
 import { motion } from "framer-motion";
 import {
@@ -199,6 +199,23 @@ export function TicketCard({
               <Globe className="h-3 w-3 flex-shrink-0" />
               <span className="mobile-text-safe">{ticket.city}, {getCountryInfo(ticket.country)?.name || ticket.country}</span>
             </motion.div>
+
+            {/* Additional Info Display */}
+            {ticket.additionalInfo && ticket.additionalInfo.trim() && (
+              <motion.div
+                className="flex items-start gap-2 text-xs text-gray-600 bg-blue-50 p-3 rounded-lg mb-2"
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.26 + index * 0.05 }}
+              >
+                <Info className="h-3 w-3 text-blue-600 mt-0.5 flex-shrink-0" />
+                <p className="line-clamp-2 leading-relaxed">
+                  {ticket.additionalInfo.length > 100 
+                    ? `${ticket.additionalInfo.substring(0, 100)}...` 
+                    : ticket.additionalInfo}
+                </p>
+              </motion.div>
+            )}
 
             {/* Inline Popularity Metrics */}
             <PopularityMetricsInline ticketId={ticket.id} />
