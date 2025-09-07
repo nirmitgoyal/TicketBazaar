@@ -26,7 +26,7 @@ export class ErrorRecoveryManager {
     const currentCount = this.errorCount.get(errorKey) || 0;
 
     if (currentCount >= this.maxRetries) {
-      console.warn(`Module ${modulePath} failed to load after ${this.maxRetries} attempts`);
+      console.error(`Module ${modulePath} failed to load after ${this.maxRetries} attempts`);
       return { default: () => this.createFallbackComponent(modulePath) };
     }
 

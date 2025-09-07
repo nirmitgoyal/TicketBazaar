@@ -52,7 +52,7 @@ export function notFoundHandler(req: Request, res: Response) {
   const userId = (req.user as any)?.id;
   const requestId = req.headers['x-request-id'] as string;
   
-  logger.warn('API', `Route not found: ${req.method} ${req.originalUrl}`, undefined, userId, requestId);
+  logger.error('API', `Route not found: ${req.method} ${req.originalUrl}`, undefined, userId, requestId);
   
   res.status(404).json({
     message: 'Route not found',

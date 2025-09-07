@@ -112,7 +112,7 @@ export async function retryDatabaseOperation<T>(
       }
       
       const delay = baseDelay * Math.pow(2, attempt - 1);
-      console.log(`[DB-RETRY] Attempt ${attempt}/${maxRetries} failed, retrying in ${delay}ms:`, error.message);
+      console.error(`[DB-RETRY] Attempt ${attempt}/${maxRetries} failed, retrying in ${delay}ms:`, error.message);
       
       await new Promise(resolve => setTimeout(resolve, delay));
     }

@@ -137,7 +137,7 @@ class ComprehensiveTestRunner {
 
         this.results.api.push(result);
       } catch (error) {
-        console.log(`✗ ${test.name}: ERROR - ${error.message}`);
+        console.error(`✗ ${test.name}: ERROR - ${error.message}`);
         this.results.api.push({
           name: test.name,
           status: 'ERROR',
@@ -204,7 +204,7 @@ class ComprehensiveTestRunner {
         console.log(`${result.status === 'PASS' ? '✓' : '✗'} ${test.name}: ${response.statusCode}`);
         this.results.frontend.push(result);
       } catch (error) {
-        console.log(`✗ ${test.name}: ERROR - ${error.message}`);
+        console.error(`✗ ${test.name}: ERROR - ${error.message}`);
         this.results.frontend.push({
           name: test.name,
           status: 'ERROR',
@@ -245,7 +245,7 @@ class ComprehensiveTestRunner {
         searchFunctionality: searchWorks
       });
     } catch (error) {
-      console.log(`✗ Database Testing: ERROR - ${error.message}`);
+      console.error(`✗ Database Testing: ERROR - ${error.message}`);
       this.results.database.push({ error: error.message });
     }
   }
@@ -291,7 +291,7 @@ class ComprehensiveTestRunner {
           status: passed ? 'PASS' : 'FAIL'
         });
       } catch (error) {
-        console.log(`✗ ${test.name}: ERROR`);
+        console.error(`✗ ${test.name}: ERROR`);
         this.results.security.push({
           name: test.name,
           status: 'ERROR',
@@ -319,7 +319,7 @@ class ComprehensiveTestRunner {
           await this.makeRequest(test.path);
           times.push(Date.now() - start);
         } catch (error) {
-          console.log(`✗ ${test.name}: Request failed`);
+          console.error(`✗ ${test.name}: Request failed`);
           break;
         }
       }

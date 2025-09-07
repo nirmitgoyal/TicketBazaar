@@ -216,7 +216,7 @@ function runTests() {
     console.log('🎉 All tests passed! API access restriction is working correctly.');
     process.exit(0);
   } else {
-    console.log('❌ Some tests failed. Please check the implementation.');
+    console.error('❌ Some tests failed. Please check the implementation.');
     process.exit(1);
   }
 }

@@ -24,12 +24,12 @@ export function initializeGlobalErrorHandlers() {
 
     // Handle specific error types
     if (event.reason?.name === 'QuotaExceededError') {
-      console.warn('Storage quota exceeded, clearing storage');
+      clientLogger.error('STORAGE_ERROR', 'Storage quota exceeded, clearing storage');
       try {
         localStorage.clear();
         sessionStorage.clear();
       } catch (e) {
-        console.warn('Failed to clear storage:', e);
+        clientLogger.error('STORAGE_ERROR', 'Failed to clear storage', e);
       }
     }
 
@@ -55,12 +55,12 @@ export function initializeGlobalErrorHandlers() {
 
     // Handle specific error types
     if (event.message.includes('childElementCount')) {
-      console.warn('DOM manipulation error detected, likely safe to ignore');
+      clientLogger.error('DOM_ERROR', 'DOM manipulation error detected, likely safe to ignore');
       return true; // Prevent default error handling
     }
 
     if (event.message.includes('Loading chunk')) {
-      console.warn('Chunk loading error detected, may need page refresh');
+      clientLogger.error('CHUNK_ERROR', 'Chunk loading error detected, may need page refresh');
       // Don't prevent default handling for chunk errors
     }
 
@@ -73,7 +73,7 @@ export function initializeGlobalErrorHandlers() {
     const target = event.target as HTMLElement;
     if (target && target.tagName) {
       // Log resource loading errors
-      clientLogger.warn('RESOURCE_ERROR', `Failed to load ${target.tagName.toLowerCase()}`, {
+      clientLogger.error('RESOURCE_ERROR', `Failed to load ${target.tagName.toLowerCase()}`, {
         tagName: target.tagName,
         src: (target as any).src || (target as any).href,
         currentSrc: (target as any).currentSrc
@@ -81,11 +81,11 @@ export function initializeGlobalErrorHandlers() {
 
       // Handle specific resource types
       if (target.tagName === 'SCRIPT') {
-        console.warn('Script loading failed:', (target as any).src);
+        clientLogger.error('SCRIPT_ERROR', 'Script loading failed', { src: (target as any).src });
       } else if (target.tagName === 'LINK') {
-        console.warn('Stylesheet loading failed:', (target as any).href);
+        clientLogger.error('STYLESHEET_ERROR', 'Stylesheet loading failed', { href: (target as any).href });
       } else if (target.tagName === 'IMG') {
-        console.warn('Image loading failed:', (target as any).src);
+        clientLogger.error('IMAGE_ERROR', 'Image loading failed', { src: (target as any).src });
       }
     }
   }, true); // Use capture phase to catch all resource errors
@@ -96,7 +96,7 @@ export function initializeGlobalErrorHandlers() {
   });
 
   window.addEventListener('offline', () => {
-    clientLogger.warn('NETWORK', 'Network connection lost');
+    clientLogger.error('NETWORK', 'Network connection lost');
   });
 }
 
@@ -157,7 +157,7 @@ export async function retryOperation<T>(
         return null;
       }
       
-      clientLogger.warn('RETRY_OPERATION', `Attempt ${attempt} failed, retrying...`, error);
+      clientLogger.error('RETRY_OPERATION', `Attempt ${attempt} failed, retrying...`, error);
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }

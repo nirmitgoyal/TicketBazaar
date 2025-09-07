@@ -181,7 +181,7 @@ async function testIntegration() {
     console.log('🎉 All integration tests passed! API access restriction is working correctly in server context.');
     process.exit(0);
   } else {
-    console.log('❌ Some integration tests failed. Please check the implementation.');
+    console.error('❌ Some integration tests failed. Please check the implementation.');
     process.exit(1);
   }
 }

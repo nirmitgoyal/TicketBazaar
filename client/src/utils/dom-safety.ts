@@ -9,7 +9,7 @@ export function safeQuerySelector<T extends Element>(selector: string): T | null
   try {
     return document.querySelector<T>(selector);
   } catch (error) {
-    console.warn(`Error querying selector "${selector}":`, error);
+    console.error(`Error querying selector "${selector}":`, error);
     return null;
   }
 }
@@ -21,7 +21,7 @@ export function safeQuerySelectorAll<T extends Element>(selector: string): NodeL
   try {
     return document.querySelectorAll<T>(selector);
   } catch (error) {
-    console.warn(`Error querying selector "${selector}":`, error);
+    console.error(`Error querying selector "${selector}":`, error);
     return null;
   }
 }
@@ -34,7 +34,7 @@ export function safeGetElementProperty<T>(element: Element | null, property: key
     if (!element) return null;
     return (element as any)[property] as T;
   } catch (error) {
-    console.warn(`Error getting property "${String(property)}" from element:`, error);
+    console.error(`Error getting property "${String(property)}" from element:`, error);
     return null;
   }
 }
@@ -47,7 +47,7 @@ export function safeGetChildElementCount(element: Element | null): number {
     if (!element) return 0;
     return element.childElementCount || 0;
   } catch (error) {
-    console.warn('Error getting child element count:', error);
+    console.error('Error getting child element count:', error);
     return 0;
   }
 }
@@ -71,11 +71,11 @@ export function safeAddEventListener<K extends keyof HTMLElementEventMap>(
       try {
         element.removeEventListener(type, listener as any, options);
       } catch (error) {
-        console.warn('Error removing event listener:', error);
+        console.error('Error removing event listener:', error);
       }
     };
   } catch (error) {
-    console.warn('Error adding event listener:', error);
+    console.error('Error adding event listener:', error);
     return null;
   }
 }
@@ -94,7 +94,7 @@ export function safeSetElementStyle(element: Element | null, styles: Partial<CSS
       }
     });
   } catch (error) {
-    console.warn('Error setting element style:', error);
+    console.error('Error setting element style:', error);
   }
 }
 
@@ -111,7 +111,7 @@ export function safeGetElementDimensions(element: Element | null): { width: numb
       height: rect.height || 0
     };
   } catch (error) {
-    console.warn('Error getting element dimensions:', error);
+    console.error('Error getting element dimensions:', error);
     return { width: 0, height: 0 };
   }
 }

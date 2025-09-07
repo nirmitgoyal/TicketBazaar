@@ -30,7 +30,7 @@ export async function assessTicketListingFraud(
 
     // Block high-risk activities
     if (assessment.riskLevel === 'CRITICAL') {
-      logger.warn('FRAUD_PROTECTION', 'Critical risk ticket listing blocked', {
+      logger.error('FRAUD_PROTECTION', 'Critical risk ticket listing blocked', {
         userId,
         riskScore: assessment.riskScore,
         factors: assessment.riskFactors
@@ -97,7 +97,7 @@ export async function assessContactRequestFraud(
 
     // Block critical risk contacts
     if (assessment.riskLevel === 'CRITICAL') {
-      logger.warn('FRAUD_PROTECTION', 'Critical risk contact request blocked', {
+      logger.error('FRAUD_PROTECTION', 'Critical risk contact request blocked', {
         userId,
         ticketId,
         riskScore: assessment.riskScore,
@@ -116,7 +116,7 @@ export async function assessContactRequestFraud(
 
     // Rate limit high-risk users
     if (assessment.riskLevel === 'HIGH') {
-      logger.warn('FRAUD_PROTECTION', 'High risk contact request with rate limiting', {
+      logger.error('FRAUD_PROTECTION', 'High risk contact request with rate limiting', {
         userId,
         ticketId,
         riskScore: assessment.riskScore,
@@ -242,7 +242,7 @@ export function verificationBasedRateLimit(
 
   // Check if limit exceeded
   if (userRequests.count >= maxRequests) {
-    logger.warn('RATE_LIMIT', 'Rate limit exceeded', {
+    logger.error('RATE_LIMIT', 'Rate limit exceeded', {
       userId: user.id,
       verificationScore,
       requestCount: userRequests.count,
