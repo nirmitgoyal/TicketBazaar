@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { fraudDetectionService } from "../services/fraud-detection.service";
 import { logger } from "../utils/logger";
+import { securityConfig } from "../utils/environment.validation";
 
 /**
  * Middleware to automatically assess fraud risk for ticket listings
@@ -192,6 +193,11 @@ export function verificationBasedRateLimit(
   res: Response, 
   next: NextFunction
 ) {
+  // Check if rate limiting is disabled via configuration
+  if (securityConfig.rateLimit.disabled) {
+    return next();
+  }
+
   const user = req.user;
   if (!user) {
     return next();

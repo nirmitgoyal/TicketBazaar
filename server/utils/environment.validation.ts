@@ -17,6 +17,7 @@ const envSchema = z.object({
   // Security settings
   RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default('900000'), // 15 minutes
   RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).default('100'),
+  DISABLE_RATE_LIMITING: z.string().transform(val => val === 'true').default('false'), // Disable all rate limiting
   
   // File upload settings
   MAX_FILE_SIZE: z.string().transform(Number).default('5242880'), // 5MB
@@ -61,6 +62,7 @@ export const securityConfig = {
   rateLimit: {
     windowMs: config.RATE_LIMIT_WINDOW_MS,
     max: config.RATE_LIMIT_MAX_REQUESTS,
+    disabled: config.DISABLE_RATE_LIMITING,
   },
   
   upload: {

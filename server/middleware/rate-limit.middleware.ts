@@ -1,5 +1,13 @@
 import rateLimit from 'express-rate-limit';
 import { Request, Response } from 'express';
+import { securityConfig } from '../utils/environment.validation';
+
+/**
+ * Bypass function for rate limiting when disabled via configuration
+ */
+const bypassRateLimit = (req: Request, res: Response, next: Function) => {
+  next();
+};
 
 // Rate limiting error handler
 const rateLimitHandler = (req: Request, res: Response) => {
@@ -11,7 +19,7 @@ const rateLimitHandler = (req: Request, res: Response) => {
 };
 
 // General API rate limiter - 144 requests per 15 minutes
-export const generalApiLimiter = rateLimit({
+export const generalApiLimiter = securityConfig.rateLimit.disabled ? bypassRateLimit : rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 144, // limit each IP to 144 requests per windowMs
   message: rateLimitHandler,
@@ -24,7 +32,7 @@ export const generalApiLimiter = rateLimit({
 });
 
 // Strict rate limiter for authentication endpoints - 7 attempts per 15 minutes
-export const authLimiter = rateLimit({
+export const authLimiter = securityConfig.rateLimit.disabled ? bypassRateLimit : rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 7, // limit each IP to 7 requests per windowMs
   message: rateLimitHandler,
@@ -34,7 +42,7 @@ export const authLimiter = rateLimit({
 });
 
 // Moderate rate limiter for ticket creation - 14 tickets per hour
-export const ticketCreationLimiter = rateLimit({
+export const ticketCreationLimiter = securityConfig.rateLimit.disabled ? bypassRateLimit : rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 14, // limit each IP to 14 ticket creations per hour
   message: rateLimitHandler,
@@ -43,7 +51,7 @@ export const ticketCreationLimiter = rateLimit({
 });
 
 // Contact request rate limiter - 29 requests per hour
-export const contactRequestLimiter = rateLimit({
+export const contactRequestLimiter = securityConfig.rateLimit.disabled ? bypassRateLimit : rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 29, // limit each IP to 29 contact requests per hour
   message: rateLimitHandler,
@@ -52,7 +60,7 @@ export const contactRequestLimiter = rateLimit({
 });
 
 // Review submission rate limiter - 7 reviews per hour
-export const reviewLimiter = rateLimit({
+export const reviewLimiter = securityConfig.rateLimit.disabled ? bypassRateLimit : rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 7, // limit each IP to 7 reviews per hour
   message: rateLimitHandler,
@@ -61,7 +69,7 @@ export const reviewLimiter = rateLimit({
 });
 
 // Search rate limiter - 86 searches per minute (generous for browsing)
-export const searchLimiter = rateLimit({
+export const searchLimiter = securityConfig.rateLimit.disabled ? bypassRateLimit : rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 86, // limit each IP to 86 searches per minute
   message: rateLimitHandler,
@@ -70,7 +78,7 @@ export const searchLimiter = rateLimit({
 });
 
 // File upload rate limiter - 7 uploads per 15 minutes
-export const uploadLimiter = rateLimit({
+export const uploadLimiter = securityConfig.rateLimit.disabled ? bypassRateLimit : rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 7, // limit each IP to 7 uploads per 15 minutes
   message: rateLimitHandler,
@@ -79,7 +87,7 @@ export const uploadLimiter = rateLimit({
 });
 
 // Very strict rate limiter for sensitive operations - 5 attempts per hour
-export const strictLimiter = rateLimit({
+export const strictLimiter = securityConfig.rateLimit.disabled ? bypassRateLimit : rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 5, // limit each IP to 5 requests per hour
   message: rateLimitHandler,
