@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -47,12 +48,9 @@ const instagramSchema = z.object({
 type InstagramForm = z.infer<typeof instagramSchema>;
 
 export default function CompleteProfile() {
-  const { user, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [, navigate] = useLocation();
-
-  const form = useForm<InstagramForm>({
+  const [, navigate] = useLocation();  const form = useForm<InstagramForm>({
     resolver: zodResolver(instagramSchema),
     defaultValues: {
       instagram: "",

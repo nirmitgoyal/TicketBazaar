@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -70,7 +71,6 @@ export default function Profile() {
   const { user, isAuthenticated, logoutMutation } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
-  const queryClient = useQueryClient();
   const [isInstagramDialogOpen, setIsInstagramDialogOpen] = useState(false);
   const [isDataDeletionDialogOpen, setIsDataDeletionDialogOpen] = useState(false);
   const [isExportingData, setIsExportingData] = useState(false);

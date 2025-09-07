@@ -161,13 +161,6 @@ interface VerificationResult {
 }
 
 export default function ListTicket() {
-  // Defensive: some stale compiled chunk still references useQueryClient; provide no-op shim to avoid ReferenceError
-  // (Will be removed after next full clean build)
-  // @ts-ignore
-  if (typeof window !== 'undefined' && typeof (globalThis as any).useQueryClient === 'undefined') {
-    // Minimal shim that returns the singleton so any late calls still work
-    (globalThis as any).useQueryClient = () => queryClient;
-  }
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { useParams, useLocation } from "wouter";
 import { Ticket } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
@@ -15,7 +16,6 @@ export default function TicketVerificationPage() {
   const [, setLocation] = useLocation();
   const { ticketId } = useParams<{ ticketId: string }>();
   const { user } = useAuth();
-  const queryClient = useQueryClient();
   const { toast } = useToast();
   const id = parseInt(ticketId);
 

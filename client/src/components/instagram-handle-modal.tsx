@@ -49,7 +49,6 @@ interface InstagramHandleModalProps {
 export function InstagramHandleModal({ isOpen, onClose, onSuccess }: InstagramHandleModalProps) {
   const { user } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<InstagramHandleFormData>({

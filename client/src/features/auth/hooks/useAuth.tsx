@@ -6,7 +6,8 @@
  */
 
 import { createContext, useContext, ReactNode, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { queryClient } from "@/lib/queryClient";
 import { User } from '@shared/schema';
 import { AuthContextType, LoginCredentials, RegisterCredentials } from '../types/auth.types';
 import { authService } from '../services/AuthService';
@@ -19,7 +20,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
  * Auth Provider Component
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const queryClient = useQueryClient();
   const { toast } = useToast();
 
   // Get current user query
