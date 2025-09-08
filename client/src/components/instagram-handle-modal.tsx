@@ -32,14 +32,11 @@ const instagramHandleSchema = z.object({
   instagram: z
     .string()
     .min(1, "Instagram handle is required")
+    .max(20, "Instagram handle must be 20 characters or less")
     .transform((val) => val.replace(/^@/, "")) // Remove @ if present first
-    .pipe(
-      z.string()
-        .max(20, "Instagram handle must be 20 characters or less")
-        .regex(
-          /^[a-zA-Z0-9_.]+$/,
-          "Invalid Instagram handle format. Must be 1-20 characters, contain only letters, numbers, periods, and underscores."
-        )
+    .refine(
+      (val) => /^[a-zA-Z0-9_.]+$/.test(val),
+      "Invalid Instagram handle format. Must be 1-20 characters, contain only letters, numbers, periods, and underscores."
     ),
 });
 
@@ -66,19 +63,24 @@ export function InstagramHandleModal({ isOpen, onClose, onSuccess }: InstagramHa
   // Mutation to update user's Instagram handle
   const updateInstagramMutation = useMutation({
     mutationFn: async (data: InstagramHandleFormData) => {
+      console.log('Starting Instagram mutation with data:', data);
+      
       if (!user?.id) {
         throw new Error("User not authenticated");
       }
       
+      console.log('Making API request to update Instagram handle');
       const response = await apiRequest("PATCH", `/api/users/${user.id}/instagram`, {
         instagram: data.instagram,
       });
       
       if (!response.ok) {
         const error = await response.json();
+        console.error('API request failed:', error);
         throw new Error(error.message || "Failed to update Instagram handle");
       }
       
+      console.log('Instagram handle updated successfully');
       return response.json();
     },
     onSuccess: () => {
@@ -102,8 +104,18 @@ export function InstagramHandleModal({ isOpen, onClose, onSuccess }: InstagramHa
   });
 
   const onSubmit = async (data: InstagramHandleFormData) => {
-    setIsSubmitting(true);
-    await updateInstagramMutation.mutateAsync(data);
+    try {
+      setIsSubmitting(true);
+      await updateInstagramMutation.mutateAsync(data);
+    } catch (error) {
+      console.error('Error submitting Instagram handle:', error);
+      setIsSubmitting(false);
+      toast({
+        title: "Submission Failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -111,7 +123,6 @@ export function InstagramHandleModal({ isOpen, onClose, onSuccess }: InstagramHa
       <AlertDialogContent 
         className="sm:max-w-[425px]" 
         onEscapeKeyDown={(e) => e.preventDefault()}
-        onInteractOutside={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
       >
         <AlertDialogHeader>
@@ -125,7 +136,17 @@ export function InstagramHandleModal({ isOpen, onClose, onSuccess }: InstagramHa
         </AlertDialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (typeof form.handleSubmit !== 'function') {
+                console.error('form.handleSubmit is not a function');
+                return;
+              }
+              return form.handleSubmit(onSubmit)(e);
+            }} 
+            className="space-y-4"
+          >
             <Alert>
               <Info className="h-4 w-4" />
               <AlertDescription>
