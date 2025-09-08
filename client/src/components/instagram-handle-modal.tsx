@@ -31,11 +31,16 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 const instagramHandleSchema = z.object({
   instagram: z
     .string()
-    .regex(
-      /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]$/,
-      "Invalid Instagram handle format. Must be 3-30 characters, contain only letters, numbers, periods, and underscores."
-    )
-    .transform((val) => val.replace(/^@/, "")), // Remove @ if present
+    .min(1, "Instagram handle is required")
+    .transform((val) => val.replace(/^@/, "")) // Remove @ if present first
+    .pipe(
+      z.string()
+        .max(20, "Instagram handle must be 20 characters or less")
+        .regex(
+          /^[a-zA-Z0-9_.]+$/,
+          "Invalid Instagram handle format. Must be 1-20 characters, contain only letters, numbers, periods, and underscores."
+        )
+    ),
 });
 
 type InstagramHandleFormData = z.infer<typeof instagramHandleSchema>;

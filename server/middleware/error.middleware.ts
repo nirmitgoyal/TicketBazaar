@@ -31,6 +31,21 @@ export function errorHandler(error: any, req: Request, res: Response, next: Next
   // Database errors
   if (error.code && error.code.startsWith('23')) {
     logger.error('DATABASE', 'Database constraint violation', error, userId, requestId);
+    
+    // Handle specific constraint violations with user-friendly messages
+    if (error.constraint === 'valid_instagram_handle') {
+      return res.status(400).json({
+        message: 'Invalid Instagram handle format. Must be 1-20 characters with only letters, numbers, dots, and underscores.',
+      });
+    }
+    
+    // Handle Instagram column length constraint
+    if (error.message && error.message.includes('instagram') && error.message.includes('too long')) {
+      return res.status(400).json({
+        message: 'Instagram handle must be 20 characters or less.',
+      });
+    }
+    
     return res.status(409).json({
       message: 'Database operation failed',
     });
