@@ -41,7 +41,7 @@ export const commonSchemas = {
   ),
   
   // Enums
-  category: z.enum(['Concerts', 'Sports', 'Theater', 'Comedy', 'Festival', 'Conference', 'Other'] as const),
+  category: z.enum(['concerts', 'sports', 'theater', 'comedy', 'festivals', 'conferences', 'exhibitions', 'movies', 'dance', 'opera', 'classical', 'family', 'nightlife', 'education', 'networking', 'fitness', 'accommodation', 'others'] as const),
   ticketStatus: z.enum(['available', 'sold', 'expired', 'cancelled'] as const),
   userStatus: z.enum(['active', 'suspended', 'banned', 'deleted'] as const),
   verificationStatus: z.enum(['unverified', 'pending', 'verified'] as const),

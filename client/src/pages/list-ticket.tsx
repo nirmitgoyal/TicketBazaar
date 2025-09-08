@@ -98,7 +98,7 @@ const ticketFormSchema = z.object({
     .string()
     .min(1, "Event category is required")
     .refine((val) => {
-      const validCategories = ['concerts', 'sports', 'theater', 'comedy', 'festival', 'conference', 'other'];
+      const validCategories = ['concerts', 'sports', 'theater', 'comedy', 'festivals', 'conferences', 'movies', 'fitness', 'accommodation', 'exhibitions', 'dance', 'nightlife', 'education', 'networking', 'others'];
       return validCategories.includes(val.toLowerCase());
     }, "Please select a valid event category"),
   
