@@ -50,7 +50,14 @@ export function InstagramHandleCheck({ children }: { children: React.ReactNode }
       {showInstagramModal && user && (
         <InstagramHandleModal 
           isOpen={showInstagramModal} 
-          userId={user.id} 
+          onClose={() => setShowInstagramModal(false)}
+          onSuccess={() => {
+            setShowInstagramModal(false);
+            toast({
+              title: "Instagram handle added!",
+              description: "Your Instagram handle has been successfully added to your profile.",
+            });
+          }}
         />
       )}
     </>

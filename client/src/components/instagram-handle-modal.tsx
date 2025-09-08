@@ -111,7 +111,6 @@ export function InstagramHandleModal({ isOpen, onClose, onSuccess }: InstagramHa
       <AlertDialogContent 
         className="sm:max-w-[425px]" 
         onEscapeKeyDown={(e) => e.preventDefault()}
-        onInteractOutside={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
       >
         <AlertDialogHeader>

@@ -44,7 +44,7 @@ import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps-config";
 import { getAllCountries, getCountryInfo, detectUserCountry } from "@/lib/country-utils";
 
 import { ticketListingSchema } from "@shared/schema";
-import { InstagramHandleModal } from "@/components/InstagramHandleModal";
+import { InstagramHandleModal } from "@/components/instagram-handle-modal";
 
 // Custom form schema for ticket listing with comprehensive validation
 const ticketFormSchema = z.object({
