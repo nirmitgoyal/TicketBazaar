@@ -33,6 +33,7 @@ const instagramSchema = z.object({
   instagram: z
     .string()
     .min(1, "Instagram handle is required")
+    .max(20, "Instagram handle must be 20 characters or less")
     .refine((handle) => {
       // Remove @ if user includes it and validate handle format
       const cleanHandle = handle.replace(/^@/, "");
@@ -40,9 +41,9 @@ const instagramSchema = z.object({
       return (
         handleRegex.test(cleanHandle) &&
         cleanHandle.length >= 1 &&
-        cleanHandle.length <= 30
+        cleanHandle.length <= 20
       );
-    }, "Please enter a valid Instagram handle (e.g., username or @username)"),
+    }, "Please enter a valid Instagram handle (1-20 characters, letters, numbers, dots, and underscores only)"),
 });
 
 type InstagramForm = z.infer<typeof instagramSchema>;

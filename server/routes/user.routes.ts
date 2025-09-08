@@ -5,22 +5,30 @@ import { logger } from "../utils/logger";
 
 const router = Router();
 
-// Instagram handle schema - max 20 chars as per spec
+// Instagram handle schema - max 20 chars as per database constraint
 const instagramHandleSchema = z.object({
   instagram_handle: z
     .string()
     .min(1, "Instagram handle is required")
-    .max(20, "Instagram handle must be 20 characters or less")
-    .regex(/^[a-zA-Z0-9_.]+$/, "Instagram handle can only contain letters, numbers, dots, and underscores")
+    .transform((val) => val.replace(/^@/, "")) // Remove @ if present first
+    .pipe(
+      z.string()
+        .max(20, "Instagram handle must be 20 characters or less")
+        .regex(/^[a-zA-Z0-9_.]+$/, "Instagram handle can only contain letters, numbers, dots, and underscores")
+    )
 });
 
-// Instagram handle schema - max 20 chars as per spec
+// Instagram handle schema - max 20 chars as per database constraint
 const instagramHandleSchemaNew = z.object({
   instagram: z
     .string()
     .min(1, "Instagram handle is required")
-    .max(30, "Instagram handle must be 30 characters or less")
-    .regex(/^[\w](?!.*?\.{2})[\w.]{1,28}[\w]$/, "Invalid Instagram handle format")
+    .transform((val) => val.replace(/^@/, "")) // Remove @ if present first
+    .pipe(
+      z.string()
+        .max(20, "Instagram handle must be 20 characters or less")
+        .regex(/^[a-zA-Z0-9_.]+$/, "Instagram handle can only contain letters, numbers, dots, and underscores")
+    )
 });
 
 // PUT /api/users/:id/instagram - Idempotent Instagram handle update

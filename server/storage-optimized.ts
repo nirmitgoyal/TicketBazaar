@@ -125,6 +125,10 @@ export class OptimizedStorage {
       return user;
     } catch (error) {
       logger.error('STORAGE', `Error updating user Instagram ${userId}:`, error);
+      // Re-throw database constraint errors to be handled by error middleware
+      if (error && typeof error === 'object' && 'code' in error && typeof error.code === 'string' && error.code.startsWith('23')) {
+        throw error;
+      }
       return undefined;
     }
   }
