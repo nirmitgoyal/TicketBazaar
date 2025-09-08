@@ -222,7 +222,8 @@ export default function ListTicket() {
       }
     });
     return () => subscription.unsubscribe();
-  }, [form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Remove form dependency to prevent re-subscription on re-renders
 
   // Auto-detect user's location and set defaults
   useEffect(() => {
@@ -235,7 +236,8 @@ export default function ListTicket() {
 
       form.setValue("eventTimezone", userTimezone);
     }
-  }, [form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Remove form dependency since this should only run once on mount
 
   const onPlaceChanged = useCallback(() => {
     if (selectedPlace) {
@@ -253,7 +255,8 @@ export default function ListTicket() {
       }
       setVenueInputValue(venue);
     }
-  }, [selectedPlace, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPlace]); // Remove form dependency since form object is stable
 
   const [searchResults, setSearchResults] = useState<google.maps.places.PlaceResult[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -292,7 +295,8 @@ export default function ListTicket() {
         }
       });
     }
-  }, [form, selectedPlace]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPlace]); // Remove form dependency since form object is stable
 
   const handleSelectVenue = useCallback((place: google.maps.places.PlaceResult) => {
     setSelectedPlace(place);
@@ -323,7 +327,8 @@ export default function ListTicket() {
     setVenueInputValue(venue);
     setShowResults(false);
     setSearchResults([]);
-  }, [form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Remove form dependency since form object is stable
 
   const handleClearVenue = useCallback(() => {
     setSelectedPlace(null);
@@ -334,7 +339,8 @@ export default function ListTicket() {
     form.setValue("venueAddress", "");
     form.setValue("latitude", undefined);
     form.setValue("longitude", undefined);
-  }, [form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Remove form dependency since form object is stable
 
   // Verify ticket listing using Perplexity AI
   const verifyTicket = async () => {
