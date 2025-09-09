@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocation } from "wouter";
@@ -35,7 +35,7 @@ import { Separator } from "@/components/ui/separator";
 import { AlertCircle, Info, MapPin, X, Globe, Shield, CheckCircle, XCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { z } from "zod";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { SEOManager } from "@/components/helmet-manager";
 import { UnifiedSchema } from "@/components/schema/unified-schema";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
@@ -97,7 +97,23 @@ const ticketFormSchema = z.object({
     .string()
     .min(1, "Event category is required")
     .refine((val) => {
-      const validCategories = ['concerts', 'sports', 'theater', 'comedy', 'festival', 'conference', 'other'];
+      // Keep this list in sync with the <SelectItem> values below
+      const validCategories = [
+        'concerts',
+        'fitness',
+        'accommodation',
+        'sports',
+        'comedy',
+        'festivals',
+        'conferences',
+        'exhibitions',
+        'movies',
+        'dance',
+        'nightlife',
+        'education',
+        'networking',
+        'others',
+      ];
       return validCategories.includes(val.toLowerCase());
     }, "Please select a valid event category"),
   
@@ -162,7 +178,6 @@ interface VerificationResult {
 export default function ListTicket() {
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [, navigate] = useLocation();
 
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
