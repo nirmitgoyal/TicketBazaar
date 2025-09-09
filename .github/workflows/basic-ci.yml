@@ -91,7 +91,7 @@ jobs:
       env:
         NODE_ENV: test
         DATABASE_URL: postgresql://test:test@localhost:5432/test
-        SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+        SESSION_SECRET: ${{ secrets.SESSION_SECRET || 'test-session-secret-for-ci-32-chars-minimum' }}
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
         VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
@@ -112,7 +112,7 @@ jobs:
       env:
         NODE_ENV: test
         DATABASE_URL: postgresql://test:test@localhost:5432/test
-        SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+        SESSION_SECRET: ${{ secrets.SESSION_SECRET || 'test-session-secret-for-ci-32-chars-minimum' }}
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
         VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
