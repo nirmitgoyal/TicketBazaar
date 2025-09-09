@@ -56,7 +56,7 @@ export default defineConfig({
     env: {
       NODE_ENV: "test",
       DATABASE_URL: process.env.DATABASE_URL || "postgresql://test:test@localhost:5432/test",
-      SESSION_SECRET: process.env.SESSION_SECRET || "test-session-secret-for-ci",
+      SESSION_SECRET: process.env.SESSION_SECRET || "test-session-secret-for-ci-32-chars-minimum",
       VITE_GOOGLE_MAPS_API_KEY: process.env.VITE_GOOGLE_MAPS_API_KEY || "test-key",
       SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || "test-key",
       PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY || "test-key",
