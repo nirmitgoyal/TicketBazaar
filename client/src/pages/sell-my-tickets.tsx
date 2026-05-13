@@ -9,7 +9,6 @@ import {
   ListChecks,
   Loader2,
   LogIn,
-  Menu,
   ShieldCheck,
   Ticket,
   Upload,
@@ -440,9 +439,6 @@ export default function SellMyTicketsPage() {
             >
               <LogIn size={20} />
               {isAuthLoading ? "Checking login" : user?.fullName || "Login with Google"}
-            </button>
-            <button className="smt-icon-button" type="button" aria-label="Menu">
-              <Menu />
             </button>
           </div>
         </header>

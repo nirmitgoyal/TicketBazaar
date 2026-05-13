@@ -5,7 +5,7 @@ import crypto from "crypto";
 import { Request, Response, NextFunction } from "express";
 
 // Secure file upload configuration
-const UPLOAD_DIR = "uploads/tickets";
+const UPLOAD_DIR = process.env.VERCEL === "1" ? "/tmp/tickets" : "uploads/tickets";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIME_TYPES = [
   "application/pdf",

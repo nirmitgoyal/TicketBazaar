@@ -50,7 +50,6 @@
 }
 
 .smt-google-button,
-.smt-icon-button,
 .smt-primary,
 .smt-secondary,
 .smt-tab {
@@ -60,7 +59,6 @@
 }
 
 .smt-google-button:hover,
-.smt-icon-button:hover,
 .smt-primary:hover,
 .smt-secondary:hover,
 .smt-tab:hover {
@@ -78,16 +76,6 @@
   min-width: 0;
   padding: 0.55rem 0.75rem;
   white-space: nowrap;
-}
-
-.smt-icon-button {
-  align-items: center;
-  background: var(--smt-panel);
-  border-radius: 7px;
-  display: inline-flex;
-  height: 2.75rem;
-  justify-content: center;
-  width: 2.75rem;
 }
 
 .smt-hero {
@@ -473,7 +461,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .smt-google-button,
-  .smt-icon-button,
   .smt-primary,
   .smt-secondary,
   .smt-progress-fill,
