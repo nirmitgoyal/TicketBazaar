@@ -1,5 +1,9 @@
 import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import {
+  Strategy as GoogleStrategy,
+  type Profile as GoogleProfile,
+  type VerifyCallback,
+} from "passport-google-oauth20";
 import { Express, Request, Response } from "express";
 import session from "express-session";
 import { storage } from "./storage";
@@ -39,6 +43,12 @@ export function setupAuth(app: Express) {
                       process.env.NODE_ENV === 'production' || 
                       Boolean(process.env.DYNO) || 
                       isAWSRDS);
+  const isNeonAuthMode = Boolean(process.env.NEON_AUTH_URL || process.env.VITE_NEON_AUTH_URL || isNeon);
+  const googleClientId = process.env.GOOGLE_CLIENT_ID;
+  const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const hasLegacyGoogleOAuthCredentials = Boolean(googleClientId && googleClientSecret);
+  const shouldEnableLegacyGoogleOAuth = hasLegacyGoogleOAuthCredentials && !isNeonAuthMode;
+  const requiresPersistentSessionConfig = isProduction && shouldEnableLegacyGoogleOAuth;
   
   // Create session store with database connection
   // For production environments (like Heroku), we need to configure SSL properly
@@ -47,15 +57,17 @@ export function setupAuth(app: Express) {
   console.log('[AUTH] Is Production:', isProduction);
   console.log('[AUTH] AWS RDS detected:', isAWSRDS);
   console.log('[AUTH] Neon detected:', isNeon);
+  console.log('[AUTH] Neon Auth mode:', isNeonAuthMode);
+  console.log('[AUTH] Legacy Google OAuth enabled:', shouldEnableLegacyGoogleOAuth);
   
   let sessionStore: session.Store;
 
   if (!process.env.DATABASE_URL) {
-    if (isProduction) {
-      throw new Error("DATABASE_URL is required for production session storage");
+    if (requiresPersistentSessionConfig) {
+      throw new Error("DATABASE_URL is required for production session storage when legacy Google OAuth is enabled");
     }
 
-    console.log('[AUTH] Using in-memory session store because DATABASE_URL is not set');
+    console.warn('[AUTH] Using in-memory session store because DATABASE_URL is not set; Neon Auth bearer sessions remain stateless');
     const MemoryStore = createMemoryStore(session);
     sessionStore = new MemoryStore({
       checkPeriod: 24 * 60 * 60 * 1000,
@@ -109,15 +121,18 @@ export function setupAuth(app: Express) {
   // Configure session settings
   let sessionSecret = process.env.SESSION_SECRET;
   
-  // In test mode, provide a default session secret if none is provided
-  if (!sessionSecret && process.env.NODE_ENV !== 'production') {
-    console.log('Non-production mode: Using default session secret for local testing');
-    sessionSecret = 'local-session-secret-for-testing-only-not-secure';
+  // Passport Google sessions need an explicit production secret. Neon Auth uses
+  // bearer tokens, so keep Express sessions initialized without failing API boot.
+  if (!sessionSecret && !requiresPersistentSessionConfig) {
+    console.warn('[AUTH] SESSION_SECRET is not set; using stateless Neon Auth fallback session secret');
+    sessionSecret = 'neon-auth-stateless-session-secret-do-not-use-for-passport';
   }
   
   if (!sessionSecret) {
-    throw new Error("SESSION_SECRET environment variable is required for security");
+    throw new Error("SESSION_SECRET environment variable is required when legacy Google OAuth is enabled");
   }
+
+  const sessionCookieDomain = process.env.SESSION_COOKIE_DOMAIN;
   
   const sessionSettings: session.SessionOptions = {
     secret: sessionSecret,
@@ -129,7 +144,7 @@ export function setupAuth(app: Express) {
       sameSite: "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      domain: isProduction && !process.env.REPL_SLUG ? '.ticketbazaar.co.in' : undefined // Only set domain in production (not Replit)
+      domain: sessionCookieDomain || undefined,
     },
     name: 'tb.sid', // Custom session cookie name
   };
@@ -148,11 +163,12 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Configure Google OAuth2 strategy only if credentials are provided
-  const googleClientId = process.env.GOOGLE_CLIENT_ID;
-  const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  
-  if (googleClientId && googleClientSecret) {
+  if (hasLegacyGoogleOAuthCredentials && isNeonAuthMode) {
+    console.log('Google OAuth credentials found, but legacy Passport Google auth is disabled because Neon Auth is configured');
+  }
+
+  // Configure legacy Google OAuth2 strategy only when Neon Auth is not active.
+  if (shouldEnableLegacyGoogleOAuth && googleClientId && googleClientSecret) {
     // Determine callback URL based on environment
     let callbackURL;
     
@@ -189,7 +205,7 @@ export function setupAuth(app: Express) {
           state: true, // Enable state parameter for CSRF protection
           scope: ['profile', 'email'] // Explicitly set required scopes
         },
-        async (req, accessToken, refreshToken, profile, done) => {
+        async (_req: Request, accessToken: string, _refreshToken: string, profile: GoogleProfile, done: VerifyCallback) => {
           try {
             console.log('[GOOGLE OAUTH] Starting authentication for profile:', profile.id);
             console.log('[GOOGLE OAUTH] Access token received:', accessToken ? 'Yes' : 'No');

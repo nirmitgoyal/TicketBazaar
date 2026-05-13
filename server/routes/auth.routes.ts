@@ -4,13 +4,14 @@ import { validateBody } from "../middleware/validation.middleware";
 import { UserController } from "../controllers/index";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
-import { getNeonAuthPublicConfig, isNeonAuthEnabled } from "../middleware/neon-auth.middleware";
+import { getNeonAuthPublicConfig, getNeonAuthUrl, isNeonAuthEnabled } from "../middleware/neon-auth.middleware";
 
 const router = Router();
 const userController = new UserController();
 
 // Check if Google OAuth is configured
-const isGoogleOAuthEnabled = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+const hasGoogleOAuthCredentials = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+const isPassportGoogleOAuthEnabled = hasGoogleOAuthCredentials && !getNeonAuthUrl();
 
 function safeReturnTo(value: unknown) {
   if (typeof value !== "string" || value.length === 0) {
@@ -40,8 +41,8 @@ function loginRedirect(returnTo: string | undefined, error: string, message?: st
 
 router.get("/google/status", (_req, res) => {
   res.json({
-    enabled: isGoogleOAuthEnabled || isNeonAuthEnabled(),
-    mode: isNeonAuthEnabled() ? "neon-auth" : "passport-google",
+    enabled: isPassportGoogleOAuthEnabled || isNeonAuthEnabled(),
+    mode: getNeonAuthUrl() ? "neon-auth" : "passport-google",
   });
 });
 
@@ -50,7 +51,7 @@ router.get("/neon/status", (_req, res) => {
 });
 
 // Google OAuth login route (only if configured)
-if (isGoogleOAuthEnabled) {
+if (isPassportGoogleOAuthEnabled) {
   router.get("/google", (req, res, next) => {
     // Store the returnTo parameter in session before initiating OAuth
     const returnTo = safeReturnTo(req.query.returnTo);
@@ -183,14 +184,18 @@ if (isGoogleOAuthEnabled) {
   // Provide fallback routes that return appropriate errors
   router.get("/google", (req, res) => {
     res.status(503).json({ 
-      message: "Google OAuth is not configured on this server",
+      message: getNeonAuthUrl()
+        ? "Legacy Google OAuth is disabled because Neon Auth handles Google sign-in"
+        : "Google OAuth is not configured on this server",
       error: "SERVICE_UNAVAILABLE"
     });
   });
 
   router.get("/google/callback", (req, res) => {
     res.status(503).json({ 
-      message: "Google OAuth is not configured on this server",
+      message: getNeonAuthUrl()
+        ? "Legacy Google OAuth is disabled because Neon Auth handles Google sign-in"
+        : "Google OAuth is not configured on this server",
       error: "SERVICE_UNAVAILABLE"
     });
   });

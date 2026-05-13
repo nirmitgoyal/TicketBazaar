@@ -8,6 +8,10 @@ const envSchema = z.object({
   PORT: z.string().transform(Number).default('5000'),
   DATABASE_URL: z.string().url("DATABASE_URL must be a valid PostgreSQL connection string").optional(),
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters for security").optional(),
+  NEON_AUTH_URL: z.string().url("NEON_AUTH_URL must be a valid URL").optional(),
+  VITE_NEON_AUTH_URL: z.string().url("VITE_NEON_AUTH_URL must be a valid URL").optional(),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
   
   // Optional but recommended
   GOOGLE_MAPS_API_KEY: z.string().optional(),
@@ -27,19 +31,27 @@ const envSchema = z.object({
     return;
   }
 
-  if (!env.DATABASE_URL) {
+  const neonAuthConfigured = Boolean(
+    env.NEON_AUTH_URL ||
+      env.VITE_NEON_AUTH_URL ||
+      env.DATABASE_URL?.includes("neon.tech"),
+  );
+  const legacyGoogleOAuthConfigured = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
+  const legacyGoogleOAuthMode = legacyGoogleOAuthConfigured && !neonAuthConfigured;
+
+  if (!env.DATABASE_URL && legacyGoogleOAuthMode) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['DATABASE_URL'],
-      message: 'DATABASE_URL is required in production',
+      message: 'DATABASE_URL is required in production when legacy Google OAuth is enabled',
     });
   }
 
-  if (!env.SESSION_SECRET) {
+  if (!env.SESSION_SECRET && legacyGoogleOAuthMode) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['SESSION_SECRET'],
-      message: 'SESSION_SECRET is required in production',
+      message: 'SESSION_SECRET is required in production when legacy Google OAuth is enabled',
     });
   }
 });
@@ -73,7 +85,7 @@ export const config = validateEnvironment();
  */
 export const securityConfig = {
   session: {
-    secret: config.SESSION_SECRET || 'local-session-secret-for-testing-only-not-secure',
+    secret: config.SESSION_SECRET || 'neon-auth-stateless-session-secret-do-not-use-for-passport',
     secure: config.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
