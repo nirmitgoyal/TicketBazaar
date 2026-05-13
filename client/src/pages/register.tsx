@@ -1,26 +1,49 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { UnifiedSEO } from "@/components/unified-seo-component";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { signInWithNeonGoogle } from "@/lib/neon-auth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+
+function safeReturnTo(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+    return "/";
+  }
+
+  return value;
+}
 
 export default function Register() {
   const { isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
+  const [signUpError, setSignUpError] = useState<string | null>(null);
+  const [isSigningUp, setIsSigningUp] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {
       // Check if there's a return URL in the query params
       const urlParams = new URLSearchParams(window.location.search);
-      const returnTo = urlParams.get("returnTo") || "/";
+      const returnTo = safeReturnTo(urlParams.get("returnTo"));
       navigate(returnTo);
     }
   }, [isAuthenticated, navigate]);
 
-  const handleGoogleSignUp = () => {
-    window.location.href = "/api/auth/google";
+  const handleGoogleSignUp = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const returnTo = safeReturnTo(urlParams.get("returnTo"));
+    setSignUpError(null);
+    setIsSigningUp(true);
+
+    try {
+      await signInWithNeonGoogle(new URL(returnTo, window.location.origin).toString());
+    } catch (error) {
+      setIsSigningUp(false);
+      setSignUpError(error instanceof Error ? error.message : "Google sign-up failed.");
+    }
   };
 
   return (
@@ -39,9 +62,19 @@ export default function Register() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {signUpError && (
+            <Alert className="border-red-200 bg-red-50">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-sm text-red-800">
+                {signUpError}
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Google Sign-up Button following Google's branding guidelines */}
           <Button
             onClick={handleGoogleSignUp}
+            disabled={isSigningUp}
             className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 font-medium border border-gray-300 shadow-sm"
           >
             <svg 
@@ -56,7 +89,7 @@ export default function Register() {
                 <path fill="#EA4335" d="M -14.754 43.989 C -12.984 43.989 -11.404 44.599 -10.154 45.789 L -6.734 42.369 C -8.804 40.429 -11.514 39.239 -14.754 39.239 C -19.444 39.239 -23.494 41.939 -25.464 45.859 L -21.484 48.949 C -20.534 46.099 -17.884 43.989 -14.754 43.989 Z"/>
               </g>
             </svg>
-            Sign up with Google
+            {isSigningUp ? "Signing up..." : "Sign up with Google"}
           </Button>
           
           <div className="text-center text-sm text-gray-600">

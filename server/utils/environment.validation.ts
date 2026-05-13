@@ -6,8 +6,8 @@ import { z } from "zod";
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.string().transform(Number).default('5000'),
-  DATABASE_URL: z.string().url("DATABASE_URL must be a valid PostgreSQL connection string"),
-  SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters for security"),
+  DATABASE_URL: z.string().url("DATABASE_URL must be a valid PostgreSQL connection string").optional(),
+  SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters for security").optional(),
   
   // Optional but recommended
   GOOGLE_MAPS_API_KEY: z.string().optional(),
@@ -22,6 +22,26 @@ const envSchema = z.object({
   // File upload settings
   MAX_FILE_SIZE: z.string().transform(Number).default('5242880'), // 5MB
   UPLOAD_DIR: z.string().default('uploads'),
+}).superRefine((env, ctx) => {
+  if (env.NODE_ENV !== 'production') {
+    return;
+  }
+
+  if (!env.DATABASE_URL) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['DATABASE_URL'],
+      message: 'DATABASE_URL is required in production',
+    });
+  }
+
+  if (!env.SESSION_SECRET) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['SESSION_SECRET'],
+      message: 'SESSION_SECRET is required in production',
+    });
+  }
 });
 
 /**
@@ -53,7 +73,7 @@ export const config = validateEnvironment();
  */
 export const securityConfig = {
   session: {
-    secret: config.SESSION_SECRET,
+    secret: config.SESSION_SECRET || 'local-session-secret-for-testing-only-not-secure',
     secure: config.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days

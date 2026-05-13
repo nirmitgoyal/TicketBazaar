@@ -6,6 +6,7 @@ import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import connectPgSimple from "connect-pg-simple";
 import { db } from "./db";
+import createMemoryStore from "memorystore";
 
 /**
  * Extend Express User interface with our User type
@@ -29,28 +30,39 @@ export function setupAuth(app: Express) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   }
   
+  // Check if we're on production (ticketbazaar.co.in)
+  // In Replit, we should always use development settings
+  const isReplit = Boolean(process.env.REPL_ID || process.env.REPLIT_DB_URL);
+  const isAWSRDS = Boolean(process.env.DATABASE_URL?.includes('amazonaws.com'));
+  const isNeon = Boolean(process.env.DATABASE_URL?.includes('neon.tech'));
+  const isProduction = !isReplit && (
+                      process.env.NODE_ENV === 'production' || 
+                      Boolean(process.env.DYNO) || 
+                      isAWSRDS);
+  
   // Create session store with database connection
   // For production environments (like Heroku), we need to configure SSL properly
   console.log('[AUTH] Environment:', process.env.NODE_ENV);
   console.log('[AUTH] Database URL exists:', !!process.env.DATABASE_URL);
-  
-  let sessionStore;
-  
-  // Check if we're on production (ticketbazaar.co.in)
-  // In Replit, we should always use development settings
-  const isReplit = process.env.REPL_ID || process.env.REPLIT_DB_URL;
-  const isAWSRDS = process.env.DATABASE_URL?.includes('amazonaws.com');
-  const isProduction = !isReplit && (
-                      process.env.NODE_ENV === 'production' || 
-                      process.env.DYNO || 
-                      isAWSRDS);
-  
   console.log('[AUTH] Is Production:', isProduction);
   console.log('[AUTH] AWS RDS detected:', isAWSRDS);
+  console.log('[AUTH] Neon detected:', isNeon);
   
-  if (isProduction) {
-    // Production configuration with SSL for Heroku and AWS RDS
-    console.log('[AUTH] Using production session store configuration with SSL');
+  let sessionStore: session.Store;
+
+  if (!process.env.DATABASE_URL) {
+    if (isProduction) {
+      throw new Error("DATABASE_URL is required for production session storage");
+    }
+
+    console.log('[AUTH] Using in-memory session store because DATABASE_URL is not set');
+    const MemoryStore = createMemoryStore(session);
+    sessionStore = new MemoryStore({
+      checkPeriod: 24 * 60 * 60 * 1000,
+    });
+  } else if (isProduction || isNeon) {
+    // Production and Neon pooled connections require SSL.
+    console.log('[AUTH] Using SSL session store configuration');
     
     const connectionConfig = isAWSRDS ? {
       // AWS RDS optimized configuration
@@ -65,7 +77,7 @@ export function setupAuth(app: Express) {
       idleTimeoutMillis: 60000, // 1 minute idle timeout
       max: 15, // Larger pool for production
     } : {
-      // Heroku configuration
+      // Heroku and Neon configuration
       connectionString: process.env.DATABASE_URL,
       ssl: {
         rejectUnauthorized: false
@@ -98,9 +110,9 @@ export function setupAuth(app: Express) {
   let sessionSecret = process.env.SESSION_SECRET;
   
   // In test mode, provide a default session secret if none is provided
-  if (!sessionSecret && process.env.NODE_ENV === 'test') {
-    console.log('Test mode: Using default session secret for testing');
-    sessionSecret = 'test-session-secret-for-testing-only-not-secure';
+  if (!sessionSecret && process.env.NODE_ENV !== 'production') {
+    console.log('Non-production mode: Using default session secret for local testing');
+    sessionSecret = 'local-session-secret-for-testing-only-not-secure';
   }
   
   if (!sessionSecret) {
@@ -208,7 +220,10 @@ export function setupAuth(app: Express) {
               if (user) {
                 // Update existing user with Google ID
                 console.log('[GOOGLE OAUTH] Updating existing user with Google ID. User ID:', user.id);
-                user = await storage.updateUserGoogleId(user.id, profile.id);
+                const updatedUser = await storage.updateUserGoogleId(user.id, profile.id);
+                if (updatedUser) {
+                  user = updatedUser;
+                }
                 // Update profile picture if available
                 if (profilePicture) {
                   console.log('[GOOGLE OAUTH] Updating profile picture for user:', user.id);
@@ -246,6 +261,10 @@ export function setupAuth(app: Express) {
               }
             }
 
+            if (!user) {
+              throw new Error("Google OAuth completed without a user record");
+            }
+
             // Remove password from user object for security
             const { password, ...userWithoutPassword } = user;
             console.log('[GOOGLE OAUTH] Authentication successful for user:', user.id);
@@ -253,7 +272,7 @@ export function setupAuth(app: Express) {
           } catch (error) {
             console.error('[GOOGLE OAUTH] Error during authentication:', error);
             console.error('[GOOGLE OAUTH] Error details:', JSON.stringify(error, null, 2));
-            console.error('[GOOGLE OAUTH] Error stack:', error.stack);
+            console.error('[GOOGLE OAUTH] Error stack:', error instanceof Error ? error.stack : undefined);
             return done(error as Error, false);
           }
         }

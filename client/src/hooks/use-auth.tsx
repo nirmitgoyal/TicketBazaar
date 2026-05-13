@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 import {
   useQuery,
   useMutation,
@@ -7,6 +7,7 @@ import {
 import { User as SelectUser } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { neonAuthClient, signOutFromNeonAuth } from "@/lib/neon-auth";
 
 /**
  * Auth context type definition
@@ -28,6 +29,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  const neonSession = neonAuthClient.useSession();
 
   // Note: We can't check for httpOnly cookies via JavaScript, so we always
   // attempt to fetch user data and let the server validate the session
@@ -43,9 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/auth/user", {
-          credentials: "include",
-        });
+        const res = await apiRequest("GET", "/api/auth/user");
         if (res.status === 401) {
           return null;
         }
@@ -60,11 +60,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     retry: false,
     throwOnError: false,
+    enabled: !neonSession.isPending,
     staleTime: 5 * 60 * 1000, // Consider data stale after 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
 
-
+  useEffect(() => {
+    if (!neonSession.isPending) {
+      void refetchUser();
+    }
+  }, [neonSession.data?.user?.id, neonSession.isPending, refetchUser]);
 
   /**
    * Logout mutation
@@ -72,13 +77,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const res = await apiRequest("POST", "/api/auth/logout");
-      if (res.status !== 200) {
-        const data = await res.json();
-        throw new Error(data.message || "Logout failed");
+      const [serverLogout, neonLogout] = await Promise.allSettled([
+        apiRequest("POST", "/api/auth/logout"),
+        signOutFromNeonAuth(),
+      ]);
+
+      if (serverLogout.status === "rejected" && neonLogout.status === "rejected") {
+        throw new Error("Logout failed");
       }
     },
     onSuccess: () => {
+      queryClient.setQueryData(["/api/auth/user"], null);
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: "Logout successful",
@@ -98,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user: user ?? null,
-        isLoading,
+        isLoading: isLoading || neonSession.isPending,
         error,
         isAuthenticated: !!user,
         logoutMutation,

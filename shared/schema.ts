@@ -188,6 +188,38 @@ export const ticketPopularity = pgTable("ticket_popularity", {
   updatedAtIdx: index("ticket_popularity_updated_at_idx").on(table.updatedAt),
 }));
 
+export const sellMyTicketsSubmissions = pgTable("sellmytickets_submissions", {
+  id: serial("id").primaryKey(),
+  dashboardCode: text("dashboard_code").notNull().unique(),
+  sellerName: text("seller_name").notNull(),
+  sellerEmail: text("seller_email").notNull(),
+  eventName: text("event_name").notNull(),
+  venue: text("venue"),
+  eventDate: timestamp("event_date"),
+  quantity: integer("quantity").notNull().default(1),
+  targetPriceCents: integer("target_price_cents").notNull(),
+  minimumPriceCents: integer("minimum_price_cents").notNull(),
+  currency: text("currency").notNull().default("USD"),
+  files: json("files").notNull().default([]),
+  marketplaces: json("marketplaces").notNull().default([]),
+  status: text("status").notNull().default("uploaded"),
+  verificationStatus: text("verification_status").notNull().default("pending"),
+  payoutStatus: text("payout_status").notNull().default("not_started"),
+  bankAccountHolder: text("bank_account_holder"),
+  bankLast4: text("bank_last4"),
+  routingLast4: text("routing_last4"),
+  soldMarketplace: text("sold_marketplace"),
+  soldAt: timestamp("sold_at"),
+  payoutEta: timestamp("payout_eta"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  dashboardCodeIdx: index("sellmytickets_dashboard_code_idx").on(table.dashboardCode),
+  sellerEmailIdx: index("sellmytickets_seller_email_idx").on(table.sellerEmail),
+  statusIdx: index("sellmytickets_status_idx").on(table.status),
+  createdAtIdx: index("sellmytickets_created_at_idx").on(table.createdAt),
+}));
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   tickets: many(tickets),
@@ -284,6 +316,8 @@ export const insertTicketViewSchema = createInsertSchema(ticketViews);
 
 export const insertTicketPopularitySchema = createInsertSchema(ticketPopularity);
 
+export const insertSellMyTicketsSubmissionSchema = createInsertSchema(sellMyTicketsSubmissions);
+
 // Types
 export type InsertUser = Omit<z.infer<typeof insertUserSchema>, 'id'>;
 export type User = typeof users.$inferSelect;
@@ -306,6 +340,9 @@ export type TicketView = typeof ticketViews.$inferSelect;
 
 export type InsertTicketPopularity = z.infer<typeof insertTicketPopularitySchema>;
 export type TicketPopularity = typeof ticketPopularity.$inferSelect;
+
+export type InsertSellMyTicketsSubmission = z.infer<typeof insertSellMyTicketsSubmissionSchema>;
+export type SellMyTicketsSubmission = typeof sellMyTicketsSubmissions.$inferSelect;
 
 // Event type derived from ticket event fields for compatibility
 export type Event = {

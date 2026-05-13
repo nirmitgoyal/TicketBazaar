@@ -23,6 +23,7 @@ import dataPrivacyRoutes from "./routes/data-privacy";
 import { WebSocketService } from "./services/websocket.service";
 import { logger } from "./utils/logger";
 import { cleanupService } from "./services/cleanup.service";
+import { attachNeonAuthUser } from "./middleware/neon-auth.middleware";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -48,6 +49,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Apply general rate limiting to all API routes
   apiRouter.use(generalApiLimiter);
+  apiRouter.use(attachNeonAuthUser);
 
   // Register route modules with specific rate limiters
   apiRouter.use("/auth", authLimiter, authRoutes);
@@ -56,6 +58,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.use("/contact-requests", contactRequestLimiter, contactRequestRoutes);
   apiRouter.use("/search", searchLimiter, searchHintsRoutes);
   apiRouter.use("/data-privacy", dataPrivacyRoutes);
+
+  const sellMyTicketsRoutes = (await import("./routes/sellmytickets.routes")).default;
+  apiRouter.use("/sellmytickets", uploadLimiter, sellMyTicketsRoutes);
 
   // Import and register ticket views routes
   const ticketViewsRoutes = (await import("./routes/ticket-views")).default;
@@ -69,17 +74,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const verificationRoutes = (await import("./routes/verification.routes")).default;
   apiRouter.use("/verification", strictLimiter, verificationRoutes);
 
-  // Import and register AI verification routes
-  const aiVerificationRoutes = (await import("./routes/ai-verification.routes")).default;
-  apiRouter.use("/ai-verification", strictLimiter, aiVerificationRoutes);
+  if (process.env.PERPLEXITY_API_KEY) {
+    // Import and register AI verification routes
+    const aiVerificationRoutes = (await import("./routes/ai-verification.routes")).default;
+    apiRouter.use("/ai-verification", strictLimiter, aiVerificationRoutes);
 
-  // Import and register fraud detection routes
-  const fraudDetectionRoutes = (await import("./routes/fraud-detection.routes")).default;
-  apiRouter.use("/fraud-detection", strictLimiter, fraudDetectionRoutes);
+    // Import and register fraud detection routes
+    const fraudDetectionRoutes = (await import("./routes/fraud-detection.routes")).default;
+    apiRouter.use("/fraud-detection", strictLimiter, fraudDetectionRoutes);
 
-  // Import and register ticket verification routes
-  const ticketVerificationRoutes = (await import("./routes/ticket-verification.routes")).default;
-  apiRouter.use("/ticket-verification", strictLimiter, ticketVerificationRoutes);
+    // Import and register ticket verification routes
+    const ticketVerificationRoutes = (await import("./routes/ticket-verification.routes")).default;
+    apiRouter.use("/ticket-verification", strictLimiter, ticketVerificationRoutes);
+  } else {
+    logger.warn('SERVER', 'AI verification routes skipped because PERPLEXITY_API_KEY is not configured');
+  }
 
   // Import and register user routes
   const userRoutes = (await import("./routes/user.routes")).default;
@@ -94,8 +103,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.use("/notifications", notificationRoutes);
 
   // Import and register seller trust routes
-  const sellerTrustRoutes = (await import("./routes/seller-trust.routes")).default;
-  apiRouter.use("/seller-trust", strictLimiter, sellerTrustRoutes);
+  if (process.env.PERPLEXITY_API_KEY) {
+    const sellerTrustRoutes = (await import("./routes/seller-trust.routes")).default;
+    apiRouter.use("/seller-trust", strictLimiter, sellerTrustRoutes);
+  } else {
+    logger.warn('SERVER', 'Seller trust routes skipped because PERPLEXITY_API_KEY is not configured');
+  }
 
   // Import and register email routes
   const emailRoutes = (await import("./routes/email.routes")).default;
@@ -105,9 +118,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const metricsRoutes = (await import("./routes/metrics")).default;
   apiRouter.use("/metrics", metricsRoutes);
 
-  // Import and register OG image generation routes
-  const ogImageRoutes = (await import("./routes/og-images.routes")).default;
-  apiRouter.use("/og", ogImageRoutes);
+  // Import and register OG image generation routes when the native renderer is available.
+  if (process.env.VERCEL === "1") {
+    logger.warn('SERVER', 'OG image routes skipped on Vercel because the native renderer is not bundled');
+  } else {
+    try {
+      const ogImageRoutes = (await import("./routes/og-images.routes")).default;
+      apiRouter.use("/og", ogImageRoutes);
+    } catch (error) {
+      logger.warn('SERVER', `OG image routes skipped: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
 
   // Runtime config: expose Google Maps API key for client (public referrer-restricted key only)
   // This avoids needing a full rebuild when the env var changes on the server

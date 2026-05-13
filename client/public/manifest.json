@@ -1,22 +1,39 @@
 {
+  "id": "/",
   "name": "Ticket Bazaar - India's Secure Ticket Marketplace",
   "short_name": "Ticket Bazaar",
   "description": "Buy and sell verified second hand tickets for concerts, sports events, and festivals across India at fair prices. Secure transactions with escrow protection.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#ffffff",
   "theme_color": "#1976D2",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/maskable-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/maskable-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/apple-touch-icon.png",
@@ -26,21 +43,20 @@
   ],
   "categories": ["entertainment", "lifestyle", "music"],
   "lang": "en-IN",
-  "scope": "/",
   "shortcuts": [
     {
       "name": "Browse Events",
       "short_name": "Browse",
       "description": "Browse all available events",
-      "url": "/?category=all",
-      "icons": [{ "src": "/logo.svg", "sizes": "96x96" }]
+      "url": "/ticketbazaar?category=all",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Sell Tickets",
       "short_name": "Sell",
       "description": "List your tickets for sale",
       "url": "/list-ticket",
-      "icons": [{ "src": "/logo.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }

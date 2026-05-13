@@ -3,9 +3,11 @@ import App from "./App";
 import "./lib/socket-fix";
 import "./index.css";
 import { initializeGlobalErrorHandlers } from "./utils/error-handler";
+import { registerPWAServiceWorker } from "./pwa";
 
 // Initialize comprehensive global error handlers
 initializeGlobalErrorHandlers();
+registerPWAServiceWorker();
 
 // Override Vite's error overlay behavior in development
 if (import.meta.env.DEV) {

@@ -7,6 +7,7 @@ import { createResilientLazyComponent } from "@/utils/error-recovery";
 
 // Resilient lazy loaded pages with error recovery
 const Home = createResilientLazyComponent(() => import("@/pages/home"), "home");
+const SellMyTickets = createResilientLazyComponent(() => import("@/pages/sell-my-tickets"), "sell-my-tickets");
 const EventDetails = createResilientLazyComponent(() => import("@/pages/event-details"), "event-details");
 const EventMap = createResilientLazyComponent(() => import("@/pages/event-map"), "event-map");
 const TicketPage = createResilientLazyComponent(() => import("@/pages/ticket-page"), "ticket-page");
@@ -129,7 +130,10 @@ export function AppRoutes() {
   return (
     <Switch>
       {/* Public routes */}
-      <LazyRoute path="/" component={Home} />
+      <LazyRoute path="/" component={SellMyTickets} />
+      <LazyRoute path="/sellmytickets" component={SellMyTickets} />
+      <LazyRoute path="/sell-my-tickets" component={SellMyTickets} />
+      <LazyRoute path="/ticketbazaar" component={Home} />
       <LazyRoute path="/event/:id" component={EventDetails} />
       <LazyRoute path="/events/:id" component={EventDetails} />
       <LazyRoute path="/tickets/:id" component={TicketPage} />

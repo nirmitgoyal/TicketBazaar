@@ -29,6 +29,10 @@ import "@/utils/performance-optimizer"; // Optimize performance
 
 function App() {
   const [location] = useLocation();
+  const isSellMyTicketsRoute =
+    location === "/" ||
+    location === "/sellmytickets" ||
+    location === "/sell-my-tickets";
 
   useEffect(() => {
     // Debug route changes
@@ -98,44 +102,52 @@ function App() {
                     <InstagramHandleCheck>
                       <UnifiedSEO type="general" />
                       <CanonicalUrlManager />
-                      <div className="min-h-screen flex flex-col safe-area-top prevent-horizontal-overflow app-with-anchor-ads">
-                        <ErrorBoundary fallback={
-                          <div className="bg-red-50 border border-red-200 p-4 m-4 rounded">
-                            <p className="text-red-800">Navigation temporarily unavailable</p>
-                          </div>
-                        }>
-                          <Navigation />
-                        </ErrorBoundary>
-                        
-                        <main className="flex-grow container mx-auto mobile-container py-3 sm:py-6 pt-20 sm:pt-24">
+                      {isSellMyTicketsRoute ? (
+                        <main className="min-h-screen prevent-horizontal-overflow">
                           <AppRoutes />
                         </main>
-                        
-                        <ErrorBoundary fallback={
-                          <div className="bg-gray-100 p-4 text-center text-gray-600">
-                            <p>Footer content unavailable</p>
-                          </div>
-                        }>
-                          <Footer />
-                        </ErrorBoundary>
-                      </div>
+                      ) : (
+                        <div className="min-h-screen flex flex-col safe-area-top prevent-horizontal-overflow app-with-anchor-ads">
+                          <ErrorBoundary fallback={
+                            <div className="bg-red-50 border border-red-200 p-4 m-4 rounded">
+                              <p className="text-red-800">Navigation temporarily unavailable</p>
+                            </div>
+                          }>
+                            <Navigation />
+                          </ErrorBoundary>
+                          
+                          <main className="flex-grow container mx-auto mobile-container py-3 sm:py-6 pt-20 sm:pt-24">
+                            <AppRoutes />
+                          </main>
+                          
+                          <ErrorBoundary fallback={
+                            <div className="bg-gray-100 p-4 text-center text-gray-600">
+                              <p>Footer content unavailable</p>
+                            </div>
+                          }>
+                            <Footer />
+                          </ErrorBoundary>
+                        </div>
+                      )}
                       
                       {/* Mobile AdSense Anchor Ad Integration */}
-                      <ErrorBoundary fallback={null}>
-                        <MobileAdSenseAnchor
-                          adClient="ca-pub-8712426072706283"
-                          debug={process.env.NODE_ENV === 'development'}
-                          addVisualEffects={true}
-                          onAdLoad={() => {
-                            console.log('AdSense anchor ad loaded successfully');
-                          }}
-                          onAdError={(error) => {
-                            console.warn('AdSense anchor ad failed to load:', error.message);
-                          }}
-                        />
-                      </ErrorBoundary>
+                      {!isSellMyTicketsRoute && (
+                        <ErrorBoundary fallback={null}>
+                          <MobileAdSenseAnchor
+                            adClient="ca-pub-8712426072706283"
+                            debug={process.env.NODE_ENV === 'development'}
+                            addVisualEffects={true}
+                            onAdLoad={() => {
+                              console.log('AdSense anchor ad loaded successfully');
+                            }}
+                            onAdError={(error) => {
+                              console.warn('AdSense anchor ad failed to load:', error.message);
+                            }}
+                          />
+                        </ErrorBoundary>
+                      )}
                       
-                      <ScrollNavigation />
+                      {!isSellMyTicketsRoute && <ScrollNavigation />}
                       <Toaster />
                     </InstagramHandleCheck>
                   </HelmetProvider>

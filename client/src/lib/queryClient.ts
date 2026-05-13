@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { getNeonAuthToken } from "./neon-auth";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -25,23 +26,40 @@ function getProtocolAwareUrl(url: string): string {
   return url;
 }
 
+export async function apiFetch(
+  url: string,
+  init: RequestInit = {},
+): Promise<Response> {
+  const protocolAwareUrl = getProtocolAwareUrl(url);
+  const headers = new Headers(init.headers);
+  const token = await getNeonAuthToken();
+
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  return fetch(protocolAwareUrl, {
+    ...init,
+    headers,
+    credentials: init.credentials ?? "include",
+  });
+}
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const protocolAwareUrl = getProtocolAwareUrl(url);
-
   // Create AbortController for timeout handling
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
   try {
-    const res = await fetch(protocolAwareUrl, {
+    const headers = new Headers(data ? { "Content-Type": "application/json" } : {});
+    const res = await apiFetch(url, {
       method,
-      headers: data ? { "Content-Type": "application/json" } : {},
+      headers,
       body: data ? JSON.stringify(data) : undefined,
-      credentials: "include",
       signal: controller.signal,
     });
 
@@ -50,7 +68,7 @@ export async function apiRequest(
     return res;
   } catch (error) {
     clearTimeout(timeoutId);
-    if (error.name === 'AbortError') {
+    if (error instanceof DOMException && error.name === "AbortError") {
       throw new Error('Request timeout');
     }
     throw error;
@@ -64,9 +82,7 @@ export const getQueryFn: <T>(options: {
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const url = getProtocolAwareUrl(queryKey[0] as string);
-    const res = await fetch(url, {
-      credentials: "include",
-    });
+    const res = await apiFetch(url);
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
       return null;

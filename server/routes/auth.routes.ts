@@ -4,6 +4,7 @@ import { validateBody } from "../middleware/validation.middleware";
 import { UserController } from "../controllers/index";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
+import { getNeonAuthPublicConfig, isNeonAuthEnabled } from "../middleware/neon-auth.middleware";
 
 const router = Router();
 const userController = new UserController();
@@ -11,11 +12,48 @@ const userController = new UserController();
 // Check if Google OAuth is configured
 const isGoogleOAuthEnabled = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 
+function safeReturnTo(value: unknown) {
+  if (typeof value !== "string" || value.length === 0) {
+    return undefined;
+  }
+
+  if (!value.startsWith("/") || value.startsWith("//")) {
+    return undefined;
+  }
+
+  return value;
+}
+
+function loginRedirect(returnTo: string | undefined, error: string, message?: string) {
+  const params = new URLSearchParams({ error });
+
+  if (returnTo) {
+    params.set("returnTo", returnTo);
+  }
+
+  if (message) {
+    params.set("message", message);
+  }
+
+  return `/login?${params.toString()}`;
+}
+
+router.get("/google/status", (_req, res) => {
+  res.json({
+    enabled: isGoogleOAuthEnabled || isNeonAuthEnabled(),
+    mode: isNeonAuthEnabled() ? "neon-auth" : "passport-google",
+  });
+});
+
+router.get("/neon/status", (_req, res) => {
+  res.json(getNeonAuthPublicConfig());
+});
+
 // Google OAuth login route (only if configured)
 if (isGoogleOAuthEnabled) {
   router.get("/google", (req, res, next) => {
     // Store the returnTo parameter in session before initiating OAuth
-    const returnTo = req.query.returnTo as string;
+    const returnTo = safeReturnTo(req.query.returnTo);
     console.log("[AUTH] Google OAuth initiated with returnTo:", returnTo);
     console.log("[AUTH] Session ID before OAuth:", req.sessionID);
     console.log("[AUTH] Full query params:", req.query);
@@ -58,7 +96,7 @@ if (isGoogleOAuthEnabled) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       console.log("[AUTH] Backup returnTo stored:", (req as any).__returnTo);
       
-      passport.authenticate("google", (err, user, info) => {
+      passport.authenticate("google", (err: any, user: Express.User | false | null, info: unknown) => {
         if (err) {
           // Authentication error
           console.error("[AUTH] Authentication error:", err);
@@ -83,11 +121,8 @@ if (isGoogleOAuthEnabled) {
           
           // Use backup returnTo if session returnTo is lost
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const finalReturnTo = sessionReturnTo || (req as any).__returnTo;
-          const failureRedirect = finalReturnTo 
-            ? `/login?returnTo=${encodeURIComponent(finalReturnTo)}&error=${errorType}&message=${encodeURIComponent(errorMessage)}`
-            : `/login?error=${errorType}&message=${encodeURIComponent(errorMessage)}`;
-          return res.redirect(failureRedirect);
+          const finalReturnTo = safeReturnTo(sessionReturnTo || (req as any).__returnTo);
+          return res.redirect(loginRedirect(finalReturnTo, errorType, errorMessage));
         }
         
         if (!user) {
@@ -97,11 +132,8 @@ if (isGoogleOAuthEnabled) {
           
           // Use backup returnTo if session returnTo is lost
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const finalReturnTo = sessionReturnTo || (req as any).__returnTo;
-          const failureRedirect = finalReturnTo 
-            ? `/login?returnTo=${encodeURIComponent(finalReturnTo)}&error=authentication_failed`
-            : '/login?error=authentication_failed';
-          return res.redirect(failureRedirect);
+          const finalReturnTo = safeReturnTo(sessionReturnTo || (req as any).__returnTo);
+          return res.redirect(loginRedirect(finalReturnTo, "authentication_failed"));
         }
         
         // Authentication succeeded, log in the user
@@ -116,7 +148,7 @@ if (isGoogleOAuthEnabled) {
           // 2. Current session returnTo (might be lost due to regeneration)
           // 3. Backup returnTo stored on request object
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const finalReturnTo = sessionReturnTo || req.session.returnTo || (req as any).__returnTo;
+          const finalReturnTo = safeReturnTo(sessionReturnTo || req.session.returnTo || (req as any).__returnTo);
           const redirectUrl = finalReturnTo || "/";
           
           console.log("[AUTH] Login successful, preparing redirect to:", redirectUrl);
@@ -165,7 +197,14 @@ if (isGoogleOAuthEnabled) {
 }
 
 // Get current user
-router.get("/user", userController.getCurrentUser);
+router.get("/user", (req, res) => {
+  if (req.user) {
+    res.status(200).json(req.user);
+    return;
+  }
+
+  userController.getCurrentUser(req, res);
+});
 
 // Update user Instagram profile with validation
 router.patch("/user/instagram", async (req, res) => {

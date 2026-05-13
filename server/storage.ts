@@ -138,8 +138,10 @@ export class DatabaseStorage implements IStorage {
       createTableIfMissing: true,
     };
     
-    // Add SSL configuration for production (Heroku PostgreSQL uses self-signed certificates)
-    if (process.env.NODE_ENV === 'production') {
+    const needsSsl = process.env.NODE_ENV === 'production' || process.env.DATABASE_URL?.includes('neon.tech');
+
+    // Add SSL configuration for production/Neon database connections.
+    if (needsSsl) {
       sessionStoreConfig.conObject = {
         connectionString: process.env.DATABASE_URL,
         ssl: {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import SEO from "@/components/seo";
@@ -7,10 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info, AlertCircle } from "lucide-react";
 import { debugAuthFlow } from "@/utils/auth-debug";
+import { signInWithNeonGoogle } from "@/lib/neon-auth";
+
+function safeReturnTo(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+    return "/";
+  }
+
+  return value;
+}
 
 export default function Login() {
   const { isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
+  const [signInError, setSignInError] = useState<string | null>(null);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   // Check for authentication errors in URL params
   const urlParams = new URLSearchParams(window.location.search);
@@ -29,28 +40,32 @@ export default function Login() {
     
     if (isAuthenticated) {
       // Check if there's a return URL in the query params
-      const returnTo = urlParams.get("returnTo") || "/";
+      const returnTo = safeReturnTo(urlParams.get("returnTo"));
       debugAuthFlow("User authenticated, navigating to:", { returnTo });
       navigate(returnTo);
     }
   }, [isAuthenticated, navigate, urlParams]);
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     // Preserve the returnTo parameter in the Google OAuth flow
     const urlParams = new URLSearchParams(window.location.search);
-    const returnTo = urlParams.get("returnTo");
+    const returnTo = safeReturnTo(urlParams.get("returnTo"));
+    setSignInError(null);
+    setIsSigningIn(true);
     
-    // Store OAuth redirect info in session storage
-    debugAuthFlow("Initiating Google OAuth", { returnTo });
-    if (returnTo) {
-      sessionStorage.setItem("oauth-intended-destination", returnTo);
-      sessionStorage.setItem("oauth-redirect-pending", "true");
+    try {
+      // Store OAuth redirect info in session storage
+      debugAuthFlow("Initiating Google OAuth", { returnTo });
+      if (returnTo !== "/") {
+        sessionStorage.setItem("oauth-intended-destination", returnTo);
+        sessionStorage.setItem("oauth-redirect-pending", "true");
+      }
+      
+      await signInWithNeonGoogle(new URL(returnTo, window.location.origin).toString());
+    } catch (error) {
+      setIsSigningIn(false);
+      setSignInError(error instanceof Error ? error.message : "Google sign-in failed.");
     }
-    
-    const googleAuthUrl = returnTo 
-      ? `/api/auth/google?returnTo=${encodeURIComponent(returnTo)}`
-      : "/api/auth/google";
-    window.location.href = googleAuthUrl;
   };
 
   return (
@@ -77,6 +92,15 @@ export default function Login() {
               </AlertDescription>
             </Alert>
           )}
+
+          {signInError && (
+            <Alert className="border-red-200 bg-red-50">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-sm text-red-800">
+                {signInError}
+              </AlertDescription>
+            </Alert>
+          )}
           
           {/* Show invalid code error if present */}
           {hasInvalidCode && (
@@ -99,6 +123,7 @@ export default function Login() {
           {/* Google Sign-in Button following Google's branding guidelines */}
           <Button
             onClick={handleGoogleSignIn}
+            disabled={isSigningIn}
             className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 font-medium border border-gray-300 shadow-sm"
           >
             <svg 
@@ -113,7 +138,7 @@ export default function Login() {
                 <path fill="#EA4335" d="M -14.754 43.989 C -12.984 43.989 -11.404 44.599 -10.154 45.789 L -6.734 42.369 C -8.804 40.429 -11.514 39.239 -14.754 39.239 C -19.444 39.239 -23.494 41.939 -25.464 45.859 L -21.484 48.949 C -20.534 46.099 -17.884 43.989 -14.754 43.989 Z"/>
               </g>
             </svg>
-            Sign in with Google
+            {isSigningIn ? "Signing in..." : "Sign in with Google"}
           </Button>
           
           <div className="text-center text-sm text-gray-600">

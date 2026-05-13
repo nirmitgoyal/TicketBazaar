@@ -40,6 +40,17 @@ export function setSecurityHeaders(req: Request, res: Response, next: NextFuncti
   const baseStyleSrc = "'self' 'unsafe-inline'";
   const baseFontSrc = "'self'";
   const baseConnectSrc = "'self'";
+  const defaultNeonAuthOrigin = "https://ep-dry-hill-ajs1lm50.neonauth.c-3.us-east-2.aws.neon.tech";
+  const configuredNeonAuthUrl = process.env.NEON_AUTH_URL || process.env.VITE_NEON_AUTH_URL;
+  let neonAuthOrigin = defaultNeonAuthOrigin;
+
+  if (configuredNeonAuthUrl) {
+    try {
+      neonAuthOrigin = new URL(configuredNeonAuthUrl).origin;
+    } catch {
+      neonAuthOrigin = defaultNeonAuthOrigin;
+    }
+  }
   
   // Only include Google domains in non-test environments
   const scriptSrc = isTestEnvironment 
@@ -56,7 +67,7 @@ export function setSecurityHeaders(req: Request, res: Response, next: NextFuncti
     
   const connectSrc = isTestEnvironment 
     ? baseConnectSrc 
-    : `${baseConnectSrc} https://maps.googleapis.com https://maps.gstatic.com https://places.googleapis.com https://www.google-analytics.com`;
+    : `${baseConnectSrc} ${neonAuthOrigin} https://maps.googleapis.com https://maps.gstatic.com https://places.googleapis.com https://www.google-analytics.com`;
 
   // CSP frame-ancestors for better clickjacking protection
   const frameAncestors = isInstagramWebView 
